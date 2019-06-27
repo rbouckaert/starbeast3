@@ -81,7 +81,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     		int[] transformationSizes, 
     		double[] transformationSums, 
     		double scaleFactor, 
-    		double[][] inMatrix,
+    		double[] inMatrixVector,
             double weight, 
             double beta, 
             int initial, 
@@ -103,6 +103,13 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         this.m_pWeight.setValue(weight, this);
         
         dim = parameter.getDimension();
+        
+        double [][] inMatrix = new double[dim][dim];
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+            	inMatrix[i][j] = inMatrixVector[i*dim + j];            	
+            }
+        }        
         // constantFactor = Math.pow(2.38, 2) / ((double) dim); // not necessary because scaleFactor is auto-tuned
         this.initial = initial;
         this.burnin = burnin;
@@ -149,7 +156,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     		int[] transformationSizes, 
     		double[] transformationSums, 
     		double scaleFactor,
-    		MatrixParameter varMatrix, 
+    		RealParameter varMatrix, 
     		double weight, 
     		double beta, 
     		int initial, 
@@ -158,7 +165,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     		AdaptationMode mode, 
     		boolean isVariance,
     		boolean skipRankCheck) {
-        this(parameter, transformations, transformationSizes, transformationSums, scaleFactor, varMatrix.getParameterAsMatrix(), weight, beta, initial, burnin, every, mode, isVariance, skipRankCheck);
+        this(parameter, transformations, transformationSizes, transformationSums, scaleFactor, varMatrix.getDoubleValues(), weight, beta, initial, burnin, every, mode, isVariance, skipRankCheck);
     }
 
     private double[][] formXtXInverse(double[][] X) {

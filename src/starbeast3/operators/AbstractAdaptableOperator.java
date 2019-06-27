@@ -25,6 +25,7 @@
 
 package starbeast3.operators;
 
+import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -109,39 +110,49 @@ public abstract class AbstractAdaptableOperator extends Operator implements Adap
         return MAXIMUM_GOOD_ACCEPTANCE_LEVEL;
     }
 
+    @Override
+    public final String getPerformanceSuggestion() {
+        final double prob = m_nNrAccepted / (m_nNrAccepted + m_nNrRejected + 0.0);
+        final double targetProb = getTargetAcceptanceProbability();
 
-    public String getPerformanceSuggestion() {
-        //double d = OperatorUtils.optimizeWindowSize(getRawParameter(), parameter.getParameterValue(0) * 2.0, prob, targetProb);
+        double ratio = prob / targetProb;
+        if (ratio > 2.0) ratio = 2.0;
+        if (ratio < 0.5) ratio = 0.5;
 
-        return getPerformanceSuggestion(
-                getAcceptanceProbability(),
-                getTargetAcceptanceProbability(),
-                getRawParameter(),
-                getAdaptableParameterName());
+        // new scale factor
+        final double newDelta = getAdaptableParameterValue() * ratio;
+
+        String adaptationParameterName = getAdaptableParameterName();
+        final DecimalFormat formatter = new DecimalFormat("#.###");
+        if (prob < MINIMUM_ACCEPTANCE_LEVEL) {
+            return "Try setting " + adaptationParameterName + " to about " + formatter.format(newDelta);
+        } else if (prob > MAXIMUM_ACCEPTANCE_LEVEL) {
+            return "Try setting " + adaptationParameterName + " to about " + formatter.format(newDelta);
+        } else return "";
     }
 
     public AdaptationMode getMode() {
         return mode;
     }
 
-    public static String getPerformanceSuggestion(double acceptanceProbability,
-                                                  double targetAcceptanceProbability,
-                                                  double adaptationParameterValue,
-                                                  String adaptationParameterName) {
-
-        dr.util.NumberFormatter formatter = new dr.util.NumberFormatter(5);
-
-        double sf = OperatorUtils.optimizeWindowSize(adaptationParameterValue, acceptanceProbability, targetAcceptanceProbability);
-
-        //double d = OperatorUtils.optimizeWindowSize(getRawParameter(), parameter.getParameterValue(0) * 2.0, prob, targetProb);
-
-
-        if (acceptanceProbability < MINIMUM_ACCEPTANCE_LEVEL) {
-            return "Try setting " + adaptationParameterName + " to about " + formatter.format(sf);
-        } else if (acceptanceProbability > MAXIMUM_ACCEPTANCE_LEVEL) {
-            return "Try setting " + adaptationParameterName + " to about " + formatter.format(sf);
-        } else return "";
-    }
+//    public static String getPerformanceSuggestion(double acceptanceProbability,
+//                                                  double targetAcceptanceProbability,
+//                                                  double adaptationParameterValue,
+//                                                  String adaptationParameterName) {
+//
+//        dr.util.NumberFormatter formatter = new dr.util.NumberFormatter(5);
+//
+//        double sf = OperatorUtils.optimizeWindowSize(adaptationParameterValue, acceptanceProbability, targetAcceptanceProbability);
+//
+//        //double d = OperatorUtils.optimizeWindowSize(getRawParameter(), parameter.getParameterValue(0) * 2.0, prob, targetProb);
+//
+//
+//        if (acceptanceProbability < MINIMUM_ACCEPTANCE_LEVEL) {
+//            return "Try setting " + adaptationParameterName + " to about " + formatter.format(sf);
+//        } else if (acceptanceProbability > MAXIMUM_ACCEPTANCE_LEVEL) {
+//            return "Try setting " + adaptationParameterName + " to about " + formatter.format(sf);
+//        } else return "";
+//    }
 
 
 }
