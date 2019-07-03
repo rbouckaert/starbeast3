@@ -28,7 +28,10 @@ package starbeast3.operators;
 import java.util.ArrayList;
 import java.util.List;
 
+import beast.core.Description;
+import beast.core.Param;
 import beast.core.parameter.RealParameter;
+import beast.evolution.operators.CompoundParameterHelper;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.SingularValueDecomposition;
 import starbeast3.util.Transform;
@@ -39,6 +42,9 @@ import beast.util.Randomizer;
  * @author Guy Baele
  * @author Marc A. Suchard
  */
+@Description("Opeator that moves many parameters (possibly, after transformation to make them "
+		+ "more normally distributed). It learns the correlation structure among these parameters "
+		+ "during the MCMC run and updates parameters accordingly.")
 public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptableOperator {
 
     public static final String AVMVN_OPERATOR = "adaptableVarianceMultivariateNormalOperator";
@@ -60,15 +66,15 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     private double scaleFactor;
     private double beta;
     private int iterations, updates, initial, burnin, every;
-    private final RealParameter parameter;
-    private final Transform[] transformations;
-    private final int[] transformationSizes;
-    private final double[] transformationSums;
-    private final int dim;
+    private CompoundParameterHelper<Double> parameter;
+    private Transform[] transformations;
+    private int[] transformationSizes;
+    private double[] transformationSums;
+    private int dim;
     // private final double constantFactor;
     private double[] oldMeans, newMeans;
 
-    final double[][] matrix;
+    private double[][] matrix;
     private double[][] empirical;
     private double[][] cholesky;
 
@@ -76,24 +82,145 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     private double[] epsilon;
     private double[][] proposal;
 
-    public AdaptableVarianceMultivariateNormalOperator(RealParameter parameter, 
-    		Transform[] transformations, 
-    		int[] transformationSizes, 
-    		double[] transformationSums, 
-    		double scaleFactor, 
-    		double[] inMatrixVector,
-            double weight, 
-            double beta, 
-            int initial, 
-            int burnin, 
-            int every, 
-            AdaptableMCMCOperator.AdaptationMode mode, 
-            boolean isVarianceMatrix, 
-            boolean skipRankCheck) {
+	private boolean isVarianceMatrix;
+	private boolean skipRankCheck;
+
+//    public RealParameter getParameter() {
+//		return parameter;
+//	}
+//
+//	public void setParameter(RealParameter parameter) {
+//		this.parameter = parameter;
+//	}
+
+    public double getBeta() {
+		return beta;
+	}
+
+	public void setBeta(double beta) {
+		this.beta = beta;
+	}
+
+    public double getWeight() {
+		return m_pWeight.get();
+	}
+
+	public void setWeight(double weight) {
+		m_pWeight.set(weight);
+	}
+	
+	public int getInitial() {
+		return initial;
+	}
+
+	public void setInitial(int initial) {
+		this.initial = initial;
+	}
+
+	public int getBurnin() {
+		return burnin;
+	}
+
+	public void setBurnin(int burnin) {
+		this.burnin = burnin;
+	}
+
+	public int getEvery() {
+		return every;
+	}
+
+	public void setEvery(int every) {
+		this.every = every;
+	}
+
+	public Transform[] getTransformations() {
+		return transformations;
+	}
+
+	public void setTransformations(Transform [] transformations) {
+		this.transformations = transformations;
+	}
+
+	public int[] getTransformationSizes() {
+		return transformationSizes;
+	}
+
+	public double[] getTransformationSums() {
+		return transformationSums;
+	}
+
+	public void setScaleFactor(double scaleFactor) {
+		this.scaleFactor = scaleFactor;
+	}
+
+	public void setTransformationSizes(int[] transformationSizes) {
+		this.transformationSizes = transformationSizes;
+	}
+
+	public void setTransformationSums(double[] transformationSums) {
+		this.transformationSums = transformationSums;
+	}
+
+	public double[] getInMatrixVector() {
+        double [] inMatrixVector = new double[dim*dim];
+        for (int i = 0; i < dim; i++) {
+        	System.arraycopy(matrix[i], 0, inMatrixVector, i * dim, dim);
+        }
+        return inMatrixVector;
+	}
+
+	public void setInMatrixVector(double[] inMatrixVector) {
+		int dim = (int) Math.sqrt(inMatrixVector.length + 0.5);
+        double [][] inMatrix = new double[dim][dim];
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+            	inMatrix[i][j] = inMatrixVector[i*dim + j];            	
+            }
+        }        
+        this.matrix = inMatrix;
+    }
+	
+	public boolean isVarianceMatrix() {
+		return isVarianceMatrix;
+	}
+
+	public void setVarianceMatrix(boolean isVarianceMatrix) {
+		this.isVarianceMatrix = isVarianceMatrix;
+	}
+
+	public boolean isSkipRankCheck() {
+		return skipRankCheck;
+	}
+
+	public void setSkipRankCheck(boolean skipRankCheck) {
+		this.skipRankCheck = skipRankCheck;
+	}
+
+	public AdaptableVarianceMultivariateNormalOperator() {super(AdaptableMCMCOperator.AdaptationMode.DEFAULT);}
+	
+	public AdaptableVarianceMultivariateNormalOperator(
+    		@Param(name="parameter", description="multi dimensional parameter to be moved") RealParameter parameter, 
+    		@Param(name="transformations", description="one or more transformed parameters to be moved") Transform[] transformations, 
+    		@Param(name="transformationSizes", description="") int[] transformationSizes, 
+    		@Param(name="transformationSums", description="") double[] transformationSums, 
+    		@Param(name="scaleFactor", description="") double scaleFactor, 
+    		@Param(name="inMatrixVector", description="") double[] inMatrixVector,
+    		@Param(name="weight", description="") double weight, 
+    		@Param(name="beta", description="") double beta, 
+    		@Param(name="initial", description="") int initial, 
+    		@Param(name="burnin", description="") int burnin, 
+    		@Param(name="every", description="") int every, 
+    		@Param(name="mode", description="") AdaptableMCMCOperator.AdaptationMode mode, 
+    		@Param(name="isVarianceMatrix", description="") boolean isVarianceMatrix, 
+    		@Param(name="skipRankCheck", description="") boolean skipRankCheck) {
 
         super(mode);
         this.scaleFactor = scaleFactor;
-        this.parameter = parameter;
+        List<RealParameter> parameterList = new ArrayList<>();
+        for (Transform t : transformations) {
+        	parameterList.add(t.getParameter());
+        }
+        this.parameter = new CompoundParameterHelper(parameterList);
         this.transformations = transformations;
         this.transformationSizes = transformationSizes;
         this.transformationSums = transformationSums;
@@ -101,6 +228,8 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         this.iterations = 0;
         this.updates = 0;
         this.m_pWeight.setValue(weight, this);
+        this.isVarianceMatrix = isVarianceMatrix;
+        this.skipRankCheck = skipRankCheck;
         
         dim = parameter.getDimension();
         
@@ -121,33 +250,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         this.epsilon = new double[dim];
         this.proposal = new double[dim][dim];
 
-        if (!skipRankCheck) {
-            SingularValueDecomposition svd = new SingularValueDecomposition(new DenseDoubleMatrix2D(inMatrix));
-            if (inMatrix[0].length != svd.rank()) {
-                throw new RuntimeException("Variance matrix in AdaptableVarianceMultivariateNormalOperator is not of full rank");
-            }
-        }
-
-        if (isVarianceMatrix) {
-            matrix = inMatrix;
-        } else {
-            matrix = formXtXInverse(inMatrix);
-        }
-
-        /*System.err.println("matrix initialization: ");
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
-                System.err.print(matrix[i][j] + " ");
-            }
-            System.err.println();
-        }*/
-
-        try {
-            cholesky = (new CholeskyDecomposition(matrix)).getL();
-        } catch (IllegalDimension illegalDimension) {
-            throw new RuntimeException("Unable to decompose matrix in AdaptableVarianceMultivariateNormalOperator");
-        }
-        
         initAndValidate();
     }
 
@@ -212,14 +314,18 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 
         if (DEBUG) {
             System.err.println("\nAVMVN Iteration: " + iterations);
-            System.err.println("Using AdaptableVarianceMultivariateNormalOperator: " + iterations + " for " + parameter.getID());
+            System.err.println("Using AdaptableVarianceMultivariateNormalOperator: " + iterations + " for " + "parameter.getID()");
             System.err.println("Old parameter values:");
             for (int i = 0; i < dim; i++) {
                 System.err.println(parameter.getValue(i));
             }
         }
 
-        double[] x = parameter.getDoubleValues();
+        // double[] x = parameter.getDoubleValues();
+        double[] x = new double[dim];
+        for (int i = 0; i < dim; i++) {
+        	x[i] = parameter.getValue(i);
+        }
 
         //transform to the appropriate scale
         double[] transformedX = new double[dim];
@@ -507,15 +613,15 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     }
 
     public String toString() {
-        return AVMVN_OPERATOR + "(" + parameter.getID() + ")";
+        return AVMVN_OPERATOR + "(" + "parameter.getID()" + ")";
     }
 
     public static final boolean MULTI = true;
 
     //Methods needed when using TwoPhaseOperator(Parser)
-    public RealParameter getParameter() {
-        return this.parameter;
-    }
+//    public RealParameter getParameter() {
+//        return this.parameter;
+//    }
 
     public void provideSamples(ArrayList<ArrayList<Double>> parameterSamples) {
         if (DEBUG) {
@@ -577,7 +683,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 
     //MCMCOperator INTERFACE
     public final String getOperatorName() {
-        String output = "adaptableVarianceMultivariateNormal(" + parameter.getID() + ")";
+        String output = "adaptableVarianceMultivariateNormal(" + "parameter.getID()" + ")";
         if (PRINT_FULL_MATRIX) {
             output += "\nMeans:\n";
             for (int i = 0; i < dim; i++) {
@@ -619,8 +725,34 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     
     @Override
 	public void initAndValidate() {
-		// TODO Auto-generated method stub
-		
+        dim = parameter.getDimension();
+
+        if (!skipRankCheck) {
+            SingularValueDecomposition svd = new SingularValueDecomposition(new DenseDoubleMatrix2D(matrix));
+            if (matrix[0].length != svd.rank()) {
+                throw new RuntimeException("Variance matrix in AdaptableVarianceMultivariateNormalOperator is not of full rank");
+            }
+        }
+
+        if (isVarianceMatrix) {
+            // matrix = inMatrix;
+        } else {
+            matrix = formXtXInverse(matrix);
+        }
+
+        /*System.err.println("matrix initialization: ");
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                System.err.print(matrix[i][j] + " ");
+            }
+            System.err.println();
+        }*/
+
+        try {
+            cholesky = (new CholeskyDecomposition(matrix)).getL();
+        } catch (IllegalDimension illegalDimension) {
+            throw new RuntimeException("Unable to decompose matrix in AdaptableVarianceMultivariateNormalOperator");
+        }		
 	}
 
 	@Override
