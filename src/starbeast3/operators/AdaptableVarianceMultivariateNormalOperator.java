@@ -133,6 +133,14 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 		this.every = every;
 	}
 
+	public AdaptationMode getMode() {
+		return mode;
+	}
+
+	public void setMode(AdaptationMode mode) {
+		this.mode = mode;
+	}
+
 	public Transform[] getTransformations() {
 		return transformations;
 	}
@@ -180,15 +188,19 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         this.matrix = inMatrix;
     }
 	
-	public boolean isVarianceMatrix() {
+	public void setInMatrixVector(RealParameter inMatrixVector) {
+		setInMatrixVector(inMatrixVector.getDoubleValues());
+    }
+
+	public boolean getIsVarianceMatrix() {
 		return isVarianceMatrix;
 	}
 
-	public void setVarianceMatrix(boolean isVarianceMatrix) {
+	public void setIsVarianceMatrix(boolean isVarianceMatrix) {
 		this.isVarianceMatrix = isVarianceMatrix;
 	}
 
-	public boolean isSkipRankCheck() {
+	public boolean getSkipRankCheck() {
 		return skipRankCheck;
 	}
 
@@ -199,26 +211,26 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 	public AdaptableVarianceMultivariateNormalOperator() {super(AdaptableMCMCOperator.AdaptationMode.DEFAULT);}
 	
 	public AdaptableVarianceMultivariateNormalOperator(
-    		@Param(name="parameter", description="multi dimensional parameter to be moved") RealParameter parameter, 
-    		@Param(name="transformations", description="one or more transformed parameters to be moved") Transform[] transformations, 
-    		@Param(name="transformationSizes", description="") int[] transformationSizes, 
-    		@Param(name="transformationSums", description="") double[] transformationSums, 
+//    		@Param(name="parameter", description="multi dimensional parameter to be moved") RealParameter parameter, 
+    		@Param(name="transformations", description="one or more transformed parameters to be moved") Transform [] transformations, 
+    		@Param(name="transformationSizes", description="list of dimensions of individual parameters") int[] transformationSizes, 
+    		@Param(name="transformationSums", description="list of sum values for all parameters, used if constrained by a sum like subst model frequencies") double[] transformationSums, 
     		@Param(name="scaleFactor", description="") double scaleFactor, 
     		@Param(name="inMatrixVector", description="") double[] inMatrixVector,
-    		@Param(name="weight", description="") double weight, 
+//    		@Param(name="weight", description="") double weight, 
     		@Param(name="beta", description="") double beta, 
     		@Param(name="initial", description="") int initial, 
-    		@Param(name="burnin", description="") int burnin, 
-    		@Param(name="every", description="") int every, 
-    		@Param(name="mode", description="") AdaptableMCMCOperator.AdaptationMode mode, 
-    		@Param(name="isVarianceMatrix", description="") boolean isVarianceMatrix, 
+    		@Param(name="burnin", description="", defaultValue="0") int burnin, 
+    		@Param(name="every", description="", defaultValue="1") int every, 
+    		@Param(name="mode", description="") AdaptationMode mode, 
+    		@Param(name="isVarianceMatrix", description="", defaultValue="true") boolean isVarianceMatrix, 
     		@Param(name="skipRankCheck", description="") boolean skipRankCheck) {
 
         super(mode);
         this.scaleFactor = scaleFactor;
         List<RealParameter> parameterList = new ArrayList<>();
         for (Transform t : transformations) {
-        	parameterList.add(t.getParameter());
+        	parameterList.addAll(t.getParameter());
         }
         this.parameter = new CompoundParameterHelper(parameterList);
         this.transformations = transformations;
@@ -227,7 +239,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         this.beta = beta;
         this.iterations = 0;
         this.updates = 0;
-        this.m_pWeight.setValue(weight, this);
+        this.m_pWeight.setValue(1.0, this);
         this.isVarianceMatrix = isVarianceMatrix;
         this.skipRankCheck = skipRankCheck;
         
@@ -253,21 +265,21 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         initAndValidate();
     }
 
-    public AdaptableVarianceMultivariateNormalOperator(RealParameter parameter, 
-    		Transform[] transformations, 
-    		int[] transformationSizes, 
-    		double[] transformationSums, 
-    		double scaleFactor,
-    		RealParameter varMatrix, 
-    		double weight, 
-    		double beta, 
-    		int initial, 
-    		int burnin, 
-    		int every, 
-    		AdaptationMode mode, 
-    		boolean isVariance,
-    		boolean skipRankCheck) {
-        this(parameter, transformations, transformationSizes, transformationSums, scaleFactor, varMatrix.getDoubleValues(), weight, beta, initial, burnin, every, mode, isVariance, skipRankCheck);
+    public AdaptableVarianceMultivariateNormalOperator(//RealParameter parameter, 
+    		@Param(name="transformations", description="one or more transformed parameters to be moved") Transform[] transformations, 
+    		@Param(name="transformationSizes", description="") int[] transformationSizes, 
+    		@Param(name="transformationSums", description="") double[] transformationSums, 
+    		@Param(name="scaleFactor", description="") double scaleFactor, 
+    		@Param(name="inMatrixVector", description="") RealParameter varMatrix,
+//    		@Param(name="weight", description="") double weight, 
+    		@Param(name="beta", description="") double beta, 
+    		@Param(name="initial", description="") int initial, 
+    		@Param(name="burnin", description="") int burnin, 
+    		@Param(name="every", description="") int every, 
+    		@Param(name="mode", description="") AdaptationMode mode, 
+    		@Param(name="isVarianceMatrix", description="") boolean isVariance, 
+    		@Param(name="skipRankCheck", description="") boolean skipRankCheck) {
+        this(/*parameter, */transformations, transformationSizes, transformationSums, scaleFactor, varMatrix.getDoubleValues(), beta, initial, burnin, every, mode, isVariance, skipRankCheck);
     }
 
     private double[][] formXtXInverse(double[][] X) {
@@ -308,7 +320,12 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 
     }
 
-    public double doOperation() {
+	@Override
+	public double proposal() {
+		return doOperation();
+	}
+
+	public double doOperation() {
 
         iterations++;
 
@@ -725,6 +742,19 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     
     @Override
 	public void initAndValidate() {
+        if (burnin > initial || burnin < 0) {
+            throw new IllegalArgumentException("Burn-in must be smaller than the initial period.");
+        }
+
+
+        if (every <= 0) {
+            throw new IllegalArgumentException("Covariance matrix needs to be updated at least every single iteration.");
+        }
+
+        if (scaleFactor <= 0.0) {
+            throw new IllegalArgumentException("ScaleFactor must be greater than zero.");
+        }
+
         dim = parameter.getDimension();
 
         if (!skipRankCheck) {
@@ -755,10 +785,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         }		
 	}
 
-	@Override
-	public double proposal() {
-		return doOperation();
-	}
 
     /*
     public static XMLObjectParser PARSER = new AbstractXMLObjectParser() {

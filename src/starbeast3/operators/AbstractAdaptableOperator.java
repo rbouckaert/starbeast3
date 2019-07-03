@@ -26,8 +26,6 @@
 package starbeast3.operators;
 
 import java.text.DecimalFormat;
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 import beast.core.Operator;
 
@@ -37,7 +35,7 @@ import beast.core.Operator;
  */
 public abstract class AbstractAdaptableOperator extends Operator implements AdaptableMCMCOperator {
 
-    public final AdaptationMode mode;
+    public AdaptationMode mode;
     private final double targetAcceptanceProbability;
     private long adaptationCount = 0;
 
