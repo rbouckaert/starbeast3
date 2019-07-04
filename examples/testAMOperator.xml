@@ -4,7 +4,7 @@
 
 <!-- sample from 2-dimensional multivariate Normal with strong correlation -->
 
-<run id="mcmc" spec="MCMC" chainLength="100000">
+<run id="mcmc" spec="MCMC" chainLength="1000000">
     <state id="state" spec="State" storeEvery="10000">
         <stateNode idref="arg"/>
     </state>
@@ -14,7 +14,7 @@
                 <arg id="arg" spec='parameter.RealParameter' value='0.0 0.0'/>
                 <mean id="mean" spec='parameter.RealParameter' value='0.0 0.0'/>
                 <precision id="precision" spec='parameter.RealParameter' minordimension='2'>
-                                1.0 1.5
+                                1.0 1.9
                                 .0 1.0
                 </precision>
         </distribution>
@@ -24,18 +24,16 @@
     <operator id="scaleOperator" spec="RealRandomWalkOperator" parameter="@arg" windowSize="0.5" weight="1"/>
 -->
     <operator id="AdaptableVarianceMultivariateNormalOperator" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
-    	weight="1">
-    		transformationSizes="2"
-    		transformationSums="0"
-    		inMatrixVector="1 0 0 1"
+     		weight="1"
+    		coefficient="1"
     		scaleFactor="0.75"
-    		beta="0.3"
+    		beta="0.05"
     		initial="1000"
     		burnin="1000"
     		every="1"
     		mode="DEFAULT"
     		isVarianceMatrix="true"
-    		skipRankCheck="true"/>
+    		skipRankCheck="true">
     	    <transformations spec="starbeast3.util.Transform$NoTransform" parameter="@arg"/>
     </operator>
 
@@ -44,7 +42,7 @@
         <log idref="arg"/>
     </logger>
 
-    <logger id="screenlog" spec="Logger" logEvery="10000">
+    <logger id="screenlog" spec="Logger" logEvery="100000">
         <log idref="MultivariateNormal"/>
         <log idref="arg"/>
     </logger>

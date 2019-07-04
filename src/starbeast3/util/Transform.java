@@ -496,13 +496,13 @@ public interface Transform {
 
         private double fixedSum;
 
-        public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
-    		super(parameter);
-    		fixedSum = 1;
-        }
+//        public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+//    		super(parameter);
+//    		fixedSum = 1;
+//        }
 
         public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter,
-        		@Param(name="sum",description="total sum of parameter values the parameter is constrained to") double fixedSum) {
+        		@Param(name="sum",description="total sum of parameter values the parameter is constrained to", defaultValue="1.0") double fixedSum) {
     		super(parameter);
             this.fixedSum = fixedSum;
         }
@@ -905,7 +905,12 @@ public interface Transform {
         public double inverse(double value) {
             return value;
         }
-
+        
+        @Override
+        public double[] inverse(double[] values, int from, int to, double sum) {
+        	return values;
+        }
+        
         public double updateGradientLogDensity(double gradient, double value) {
             return gradient;
         }
@@ -996,7 +1001,8 @@ public interface Transform {
 
         @Override
         public double[] inverse(double[] values, int from, int to, double sum) {
-            throw new RuntimeException("Not implemented.");
+        	return values;
+            //throw new RuntimeException("Not implemented.");
         }
 
         @Override
@@ -1882,7 +1888,7 @@ public interface Transform {
     LogTransform LOG = new LogTransform(null);
     NegateTransform NEGATE = new NegateTransform(null);
     Compose LOG_NEGATE = new Compose(new LogTransform(null), new NegateTransform(null));
-    LogConstrainedSumTransform LOG_CONSTRAINED_SUM = new LogConstrainedSumTransform(null);
+    LogConstrainedSumTransform LOG_CONSTRAINED_SUM = new LogConstrainedSumTransform(null, 1.0);
     LogitTransform LOGIT = new LogitTransform(null);
     FisherZTransform FISHER_Z = new FisherZTransform(null);
     PositiveOrdered POSITIVE_ORDERED = new PositiveOrdered(null);
@@ -1892,7 +1898,7 @@ public interface Transform {
         LOG("log", new LogTransform(null)),
         NEGATE("negate", new NegateTransform(null)),
         LOG_NEGATE("log-negate", new Compose(new LogTransform(null), new NegateTransform(null))),
-        LOG_CONSTRAINED_SUM("logConstrainedSum", new LogConstrainedSumTransform(null)),
+        LOG_CONSTRAINED_SUM("logConstrainedSum", new LogConstrainedSumTransform(null, 1.0)),
         LOGIT("logit", new LogitTransform(null)),
         FISHER_Z("fisherZ",new FisherZTransform(null)),
         POWER("power", new PowerTransform(null)),
