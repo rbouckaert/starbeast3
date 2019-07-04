@@ -3,22 +3,30 @@
 
 
 <!-- sample from 2-dimensional multivariate Normal with strong correlation -->
+<map name="prior" >beast.math.distributions.Prior</map>
 
 <run id="mcmc" spec="MCMC" chainLength="1000000">
     <state id="state" spec="State" storeEvery="10000">
         <stateNode idref="arg"/>
+        <stateNode idref="freqParameter"/>
     </state>
 
 
-        <distribution id="MultivariateNormal" spec='beast.math.distributions.MultivariateNormalDistribution'>
+	<distribution id="posterior" spec="CompoundDistribution">
+           <distribution id="MultivariateNormal" spec='beast.math.distributions.MultivariateNormalDistribution'>
                 <arg id="arg" spec='parameter.RealParameter' value='0.0 0.0'/>
                 <mean id="mean" spec='parameter.RealParameter' value='0.0 0.0'/>
                 <precision id="precision" spec='parameter.RealParameter' minordimension='2'>
-                                1.0 1.9
-                                .0 1.0
+                                2.0 3.9
+                                .0 2.0
                 </precision>
-        </distribution>
-
+           </distribution>
+           <prior id="FrequenciesPrior" name="distribution">
+                <distr spec="beast.math.distributions.Dirichlet" alpha="4 1 1 4"/>
+                <parameter id="freqParameter" spec="parameter.RealParameter" dimension="4" lower="0.0" name="x" upper="1.0">0.25</parameter>
+            </prior>
+    </distribution>
+ 
 
 <!--
     <operator id="scaleOperator" spec="RealRandomWalkOperator" parameter="@arg" windowSize="0.5" weight="1"/>
@@ -35,16 +43,19 @@
     		isVarianceMatrix="true"
     		skipRankCheck="true">
     	    <transformations spec="starbeast3.util.Transform$NoTransform" parameter="@arg"/>
+    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" parameter="@freqParameter" sum="1.0"/>
     </operator>
 
     <logger id="tracelog" spec="Logger" fileName="MultivariateNormal.log" logEvery="100" model="@MultivariateNormal" sanitiseHeaders="true" sort="smart">
         <log idref="MultivariateNormal"/>
         <log idref="arg"/>
+        <log idref="freqParameter"/>
     </logger>
 
     <logger id="screenlog" spec="Logger" logEvery="100000">
         <log idref="MultivariateNormal"/>
         <log idref="arg"/>
+        <log idref="freqParameter"/>
     </logger>
 
 </run>
