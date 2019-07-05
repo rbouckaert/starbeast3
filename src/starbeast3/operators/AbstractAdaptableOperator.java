@@ -35,20 +35,20 @@ import beast.core.Operator;
  */
 public abstract class AbstractAdaptableOperator extends Operator implements AdaptableMCMCOperator {
 
-    public AdaptationMode mode;
+    //public AdaptationMode mode;
     private final double targetAcceptanceProbability;
     private long adaptationCount = 0;
 
     public AbstractAdaptableOperator() {
-        this(AdaptationMode.DEFAULT, DEFAULT_ADAPTATION_TARGET);
+        this(/*AdaptationMode.DEFAULT,*/ DEFAULT_ADAPTATION_TARGET);
     }
 
-    public AbstractAdaptableOperator(AdaptationMode mode) {
-        this(mode, DEFAULT_ADAPTATION_TARGET);
-    }
+    //public AbstractAdaptableOperator(/*AdaptationMode mode*/) {
+    //   this(/*mode,*/ DEFAULT_ADAPTATION_TARGET);
+    //}
 
-    public AbstractAdaptableOperator(AdaptationMode mode, double targetAcceptanceProbability) {
-        this.mode = mode;
+    public AbstractAdaptableOperator(/*AdaptationMode mode,*/ double targetAcceptanceProbability) {
+        //this.mode = mode;
         if (System.getProperty("mcmc.adaptation_target") != null) {
             this.targetAcceptanceProbability = Double.parseDouble(System.getProperty("mcmc.adaptation_target"));
         } else {
@@ -129,9 +129,9 @@ public abstract class AbstractAdaptableOperator extends Operator implements Adap
         } else return "";
     }
 
-    public AdaptationMode getMode() {
-        return mode;
-    }
+    //public AdaptationMode getMode() {
+    //    return mode;
+    //}
 
 //    public static String getPerformanceSuggestion(double acceptanceProbability,
 //                                                  double targetAcceptanceProbability,

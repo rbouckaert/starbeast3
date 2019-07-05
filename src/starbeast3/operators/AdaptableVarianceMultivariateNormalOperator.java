@@ -33,8 +33,6 @@ import beast.core.Input;
 import beast.core.StateNode;
 import beast.core.parameter.Parameter;
 import beast.core.parameter.RealParameter;
-import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import cern.colt.matrix.linalg.SingularValueDecomposition;
 import starbeast3.util.Transform;
 import starbeast3.util.Transform.LogConstrainedSumTransform;
 import beast.math.matrixalgebra.*;
@@ -46,18 +44,23 @@ import beast.util.Randomizer;
  */
 @Description("Opeator that moves many parameters (possibly, after transformation to make them "
 		+ "more normally distributed). It learns the correlation structure among these parameters "
-		+ "during the MCMC run and updates parameters accordingly.")
+		+ "during the MCMC run and updates parameters accordingly. doi:10.1093/bioinformatics/btx088")
 public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptableOperator {
-	final public Input<List<Transform>> transformationsInput = new Input<>("transformations", "one or more transformed parameters to be moved", new ArrayList<>()); 
-	final public Input<Double> scaleFactorInput = new Input<>("scaleFactor", "scaling factor: larger means more bold proposals", 1.0); 
-	final public Input<Double> coefficientInput = new Input<>("coefficient", "");
-	final public Input<Double> betaInput = new Input<>("beta", ""); 
-	final public Input<Integer> initialInput = new Input<>("initial", ""); 
-	final public Input<Integer> burninInput = new Input<>("burnin", "", 0); 
-	final public Input<Integer> everyInput = new Input<>("every", "", 1); 
-	final public Input<AdaptationMode> modeInput = new Input<>("mode", "", AdaptationMode.DEFAULT, AdaptationMode.values()); 
-	final public Input<Boolean> isVarianceMatrixInput = new Input<>("isVarianceMatrix", "", true);
-	final public Input<Boolean> skipRankCheckInput = new Input<>("skipRankCheck", "", true);
+	final public Input<List<Transform>> transformationsInput = new Input<>("transformations", 
+			"one or more transformed parameters to be moved.\n"
+			+ "For scale parameters use LogTransform (where e.g. scale operators were used).\n"
+			+ "For location parameter use NoTransform (where e.g. random walk operators were used).\n"
+			+ "For parameters that sum to a constant use LogConstrainedSumTransform  (where e.g. delta-exchange operators were used).", new ArrayList<>()); 
+	final public Input<Double> scaleFactorInput = new Input<>("scaleFactor", "start scaling factor, larger values give bolder moves (this is tuned during the run)", 1.0); 
+	final public Input<Double> coefficientInput = new Input<>("coefficient", "determines diagonal correlation for variance matrix", 1.0);
+	final public Input<Double> betaInput = new Input<>("beta", "fraction of proposal determined by non-covariance matrix");
+	final public Input<Integer> initialInput = new Input<>("initial", "number of proposals before covariance matrix is considered in proposal (must be larger than burnin)"); 
+	final public Input<Integer> burninInput = new Input<>("burnin", "number of proposals that are ignored before covariance matrix is being updated", 0); 
+	final public Input<Integer> everyInput = new Input<>("every", "update interval for covarionce matrix, default 1 (that is, every step)", 1); 
+
+	// final public Input<AdaptationMode> modeInput = new Input<>("mode", "", AdaptationMode.DEFAULT, AdaptationMode.values()); 
+	// final public Input<Boolean> isVarianceMatrixInput = new Input<>("isVarianceMatrix", "", true);
+	// final public Input<Boolean> skipRankCheckInput = new Input<>("skipRankCheck", "", true);
 
     public static final String AVMVN_OPERATOR = "adaptableVarianceMultivariateNormalOperator";
     public static final String SCALE_FACTOR = "scaleFactor";
@@ -94,8 +97,8 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     private double[] epsilon;
     private double[][] proposal;
 
-	private boolean isVarianceMatrix;
-	private boolean skipRankCheck;
+	//private boolean isVarianceMatrix;
+	//private boolean skipRankCheck;
 
 	
 	@Override
@@ -154,13 +157,13 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 		this.every = every;
 	}
 
-	public AdaptationMode getMode() {
-		return mode;
-	}
+	//public AdaptationMode getMode() {
+	//	return mode;
+	//}
 
-	public void setMode(AdaptationMode mode) {
-		this.mode = mode;
-	}
+	//public void setMode(AdaptationMode mode) {
+	//	this.mode = mode;
+	//}
 
 	public List<Transform> getTransformations() {
 		List<Transform> ts = new ArrayList<>();
@@ -227,25 +230,25 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 		setInMatrixVector(inMatrixVector.getDoubleValues());
     }
 
-	public boolean getIsVarianceMatrix() {
-		return isVarianceMatrix;
-	}
+//	public boolean getIsVarianceMatrix() {
+//		return isVarianceMatrix;
+//	}
+//
+//	public void setIsVarianceMatrix(boolean isVarianceMatrix) {
+//		this.isVarianceMatrix = isVarianceMatrix;
+//	}
+//
+//	public boolean getSkipRankCheck() {
+//		return skipRankCheck;
+//	}
+//
+//	public void setSkipRankCheck(boolean skipRankCheck) {
+//		this.skipRankCheck = skipRankCheck;
+//	}
 
-	public void setIsVarianceMatrix(boolean isVarianceMatrix) {
-		this.isVarianceMatrix = isVarianceMatrix;
-	}
-
-	public boolean getSkipRankCheck() {
-		return skipRankCheck;
-	}
-
-	public void setSkipRankCheck(boolean skipRankCheck) {
-		this.skipRankCheck = skipRankCheck;
-	}
-
-	public AdaptableVarianceMultivariateNormalOperator() {
-		super(AdaptableMCMCOperator.AdaptationMode.DEFAULT);
-	}
+	//public AdaptableVarianceMultivariateNormalOperator() {
+	//	super(AdaptableMCMCOperator.AdaptationMode.DEFAULT);
+	//}
 	
 /*
 	public AdaptableVarianceMultivariateNormalOperator(
@@ -322,25 +325,25 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 //        this(/*parameter, */transformations, /*transformationSizes, transformationSums,*/ scaleFactor, varMatrix.getDoubleValues(), beta, initial, burnin, every, mode, isVariance, skipRankCheck);
 //    }
 	
-    private double[][] formXtXInverse(double[][] X) {
-        int N = X.length;
-        int P = X[0].length;
-
-        double[][] matrix = new double[P][P];
-        for (int i = 0; i < P; i++) {
-            for (int j = 0; j < P; j++) {
-                int total = 0;
-                for (int k = 0; k < N; k++) {
-                    total += X[k][i] * X[k][j];
-                }
-                matrix[i][j] = total;
-            }
-        }
-
-        // Take inverse
-        matrix = new SymmetricMatrix(matrix).inverse().toComponents();
-        return matrix;
-    }
+//    private double[][] formXtXInverse(double[][] X) {
+//        int N = X.length;
+//        int P = X[0].length;
+//
+//        double[][] matrix = new double[P][P];
+//        for (int i = 0; i < P; i++) {
+//            for (int j = 0; j < P; j++) {
+//                int total = 0;
+//                for (int k = 0; k < N; k++) {
+//                    total += X[k][i] * X[k][j];
+//                }
+//                matrix[i][j] = total;
+//            }
+//        }
+//
+//        // Take inverse
+//        matrix = new SymmetricMatrix(matrix).inverse().toComponents();
+//        return matrix;
+//    }
 
     //act as if population mean is known
     private double calculateCovariance(int number, double currentMatrixEntry, double[] values, int firstIndex, int secondIndex) {
@@ -762,6 +765,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         return Math.log(scaleFactor);
     }
 
+    @Override
     public void setAdaptableParameterValue(double value) {
         scaleFactor = Math.exp(value);
     }
@@ -774,6 +778,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         return scaleFactor;
     }
 
+    @Override
     public String getAdaptableParameterName() {
         return "scaleFactor";
     }
@@ -782,7 +787,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     
     @Override
 	public void initAndValidate() {
-        setMode(modeInput.get());
+        // setMode(modeInput.get());
         this.scaleFactor = scaleFactorInput.get();
         List<RealParameter> parameterList = new ArrayList<>();
         for (Transform t : transformationsInput.get()) {
@@ -796,8 +801,8 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         this.iterations = 0;
         this.updates = 0;
         this.m_pWeight.setValue(1.0, this);
-        this.isVarianceMatrix = isVarianceMatrixInput.get();
-        this.skipRankCheck = skipRankCheckInput.get();
+        // this.isVarianceMatrix = isVarianceMatrixInput.get();
+        // this.skipRankCheck = skipRankCheckInput.get();
         
         dim = parameter.getDimension();
         
@@ -835,18 +840,18 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 
         dim = parameter.getDimension();
 
-        if (!skipRankCheck) {
-            SingularValueDecomposition svd = new SingularValueDecomposition(new DenseDoubleMatrix2D(matrix));
-            if (matrix[0].length != svd.rank()) {
-                throw new RuntimeException("Variance matrix in AdaptableVarianceMultivariateNormalOperator is not of full rank");
-            }
-        }
-
-        if (isVarianceMatrix) {
+//        if (!skipRankCheck) {
+//            SingularValueDecomposition svd = new SingularValueDecomposition(new DenseDoubleMatrix2D(matrix));
+//            if (matrix[0].length != svd.rank()) {
+//                throw new RuntimeException("Variance matrix in AdaptableVarianceMultivariateNormalOperator is not of full rank");
+//            }
+//        }
+//
+//        if (isVarianceMatrix) {
             matrix = inMatrix;
-        } else {
-            matrix = formXtXInverse(inMatrix);
-        }
+//        } else {
+//            matrix = formXtXInverse(inMatrix);
+//        }
 
         /*System.err.println("matrix initialization: ");
         for (int i = 0; i < matrix.length; i++) {
@@ -1234,4 +1239,16 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         }
 
     }
+
+    @Override
+    public double getCoercableParameterValue() {
+    	return scaleFactor;
+    }
+    
+    @Override
+    public void optimize(double logAlpha) {
+        final double i = calcDelta(logAlpha);
+        scaleFactor += i;
+   }
+    
 }

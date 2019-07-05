@@ -34,7 +34,7 @@ package starbeast3.operators;
  */
 public interface AdaptableMCMCOperator {
 	
-	public enum AdaptationMode {DEFAULT, ADAPTATION_ON, ADAPTATION_OFF};
+	// public enum AdaptationMode {DEFAULT, ADAPTATION_ON, ADAPTATION_OFF};
 
 
     String ADAPTABLE = "adaptable";
@@ -101,6 +101,6 @@ public interface AdaptableMCMCOperator {
     /**
      * @return the mode of this operator.
      */
-    AdaptationMode getMode();
+    // AdaptationMode getMode();
 
 }
