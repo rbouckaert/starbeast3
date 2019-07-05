@@ -36,7 +36,8 @@
     <operator id="FrequenciesExchanger" spec="DeltaExchangeOperator" delta="0.01" weight="1">
         <parameter idref="freqParameter"/>
     </operator>
-    <operator id="scaleOperator" spec="RealRandomWalkOperator" parameter="@arg" windowSize="0.5" weight="20"/>
+    <operator id="scaleOperator" spec="RealRandomWalkOperator" parameter="@kappa" windowSize="0.5" weight="2"/>
+    <operator id="randomWalkOperator" spec="RealRandomWalkOperator" parameter="@arg" windowSize="0.5" weight="20"/>
 -->    
     <operator id="AdaptableVarianceMultivariateNormalOperator" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
      		weight="1"
@@ -48,13 +49,9 @@
     		every="1">
     	    <transformations spec="starbeast3.util.Transform$NoTransform" parameter="@arg"/>
     	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
-<!--
-    		mode="DEFAULT"
-    		isVarianceMatrix="true"
-    		skipRankCheck="true">
--->
     	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" parameter="@freqParameter" sum="1.0"/>
     </operator>
+
 
     <logger id="tracelog" spec="Logger" fileName="MultivariateNormal.log" logEvery="100" model="@MultivariateNormal" sanitiseHeaders="true" sort="smart">
         <log idref="posterior"/>

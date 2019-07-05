@@ -25,11 +25,13 @@
 
 package starbeast3.operators;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.Operator;
 import beast.core.StateNode;
 import beast.core.parameter.Parameter;
 import beast.core.parameter.RealParameter;
@@ -39,13 +41,14 @@ import beast.math.matrixalgebra.*;
 import beast.util.Randomizer;
 
 /**
+ * Adapted from BEAST 1
  * @author Guy Baele
  * @author Marc A. Suchard
  */
 @Description("Opeator that moves many parameters (possibly, after transformation to make them "
 		+ "more normally distributed). It learns the correlation structure among these parameters "
 		+ "during the MCMC run and updates parameters accordingly. doi:10.1093/bioinformatics/btx088")
-public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptableOperator {
+public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 	final public Input<List<Transform>> transformationsInput = new Input<>("transformations", 
 			"one or more transformed parameters to be moved.\n"
 			+ "For scale parameters use LogTransform (where e.g. scale operators were used).\n"
@@ -57,10 +60,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 	final public Input<Integer> initialInput = new Input<>("initial", "number of proposals before covariance matrix is considered in proposal (must be larger than burnin)"); 
 	final public Input<Integer> burninInput = new Input<>("burnin", "number of proposals that are ignored before covariance matrix is being updated", 0); 
 	final public Input<Integer> everyInput = new Input<>("every", "update interval for covarionce matrix, default 1 (that is, every step)", 1); 
-
-	// final public Input<AdaptationMode> modeInput = new Input<>("mode", "", AdaptationMode.DEFAULT, AdaptationMode.values()); 
-	// final public Input<Boolean> isVarianceMatrixInput = new Input<>("isVarianceMatrix", "", true);
-	// final public Input<Boolean> skipRankCheckInput = new Input<>("skipRankCheck", "", true);
 
     public static final String AVMVN_OPERATOR = "adaptableVarianceMultivariateNormalOperator";
     public static final String SCALE_FACTOR = "scaleFactor";
@@ -86,7 +85,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     private int[] transformationSizes;
     private double[] transformationSums;
     private int dim;
-    // private final double constantFactor;
+
     private double[] oldMeans, newMeans;
 
     private double[][] matrix;
@@ -97,9 +96,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     private double[] epsilon;
     private double[][] proposal;
 
-	//private boolean isVarianceMatrix;
-	//private boolean skipRankCheck;
-
 	
 	@Override
 	public List<StateNode> listStateNodes() {
@@ -109,241 +105,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 		}
 		return nodes;
 	}
-//    public RealParameter getParameter() {
-//		return parameter;
-//	}
-//
-//	public void setParameter(RealParameter parameter) {
-//		this.parameter = parameter;
-//	}
-
-    public double getBeta() {
-		return beta;
-	}
-
-	public void setBeta(double beta) {
-		this.beta = beta;
-	}
-
-    public double getWeight() {
-		return m_pWeight.get();
-	}
-
-	public void setWeight(double weight) {
-		m_pWeight.set(weight);
-	}
-	
-	public int getInitial() {
-		return initial;
-	}
-
-	public void setInitial(int initial) {
-		this.initial = initial;
-	}
-
-	public int getBurnin() {
-		return burnin;
-	}
-
-	public void setBurnin(int burnin) {
-		this.burnin = burnin;
-	}
-
-	public int getEvery() {
-		return every;
-	}
-
-	public void setEvery(int every) {
-		this.every = every;
-	}
-
-	//public AdaptationMode getMode() {
-	//	return mode;
-	//}
-
-	//public void setMode(AdaptationMode mode) {
-	//	this.mode = mode;
-	//}
-
-	public List<Transform> getTransformations() {
-		List<Transform> ts = new ArrayList<>();
-		if (transformations != null) {
-			for (Transform t : transformations) {
-				ts.add(t);
-			}
-		}
-		return ts;
-	}
-
-	public void setTransformations(List<Transform> transformations) {
-		this.transformations = transformations.toArray(new Transform[]{});
-	}
-
-	public void setTransformations(Transform transformation) {
-		List<Transform> ts = getTransformations();
-		ts.add(transformation);
-		this.transformations = ts.toArray(new Transform[]{});
-	}
-
-	
-
-	public int[] getTransformationSizes() {
-		return transformationSizes;
-	}
-
-	public double[] getTransformationSums() {
-		return transformationSums;
-	}
-
-	public void setScaleFactor(double scaleFactor) {
-		this.scaleFactor = scaleFactor;
-	}
-
-	public void setTransformationSizes(int[] transformationSizes) {
-		this.transformationSizes = transformationSizes;
-	}
-
-	public void setTransformationSums(double[] transformationSums) {
-		this.transformationSums = transformationSums;
-	}
-
-	public double[] getInMatrixVector() {
-        double [] inMatrixVector = new double[dim*dim];
-        for (int i = 0; i < dim; i++) {
-        	System.arraycopy(matrix[i], 0, inMatrixVector, i * dim, dim);
-        }
-        return inMatrixVector;
-	}
-
-	public void setInMatrixVector(double[] inMatrixVector) {
-		int dim = (int) Math.sqrt(inMatrixVector.length + 0.5);
-        double [][] inMatrix = new double[dim][dim];
-        for (int i = 0; i < dim; i++) {
-            for (int j = 0; j < dim; j++) {
-            	inMatrix[i][j] = inMatrixVector[i*dim + j];            	
-            }
-        }        
-        this.matrix = inMatrix;
-    }
-	
-	public void setInMatrixVector(RealParameter inMatrixVector) {
-		setInMatrixVector(inMatrixVector.getDoubleValues());
-    }
-
-//	public boolean getIsVarianceMatrix() {
-//		return isVarianceMatrix;
-//	}
-//
-//	public void setIsVarianceMatrix(boolean isVarianceMatrix) {
-//		this.isVarianceMatrix = isVarianceMatrix;
-//	}
-//
-//	public boolean getSkipRankCheck() {
-//		return skipRankCheck;
-//	}
-//
-//	public void setSkipRankCheck(boolean skipRankCheck) {
-//		this.skipRankCheck = skipRankCheck;
-//	}
-
-	//public AdaptableVarianceMultivariateNormalOperator() {
-	//	super(AdaptableMCMCOperator.AdaptationMode.DEFAULT);
-	//}
-	
-/*
-	public AdaptableVarianceMultivariateNormalOperator(
-//    		@Param(name="parameter", description="multi dimensional parameter to be moved") RealParameter parameter, 
-    		@Param(name="transformations", description="one or more transformed parameters to be moved") List<Transform> transformations, 
-//    		@Param(name="transformationSizes", description="list of dimensions of individual parameters") int[] transformationSizes, 
-//    		@Param(name="transformationSums", description="list of sum values for all parameters, used if constrained by a sum like subst model frequencies") double[] transformationSums, 
-    		@Param(name="scaleFactor", description="") double scaleFactor, 
-    		@Param(name="inMatrixVector", description="") double[] inMatrixVector,
-//    		@Param(name="weight", description="") double weight, 
-    		@Param(name="beta", description="") double beta, 
-    		@Param(name="initial", description="") int initial, 
-    		@Param(name="burnin", description="", defaultValue="0") int burnin, 
-    		@Param(name="every", description="", defaultValue="1") int every, 
-    		@Param(name="mode", description="") AdaptationMode mode, 
-    		@Param(name="isVarianceMatrix", description="", defaultValue="true") boolean isVarianceMatrix, 
-    		@Param(name="skipRankCheck", description="") boolean skipRankCheck) {
-
-        super(mode);
-        this.scaleFactor = scaleFactor;
-        List<RealParameter> parameterList = new ArrayList<>();
-        for (Transform t : transformations) {
-        	parameterList.addAll(t.getParameter());
-        }
-        this.parameter = new CompoundParameterHelper(parameterList);
-        this.transformations = transformations.toArray(new Transform[]{});
-        //this.transformationSizes = transformationSizes;
-        //this.transformationSums = transformationSums;
-        this.beta = beta;
-        this.iterations = 0;
-        this.updates = 0;
-        this.m_pWeight.setValue(1.0, this);
-        this.isVarianceMatrix = isVarianceMatrix;
-        this.skipRankCheck = skipRankCheck;
-        
-        dim = parameter.getDimension();
-        
-        double [][] inMatrix = new double[dim][dim];
-        for (int i = 0; i < dim; i++) {
-            for (int j = 0; j < dim; j++) {
-            	inMatrix[i][j] = inMatrixVector[i*dim + j];            	
-            }
-        }        
-        // constantFactor = Math.pow(2.38, 2) / ((double) dim); // not necessary because scaleFactor is auto-tuned
-        this.initial = initial;
-        this.burnin = burnin;
-        this.every = every;
-        this.empirical = new double[dim][dim];
-        this.oldMeans = new double[dim];
-        this.newMeans = new double[dim];
-
-        this.epsilon = new double[dim];
-        this.proposal = new double[dim][dim];
-
-        initAndValidate();
-    }
-*/
-/*
-    public AdaptableVarianceMultivariateNormalOperator(//RealParameter parameter, 
-    		@Param(name="transformations", description="one or more transformed parameters to be moved") List<Transform> transformations, 
-//    		@Param(name="transformationSizes", description="") int[] transformationSizes, 
-//    		@Param(name="transformationSums", description="") double[] transformationSums, 
-    		@Param(name="scaleFactor", description="") double scaleFactor, 
-    		@Param(name="inMatrixVector", description="") RealParameter varMatrix,
-//    		@Param(name="weight", description="") double weight, 
-    		@Param(name="beta", description="") double beta, 
-    		@Param(name="initial", description="") int initial, 
-    		@Param(name="burnin", description="") int burnin, 
-    		@Param(name="every", description="") int every, 
-    		@Param(name="mode", description="") AdaptationMode mode, 
-    		@Param(name="isVarianceMatrix", description="") boolean isVariance, 
-    		@Param(name="skipRankCheck", description="") boolean skipRankCheck) {
-*/
-//        this(/*parameter, */transformations, /*transformationSizes, transformationSums,*/ scaleFactor, varMatrix.getDoubleValues(), beta, initial, burnin, every, mode, isVariance, skipRankCheck);
-//    }
-	
-//    private double[][] formXtXInverse(double[][] X) {
-//        int N = X.length;
-//        int P = X[0].length;
-//
-//        double[][] matrix = new double[P][P];
-//        for (int i = 0; i < P; i++) {
-//            for (int j = 0; j < P; j++) {
-//                int total = 0;
-//                for (int k = 0; k < N; k++) {
-//                    total += X[k][i] * X[k][j];
-//                }
-//                matrix[i][j] = total;
-//            }
-//        }
-//
-//        // Take inverse
-//        matrix = new SymmetricMatrix(matrix).inverse().toComponents();
-//        return matrix;
-//    }
 
     //act as if population mean is known
     private double calculateCovariance(int number, double currentMatrixEntry, double[] values, int firstIndex, int secondIndex) {
@@ -507,7 +268,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
             if (DEBUG) {
                 System.err.println("\niterations == 1");
             }
-            //System.err.println("Iteration: " + iterations);
 
             //iterations == 1
             for (int i = 0; i < dim; i++) {
@@ -538,9 +298,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 
             if (iterations % every == 0) {
                 // TODO: For speed, it may not be necessary to update decomposition each and every iteration
-                //double start = System.nanoTime();
 
-                // double[][] proposal = new double[dim][dim];
                 for (int i = 0; i < dim; i++) {
                     for (int j = i; j < dim; j++) { // symmetric matrix
                         proposal[j][i] = proposal[i][j] = (1 - beta) * // constantFactor *  /* auto-tuning using scaleFactor */
@@ -554,10 +312,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
                 } catch (IllegalDimension illegalDimension) {
                     throw new RuntimeException("Unable to decompose matrix in AdaptableVarianceMultivariateNormalOperator");
                 }
-
-                //double end = System.nanoTime();
-                //double baseResult = end - start;
-                //System.err.println("Cholesky decomposition took: " + baseResult);
             }
 
         }
@@ -565,25 +319,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         if (DEBUG) {
             System.err.println("  Drawing new values");
         }
-
-        /*for (int i = 0; i < dim; i++) {
-            for (int j = i; j < dim; j++) {
-                transformedX[i] += cholesky[j][i] * epsilon[j];
-                // caution: decomposition returns lower triangular
-            }
-            if (MULTI) {
-                parameter.setParameterValueQuietly(i, transformations[i].inverse(transformedX[i]));
-            } else {
-                if (transformationSizes[i] > 1) {
-                    throw new RuntimeException("Transformations on more than 1 parameter value should be set quietly");
-                } else {
-                    parameter.setParameterValue(i, transformations[i].inverse(transformedX[i]));
-                }
-            }
-            //this should be correct
-            //logJacobian += transformations[i].getLogJacobian(parameter.getParameterValue(i)) - transformations[i].getLogJacobian(x[i]);
-            logJacobian += transformations[i].getLogJacobian(x[i]) - transformations[i].getLogJacobian(parameter.getParameterValue(i));
-        }*/
 
         for (int i = 0; i < dim; i++) {
             for (int j = i; j < dim; j++) {
@@ -660,14 +395,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
             newMeans = tmp; // faster to swap pointers
         }
 
-        //System.err.println("scale factor: " + scaleFactor);
-        /*System.err.println("New parameter values:");
-        for (int i = 0; i < dim; i++) {
-                System.err.println(parameter.getParameterValue(i));
-        }*/
-        //System.err.println("log(Jacobian): " + logJacobian);
-
-        //return 0.0;
         return logJacobian;
 
     }
@@ -677,11 +404,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
     }
 
     public static final boolean MULTI = true;
-
-    //Methods needed when using TwoPhaseOperator(Parser)
-//    public RealParameter getParameter() {
-//        return this.parameter;
-//    }
 
     public void provideSamples(ArrayList<ArrayList<Double>> parameterSamples) {
         if (DEBUG) {
@@ -760,30 +482,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         return output;
     }
 
-    @Override
-    protected double getAdaptableParameterValue() {
-        return Math.log(scaleFactor);
-    }
-
-    @Override
-    public void setAdaptableParameterValue(double value) {
-        scaleFactor = Math.exp(value);
-    }
-
-    public double getRawParameter() {
-        return scaleFactor;
-    }
-
-    public double getScaleFactor() {
-        return scaleFactor;
-    }
-
-    @Override
-    public String getAdaptableParameterName() {
-        return "scaleFactor";
-    }
-
-
     
     @Override
 	public void initAndValidate() {
@@ -795,14 +493,10 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         }
         this.parameter = new CompoundParameterHelper(parameterList);
         this.transformations = transformationsInput.get().toArray(new Transform[]{});
-        //this.transformationSizes = transformationSizes;
-        //this.transformationSums = transformationSums;
         this.beta = betaInput.get();
         this.iterations = 0;
         this.updates = 0;
         this.m_pWeight.setValue(1.0, this);
-        // this.isVarianceMatrix = isVarianceMatrixInput.get();
-        // this.skipRankCheck = skipRankCheckInput.get();
         
         dim = parameter.getDimension();
         
@@ -840,27 +534,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
 
         dim = parameter.getDimension();
 
-//        if (!skipRankCheck) {
-//            SingularValueDecomposition svd = new SingularValueDecomposition(new DenseDoubleMatrix2D(matrix));
-//            if (matrix[0].length != svd.rank()) {
-//                throw new RuntimeException("Variance matrix in AdaptableVarianceMultivariateNormalOperator is not of full rank");
-//            }
-//        }
-//
-//        if (isVarianceMatrix) {
-            matrix = inMatrix;
-//        } else {
-//            matrix = formXtXInverse(inMatrix);
-//        }
-
-        /*System.err.println("matrix initialization: ");
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
-                System.err.print(matrix[i][j] + " ");
-            }
-            System.err.println();
-        }*/
-
+        matrix = inMatrix;
         
         int paramCount = 0;
         for(Transform t : transformations) {
@@ -886,295 +560,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
             throw new RuntimeException("Unable to decompose matrix in AdaptableVarianceMultivariateNormalOperator");
         }		
 	}
-
-
-    /*
-    public static XMLObjectParser PARSER = new AbstractXMLObjectParser() {
-
-        public String getParserName() {
-            return AVMVN_OPERATOR;
-        }
-
-        public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-
-            if (DEBUG) {
-                System.err.println("\nParsing AdaptableVarianceMultivariateNormalOperator.");
-            }
-
-            AdaptationMode mode = AdaptationMode.parseMode(xo);
-
-            double weight = xo.getDoubleAttribute(WEIGHT);
-            double beta = xo.getDoubleAttribute(BETA);
-            int initial = xo.getIntegerAttribute(INITIAL);
-            double scaleFactor = xo.getDoubleAttribute(SCALE_FACTOR);
-            double coefficient = xo.getDoubleAttribute(COEFFICIENT);
-
-            int burnin = 0;
-            int every = 1;
-            if (xo.hasAttribute(BURNIN)) {
-                burnin = xo.getIntegerAttribute(BURNIN);
-            }
-            if (burnin > initial || burnin < 0) {
-                throw new XMLParseException("Burn-in must be smaller than the initial period.");
-            }
-
-            if (xo.hasAttribute(UPDATE_EVERY)) {
-                every = xo.getIntegerAttribute(UPDATE_EVERY);
-            }
-
-            if (every <= 0) {
-                throw new XMLParseException("Covariance matrix needs to be updated at least every single iteration.");
-            }
-
-            if (scaleFactor <= 0.0) {
-                throw new XMLParseException("ScaleFactor must be greater than zero.");
-            }
-
-            boolean formXtXInverse = xo.getAttribute(FORM_XTX, false);
-
-            Transform.ParsedTransform pt = (Transform.ParsedTransform) xo.getChild(Transform.ParsedTransform.class);
-            boolean oldXML;
-            if (pt == null) {
-                throw new XMLParseException("No valid transformations have been provided in the XML file.");
-            }
-            oldXML = pt.parameters == null;
-
-            Parameter parameter;
-            Transform[] transformations;
-            int[] transformationSizes;
-            double[] transformationSums;
-
-            int transformationSizeCounter = 0;
-
-            if (!oldXML) {
-                // if there are no ParsedTransform elements then use the new parser syntax
-                if (DEBUG) {
-                    System.err.println("New parser");
-                }
-
-                CompoundParameter allParameters = new CompoundParameter("allParameters");
-
-                List<Transform> transformList = new ArrayList<Transform>();
-                List<Integer> transformCountList = new ArrayList<Integer>();
-                List<Double> transformSumList = new ArrayList<Double>();
-
-                for (Object co : xo.getChildren()) {
-                    if (co instanceof Parameter) {
-                        // parameters in the body of the object are assumed to have no transform
-                        transformList.add(Transform.NONE);
-                        Parameter param = (Parameter) co;
-                        allParameters.addParameter(param);
-                        transformCountList.add(param.getDimension());
-                        transformSumList.add(0.0);
-                    } else if (co instanceof Transform.ParsedTransform) {
-                        Transform.ParsedTransform parsedTransform = (Transform.ParsedTransform)co;
-
-                        transformList.add(parsedTransform.transform);
-
-                        int dim = 0;
-                        for (Parameter param : parsedTransform.parameters) {
-                            allParameters.addParameter(param);
-                            dim += param.getDimension();
-                        }
-                        transformCountList.add(dim);
-                        transformSumList.add(parsedTransform.fixedSum);
-                    } else {
-                        throw new XMLParseException("Unknown element in " + AVMVN_OPERATOR);
-                    }
-                }
-
-                parameter = allParameters;
-                transformations = new Transform[parameter.getDimension()];
-                transformationSizes = new int[parameter.getDimension()];
-                transformationSums = new double[parameter.getDimension()];
-
-                /*transformations = transformList.toArray(transformations);
-                for (int i = 0; i < transformCountList.size(); i++) {
-                    transformationSizes[i] = transformCountList.get(i);
-                }* /
-                if (DEBUG) {
-                    for (int i = 0; i < transformList.size(); i++) {
-                        System.err.println(i + "  " + transformList.get(i));
-                    }
-                    for (int i = 0; i < transformCountList.size(); i++) {
-                        System.err.println(i + "  " + transformCountList.get(i));
-                    }
-                }
-                int index = 0;
-                for (int i = 0; i < transformCountList.size(); i++) {
-                    if (!transformList.get(i).getTransformName().equals(Transform.LOG_CONSTRAINED_SUM.getTransformName())) {
-                        for (int j = 0; j < transformCountList.get(i); j++) {
-                            transformations[index] = transformList.get(i);
-                            transformationSizes[index] = 1;
-                            transformationSums[index] = transformSumList.get(i);
-                            index++;
-                            transformationSizeCounter++;
-                        }
-                    } else {
-                        //log constrained sum transformation
-                        transformations[index] = transformList.get(i);
-                        transformationSizes[index] = transformCountList.get(i);
-                        transformationSums[index] = transformSumList.get(i);
-                        index++;
-                        transformationSizeCounter++;
-                    }
-                }
-
-            } else {
-
-                if (DEBUG) {
-                    System.err.println("Old parser");
-                }
-                // assume old parser syntax for backwards compatibility
-                parameter = (Parameter)xo.getChild(Parameter.class);
-
-                transformations = new Transform[parameter.getDimension()];
-                transformationSizes = new int[parameter.getDimension()];
-                transformationSums = new double[parameter.getDimension()];
-
-                for (int i = 0; i < xo.getChildCount(); i++) {
-                    Object child = xo.getChild(i);
-                    if (child instanceof Transform.ParsedTransform) {
-                        Transform.ParsedTransform thisObject = (Transform.ParsedTransform) child;
-
-                        if (DEBUG) {
-                            System.err.println(thisObject.transform.getTransformName());
-                        }
-
-                        if (thisObject.transform.getTransformName().equals(Transform.LOG_CONSTRAINED_SUM.getTransformName())) {
-                            transformations[transformationSizeCounter] = thisObject.transform;
-                            transformationSizes[transformationSizeCounter] = thisObject.end - thisObject.start;
-                            //transformationSums[transformationSizeCounter] = thisObject.fixedSum;
-                            transformationSums[transformationSizeCounter] = thisObject.end - thisObject.start;
-                            if (DEBUG) {
-                                System.err.println("Transformation size (logConstrainedSum) = " + transformationSizes[transformationSizeCounter]);
-                            }
-                            transformationSizeCounter++;
-                        } else {
-                            for (int j = thisObject.start; j < thisObject.end; ++j) {
-                                transformations[transformationSizeCounter] = thisObject.transform;
-                                transformationSizes[transformationSizeCounter] = 1;
-                                transformationSums[transformationSizeCounter] = thisObject.fixedSum;
-                                if (DEBUG) {
-                                    System.err.println("Transformation size = " + transformationSizes[transformationSizeCounter]);
-                                }
-                                transformationSizeCounter++;
-                            }
-                        }
-                    }
-                }
-            }
-
-            //determine array length for transformationSizes = transformationSizeCounter - 1;
-            if (DEBUG) {
-                System.err.println("\nCleaning up transformation and size arrays");
-                System.err.println("transformationSizeCounter = " + transformationSizeCounter);
-            }
-            int temp[] = new int[transformationSizeCounter];
-            Transform tempTransform[] = new Transform[transformationSizeCounter];
-            double[] tempSum = new double[transformationSizeCounter];
-            for (int i = 0; i < temp.length; i++) {
-                temp[i] = transformationSizes[i];
-                tempTransform[i] = transformations[i];
-                tempSum[i] = transformationSums[i];
-                if (transformationSizes[i] == 0 || temp[i] == 0) {
-                    throw new XMLParseException("Transformation size 0 encountered");
-                }
-            }
-            transformationSizes = temp;
-            transformations = tempTransform;
-            transformationSums = tempSum;
-
-            //varMatrix needs to be initialized
-            int dim = parameter.getDimension();
-            if (DEBUG) {
-                System.err.println("Dimension: " + dim);
-            }
-
-            if (initial <= 2 * dim) {
-                initial = 2 * dim;
-            }
-
-            Parameter[] init = new Parameter[dim];
-            for (int i = 0; i < dim; i++) {
-                init[i] = new Parameter.Default(dim, 0.0);
-            }
-            for (int i = 0; i < dim; i++) {
-                init[i].setParameterValue(i, Math.pow(coefficient, 2) / ((double) dim));
-            }
-            MatrixParameter varMatrix = new MatrixParameter(null, init);
-
-            if (DEBUG) {
-                System.err.println("\nChecking transformation array contents");
-                for (int i = 0; i < transformations.length; i++) {
-                    System.err.println(transformations[i].getTransformName());
-                }
-                System.err.println("\nChecking size array contents");
-                for (int i = 0; i < transformationSizes.length; i++) {
-                    System.err.print(transformationSizes[i] + " ");
-                }
-                System.err.println("\nChecking transformation sum contents");
-                for (int i = 0; i < transformationSums.length; i++) {
-                    System.err.print(transformationSums[i] + " ");
-                }
-                System.err.println();
-            }
-
-            // Make sure varMatrix is square and dim(varMatrix) = dim(parameter)
-
-            if (!formXtXInverse) {
-                if (varMatrix.getColumnDimension() != varMatrix.getRowDimension())
-                    throw new XMLParseException("The variance matrix is not square");
-            }
-
-            if (varMatrix.getColumnDimension() != parameter.getDimension())
-                throw new XMLParseException("The parameter and variance matrix have differing dimensions");
-
-            /*java.util.logging.Logger.getLogger("dr.inference").info("\nCreating the adaptable variance multivariate normal operator:" +
-					"\n beta = " + beta + "\n initial = " + initial + "\n burnin = " + burnin + "\n every = " + every +
-					"\n If you use this operator, please cite: " + 
-			"   Guy Baele, Philippe Lemey, Marc A. Suchard. 2016. In preparation.");* /
-
-            boolean skipRankCheck = xo.getAttribute(SKIP_RANK_CHECK, false);
-
-            return new AdaptableVarianceMultivariateNormalOperator(parameter, transformations, transformationSizes, transformationSums, scaleFactor, varMatrix, weight, beta, initial, burnin, every,
-                    mode, !formXtXInverse, skipRankCheck);
-        }
-
-        // ************************************************************************
-        // AbstractXMLObjectParser implementation
-        // ************************************************************************
-
-        public String getParserDescription() {
-            return "This element returns an adaptable variance multivariate normal operator on a given parameter.";
-        }
-
-        public Class getReturnType() {
-            return MCMCOperator.class;
-        }
-
-        public XMLSyntaxRule[] getSyntaxRules() {
-            return rules;
-        }
-
-        private final XMLSyntaxRule[] rules = {
-                AttributeRule.newDoubleRule(SCALE_FACTOR),
-                AttributeRule.newDoubleRule(WEIGHT),
-                AttributeRule.newDoubleRule(BETA),
-                AttributeRule.newDoubleRule(COEFFICIENT),
-                AttributeRule.newIntegerRule(INITIAL),
-                AttributeRule.newIntegerRule(BURNIN, true),
-                AttributeRule.newIntegerRule(UPDATE_EVERY, true),
-                AttributeRule.newBooleanRule(AUTO_OPTIMIZE, true),
-                AttributeRule.newBooleanRule(FORM_XTX, true),
-                AttributeRule.newBooleanRule(SKIP_RANK_CHECK, true),
-                new ElementRule(Parameter.class, 0, Integer.MAX_VALUE),
-                new ElementRule(Transform.ParsedTransform.class, 0, Integer.MAX_VALUE)
-        };
-
-    };
-   */
-
+    
     public class CompoundParameterHelper<T> {
         protected int[] parameterIndex1; // index to select parameter
         protected int[] parameterIndex2; // index to select dimension inside parameter
@@ -1250,5 +636,43 @@ public class AdaptableVarianceMultivariateNormalOperator extends AbstractAdaptab
         final double i = calcDelta(logAlpha);
         scaleFactor += i;
    }
+
+    
+    final static double DEFAULT_ADAPTATION_TARGET = 0.234;
+    final static double MINIMUM_ACCEPTANCE_LEVEL = 0.1;
+    final static double MAXIMUM_ACCEPTANCE_LEVEL = 0.4;
+    final static double MINIMUM_GOOD_ACCEPTANCE_LEVEL = 0.2;
+    final static double MAXIMUM_GOOD_ACCEPTANCE_LEVEL = 0.3;
+
+    @Override
+    public final double getTargetAcceptanceProbability() {
+        return DEFAULT_ADAPTATION_TARGET;
+    }
+
+    @Override
+    public final String getPerformanceSuggestion() {
+        final double prob = m_nNrAccepted / (m_nNrAccepted + m_nNrRejected + 0.0);
+        final double targetProb = getTargetAcceptanceProbability();
+
+        double delta = getCoercableParameterValue();
+        if (delta <= 0.0) {
+            throw new IllegalArgumentException("random walk window size cannot be negative: " + delta);
+        }
+
+        double ratio = prob / targetProb;
+
+        if (ratio > 2.0) ratio = 2.0;
+        if (ratio < 0.5) ratio = 0.5;
+
+        double newDelta = delta * ratio;
+        
+        String adaptationParameterName = "scalefactor";
+        final DecimalFormat formatter = new DecimalFormat("#.###");
+        if (prob < MINIMUM_ACCEPTANCE_LEVEL) {
+            return "Try setting " + adaptationParameterName + " to about " + formatter.format(newDelta);
+        } else if (prob > MAXIMUM_ACCEPTANCE_LEVEL) {
+            return "Try setting " + adaptationParameterName + " to about " + formatter.format(newDelta);
+        } else return "";
+    }
     
 }
