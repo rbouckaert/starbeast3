@@ -27,6 +27,7 @@ package starbeast3.operators;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import beast.core.Description;
@@ -35,8 +36,9 @@ import beast.core.Operator;
 import beast.core.StateNode;
 import beast.core.parameter.Parameter;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
+import starbeast3.util.Transform.*;
 import starbeast3.util.Transform;
-import starbeast3.util.Transform.LogConstrainedSumTransform;
 import beast.math.matrixalgebra.*;
 import beast.util.Randomizer;
 
@@ -57,22 +59,14 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 	final public Input<Double> scaleFactorInput = new Input<>("scaleFactor", "start scaling factor, larger values give bolder moves (this is tuned during the run)", 1.0); 
 	final public Input<Double> coefficientInput = new Input<>("coefficient", "determines diagonal correlation for variance matrix", 1.0);
 	final public Input<Double> betaInput = new Input<>("beta", "fraction of proposal determined by non-covariance matrix");
-	final public Input<Integer> initialInput = new Input<>("initial", "number of proposals before covariance matrix is considered in proposal (must be larger than burnin)"); 
-	final public Input<Integer> burninInput = new Input<>("burnin", "number of proposals that are ignored before covariance matrix is being updated", 0); 
+	final public Input<Integer> initialInput = new Input<>("initial", "Number of proposals before covariance matrix is considered in proposal. "
+			+ "Must be larger than burnin, if specified. "
+			+ "If not specified (or < 0), the operator uses 200 * paramater dimension", -1); 
+	final public Input<Integer> burninInput = new Input<>("burnin", "Number of proposals that are ignored before covariance matrix is being updated. "
+			+ "If initial is not specified, uses half the default initial value (which equals 100 * paramater dimension)", 0); 
 	final public Input<Integer> everyInput = new Input<>("every", "update interval for covarionce matrix, default 1 (that is, every step)", 1); 
+    final public Input<Boolean> optimiseInput = new Input<>("optimise", "flag to indicate that the scale factor is automatically changed in order to achieve a good acceptance rate (default true)", true);
 
-    public static final String AVMVN_OPERATOR = "adaptableVarianceMultivariateNormalOperator";
-    public static final String SCALE_FACTOR = "scaleFactor";
-    public static final String BETA = "beta";
-    public static final String INITIAL = "initial";
-    public static final String BURNIN = "burnin";
-    public static final String UPDATE_EVERY = "updateEvery";
-    public static final String FORM_XTX = "formXtXInverse";
-    public static final String COEFFICIENT = "coefficient";
-    public static final String SKIP_RANK_CHECK = "skipRankCheck";
-
-    public static final String TRANSFORM = "transform";
-    public static final String TYPE = "type";
 
     public static final boolean DEBUG = false;
     public static final boolean PRINT_FULL_MATRIX = false;
@@ -301,8 +295,9 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 
                 for (int i = 0; i < dim; i++) {
                     for (int j = i; j < dim; j++) { // symmetric matrix
-                        proposal[j][i] = proposal[i][j] = (1 - beta) * // constantFactor *  /* auto-tuning using scaleFactor */
-                                empirical[i][j] + beta * matrix[i][j];
+                        proposal[j][i] = (1 - beta) * // constantFactor *  /* auto-tuning using scaleFactor */
+                                empirical[j][i] + beta * matrix[j][i];
+                        proposal[i][j] = proposal[j][i] ;
                     }
                 }
 
@@ -400,7 +395,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
     }
 
     public String toString() {
-        return AVMVN_OPERATOR + "(" + "parameter.getID()" + ")";
+        return this.getClass().getSimpleName() + "(" + "parameter.getID()" + ")";
     }
 
     public static final boolean MULTI = true;
@@ -496,19 +491,28 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         this.beta = betaInput.get();
         this.iterations = 0;
         this.updates = 0;
-        this.m_pWeight.setValue(1.0, this);
+        //this.m_pWeight.setValue(1.0, this);
         
         dim = parameter.getDimension();
         
-        double [][] inMatrix = new double[dim][dim];
+        matrix = new double[dim][dim];
         for (int i = 0; i < dim; i++) {
-            inMatrix[i][i] = Math.pow(coefficientInput.get(), 2) / ((double) dim);            	
+        	matrix[i][i] = Math.pow(coefficientInput.get(), 2) / ((double) dim);            	
         }        
         
         
         // constantFactor = Math.pow(2.38, 2) / ((double) dim); // not necessary because scaleFactor is auto-tuned
         this.initial = initialInput.get();
-        this.burnin = burninInput.get();
+        
+        if (this.initial < 0) {
+        	// options set according to recommendations in AVMVN paper
+        	this.initial = 200 * dim;
+        	this.burnin = this.initial / 2;
+        } else {
+            this.burnin = burninInput.get();
+        }
+
+        
         this.every = everyInput.get();
         this.empirical = new double[dim][dim];
         this.oldMeans = new double[dim];
@@ -533,25 +537,36 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         }
 
         dim = parameter.getDimension();
-
-        matrix = inMatrix;
         
         int paramCount = 0;
         for(Transform t : transformations) {
-        	paramCount += t.getParameter().size();
+        	if (t instanceof MultivariableTransform) {
+        		paramCount++;
+        	} else {
+        		paramCount += t.getParameter().size();
+        	}
         }
         transformationSizes = new int[paramCount];
         transformationSums = new double[paramCount];
+        Transform [] ts = new Transform[paramCount];
         int k = 0;
         for (Transform t : transformations) {
-        	for (RealParameter p : t.getParameter()) {
-        		transformationSizes[k] = p.getDimension();
+        	if (t instanceof MultivariableTransform) {
+        		transformationSizes[k] = t.getParameter().size();
         		if (t instanceof LogConstrainedSumTransform) {
         			transformationSums[k] = ((LogConstrainedSumTransform)t).getSum();
         		}
+        		ts[k] = t;
         		k++;
+        	} else {
+        		for (RealParameter p : t.getParameter()) {
+            		transformationSizes[k] = p.getDimension();
+            		ts[k] = t;
+            		k++;
+        		}
         	}
         }
+        transformations = ts;
         
         
         try {
@@ -633,8 +648,12 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
     
     @Override
     public void optimize(double logAlpha) {
-        final double i = calcDelta(logAlpha);
-        scaleFactor += i;
+    	if (optimiseInput.get()) {
+    		final double i = calcDelta(logAlpha);
+    		if (scaleFactor + i > 0) {
+    			scaleFactor += i;
+    		}
+    	}
    }
 
     
@@ -665,6 +684,14 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         if (ratio < 0.5) ratio = 0.5;
 
         double newDelta = delta * ratio;
+
+        
+        StringBuilder b = new StringBuilder();
+        for (double [] e : empirical) {
+        	b.append(Arrays.toString(e));
+        	b.append("\n");
+        }
+        Log.warning("Covariance matrix:\n" + b.toString());
         
         String adaptationParameterName = "scalefactor";
         final DecimalFormat formatter = new DecimalFormat("#.###");

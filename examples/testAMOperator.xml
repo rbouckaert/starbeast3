@@ -5,7 +5,7 @@
 <!-- sample from 2-dimensional multivariate Normal with strong correlation -->
 <map name="prior" >beast.math.distributions.Prior</map>
 
-<run id="mcmc" spec="MCMC" chainLength="1000000">
+<run id="mcmc" spec="MCMC" chainLength="200000">
     <state id="state" spec="State" storeEvery="10000">
         <stateNode idref="arg"/>
         <stateNode idref="freqParameter"/>
@@ -18,8 +18,12 @@
                 <arg id="arg" spec='parameter.RealParameter' value='0.0 0.0'/>
                 <mean id="mean" spec='parameter.RealParameter' value='0.0 0.0'/>
                 <precision id="precision" spec='parameter.RealParameter' minordimension='2'>
-                                2.0 3.9
-                                .0 2.0
+                                3.0 2.99
+                                .0 3.0
+<!--
+                                3.0 5.99
+                                .0 3.0
+-->                                
                 </precision>
            </distribution>
            <prior id="FrequenciesPrior" name="distribution">
@@ -39,19 +43,57 @@
     <operator id="scaleOperator" spec="RealRandomWalkOperator" parameter="@kappa" windowSize="0.5" weight="2"/>
     <operator id="randomWalkOperator" spec="RealRandomWalkOperator" parameter="@arg" windowSize="0.5" weight="20"/>
 -->    
+<!--
     <operator id="AdaptableVarianceMultivariateNormalOperator" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
-     		weight="1"
+     		weight="30"
     		coefficient="1.0"
     		scaleFactor="1"
     		beta="0.95"
-    		initial="1000"
-    		burnin="500"
+    		initial="500"
+    		burnin="250"
     		every="1">
     	    <transformations spec="starbeast3.util.Transform$NoTransform" parameter="@arg"/>
     	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
     	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" parameter="@freqParameter" sum="1.0"/>
     </operator>
+-->    
 
+     <operator id="AdaptableVarianceMultivariateNormalOperator" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+     		weight="2"
+    		coefficient="1.0"
+    		scaleFactor="1"
+    		beta="0.05"
+    		initial="1000"
+    		burnin="200"
+    		every="1"
+    		optimise="true">
+    	    <transformations spec="starbeast3.util.Transform$NoTransform" parameter="@arg"/>
+    </operator>
+
+    <operator id="AdaptableVarianceMultivariateNormalOperator2" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+     		weight="3"
+    		coefficient="1.0"
+    		scaleFactor="1"
+    		beta="0.05"
+    		initial="1000"
+    		burnin="500"
+    		every="1">
+    		<!--
+    	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
+    	    -->
+    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" parameter="@freqParameter" sum="1.0"/>
+    </operator>
+
+    <operator id="AdaptableVarianceMultivariateNormalOperator3" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+     		weight="1"
+    		coefficient="1.0"
+    		scaleFactor="1"
+    		beta="0.05"
+    		initial="1000"
+    		burnin="500"
+    		every="1">
+    	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
+    </operator>
 
     <logger id="tracelog" spec="Logger" fileName="MultivariateNormal.log" logEvery="100" model="@MultivariateNormal" sanitiseHeaders="true" sort="smart">
         <log idref="posterior"/>
