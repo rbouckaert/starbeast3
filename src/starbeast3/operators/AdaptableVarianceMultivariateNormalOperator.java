@@ -47,7 +47,7 @@ import beast.util.Randomizer;
  * @author Guy Baele
  * @author Marc A. Suchard
  */
-@Description("Opeator that moves many parameters (possibly, after transformation to make them "
+@Description("Operator that moves many parameters (possibly, after transformation to make them "
 		+ "more normally distributed). It learns the correlation structure among these parameters "
 		+ "during the MCMC run and updates parameters accordingly. doi:10.1093/bioinformatics/btx088")
 public class AdaptableVarianceMultivariateNormalOperator extends Operator {
