@@ -27,6 +27,7 @@ package starbeast3.util;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import beast.core.Param;
@@ -495,17 +496,59 @@ public interface Transform {
     public class LogConstrainedSumTransform extends MultivariableTransform {
 
         private double fixedSum;
-
+        private double [] weights;
+        
 //        public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
 //    		super(parameter);
 //    		fixedSum = 1;
 //        }
+        
+		public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter,
+        		@Param(name="sum",description="total sum of parameter values the parameter is constrained to", defaultValue="1.0") double fixedSum,
+        		@Param(name="weights",description="weight used for each dimension") double [] weights) {
+    		super(parameter);
+            this.fixedSum = fixedSum;
+            setWeights(weights);
+        }
 
-        public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter,
+		public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter,
         		@Param(name="sum",description="total sum of parameter values the parameter is constrained to", defaultValue="1.0") double fixedSum) {
     		super(parameter);
             this.fixedSum = fixedSum;
+            setWeights(null);
         }
+
+        public double[] getWeights() {
+			return weights;
+		}
+
+		public void setWeights(double[] weights) {
+            if (weights == null || weights.length == 0 || weights[0] < 0) {
+            	int dim = 0;
+            	for (RealParameter p : parameter) {
+            		try {
+            			// make sure the paramter is initialised
+            			p.getValue();
+            		} catch (NullPointerException e) {
+            			p.initAndValidate();
+            		}
+            		dim += p.getDimension();
+            	}
+            	this.weights = new double[dim];
+            	Arrays.fill(this.weights, 1.0);
+            } else {
+            	this.weights = new double[weights.length];
+            	double sum = 0;
+            	for (double d : weights) {
+            		sum += d;
+            	}
+            	int dim = weights.length;
+            	for (int i = 0; i < dim; i++) {
+            		this.weights[i] = dim * weights[i] / sum;
+            	}
+            }
+        }
+
 
         public double getSum() {
             return this.fixedSum;
@@ -536,7 +579,7 @@ public interface Transform {
             double newSum = 0.0;
             for (int i = from; i <= to; i++) {
                 transformedValues[counter] = Math.exp(values[i]);
-                newSum += transformedValues[counter];
+                newSum += transformedValues[counter] * weights[i];
                 counter++;
             }
             /*for (int i = 0; i < sum; i++) {
