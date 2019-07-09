@@ -57,7 +57,11 @@ public class AVMNCubeOperator extends TreeOperator {
 
 	@Override
 	public void initAndValidate() {
+	}
+	
+	private void setUp() {
 		tree = treeInput.get();
+		leafNodeCount = tree.getLeafNodeCount();
 		heights = new double[leafNodeCount-1];
 		order = new int[2*leafNodeCount - 1];
 		Node [] internalNodes = new Node[leafNodeCount - 1];
@@ -143,6 +147,9 @@ public class AVMNCubeOperator extends TreeOperator {
 
 	@Override
 	public double proposal() {
+		if (order == null) {
+			setUp();
+		}
 
 		tree2Cube(order, tree, heights);
 
