@@ -57,35 +57,52 @@ public class PopSizeGibbsSampler extends Operator {
 
 	/** 
 	 * sample population size for branch b 
-	 * @param b
+	 * @param branch
 	 * @return
 	 */
-	private double samplePopSize(int b) {
-		double q = 0; // = sum_j k_{jb}
+	private double samplePopSize(int branch) {
+		double a = 0; // = sum_j k_{jb}
 		for (GeneTreeForSpeciesTreeDistribution prior : genePriors) {
-			q += prior.getCoalescentCount(b);
+			a += prior.getCoalescentCount(branch);
 		}
 		
-		double gamma = 0; // = sum_j 1/ploidy \sum_i c_jbi(2 choose (n_jb - i))
+		double b = 0; // = sum_j 1/ploidy \sum_i c_jbi(2 choose (n_jb - i))
 		for (GeneTreeForSpeciesTreeDistribution prior : genePriors) {
 			double c = 0;
-			double [] times = prior.getTimes(b);
-			double nbj = times.length - 2;
+			double [] times = prior.getTimes(branch);
+			double nbj = prior.getLineageCount(branch);
 			for (int i = 0; i < times.length - 1; i++) {
 				c += (times[i+1] - times[i]) * (nbj - i) * (nbj - i - 1) / 2;
 			}
 			double ploidy = prior.getPloidy();
 			c /= ploidy;
-			gamma += c;
+			b += c;
 		}
 		
 		
-		double alpha = prior.alphaInput.get().getValue() + q + 1.0;
-		double beta = prior.betaInput.get().getValue() + gamma;
+		double alpha = prior.alphaInput.get().getValue() + a;
+		double beta = prior.betaInput.get().getValue() + b;
 		
-		GammaDistribution g = new GammaDistribution(myRandomizer, alpha, beta);
-		double newN = g.sample();
+		GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+		double newN = 1.0/g.sample();
 		return newN;
 	}
-
+/*
+	public static void main(String[] args) {
+		MyRandomizer myRandomizer = new MyRandomizer();
+		double alpha = 2;
+		double beta = 0.0015;
+		int n = 1000;
+		double [] samples = new double[n];
+		for (int i = 0; i < n; i++) {
+			GammaDistribution g = new GammaDistribution(myRandomizer, alpha, beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+			samples[i] = g.sample();
+		}
+		double sum = 0;
+		for (double d : samples) {
+			sum +=d;
+		}
+		System.out.println(sum / n);
+	}
+*/	
 }

@@ -16,7 +16,6 @@ import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
-import beast.evolution.speciation.*;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.TreeDistribution;
 import beast.evolution.tree.TreeInterface;
@@ -283,6 +282,12 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     @Override
     public void sample(final State state, final Random random) {
     }
+
+
+    // number of lineages at the bottom of branch i
+	public int getLineageCount(int i) {
+		return nrOfLineages[i];
+	}
 
     // number of coalescent events in branch i
 	public int getCoalescentCount(int i) {
