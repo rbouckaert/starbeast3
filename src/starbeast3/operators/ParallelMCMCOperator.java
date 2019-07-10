@@ -13,6 +13,7 @@ import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
 import beast.core.ParallelMCMC;
+import beast.core.State;
 import beast.core.StateNode;
 import beast.core.util.Log;
 
@@ -24,9 +25,12 @@ public class ParallelMCMCOperator extends Operator {
     final public Input<Integer> maxNrOfThreadsInput = new Input<>("threads","maximum number of threads to use, if "
     		+ "less than 1 the number of threads in BeastMCMC is used (default -1)", -1);
 
+    final public Input<State> otherStateInput = new Input<>("otherState", "");
+
     private ExecutorService exec;
     private CountDownLatch countDown;
     private List<ParallelMCMC> mcmcs;
+    private State otherState;
     
 	@Override
 	public void initAndValidate() {
@@ -35,11 +39,16 @@ public class ParallelMCMCOperator extends Operator {
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
 				BeastMCMC.m_nThreads;
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
+	    otherState = otherStateInput.get();
+	    for (ParallelMCMC pMCMC : mcmcs) {
+	    	pMCMC.setOtherState(otherState);
+	    }
 	}
 
 	@Override
 	public double proposal() {
 		proposeUsingThreads();
+		otherState.setEverythingDirty(true);
 		return Double.POSITIVE_INFINITY;
 	}
 

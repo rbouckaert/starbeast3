@@ -23,19 +23,25 @@ import beast.util.Randomizer;
 @Description("Implements MCMC without logging, or resume and suppresses all screen output. Used for ParallelMCMCOperator.")
 public class ParallelMCMC extends MCMC {
 	
-	final public Input<State> otherStateInput = new Input<>("otherState", "");
+	public void setOtherState(State otherState) {
+		this.otherState = otherState;
+	}
 	
 	public ParallelMCMC() {
 		loggersInput.setRule(Validate.OPTIONAL);
+		startStateInput.setRule(Validate.REQUIRED);
 	}
 
     private static final boolean printDebugInfo = false;
 
     private State otherState;
+    int [] otherStateNr;
     
     @Override
     public void initAndValidate() {
-    	otherState = otherStateInput.get(); 
+    	state = startStateInput.get();
+    	otherStateNr = new int[state.stateNodeInput.get().size()];
+    	
         operatorSchedule = operatorScheduleInput.get();
         for (final Operator op : operatorsInput.get()) {
             operatorSchedule.addOperator(op);
@@ -161,9 +167,14 @@ public class ParallelMCMC extends MCMC {
         int corrections = 0;
         final boolean isStochastic = posterior.isStochastic();
         
+        // make local state the current state
+        int index = 0;
         for (StateNode stateNode : state.stateNodeInput.get()) {
         	stateNode.state = state;
-        }
+    		otherStateNr[index] = stateNode.index;
+        	stateNode.index = index++;
+    	}
+        oldLogLikelihood = robustlyCalcPosterior(posterior);
         
         if (burnIn > 0) {
         	Log.warning.println("Please wait while BEAST takes " + burnIn + " pre-burnin samples");
@@ -201,8 +212,6 @@ public class ParallelMCMC extends MCMC {
                 } else {
                     if (isTooDifferent(logLikelihood, originalLogP)) {
                         // halt due to incorrect posterior during intial debug period
-                        state.storeToFile(sampleNr);
-                        operatorSchedule.storeToFile();
                         System.exit(1);
                     }
                 }
@@ -221,8 +230,11 @@ public class ParallelMCMC extends MCMC {
         	Log.err.println("\n\nNB: " + corrections + " posterior calculation corrections were required. This analysis may not be valid!\n\n");
         }
 
+        // restore to original State
+        index = 0;
         for (StateNode stateNode : state.stateNodeInput.get()) {
         	stateNode.state = otherState;
+    		stateNode.index = otherStateNr[index++];
         }
     }
 
