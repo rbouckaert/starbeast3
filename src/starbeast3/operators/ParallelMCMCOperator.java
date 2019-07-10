@@ -12,6 +12,8 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
+import beast.core.ParallelMCMC;
+import beast.core.StateNode;
 import beast.core.util.Log;
 
 @Description("Run MCMC on different parts of the model in parallel before combining them in a single Gibbs move")
@@ -75,5 +77,14 @@ public class ParallelMCMCOperator extends Operator {
         } catch (RejectedExecutionException | InterruptedException e) {
             Log.err.println("Stop using threads: " + e.getMessage());
         }
+    }
+    
+    @Override
+    public List<StateNode> listStateNodes() {
+    	List<StateNode> stateNodes = new ArrayList<>();
+    	for (ParallelMCMC mcmc : mcmcs) {
+    		stateNodes.addAll(mcmc.startStateInput.get().stateNodeInput.get());
+    	}
+    	return stateNodes;
     }
 }

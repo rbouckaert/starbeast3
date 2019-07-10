@@ -30,8 +30,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import beast.core.BEASTInterface;
+import beast.core.BEASTObject;
+import beast.core.Function;
+import beast.core.Input;
 import beast.core.Param;
-import beast.core.parameter.RealParameter;
 import beast.math.matrixalgebra.Matrix;
 import beast.util.Randomizer;
 
@@ -113,7 +116,7 @@ public interface Transform {
 
     double[] gradientInverse(double[] values, int from, int to);
     
-    List<RealParameter> getParameter();
+    List<Function> getParameter();
 
     /**
      * @return the transform's name
@@ -139,15 +142,16 @@ public interface Transform {
      */
     boolean isMultivariate();
 
-    abstract class UnivariableTransform implements Transform {
+    abstract class UnivariableTransform extends BEASTObject implements Transform {
+    	final public Input<List<Function>> functionInput = new Input<>("f", "parameter to be transformed", new ArrayList<>());
     	
-    	List<RealParameter> parameter;
+    	List<Function> parameter;
     	
-        public List<RealParameter> getParameter() {
+        public List<Function> getParameter() {
 			return parameter;
 		}
 
-		public void setParameter(RealParameter parameter) {
+		public void setParameter(Function parameter) {
 			if (parameter == null) {
 				this.parameter = new ArrayList<>();
 			}
@@ -156,7 +160,7 @@ public interface Transform {
 			}
 		}
 
-		public void setParameter(List<RealParameter> parameter) {
+		public void setParameter(List<Function> parameter) {
 			if (parameter == null) {
 				this.parameter = new ArrayList<>();
 			}
@@ -165,8 +169,16 @@ public interface Transform {
 			}
 		}
 		
-		public UnivariableTransform(List<RealParameter> parameter) {
+		public UnivariableTransform() {			
+		}
+		
+		public UnivariableTransform(List<Function> parameter) {
 			this.parameter = parameter;
+		}
+		
+		@Override
+		public void initAndValidate() {
+			parameter = functionInput.get();			
 		}
 		
 		public abstract double transform(double value);
@@ -290,14 +302,22 @@ public interface Transform {
         public boolean isMultivariate() { return false;}
     }
 
-    abstract class MultivariableTransform implements Transform {
-    	List<RealParameter> parameter;
+    abstract class MultivariableTransform extends BEASTObject implements Transform {
+    	final public Input<List<Function>> functionInput = new Input<>("f", "parameter to be transformed", new ArrayList<>());    	
     	
-        public List<RealParameter> getParameter() {
+		@Override
+		public void initAndValidate() {
+			parameter = functionInput.get();			
+		}
+
+    	
+    	List<Function> parameter;
+    	
+        public List<Function> getParameter() {
 			return parameter;
 		}
 
-		public void setParameter(RealParameter parameter) {
+		public void setParameter(Function parameter) {
 			if (this.parameter == null) {
 				this.parameter = new ArrayList<>();
 			}
@@ -306,7 +326,7 @@ public interface Transform {
 			}
 		}
 
-		public void setParameter(List<RealParameter> parameters) {
+		public void setParameter(List<Function> parameters) {
 			if (this.parameter == null) {
 				this.parameter = new ArrayList<>();
 			}
@@ -315,7 +335,9 @@ public interface Transform {
 			}
 		}
 
-		MultivariableTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+		public MultivariableTransform() {}
+		
+		MultivariableTransform(List<Function> parameter) {
     		setParameter(parameter);
     	}
     	
@@ -365,16 +387,16 @@ public interface Transform {
     }
 
     abstract class MultivariableTransformWithParameter extends MultivariableTransform {
-    	public MultivariableTransformWithParameter(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+    	public MultivariableTransformWithParameter(List<Function> parameter) {
     		super(parameter);    		
     	}
-        abstract public List<RealParameter> getParameter();
+        abstract public List<Function> getParameter();
     }
 
     abstract class MultivariateTransform extends MultivariableTransform {
         // A class for a multivariate transform
 
-    	public MultivariateTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+    	public MultivariateTransform(List<Function> parameter) {
     		super(parameter);    		
     	}
     	
@@ -445,11 +467,14 @@ public interface Transform {
 
     public class LogTransform extends UnivariableTransform {
     	
-    	public LogTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+    	public LogTransform() {    		
+    	}
+    	
+    	public LogTransform(List<Function> parameter) {
     		super(parameter);
     	}
 
-        public double transform(double value) {
+    	public double transform(double value) {
             return Math.log(value);
         }
 
@@ -498,12 +523,12 @@ public interface Transform {
         private double fixedSum;
         private double [] weights;
         
-//        public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+//        public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<Function> parameter) {
 //    		super(parameter);
 //    		fixedSum = 1;
 //        }
         
-		public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter,
+		public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<Function> parameter,
         		@Param(name="sum",description="total sum of parameter values the parameter is constrained to", defaultValue="1.0") double fixedSum,
         		@Param(name="weights",description="weight used for each dimension") double [] weights) {
     		super(parameter);
@@ -511,7 +536,7 @@ public interface Transform {
             setWeights(weights);
         }
 
-		public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter,
+		public LogConstrainedSumTransform(@Param(name="parameter",description="parameter to be transformed") List<Function> parameter,
         		@Param(name="sum",description="total sum of parameter values the parameter is constrained to", defaultValue="1.0") double fixedSum) {
     		super(parameter);
             this.fixedSum = fixedSum;
@@ -525,12 +550,12 @@ public interface Transform {
 		public void setWeights(double[] weights) {
             if (weights == null || weights.length == 0 || weights[0] < 0) {
             	int dim = 0;
-            	for (RealParameter p : parameter) {
+            	for (Function p : parameter) {
             		try {
             			// make sure the paramter is initialised
-            			p.getValue();
+            			p.getArrayValue();
             		} catch (NullPointerException e) {
-            			p.initAndValidate();
+            			((BEASTObject)p).initAndValidate();
             		}
             		dim += p.getDimension();
             	}
@@ -711,7 +736,7 @@ public interface Transform {
 
     public class LogitTransform extends UnivariableTransform {
 
-        public LogitTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+        public LogitTransform(List<Function> parameter) {
     		super(parameter);
             //range = 1.0;
             //lower = 0.0;
@@ -766,7 +791,7 @@ public interface Transform {
 
     public class FisherZTransform extends UnivariableTransform {
 
-    	public FisherZTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+    	public FisherZTransform(List<Function> parameter) {
     		super(parameter);
     	}
     	
@@ -819,7 +844,7 @@ public interface Transform {
 
     public class NegateTransform extends UnivariableTransform {
 
-    	public NegateTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+    	public NegateTransform(List<Function> parameter) {
     		super(parameter);
     	}
     	
@@ -870,7 +895,7 @@ public interface Transform {
     public class PowerTransform extends UnivariableTransform{
         private double power;
 
-        PowerTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+        PowerTransform(List<Function> parameter) {
     		super(parameter);
             this.power = 2;
         }
@@ -937,7 +962,7 @@ public interface Transform {
 
     public class NoTransform extends UnivariableTransform {
 
-    	public NoTransform(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+    	public NoTransform(List<Function> parameter) {
     		super(parameter);
     	}
     	
@@ -990,7 +1015,7 @@ public interface Transform {
 
     public class NoTransformMultivariable extends MultivariableTransform {
 
-    	public NoTransformMultivariable(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+    	public NoTransformMultivariable(List<Function> parameter) {
     		super(parameter);    		
     	}
     	
@@ -1237,8 +1262,7 @@ public interface Transform {
 
     public class Inverse extends UnivariableTransform {
 
-        public Inverse(UnivariableTransform inner,
-        		@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+        public Inverse(UnivariableTransform inner, List<Function> parameter) {
     		super(parameter);    	
             this.inner = inner;
         }
@@ -1298,8 +1322,7 @@ public interface Transform {
 
     public class InverseMultivariate extends MultivariateTransform {
 
-        public InverseMultivariate(MultivariateTransform inner,
-        		@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+        public InverseMultivariate(MultivariateTransform inner, List<Function> parameter) {
     		super(parameter);    	
             this.inner = inner;
         }
@@ -1406,7 +1429,7 @@ public interface Transform {
 
         public class PositiveOrdered extends MultivariateTransform {
         	
-        	public PositiveOrdered(@Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+        	public PositiveOrdered(List<Function> parameter) {
         		super(parameter); 
 			}
         @Override
@@ -1502,10 +1525,9 @@ public interface Transform {
     public class Array extends MultivariableTransformWithParameter {
 
           private final List<Transform> array;
-          //private final RealParameter parameter;
+          //private final Function parameter;
 
-          public Array(List<Transform> array, 
-        		  @Param(name="parameter",description="parameter to be transformed") List<RealParameter> parameter) {
+          public Array(List<Transform> array, List<Function> parameter) {
       		  super(parameter); 
               //this.parameter = parameter;
               this.array = array;
@@ -1515,7 +1537,7 @@ public interface Transform {
 //              }
           }
 
-          public List<RealParameter> getParameter() { return parameter; }
+          public List<Function> getParameter() { return parameter; }
 
           @Override
           public double[] transform(double[] values, int from, int to) {
@@ -1647,15 +1669,15 @@ public interface Transform {
     public class Collection extends MultivariableTransformWithParameter {
 
         private final List<ParsedTransform> segments;
-        //private final RealParameter parameter;
+        //private final Function parameter;
 
-        public Collection(List<ParsedTransform> segments, List<RealParameter> parameter) {
+        public Collection(List<ParsedTransform> segments, List<Function> parameter) {
         	super(parameter);
             // this.parameter = parameter;
             this.segments = ensureContiguous(segments);
         }
 
-        public List<RealParameter> getParameter() { return parameter; }
+        public List<Function> getParameter() { return parameter; }
 
         private List<ParsedTransform> ensureContiguous(List<ParsedTransform> segments) {
 
@@ -1671,7 +1693,7 @@ public interface Transform {
             }
             
             int dim = 0;
-            for (RealParameter p : parameter) {
+            for (Function p : parameter) {
             	dim += p.getDimension();
             }            
             if (current < dim) {
@@ -1877,7 +1899,7 @@ public interface Transform {
         public int end; // zero-indexed, i.e, i = start; i < end; ++i
         public int every = 1;
         public double fixedSum = 0.0;
-        public List<RealParameter> parameters = null;
+        public List<Function> parameters = null;
 
         public ParsedTransform() {
             

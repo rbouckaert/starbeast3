@@ -1,4 +1,4 @@
-package starbeast3.operators;
+package beast.core;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -23,14 +23,19 @@ import beast.util.Randomizer;
 @Description("Implements MCMC without logging, or resume and suppresses all screen output. Used for ParallelMCMCOperator.")
 public class ParallelMCMC extends MCMC {
 	
+	final public Input<State> otherStateInput = new Input<>("otherState", "");
+	
 	public ParallelMCMC() {
 		loggersInput.setRule(Validate.OPTIONAL);
 	}
 
     private static final boolean printDebugInfo = false;
 
+    private State otherState;
+    
     @Override
     public void initAndValidate() {
+    	otherState = otherStateInput.get(); 
         operatorSchedule = operatorScheduleInput.get();
         for (final Operator op : operatorsInput.get()) {
             operatorSchedule.addOperator(op);
@@ -156,6 +161,10 @@ public class ParallelMCMC extends MCMC {
         int corrections = 0;
         final boolean isStochastic = posterior.isStochastic();
         
+        for (StateNode stateNode : state.stateNodeInput.get()) {
+        	stateNode.state = state;
+        }
+        
         if (burnIn > 0) {
         	Log.warning.println("Please wait while BEAST takes " + burnIn + " pre-burnin samples");
         }
@@ -210,6 +219,10 @@ public class ParallelMCMC extends MCMC {
         }
         if (corrections > 0) {
         	Log.err.println("\n\nNB: " + corrections + " posterior calculation corrections were required. This analysis may not be valid!\n\n");
+        }
+
+        for (StateNode stateNode : state.stateNodeInput.get()) {
+        	stateNode.state = otherState;
         }
     }
 

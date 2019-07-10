@@ -49,8 +49,16 @@ public class PopSizeGibbsSampler extends Operator {
 
 	@Override
 	public double proposal() {
+		double lower = popSizes.getLower();
+		double upper = popSizes.getUpper();
 		for (int i = 0; i < popSizes.getDimension(); i++) {
-			popSizes.setValue(i, samplePopSize(i));
+			double newValue = samplePopSize(i);
+			if (newValue < lower) {
+				newValue = lower;
+			} else if (newValue > upper) {
+				newValue = upper;
+			}
+			popSizes.setValue(i, newValue);
 		}
 		return Double.POSITIVE_INFINITY;
 	}

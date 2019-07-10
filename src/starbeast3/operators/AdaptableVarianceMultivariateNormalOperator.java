@@ -25,18 +25,20 @@
 
 package starbeast3.operators;
 
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import beast.core.Description;
+import beast.core.Function;
 import beast.core.Input;
 import beast.core.Operator;
 import beast.core.StateNode;
-import beast.core.parameter.Parameter;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
+import beast.evolution.tree.Tree;
 import starbeast3.util.Transform.*;
 import starbeast3.util.Transform;
 import beast.math.matrixalgebra.*;
@@ -74,7 +76,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
     private double scaleFactor;
     private double beta;
     private int iterations, updates, initial, burnin, every;
-    private CompoundParameterHelper<Double> parameter;
+    private CompoundParameterHelper parameter;
     private Transform[] transformations;
     private int[] transformationSizes;
     private double[] transformationSums;
@@ -95,7 +97,11 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 	public List<StateNode> listStateNodes() {
 		List<StateNode> nodes = new ArrayList<>();
 		for (Transform t : transformations) {
-			nodes.addAll(t.getParameter());
+			for (Function f : t.getParameter()) {
+				if (f instanceof StateNode) {
+					nodes.add((StateNode) f);
+				}
+			}
 		}
 		return nodes;
 	}
@@ -482,9 +488,11 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 	public void initAndValidate() {
         // setMode(modeInput.get());
         this.scaleFactor = scaleFactorInput.get();
-        List<RealParameter> parameterList = new ArrayList<>();
+        List<Function> parameterList = new ArrayList<>();
         for (Transform t : transformationsInput.get()) {
-        	parameterList.addAll(t.getParameter());
+			for (Function f : t.getParameter()) {
+				parameterList.add(f);
+			}
         }
         this.parameter = new CompoundParameterHelper(parameterList);
         this.transformations = transformationsInput.get().toArray(new Transform[]{});
@@ -559,8 +567,14 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         		ts[k] = t;
         		k++;
         	} else {
-        		for (RealParameter p : t.getParameter()) {
-            		transformationSizes[k] = p.getDimension();
+        		for (Function p : t.getParameter()) {
+        			if (p instanceof RealParameter) {
+        				transformationSizes[k] = p.getDimension();
+        			} else if (p instanceof Tree) {
+        				transformationSizes[k] = 1;
+        			} else {
+        				throw new IllegalArgumentException("Don't know how to handle " + p.getClass().getSimpleName());
+        			}
             		ts[k] = t;
             		k++;
         		}
@@ -576,13 +590,13 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         }		
 	}
     
-    public class CompoundParameterHelper<T> {
+    public class CompoundParameterHelper {
         protected int[] parameterIndex1; // index to select parameter
         protected int[] parameterIndex2; // index to select dimension inside parameter
 
-        final List<Parameter<T>> parameterList;
+        final List<Function> parameterList;
 
-        public CompoundParameterHelper(final List<Parameter<T>> parameterList) {
+        public CompoundParameterHelper(final List<Function> parameterList) {
             this.parameterList = parameterList;
 
             if (parameterList == null || parameterList.size() < 1) {
@@ -590,8 +604,12 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
             }
 
             int dim = 0;
-            for (final Parameter<T> para : parameterList) {
-                dim += para.getDimension();
+            for (final Function para : parameterList) {
+            	if (para instanceof RealParameter) {
+            		dim += para.getDimension();
+            	} else if (para instanceof Tree) {
+            		dim += 1;
+            	}
             }
 
             parameterIndex1 = new int[dim];
@@ -599,12 +617,18 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 
             int k = 0;
             for (int y = 0; y < parameterList.size(); y++) {
-                final Parameter<T> para = parameterList.get(y);
-                for (int d = 0; d < para.getDimension(); d++) {
+                final Function para = parameterList.get(y);
+            	if (para instanceof RealParameter) {
+	                for (int d = 0; d < para.getDimension(); d++) {
+	                    parameterIndex1[k] = y;
+	                    parameterIndex2[k] = d;
+	                    k++;
+	                }
+            	} else {
                     parameterIndex1[k] = y;
-                    parameterIndex2[k] = d;
-                    k++;
-                }
+                    parameterIndex2[k] = 0;
+                    k++;            		
+            	}
             }
         }
 
@@ -612,22 +636,32 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
             return parameterIndex1.length;
         }
 
-        public void setValue(final int param, final T value) {
-            final Parameter<T> para = parameterList.get(getY(param));
-            para.setValue(getX(param), value);
+        public void setValue(final int param, final double value) {
+            final Function para = parameterList.get(getY(param));
+            if (para instanceof RealParameter) {
+            	((RealParameter)para).setValue(getX(param), value);
+            } else if (para instanceof Tree) {
+            	double old = para.getArrayValue();
+            	double scale = value / old;
+            	((Tree) para).scale(scale);
+            }
         }
 
-        public T getValue(final int param) {
-            return parameterList.get(getY(param)).getValue(getX(param));
+        public double getValue(final int param) {
+        	Function f = parameterList.get(getY(param));
+        	if (f instanceof RealParameter) {
+        		return f.getArrayValue(getX(param));
+        	}
+        	return ((Tree) f).getRoot().getHeight();
         }
 
-        public T getLower(final int param) {
-            return parameterList.get(getY(param)).getLower();
-        }
-
-        public T getUpper(final int param) {
-            return parameterList.get(getY(param)).getUpper();
-        }
+//        public double getLower(final int param) {
+//            return parameterList.get(getY(param)).getLower();
+//        }
+//
+//        public double getUpper(final int param) {
+//            return parameterList.get(getY(param)).getUpper();
+//        }
 
         // the index inside a parameter
         protected int getX(final int param) {
