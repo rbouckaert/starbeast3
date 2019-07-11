@@ -52,9 +52,9 @@
     		initial="500"
     		burnin="250"
     		every="1">
-    	    <transformations spec="starbeast3.util.Transform$NoTransform" parameter="@arg"/>
-    	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
-    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" parameter="@freqParameter" sum="1.0"/>
+    	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@arg"/>
+    	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
+    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" f="@freqParameter" sum="1.0"/>
     </operator>
 -->    
 
@@ -67,7 +67,7 @@
     		burnin="200"
     		every="1"
     		optimise="true">
-    	    <transformations spec="starbeast3.util.Transform$NoTransform" parameter="@arg"/>
+    	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@arg"/>
     </operator>
 
     <operator id="AdaptableVarianceMultivariateNormalOperator2" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
@@ -81,7 +81,7 @@
     		<!--
     	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
     	    -->
-    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" parameter="@freqParameter" sum="1.0"/>
+    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" f="@freqParameter" sum="1.0"/>
     </operator>
 
     <operator id="AdaptableVarianceMultivariateNormalOperator3" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
@@ -92,7 +92,7 @@
     		initial="1000"
     		burnin="500"
     		every="1">
-    	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
+    	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
     </operator>
 
     <logger id="tracelog" spec="Logger" fileName="MultivariateNormal.log" logEvery="100" model="@MultivariateNormal" sanitiseHeaders="true" sort="smart">

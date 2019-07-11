@@ -97,7 +97,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 	public List<StateNode> listStateNodes() {
 		List<StateNode> nodes = new ArrayList<>();
 		for (Transform t : transformations) {
-			for (Function f : t.getParameter()) {
+			for (Function f : t.getF()) {
 				if (f instanceof StateNode) {
 					nodes.add((StateNode) f);
 				}
@@ -490,7 +490,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         this.scaleFactor = scaleFactorInput.get();
         List<Function> parameterList = new ArrayList<>();
         for (Transform t : transformationsInput.get()) {
-			for (Function f : t.getParameter()) {
+			for (Function f : t.getF()) {
 				parameterList.add(f);
 			}
         }
@@ -551,7 +551,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         	if (t instanceof MultivariableTransform) {
         		paramCount++;
         	} else {
-        		paramCount += t.getParameter().size();
+        		paramCount += t.getF().size();
         	}
         }
         transformationSizes = new int[paramCount];
@@ -560,14 +560,20 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         int k = 0;
         for (Transform t : transformations) {
         	if (t instanceof MultivariableTransform) {
-        		transformationSizes[k] = t.getParameter().size();
+        		for (Function p : t.getF()) {
+        			if (p instanceof RealParameter) {
+        				transformationSizes[k] += p.getDimension();
+        			} else {
+        				throw new IllegalArgumentException("Don't know how to handle MultivariableTransform of " + p.getClass().getSimpleName());
+        			}
+        		}
         		if (t instanceof LogConstrainedSumTransform) {
         			transformationSums[k] = ((LogConstrainedSumTransform)t).getSum();
         		}
         		ts[k] = t;
         		k++;
         	} else {
-        		for (Function p : t.getParameter()) {
+        		for (Function p : t.getF()) {
         			if (p instanceof RealParameter) {
         				transformationSizes[k] = p.getDimension();
         			} else if (p instanceof Tree) {
