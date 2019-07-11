@@ -182,44 +182,44 @@ public class ParallelMCMC extends MCMC {
         for (long sampleNr = -burnIn; sampleNr <= chainLength; sampleNr++) {
             final Operator operator = propagateState(sampleNr);
 
-            if (debugFlag && sampleNr % 3 == 0 || sampleNr % 10000 == 0) {
-                // check that the posterior is correctly calculated at every third
-                // sample, as long as we are in debug mode
-            	final double originalLogP = isStochastic ? posterior.getNonStochasticLogP() : oldLogLikelihood;
-                final double logLikelihood = isStochastic ? state.robustlyCalcNonStochasticPosterior(posterior) : state.robustlyCalcPosterior(posterior);
-                if (isTooDifferent(logLikelihood, originalLogP)) {
-                    reportLogLikelihoods(posterior, "");
-                    Log.err.println("At sample " + sampleNr + "\nLikelihood incorrectly calculated: " + originalLogP + " != " + logLikelihood
-                    		+ "(" + (originalLogP - logLikelihood) + ")"
-                            + " Operator: " + operator.getName());
-                }
-                if (sampleNr > NR_OF_DEBUG_SAMPLES * 3) {
-                    // switch off debug mode once a sufficient large sample is checked
-                    debugFlag = false;
-                    if (isTooDifferent(logLikelihood, originalLogP)) {
-                        // incorrect calculation outside debug period.
-                        // This happens infrequently enough that it should repair itself after a robust posterior calculation
-                        corrections++;
-                        if (corrections > 100) {
-                            // after 100 repairs, there must be something seriously wrong with the implementation
-                        	Log.err.println("Too many corrections. There is something seriously wrong that cannot be corrected");
-                            state.storeToFile(sampleNr);
-                            operatorSchedule.storeToFile();
-                            System.exit(1);
-                        }
-                        oldLogLikelihood = state.robustlyCalcPosterior(posterior);;
-                    }
-                } else {
-                    if (isTooDifferent(logLikelihood, originalLogP)) {
-                        // halt due to incorrect posterior during intial debug period
-                        System.exit(1);
-                    }
-                }
-            } else {
+//            if (debugFlag && sampleNr % 3 == 0 || sampleNr % 10000 == 0) {
+//                // check that the posterior is correctly calculated at every third
+//                // sample, as long as we are in debug mode
+//            	final double originalLogP = isStochastic ? posterior.getNonStochasticLogP() : oldLogLikelihood;
+//                final double logLikelihood = isStochastic ? state.robustlyCalcNonStochasticPosterior(posterior) : state.robustlyCalcPosterior(posterior);
+//                if (isTooDifferent(logLikelihood, originalLogP)) {
+//                    reportLogLikelihoods(posterior, "");
+//                    Log.err.println("At sample " + sampleNr + "\nLikelihood incorrectly calculated: " + originalLogP + " != " + logLikelihood
+//                    		+ "(" + (originalLogP - logLikelihood) + ")"
+//                            + " Operator: " + operator.getName());
+//                }
+//                if (sampleNr > NR_OF_DEBUG_SAMPLES * 3) {
+//                    // switch off debug mode once a sufficient large sample is checked
+//                    debugFlag = false;
+//                    if (isTooDifferent(logLikelihood, originalLogP)) {
+//                        // incorrect calculation outside debug period.
+//                        // This happens infrequently enough that it should repair itself after a robust posterior calculation
+//                        corrections++;
+//                        if (corrections > 100) {
+//                            // after 100 repairs, there must be something seriously wrong with the implementation
+//                        	Log.err.println("Too many corrections. There is something seriously wrong that cannot be corrected");
+//                            state.storeToFile(sampleNr);
+//                            operatorSchedule.storeToFile();
+//                            System.exit(1);
+//                        }
+//                        oldLogLikelihood = state.robustlyCalcPosterior(posterior);;
+//                    }
+//                } else {
+//                    if (isTooDifferent(logLikelihood, originalLogP)) {
+//                        // halt due to incorrect posterior during intial debug period
+//                        System.exit(1);
+//                    }
+//                }
+//            } else {
                 if (sampleNr >= 0) {
                 	operator.optimize(logAlpha);
                 }
-            }
+//            }
             callUserFunction(sampleNr);
 
             if (posterior.getCurrentLogP() == Double.POSITIVE_INFINITY) {

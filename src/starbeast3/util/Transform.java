@@ -474,6 +474,10 @@ public interface Transform {
     		super(new ArrayList<>());
     	}
     	
+    	public LogTransform(Function parameter) {
+    		initByName("f", parameter);
+    	}
+
     	public LogTransform(List<Function> parameter) {
     		super(parameter);
     	}
@@ -534,6 +538,7 @@ public interface Transform {
 //        }
         public LogConstrainedSumTransform() {
     		super(new ArrayList<>());
+    		initByName("sum", 1.0);
         }
         
 //		public LogConstrainedSumTransform(@Param(name="f",description="parameter to be transformed") List<Function> parameter,
@@ -547,6 +552,11 @@ public interface Transform {
             setWeights(weights);
         }
 
+		public LogConstrainedSumTransform(Function parameter,
+        		double fixedSum) {
+			initByName("f", parameter, "sum", fixedSum);
+        }
+		
 //		public LogConstrainedSumTransform(@Param(name="f",description="parameter to be transformed") List<Function> parameter,
 //        		@Param(name="sum",description="total sum of parameter values the parameter is constrained to", defaultValue="1.0") double fixedSum) {
 		public LogConstrainedSumTransform(List<Function> parameter,
@@ -1999,20 +2009,20 @@ public interface Transform {
     }
 
     NoTransform NONE = new NoTransform(null);
-    LogTransform LOG = new LogTransform(null);
+    LogTransform LOG = new LogTransform();
     NegateTransform NEGATE = new NegateTransform(null);
-    Compose LOG_NEGATE = new Compose(new LogTransform(null), new NegateTransform(null));
-    LogConstrainedSumTransform LOG_CONSTRAINED_SUM = new LogConstrainedSumTransform(null, 1.0);
+    Compose LOG_NEGATE = new Compose(new LogTransform(), new NegateTransform(null));
+    LogConstrainedSumTransform LOG_CONSTRAINED_SUM = new LogConstrainedSumTransform();
     LogitTransform LOGIT = new LogitTransform(null);
     FisherZTransform FISHER_Z = new FisherZTransform(null);
     PositiveOrdered POSITIVE_ORDERED = new PositiveOrdered(null);
 
     enum Type {
         NONE("none", new NoTransform(null)),
-        LOG("log", new LogTransform(null)),
+        LOG("log", new LogTransform()),
         NEGATE("negate", new NegateTransform(null)),
-        LOG_NEGATE("log-negate", new Compose(new LogTransform(null), new NegateTransform(null))),
-        LOG_CONSTRAINED_SUM("logConstrainedSum", new LogConstrainedSumTransform(null, 1.0)),
+        LOG_NEGATE("log-negate", new Compose(new LogTransform(), new NegateTransform(null))),
+        LOG_CONSTRAINED_SUM("logConstrainedSum", new LogConstrainedSumTransform()),
         LOGIT("logit", new LogitTransform(null)),
         FISHER_Z("fisherZ",new FisherZTransform(null)),
         POWER("power", new PowerTransform(null)),
