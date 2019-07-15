@@ -4,6 +4,8 @@ import beast.util.Randomizer;
 
 /**
  *  this class is used to make sure the apache library uses random numbers from the BEAST Randomizer
+ *  so that the MCMC chain remains deterministic and starting with a certain seed twice will result in
+ *  the same sequence.
  */
 public class MyRandomizer implements org.apache.commons.math3.random.RandomGenerator {
 
