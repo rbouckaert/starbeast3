@@ -102,8 +102,14 @@ public class ParallelMCMCRealParameterOperator extends Operator {
 			}
 			
 			AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
-			AVMNOperator.initByName("weight", 1.0, "coefficient", 1.0, "scaleFactor", 1.0, "beta", 0.05, "every", 1,
-					"initial", 200 * dim, "burnin", 100 * dim, "transformations", transformations);
+			AVMNOperator.initByName("weight", 1.0, 
+					"coefficient", 1.0, 
+					"scaleFactor", 1.0, 
+					"beta", 0.05, 
+					"every", 1,
+					"initial", 200 * dim, 
+					"burnin", 100 * dim, 
+					"transformations", transformations);
 			operators.add(AVMNOperator);
 		}
 		

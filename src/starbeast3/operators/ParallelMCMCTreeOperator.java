@@ -2,7 +2,10 @@ package starbeast3.operators;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -169,9 +172,20 @@ public class ParallelMCMCTreeOperator extends Operator {
 		CompoundDistribution sampleDistr = new CompoundDistribution();
 		sampleDistr.initByName("distribution", distrs);
 		
+		
+		List<String> stateNodeIDs = new ArrayList<>();
+		for (StateNode stateNode : stateNodes) {
+			if (stateNodeIDs.contains(stateNode.getID())) {
+				Log.warning("Duplicate statenode : " + stateNode.getID());
+			}
+			stateNodeIDs.add(stateNode.getID());
+		}
+		Collections.sort(stateNodeIDs);
+		Log.info("ParallelMCMC State: " + stateNodeIDs);
+		
 		State state = new State();
 		state.initByName("stateNode", stateNodes);
-		
+
 		ParallelMCMC mcmc = new ParallelMCMC();
 		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength);
 		return mcmc;

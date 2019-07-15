@@ -645,7 +645,14 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         public void setValue(final int param, final double value) {
             final Function para = parameterList.get(getY(param));
             if (para instanceof RealParameter) {
-            	((RealParameter)para).setValue(getX(param), value);
+            	RealParameter p = (RealParameter) para;
+            	if (value > p.getUpper()) {
+            		p.setValue(getX(param), p.getUpper());
+            	} else if (value < p.getLower()) {
+            		p.setValue(getX(param), p.getLower());
+            	} else {
+            		p.setValue(getX(param), value);
+            	}
             } else if (para instanceof Tree) {
             	double old = para.getArrayValue();
             	double scale = value / old;
@@ -731,7 +738,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         	b.append(Arrays.toString(e));
         	b.append("\n");
         }
-        Log.warning("Covariance matrix:\n" + b.toString());
+        // Log.warning("Covariance matrix:\n" + b.toString());
         
         String adaptationParameterName = "scalefactor";
         final DecimalFormat formatter = new DecimalFormat("#.###");
@@ -742,4 +749,5 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
         } else return "";
     }
     
+    public int getIterations() {return iterations;}
 }
