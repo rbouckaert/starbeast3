@@ -81,6 +81,10 @@ public class ParallelMCMCRealParameterOperator extends Operator {
 			getRealParameterStateNodes(d, otherState.stateNodeInput.get(), stateNodeList);
 			stateNodes.addAll(stateNodeList);
 			
+			List<Distribution> priorsList = new ArrayList<>();
+			getRealParameterPriors(stateNodeList, priorsList);
+			distrs.addAll(priorsList);			
+			
 			int dim = 0;
 			for (StateNode s : stateNodeList) {
 				dim += s.getDimension();
@@ -122,6 +126,20 @@ public class ParallelMCMCRealParameterOperator extends Operator {
 		ParallelMCMC mcmc = new ParallelMCMC();
 		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength);
 		return mcmc;
+	}
+
+	private void getRealParameterPriors(List<StateNode> stateNodeList, List<Distribution> priorsList) {
+		for (StateNode sn : stateNodeList) {
+			for (BEASTInterface o : sn.getOutputs()) {
+				if (o instanceof Distribution) {
+					for (BEASTInterface o2 : o.getOutputs()) {
+						if (o2.getID().equals("prior")) {
+							priorsList.add((Distribution) o);
+						}
+					}
+				}				
+			}
+		}		
 	}
 
 	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, List<StateNode> stateNodes) {
