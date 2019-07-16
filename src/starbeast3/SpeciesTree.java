@@ -11,6 +11,7 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 
 /**
+ * adapted from starbeast2
 * @author Huw Ogilvie
  */
 

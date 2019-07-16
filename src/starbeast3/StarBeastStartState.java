@@ -221,7 +221,6 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             genesDmins[ng] = dmin;
 
             for(int i = 0; i < dmin.length; ++i) {
-                dg[i] += dmin[i];
                 if (dmin[i] == Double.MAX_VALUE) {
                 	// this happens when a gene tree has no taxa for some species-tree taxon.
                 	// TODO: ensure that if this happens, there will always be an "infinite"
@@ -240,7 +239,9 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
                 			id = stree.getExternalNodes().get(0).getID();
                 		}
                 	}
-                	throw new RuntimeException("Gene tree " + g.getID() + " has no lineages for species taxon " + id + " ");
+                	// throw new RuntimeException("Gene tree " + g.getID() + " has no lineages for species taxon " + id + " ");
+                } else {
+                    dg[i] += dmin[i];
                 }
             }
         }
@@ -266,6 +267,8 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         };
         ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance);
 
+System.out.println(ctree.getRoot().toNewick());
+        
         final Map<String, Integer> sptips2SpeciesIndex = new HashMap<>();
         for(int i = 0; i < speciesNames.size(); ++i) {
             sptips2SpeciesIndex.put(speciesNames.get(i), i);
