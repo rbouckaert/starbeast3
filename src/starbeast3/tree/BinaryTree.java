@@ -10,8 +10,8 @@ import beast.core.Input;
 import beast.core.StateNode;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
+import beast.util.TreeParser;
 
 @Description("Binary tree with efficient store/restore")
 public class BinaryTree extends StateNode implements TreeInterface {
@@ -201,16 +201,56 @@ public class BinaryTree extends StateNode implements TreeInterface {
         return taxonsetInput.get();
 	}
 
-	@Override
-	public void getMetaData(Node node, Double[] t, String pattern) {
-		// TODO Auto-generated method stub
+	   /**
+     * copy meta data matching pattern to double array
+     *
+     * @param node     the node
+     * @param t       the integer array to be filled with meta data
+     * @param pattern the name of the meta data
+     */
+    public void getMetaData(final Node node, final Integer[] t, final String pattern) {
+        t[Math.abs(node.getNr())] = (Integer) node.getMetaData(pattern);
+        if (!node.isLeaf()) {
+            getMetaData(node.getLeft(), t, pattern);
+            if (node.getRight() != null) {
+                getMetaData(node.getRight(), t, pattern);
+            }
+        }
+    }
 
-	}
+    /**
+     * copy meta data matching pattern to double array
+     *
+     * @param node     the node
+     * @param t       the double array to be filled with meta data
+     * @param pattern the name of the meta data
+     */
+    @Override
+	public void getMetaData(final Node node, final Double[] t, final String pattern) {
+        t[Math.abs(node.getNr())] = (Double) node.getMetaData(pattern);
+        if (!node.isLeaf()) {
+            getMetaData(node.getLeft(), t, pattern);
+            if (node.getRight() != null) {
+                getMetaData(node.getRight(), t, pattern);
+            }
+        }
+    }
 
-	@Override
+    /**
+     * traverse tree and assign meta-data values in t to nodes in the
+     * tree to the meta-data field represented by the given pattern.
+     * This only has an effect when setMetadata() in a subclass
+     * of Node know how to process such value.
+     */
+    @Override
 	public void setMetaData(Node node, Double[] t, String pattern) {
-		// TODO Auto-generated method stub
-
+        node.setMetaData(pattern, t[Math.abs(node.getNr())]);
+        if (!node.isLeaf()) {
+            setMetaData(node.getLeft(), t, pattern);
+            if (node.getRight() != null) {
+                setMetaData(node.getRight(), t, pattern);
+            }
+        }
 	}
 
 	@Override
@@ -220,33 +260,84 @@ public class BinaryTree extends StateNode implements TreeInterface {
 
 	@Override
 	public StateNode copy() {
-		// TODO Auto-generated method stub
-		return null;
+        BinaryTree tree = new BinaryTree();
+        tree.initByName("taxonset", taxonsetInput.get());
+        tree.setID(getID());
+        tree.index = index;
+        System.arraycopy(height, 0, tree.height, 0, height.length);
+		System.arraycopy(left, 0, tree.left, 0, left.length);
+		System.arraycopy(right, 0, tree.right, 0, right.length);
+		System.arraycopy(parent, 0, tree.parent, 0, parent.length);
+        return tree;
 	}
 
 	@Override
 	public void assignTo(StateNode other) {
-		// TODO Auto-generated method stub
-
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Override
 	public void assignFrom(StateNode other) {
-		// TODO Auto-generated method stub
-
+		if (other instanceof BinaryTree) {
+	        final BinaryTree tree = (BinaryTree) other;        
+	        initByName("taxonset", tree.getTaxonset());
+	        assignFromFragile(other);
+	        setID(tree.getID());
+		} else if (other instanceof TreeInterface) {
+	        final TreeInterface tree = (TreeInterface) other;        
+	        initByName("taxonset", tree.getTaxonset());
+	        setID(tree.getID());
+	        assignFromFragile(other);
+		} else {
+			throw new IllegalArgumentException("Expected state node of type tree");
+		}
 	}
 
 	@Override
 	public void assignFromFragile(StateNode other) {
-		// TODO Auto-generated method stub
+		if (other instanceof BinaryTree) {
+	        final BinaryTree tree = (BinaryTree) other;        
+			System.arraycopy(tree.height, 0, height, 0, height.length);
+			System.arraycopy(tree.left, 0, left, 0, left.length);
+			System.arraycopy(tree.right, 0, right, 0, right.length);
+			System.arraycopy(tree.parent, 0, parent, 0, parent.length);
+		} else if (other instanceof TreeInterface) {
+	        final TreeInterface tree = (TreeInterface) other;	        
+	        Node [] otherNodes = tree.getNodesAsArray();
+	        for (int i = 0; i < otherNodes.length; i++) {
+	        	Node node = otherNodes[i];
+	        	height[i] = node.getHeight();
+	        	left[i] = node.getLeft() == null ? -1 : node.getLeft().getNr();
+	        	right[i] = node.getRight() == null ? -1 : node.getRight().getNr();
+	        	parent[i] = node.getParent() == null ? -1 : node.getParent().getNr();
+	        }        
+		} else {
+			throw new IllegalArgumentException("Expected state node of type tree");
+		}	
+	}
 
+	@Override
+	public String toString() {
+	    return getRoot().toString();
 	}
 
 	@Override
 	public void fromXML(org.w3c.dom.Node node) {
-		// TODO Auto-generated method stub
-
-	}
+        final String newick = node.getTextContent();
+        final TreeParser parser = new TreeParser();
+        try {
+            parser.thresholdInput.setValue(1e-10, parser);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        try {
+            parser.offsetInput.setValue(0, parser);
+            parser.parseNewick(newick);
+            assignFromFragile(parser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	@Override
 	public int scale(double scale) {
@@ -277,4 +368,5 @@ public class BinaryTree extends StateNode implements TreeInterface {
 	void startEditing() {
 		startEditing(null);
 	}
+
 }

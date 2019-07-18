@@ -68,4 +68,15 @@ public class BinaryNode extends Node {
         return toSortedNewick(maxNodeInClade, false);
     }
 
+    @Override
+    public void setMetaData(String pattern, Object value) {
+    	// TODO Auto-generated method stub
+    	super.setMetaData(pattern, value);
+    }
+    
+    @Override
+    public Object getMetaData(String pattern) {
+    	// TODO Auto-generated method stub
+    	return super.getMetaData(pattern);
+    }
 }
