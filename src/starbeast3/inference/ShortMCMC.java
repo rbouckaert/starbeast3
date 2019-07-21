@@ -48,9 +48,9 @@ public class ShortMCMC extends MCMC {
         }
         
         PrintStream orgErr = System.err;
-        System.setErr(nullstream);
-        operatorSchedule.restoreFromFile();
-        System.setErr(orgErr);
+//        System.setErr(nullstream);
+//        operatorSchedule.restoreFromFile();
+//        System.setErr(orgErr);
         
         burnIn = 0;
         oldLogLikelihood = state.robustlyCalcPosterior(posterior);

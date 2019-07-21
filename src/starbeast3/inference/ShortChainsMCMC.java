@@ -1,6 +1,7 @@
 package starbeast3.inference;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -210,16 +211,40 @@ public class ShortChainsMCMC extends MCMC {
 	} // run
 	
 	
+	final static boolean debug = true;
 	
 	boolean stop(double [] sample1, double [] sample2) {
+		if (debug) {
+			saveFile(sample1, "/tmp/sample1.log");
+			saveFile(sample2, "/tmp/sample2.log");
+		}
+		
+		
 		KolmogorovSmirnovTest test = new KolmogorovSmirnovTest();
 		double pValue = test.kolmogorovSmirnovTest(sample1, sample2);
 		Log.info("pValue = " + pValue);
-		return (pValue < pLevel);
+		return (pValue > 1 - pLevel);
 		
 //		MannWhitneyUTest test = new MannWhitneyUTest();
 //		double pValue = test.mannWhitneyUTest(sample1, sample2);
 //		return (pValue < 0.05);
+	}
+
+
+	private void saveFile(double[] sample2, String file) {
+		try {
+			StringBuilder log = new StringBuilder();
+			log.append("sampleNr\tvalue\n");
+			for (int i = 0; i < sample2.length; i++) {
+				log.append(i + "\t" + sample2[i] + "\n");
+			}
+			FileWriter outfile = new FileWriter(new File(file));
+			outfile.write(log.toString());
+			outfile.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 }

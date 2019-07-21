@@ -79,7 +79,7 @@
     		burnin="500"
     		every="1">
     		<!--
-    	    <transformations spec="starbeast3.util.Transform$LogTransform" parameter="@kappa"/>
+    	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
     	    -->
     	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" f="@freqParameter" sum="1.0"/>
     </operator>
