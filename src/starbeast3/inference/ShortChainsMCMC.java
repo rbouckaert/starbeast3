@@ -21,6 +21,7 @@ import beast.core.Input;
 import beast.core.Logger;
 import beast.core.Logger.LogFileMode;
 import beast.core.MCMC;
+import beast.core.StateNodeInitialiser;
 import beast.core.util.Log;
 import beast.util.XMLParser;
 import beast.util.XMLParserException;
@@ -166,6 +167,20 @@ public class ShortChainsMCMC extends MCMC {
 	@Override 
 	public void run() {
 		long startTime = System.currentTimeMillis();
+		
+		
+		if (Logger.FILE_MODE != Logger.LogFileMode.resume) {
+			
+			startStateInput.get().initialise();
+			startStateInput.get().setStateFileName(stateFileName);	
+            for (final StateNodeInitialiser initialiser : initialisersInput.get()) {
+                initialiser.initStateNodes();
+            }
+            startStateInput.get().storeToFile(0);
+		}
+				
+		
+		
 		// copy starting state
 		for (int i = 0; i < sampleCountInput.get(); i++) {
 			try {

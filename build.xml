@@ -29,7 +29,7 @@
         <pathelement path="${buildstarbeast3}"/>
 		<fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
 		<fileset dir="${libBeast2}" includes="jam.jar"/>
-		<fileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar"/>
+		<fileset dir="${libBeast2}" includes="commons-math3-3.6.1.jar"/>
         <pathelement path="${beast2classpath}"/>
         <pathelement path="../BEASTLabs/build"/>
 	</path>
@@ -110,7 +110,7 @@
 			<zipgroupfileset dir="${libBeast2}" includes="jam.jar" />
 			<zipgroupfileset dir="${libBeast2}" includes="beagle.jar" />
 			<zipgroupfileset dir="${libBeast2}" includes="colt.jar" />
-			<zipgroupfileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar" />
+			<zipgroupfileset dir="${libBeast2}" includes="commons-math3-3.6.1.jar" />
 			<zipgroupfileset dir="${libBeast2}" includes="antlr-runtime-4.7.jar" />
 		</jar>
 		<jar jarfile="${diststarbeast3}/starbeast3.src.jar">

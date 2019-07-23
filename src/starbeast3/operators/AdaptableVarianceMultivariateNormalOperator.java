@@ -345,7 +345,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
                 System.err.println("transformationSizes[i] = " + transformationSizes[i]);
             }
             if (MULTI) {
-                if (transformationSizes[i] > 1) {
+                if (transformationSizes[i] > 1 && transformationSums[i] != 0) {
                     double[] temp = transformations[i].inverse(transformedX, currentIndex, currentIndex + transformationSizes[i] - 1, transformationSums[i]);
                     for (int k = 0; k < temp.length; k++) {
                         parameter.setValue(currentIndex + k, temp[k]);
