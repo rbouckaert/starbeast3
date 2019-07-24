@@ -8,6 +8,7 @@
 <run id="mcmc" spec="MCMC" chainLength="200000">
     <state id="state" spec="State" storeEvery="10000">
         <stateNode idref="arg"/>
+        <stateNode idref="other"/>
         <stateNode idref="freqParameter"/>
         <stateNode idref="kappa"/>
     </state>
@@ -24,6 +25,14 @@
                                 3.0 5.99
                                 .0 3.0
 -->                                
+                </precision>
+           </distribution>
+           <distribution id="MultivariateNormal2" spec='beast.math.distributions.MultivariateNormalDistribution'>
+                <arg id="other" spec='parameter.RealParameter' value='0.0 0.0'/>
+                <mean id="mean2" spec='parameter.RealParameter' value='0.0 0.0'/>
+                <precision id="precision2" spec='parameter.RealParameter' minordimension='2'>
+                                3.0 0
+                                2.99 3.0
                 </precision>
            </distribution>
            <prior id="FrequenciesPrior" name="distribution">
@@ -68,8 +77,10 @@
     		every="1"
     		optimise="true">
     	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@arg"/>
+    	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@other"/>
     </operator>
 
+<!--
     <operator id="AdaptableVarianceMultivariateNormalOperator2" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
      		weight="3"
     		coefficient="1.0"
@@ -78,9 +89,6 @@
     		initial="1000"
     		burnin="500"
     		every="1">
-    		<!--
-    	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
-    	    -->
     	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" f="@freqParameter" sum="1.0"/>
     </operator>
 
@@ -94,6 +102,7 @@
     		every="1">
     	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
     </operator>
+-->
 
     <logger id="tracelog" spec="Logger" fileName="MultivariateNormal.log" logEvery="100" model="@MultivariateNormal" sanitiseHeaders="true" sort="smart">
         <log idref="posterior"/>
@@ -101,6 +110,7 @@
         <log idref="FrequenciesPrior"/>
         <log idref="KappaPrior"/>
         <log idref="arg"/>
+        <log idref="other"/>
         <log idref="freqParameter"/>
         <log idref="kappa"/>
     </logger>

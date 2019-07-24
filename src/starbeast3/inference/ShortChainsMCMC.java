@@ -12,7 +12,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.math3.stat.inference.*;
+import org.xml.sax.SAXException;
 
 import beast.app.BeastMCMC;
 import beast.app.tools.LogCombiner;
@@ -124,6 +127,7 @@ public class ShortChainsMCMC extends MCMC {
             		mcmc.setStateFile(stateFileName + i, true);
             		mcmc.run();
             		posterior[i] = mcmc.robustlyCalcPosterior(mcmc.posteriorInput.get());
+            		Log.warning.print(i + " ");
             		//Log.info("Round " + round + " sample " + i);
             	}
             } catch (Exception e) {
@@ -138,23 +142,45 @@ public class ShortChainsMCMC extends MCMC {
 
     CountDownLatch countDown;
 
-    private double [] calculateLogPUsingThreads(long chainLength) {
+    private double [] calculateUsingThreads(long chainLength) {
         try {
 
-            countDown = new CountDownLatch(nrOfThreads);
-            // kick off the threads
             int start = 0;
-            CoreRunnable [] coreRunnable = new CoreRunnable[nrOfThreads];
             double [] posterior = new double[sampleCountInput.get()];
-            for (int i = 0; i < nrOfThreads; i++) {
-    			// need this to keep regression testing time reasonable
-                int end = sampleCountInput.get() * (i+1) / nrOfThreads;
-                coreRunnable[i] = new CoreRunnable(mcmcs[i], start, end, posterior);
-                start = end;
-                exec.execute(coreRunnable[i]);
+
+            if (nrOfThreads > 1) {
+                // kick off nrOfThreads-1 threads
+	            countDown = new CountDownLatch(nrOfThreads - 1);
+	            CoreRunnable [] coreRunnable = new CoreRunnable[nrOfThreads];
+	            for (int i = 0; i < nrOfThreads-1; i++) {
+	    			// need this to keep regression testing time reasonable
+	                int end = sampleCountInput.get() * (i+1) / nrOfThreads;
+	                coreRunnable[i] = new CoreRunnable(mcmcs[i], start, end, posterior);
+	                start = end;
+	                exec.execute(coreRunnable[i]);
+	            }
             }
-            countDown.await();
-            Log.info("End of round " + round);
+            
+            
+            // do the work of thread [nrOfThreads] in main thread
+            MCMC mcmc = mcmcs[nrOfThreads - 1];
+        	for (int i = start; i < posterior.length; i++) {
+        		mcmc.setStateFile(stateFileName + i, true);
+        		try {
+					mcmc.run();
+				} catch (IOException | SAXException | ParserConfigurationException e) {
+					e.printStackTrace();
+				}
+        		posterior[i] = mcmc.robustlyCalcPosterior(mcmc.posteriorInput.get());
+        		Log.warning.print(i + " ");
+        		//Log.info("Round " + round + " sample " + i);
+        	}
+
+            
+            if (nrOfThreads > 1) {
+            	countDown.await();
+            }
+            Log.info("\nEnd of round " + round);
             
             return posterior;
         } catch (RejectedExecutionException | InterruptedException e) {
@@ -194,13 +220,13 @@ public class ShortChainsMCMC extends MCMC {
 		Logger.FILE_MODE = LogFileMode.resume;
 		
 		long chainLength = chainLengthInput.get();
-		double [] newSample = calculateLogPUsingThreads(chainLength);
+		double [] newSample = calculateUsingThreads(chainLength);
 		double [] oldSample;
 		
 		do {
 			round++;
 			oldSample = newSample;
-			newSample = calculateLogPUsingThreads(chainLength);
+			newSample = calculateUsingThreads(chainLength);
 			//chainLength *= 2;
 		} while (!stop(oldSample, newSample));
 		
