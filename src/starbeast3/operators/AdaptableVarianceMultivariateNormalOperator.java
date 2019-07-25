@@ -162,7 +162,13 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
                 System.err.println("transformationSizes[i] = " + transformationSizes[i]);
             }
             if (transformationSizes[i] > 1) {
-                System.arraycopy(transformations[i].transform(x, currentIndex, currentIndex + transformationSizes[i] - 1),0,transformedX,currentIndex,transformationSizes[i]);
+            	if (transformationSums[i] != 0) {
+            		final double [] t = transformations[i].transform(x, currentIndex, currentIndex + transformationSizes[i] - 1);
+            		System.arraycopy(t,0,transformedX,currentIndex,transformationSizes[i]);
+            	} else {
+            		final double [] t = transformations[i].transform(x, currentIndex, currentIndex + transformationSizes[i]);
+            		System.arraycopy(t,0,transformedX,currentIndex,transformationSizes[i]);            		
+            	}
             } else {
                 transformedX[currentIndex] = transformations[i].transform(x[currentIndex]);
                 if (DEBUG) {
@@ -345,12 +351,20 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
                 System.err.println("transformationSizes[i] = " + transformationSizes[i]);
             }
             if (MULTI) {
-                if (transformationSizes[i] > 1 && transformationSums[i] != 0) {
-                    double[] temp = transformations[i].inverse(transformedX, currentIndex, currentIndex + transformationSizes[i] - 1, transformationSums[i]);
-                    for (int k = 0; k < temp.length; k++) {
-                        parameter.setValue(currentIndex + k, temp[k]);
-                    }
-                    logJacobian += transformations[i].getLogJacobian(x, currentIndex, currentIndex + transformationSizes[i] - 1) - transformations[i].getLogJacobian(temp, 0, transformationSizes[i] - 1);
+                if (transformationSizes[i] > 1) {
+                	if (transformationSums[i] != 0) {
+                		double[] temp = transformations[i].inverse(transformedX, currentIndex, currentIndex + transformationSizes[i] - 1, transformationSums[i]);
+                		for (int k = 0; k < temp.length; k++) {
+                			parameter.setValue(currentIndex + k, temp[k]);
+                		}
+                		logJacobian += transformations[i].getLogJacobian(x, currentIndex, currentIndex + transformationSizes[i] - 1) - transformations[i].getLogJacobian(temp, 0, transformationSizes[i] - 1);
+                	} else {
+                		double[] temp = transformations[i].inverse(transformedX, currentIndex, currentIndex + transformationSizes[i]);
+                		for (int k = 0; k < temp.length; k++) {
+                			parameter.setValue(currentIndex + k, temp[k]);
+                		}
+                		logJacobian += transformations[i].getLogJacobian(x, currentIndex, currentIndex + transformationSizes[i]) - transformations[i].getLogJacobian(temp, 0, transformationSizes[i]);
+                	}
                 } else {
                     parameter.setValue(currentIndex, transformations[i].inverse(transformedX[currentIndex]));
                     logJacobian += transformations[i].getLogJacobian(x[currentIndex]) - transformations[i].getLogJacobian(parameter.getValue(currentIndex));

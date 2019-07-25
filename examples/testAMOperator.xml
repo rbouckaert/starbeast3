@@ -80,7 +80,6 @@
     	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@other"/>
     </operator>
 
-<!--
     <operator id="AdaptableVarianceMultivariateNormalOperator2" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
      		weight="3"
     		coefficient="1.0"
@@ -102,7 +101,6 @@
     		every="1">
     	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
     </operator>
--->
 
     <logger id="tracelog" spec="Logger" fileName="MultivariateNormal.log" logEvery="100" model="@MultivariateNormal" sanitiseHeaders="true" sort="smart">
         <log idref="posterior"/>

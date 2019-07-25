@@ -184,21 +184,35 @@ public interface Transform {
 		public abstract double transform(double value);
 
         public double[] transform(double[] values, int from, int to) {
-            double[] result = values.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = transform(values[i]);
+            double[] transformedValues = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+                transformedValues[counter] = transform(values[i]);
+                counter++;
             }
-            return result;
+            return transformedValues;
+//            double[] result = values.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = transform(values[i]);
+//            }
+//            return result;
         }
 
         public abstract double inverse(double value);
 
         public double[] inverse(double[] values, int from, int to) {
-            double[] result = values.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = inverse(values[i]);
+            double[] inverse = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+            	inverse[counter] = inverse(values[i]);
+                counter++;
             }
-            return result;
+            return inverse;
+//            double[] result = values.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = inverse(values[i]);
+//            }
+//            return result;
         }
 
         public double[] inverse(double[] values, int from, int to, double sum) {
@@ -208,11 +222,18 @@ public interface Transform {
         public abstract double gradientInverse(double value);
 
         public double[] gradientInverse(double[] values, int from, int to) {
-            double[] result = values.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = gradientInverse(values[i]);
+            double[] result = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+            	result[counter] = gradientInverse(values[i]);
+                counter++;
             }
             return result;
+//            double[] result = values.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = gradientInverse(values[i]);
+//            }
+//            return result;
         }
 
         public double updateGradientLogDensity(double gradient, double value) {
@@ -221,19 +242,33 @@ public interface Transform {
         }
 
         public double[] updateGradientLogDensity(double[] gradient, double[] value , int from, int to) {
-            double[] result = value.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = updateGradientLogDensity(gradient[i], value[i]);
+            double[] result = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+            	result[counter] = updateGradientLogDensity(gradient[i], value[i]);
+                counter++;
             }
             return result;
+//            double[] result = value.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = updateGradientLogDensity(gradient[i], value[i]);
+//            }
+//            return result;
         }
 
         public double[] updateDiagonalHessianLogDensity(double[] diagonalHessian, double[] gradient, double[] value, int from, int to) {
-            double[] result = value.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = updateDiagonalHessianLogDensity(diagonalHessian[i], gradient[i], value[i]);
+            double[] result = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+            	result[counter] = updateDiagonalHessianLogDensity(diagonalHessian[i], gradient[i], value[i]);
+                counter++;
             }
             return result;
+//            double[] result = value.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = updateDiagonalHessianLogDensity(diagonalHessian[i], gradient[i], value[i]);
+//            }
+//            return result;
         }
 
         public double updateGradientInverseUnWeightedLogDensity(double gradient, double value) {
@@ -247,19 +282,33 @@ public interface Transform {
         }
 
         public double[] updateGradientInverseUnWeightedLogDensity(double[] gradient, double[] value, int from, int to) {
-            double[] result = value.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = updateGradientInverseUnWeightedLogDensity(gradient[i], value[i]);
+            double[] result = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+            	result[counter] = updateGradientInverseUnWeightedLogDensity(gradient[i], value[i]);
+                counter++;
             }
             return result;
+//            double[] result = value.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = updateGradientInverseUnWeightedLogDensity(gradient[i], value[i]);
+//            }
+//            return result;
         }
 
         public double[] updateGradientUnWeightedLogDensity(double[] gradient, double[] value, int from, int to) {
-            double[] result = value.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = updateGradientUnWeightedLogDensity(gradient[i], value[i]);
+            double[] result = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+            	result[counter] = updateGradientUnWeightedLogDensity(gradient[i], value[i]);
+                counter++;
             }
             return result;
+//            double[] result = value.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = updateGradientUnWeightedLogDensity(gradient[i], value[i]);
+//            }
+//            return result;
         }
 
         public double[][] updateHessianLogDensity(double[][] hessian, double[][] transformationHessian, double[] gradient, double[] value, int from, int to) {
@@ -282,21 +331,33 @@ public interface Transform {
 
         @Override
         public double[] gradient(double[] values, int from, int to) {
-            double[] result = values.clone();
-            for (int i = from; i < to; ++i) {
-                result[i] = gradient(values[i]);
+            double[] result = new double[to - from];
+            int counter = 0;
+            for (int i = from; i < to; i++) {
+            	result[counter] = gradient(values[i]);
+                counter++;
             }
             return result;
+//            double[] result = values.clone();
+//            for (int i = from; i < to; ++i) {
+//                result[i] = gradient(values[i]);
+//            }
+//            return result;
         }
 
         public abstract double getLogJacobian(double value);
 
         public double getLogJacobian(double[] values, int from, int to) {
             double sum = 0.0;
-            for (int i = from; i < to; ++i) {
+            for (int i = from; i < to; i++) {
                 sum += getLogJacobian(values[i]);
             }
             return sum;
+//            double sum = 0.0;
+//            for (int i = from; i < to; ++i) {
+//                sum += getLogJacobian(values[i]);
+//            }
+//            return sum;
         }
 
         public boolean isMultivariate() { return false;}
@@ -1029,10 +1090,10 @@ public interface Transform {
             return value;
         }
         
-        @Override
-        public double[] inverse(double[] values, int from, int to, double sum) {
-        	return values;
-        }
+//        @Override
+//        public double[] inverse(double[] values, int from, int to, double sum) {
+//        	return values;
+//        }
         
         public double updateGradientLogDensity(double gradient, double value) {
             return gradient;
