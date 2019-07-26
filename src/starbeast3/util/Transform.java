@@ -31,10 +31,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import beast.core.BEASTInterface;
 import beast.core.BEASTObject;
 import beast.core.Function;
 import beast.core.Input;
 import beast.core.Param;
+import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.math.matrixalgebra.Matrix;
 import beast.util.Randomizer;
 
@@ -539,6 +542,27 @@ public interface Transform {
     		initByName("f", parameter);
     	}
 
+    	@Override
+    	public void initAndValidate() {
+    		super.initAndValidate();
+    		for (Function f : parameter) {
+    			if (f instanceof RealParameter) {
+    				RealParameter p  = (RealParameter) f;
+    				if (p.getLower() < 0) {
+    					Log.warning("\n\nWarning: parameter " + p.getID() + " has lower bound < 0, which is not appropriate for a LogTransform\n");
+    				}
+    			}
+    			for (int i = 0; i < f.getDimension(); i++) {
+    				if (f.getArrayValue(i) <= 0) {
+    					Log.warning("\n\nWarning:" + f.getClass().getSimpleName() + " "
+							+ (f instanceof BEASTInterface ? ((BEASTInterface)f).getID() : "") + 
+							" has initial value <= 0, which is not appropriate for a LogTransform\n");
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	
     	public LogTransform(List<Function> parameter) {
     		super(parameter);
     	}
@@ -636,7 +660,23 @@ public interface Transform {
 			} else {
 				setWeights(Stream.of(weightsInput.get()).mapToDouble(Double::doubleValue).toArray());
 			}
-		}
+    		for (Function f : parameter) {
+    			if (f instanceof RealParameter) {
+    				RealParameter p  = (RealParameter) f;
+    				if (p.getLower() < 0) {
+    					Log.warning("\n\nWarning: parameter " + p.getID() + " has lower bound < 0, which is not appropriate for a LogConstrainedTransform\n");
+    				}
+    			}
+    			for (int i = 0; i < f.getDimension(); i++) {
+    				if (f.getArrayValue(i) <= 0) {
+    					Log.warning("\n\nWarning:" + f.getClass().getSimpleName() + " "
+							+ (f instanceof BEASTInterface ? ((BEASTInterface)f).getID() : "") + 
+							" has initial value <= 0, which is not appropriate for a LogConstrainedTransform\n");
+    					break;
+    				}
+    			}
+	    	}		
+	    }
 		
 		
         public double[] getWeights() {

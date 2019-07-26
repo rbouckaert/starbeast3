@@ -36,7 +36,7 @@ import beast.util.XMLProducer;
 public class ShortChainsMCMC extends MCMC {
     final public Input<Integer> maxNrOfThreadsInput = new Input<>("shortThreads","maximum number of threads to use, if less than 1 the number of threads in BeastMCMC is used (default -1)", -1);
     final public Input<Integer> sampleCountInput = new Input<>("sampleCount","number of samples to take to represent posterior distribution", 100);
-    final public Input<Double> pLevelInput = new Input<>("pLevel","significance level for testing posterior distribution has not changed", 0.05);
+    final public Input<Double> pLevelInput = new Input<>("pLevel","significance level for testing posterior distribution has not changed", 0.5);
 
 	/** plugins representing MCMC with model, loggers, etc **/
 	private MCMC [] mcmcs;
@@ -66,6 +66,7 @@ public class ShortChainsMCMC extends MCMC {
 		sXML = sXML.replaceAll("shortThreads=[^ >]*", "");		
 		sXML = sXML.replaceAll("pLevel=[^ >]*", "");
 		sXML = sXML.replaceAll("sampleCount=[^ >]*", "");
+		sXML = sXML.replaceAll("logEvery=\"[0-9]*\"", "logEvery=\"" + chainLength + "\"");
 		String ShortMCMCLogger = ShortMCMCLogger.class.getName();
 		sXML = sXML.replaceAll("spec=\"Logger\"", "spec=\"" + ShortMCMCLogger + "\"");
 		String ShortChainsMCMC = this.getClass().getName();
@@ -97,10 +98,6 @@ public class ShortChainsMCMC extends MCMC {
 			for (int iLogger = mcmcs[i].loggersInput.get().size()-1; iLogger >= 0; iLogger--) {
 				if (mcmcs[i].loggersInput.get().get(iLogger).fileNameInput.get() == null) {
 					mcmcs[i].loggersInput.get().remove(iLogger);
-				} else {
-					// only log after chainLengthInput.get() samples
-					Logger l = mcmcs[i].loggersInput.get().get(iLogger);
-					l.everyInput.setValue((int) chainLength, l);
 				}
 			}
 		}
@@ -264,7 +261,7 @@ public class ShortChainsMCMC extends MCMC {
 		KolmogorovSmirnovTest test = new KolmogorovSmirnovTest();
 		double pValue = test.kolmogorovSmirnovTest(sample1, sample2);
 		Log.info("pValue = " + pValue);
-		return (pValue > 1 - pLevel);
+		return (pValue > pLevel);
 		
 //		MannWhitneyUTest test = new MannWhitneyUTest();
 //		double pValue = test.mannWhitneyUTest(sample1, sample2);
