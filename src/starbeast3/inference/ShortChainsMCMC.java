@@ -52,6 +52,8 @@ public class ShortChainsMCMC extends MCMC {
 		round = 0;
 		pLevel = pLevelInput.get();
 		nrOfThreads = Math.min(maxNrOfThreadsInput.get(), BeastMCMC.m_nThreads);
+		// prevent any of the short chain MCMSs threading:
+		BeastMCMC.m_nThreads = 1;
 		exec = Executors.newFixedThreadPool(nrOfThreads);
 		chainLength = chainLengthInput.get();
 
@@ -81,29 +83,79 @@ public class ShortChainsMCMC extends MCMC {
 
 		
 		// create new chains
-		XMLParser parser = new XMLParser();
+        countDown = new CountDownLatch(nrOfThreads);
 		for (int i = 0; i < mcmcs.length; i++) {
-			String sXML2 = sXML;
-			sXML2 = sXML2.replaceAll("fileName=\"","fileName=\"" + i);
-			if (sXML2.equals(sXML)) {
-				// Uh oh, no seed in log name => logs will overwrite
-				throw new IllegalArgumentException("Use $(seed) in log file name to guarantee log files do not overwrite");
-			}
-			try {
-				mcmcs[i] = (MCMC) parser.parseFragment(sXML2, true);
-			} catch (XMLParserException e) {
-				throw new IllegalArgumentException(e);
-			}
-			// remove log to stdout, if any
-			for (int iLogger = mcmcs[i].loggersInput.get().size()-1; iLogger >= 0; iLogger--) {
-				if (mcmcs[i].loggersInput.get().get(iLogger).fileNameInput.get() == null) {
-					mcmcs[i].loggersInput.get().remove(iLogger);
-				}
-			}
+            exec.execute(new CoreInit(sXML,i));
 		}
+		try {
+			countDown.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+//		for (int i = 0; i < mcmcs.length; i++) {
+//			String sXML2 = sXML;
+//			sXML2 = sXML2.replaceAll("fileName=\"","fileName=\"" + i);
+//			if (sXML2.equals(sXML)) {
+//				// Uh oh, no seed in log name => logs will overwrite
+//				throw new IllegalArgumentException("Use $(seed) in log file name to guarantee log files do not overwrite");
+//			}
+//			try {
+//				XMLParser parser = new XMLParser();
+//				mcmcs[i] = (MCMC) parser.parseFragment(sXML2, true);
+//			} catch (XMLParserException e) {
+//				throw new IllegalArgumentException(e);
+//			}
+//			// remove log to stdout, if any
+//			for (int iLogger = mcmcs[i].loggersInput.get().size()-1; iLogger >= 0; iLogger--) {
+//				if (mcmcs[i].loggersInput.get().get(iLogger).fileNameInput.get() == null) {
+//					mcmcs[i].loggersInput.get().remove(iLogger);
+//				}
+//			}
+//		}
 	
 	} // initAndValidate
 	
+	
+    class CoreInit implements Runnable {
+    	String sXML;
+    	int i;
+    	
+        CoreInit(String xml, int index) {
+        	this.sXML = xml;
+        	this.i = index;
+        }
+
+        @Override
+		public void run() {
+            try {
+    			String sXML2 = sXML;
+    			sXML2 = sXML2.replaceAll("fileName=\"","fileName=\"" + i);
+    			if (sXML2.equals(sXML)) {
+    				// Uh oh, no seed in log name => logs will overwrite
+    				throw new IllegalArgumentException("Use $(seed) in log file name to guarantee log files do not overwrite");
+    			}
+    			try {
+    				XMLParser parser = new XMLParser();
+    				mcmcs[i] = (MCMC) parser.parseFragment(sXML2, true);
+    			} catch (XMLParserException e) {
+    				throw new IllegalArgumentException(e);
+    			}
+    			// remove log to stdout, if any
+    			for (int iLogger = mcmcs[i].loggersInput.get().size()-1; iLogger >= 0; iLogger--) {
+    				if (mcmcs[i].loggersInput.get().get(iLogger).fileNameInput.get() == null) {
+    					mcmcs[i].loggersInput.get().remove(iLogger);
+    				}
+    			}
+            } catch (Exception e) {
+                Log.err.println("Something went wrong initialising MCMC[" + i + "]");
+                e.printStackTrace();
+                System.exit(1);
+            }
+            countDown.countDown();
+        }
+        
+    } // CoreInit
 	
     class CoreRunnable implements Runnable {
         MCMC mcmc;
