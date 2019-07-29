@@ -91,4 +91,8 @@ public class ShortMCMC extends MCMC {
         operatorSchedule.storeToFile();
     } // run;
 
+	public void setChainLength(long chainLength) {
+		this.chainLength = chainLength;		
+	}
+
 }

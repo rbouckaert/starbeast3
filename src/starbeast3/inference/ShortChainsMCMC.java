@@ -37,14 +37,16 @@ public class ShortChainsMCMC extends MCMC {
     final public Input<Integer> maxNrOfThreadsInput = new Input<>("shortThreads","maximum number of threads to use, if less than 1 the number of threads in BeastMCMC is used (default -1)", -1);
     final public Input<Integer> sampleCountInput = new Input<>("sampleCount","number of samples to take to represent posterior distribution", 100);
     final public Input<Double> pLevelInput = new Input<>("pLevel","significance level for testing posterior distribution has not changed", 0.5);
+    final public Input<Double> multiplierInput = new Input<>("chainLengthMultiplier", "chain length multiplier, used to increase chain length after each iteration", 1.0);
 
 	/** plugins representing MCMC with model, loggers, etc **/
-	private MCMC [] mcmcs;
+	private ShortMCMC [] mcmcs;
 
 	private int nrOfThreads;
 	private static ExecutorService exec;
 	private double pLevel;
 	private int round;
+	private double multiplier;
 
 	
 	@Override
@@ -57,7 +59,7 @@ public class ShortChainsMCMC extends MCMC {
 		exec = Executors.newFixedThreadPool(nrOfThreads);
 		chainLength = chainLengthInput.get();
 
-		mcmcs = new MCMC[nrOfThreads];
+		mcmcs = new ShortMCMC[nrOfThreads];
 
 		// the difference between the various chains is
 		// 1. it runs an MCMC, not a ShortChainsMCMC
@@ -80,7 +82,8 @@ public class ShortChainsMCMC extends MCMC {
 				ShortChainsMCMC = "";
 			}
 		}
-
+		
+		multiplier = multiplierInput.get();
 		
 		// create new chains
         countDown = new CountDownLatch(nrOfThreads);
@@ -137,7 +140,7 @@ public class ShortChainsMCMC extends MCMC {
     			}
     			try {
     				XMLParser parser = new XMLParser();
-    				mcmcs[i] = (MCMC) parser.parseFragment(sXML2, true);
+    				mcmcs[i] = (ShortMCMC) parser.parseFragment(sXML2, true);
     			} catch (XMLParserException e) {
     				throw new IllegalArgumentException(e);
     			}
@@ -212,9 +215,10 @@ public class ShortChainsMCMC extends MCMC {
             
             
             // do the work of thread [nrOfThreads] in main thread
-            MCMC mcmc = mcmcs[nrOfThreads - 1];
+            ShortMCMC mcmc = mcmcs[nrOfThreads - 1];
         	for (int i = start; i < posterior.length; i++) {
         		mcmc.setStateFile(stateFileName + i, true);
+        		mcmc.setChainLength(chainLength);
         		try {
 					mcmc.run();
 				} catch (IOException | SAXException | ParserConfigurationException e) {
@@ -276,7 +280,7 @@ public class ShortChainsMCMC extends MCMC {
 			round++;
 			oldSample = newSample;
 			newSample = calculateUsingThreads(chainLength);
-			//chainLength *= 2;
+			chainLength *= multiplier;
 		} while (!stop(oldSample, newSample));
 		
 		long endTime = System.currentTimeMillis();
