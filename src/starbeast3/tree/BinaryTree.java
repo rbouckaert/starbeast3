@@ -5,18 +5,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import beast.core.BEASTInterface;
 import beast.core.Description;
-import beast.core.Input;
 import beast.core.StateNode;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
+import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import beast.util.TreeParser;
 
 @Description("Binary tree with efficient store/restore")
-public class BinaryTree extends StateNode implements TreeInterface {
-    final public Input<TaxonSet> taxonsetInput = new Input<>("taxonset",
-            "set of taxa that correspond to the leafs in the tree");
+public class BinaryTree extends Tree implements TreeInterface {
+//    final public Input<TaxonSet> taxonsetInput = new Input<>("taxonset",
+//            "set of taxa that correspond to the leafs in the tree");
 
 	int [] parent;
 	int [] left;
@@ -28,22 +29,32 @@ public class BinaryTree extends StateNode implements TreeInterface {
 	int [] storedRight;
 	double [] storedHeight;
 	
-	String [] taxa;
-
 	protected BinaryNode[] nodes = null;
 
 	@Override
 	public void initAndValidate() {
-		List<String> taxaList = taxonsetInput.get().asStringList();
-		taxa = taxaList.toArray(new String[] {});
-		int leafCount = taxa.length;
-		int nodeCount = leafCount * 2 -1;
+		List<String> taxaList = m_taxonset.get().asStringList();
+		m_sTaxaNames = taxaList.toArray(new String[] {});
+		leafNodeCount = m_sTaxaNames.length;
+		nodeCount = leafNodeCount * 2 - 1;
+		internalNodeCount = leafNodeCount - 1;
+		
+		parent = new int[nodeCount];
+		left = new int[nodeCount];
+		right = new int[nodeCount];
+		height = new double[nodeCount];
 				
+		storedParent = new int[nodeCount];
+		storedLeft = new int[nodeCount];
+		storedRight = new int[nodeCount];
+		storedHeight = new double[nodeCount];
 				
 		nodes = new BinaryNode[nodeCount];
 		for (int i = 0; i < nodeCount; i++) {
 			nodes[i] = new BinaryNode(i, this);
 		}
+		
+		root = nodes[nodeCount - 1];
 	}
 
 	
@@ -150,12 +161,12 @@ public class BinaryTree extends StateNode implements TreeInterface {
 
 	@Override
 	public int getLeafNodeCount() {
-		return taxa.length;
+		return m_sTaxaNames.length;
 	}
 
 	@Override
 	public int getInternalNodeCount() {
-		return taxa.length - 1;
+		return m_sTaxaNames.length - 1;
 	}
 
 	@Override
@@ -181,7 +192,7 @@ public class BinaryTree extends StateNode implements TreeInterface {
 	@Override
 	public List<Node> getExternalNodes() {
 		List<Node> externalNodes = new ArrayList<>();
-		for (int i = 0; i < taxa.length; i++) {
+		for (int i = 0; i < m_sTaxaNames.length; i++) {
 			externalNodes.add(nodes[i]);
 		}
 		return externalNodes;
@@ -190,7 +201,7 @@ public class BinaryTree extends StateNode implements TreeInterface {
 	@Override
 	public List<Node> getInternalNodes() {
 		List<Node> internalNodes = new ArrayList<>();
-		for (int i = taxa.length; i < taxa.length*2 - 1; i++) {
+		for (int i = m_sTaxaNames.length; i < m_sTaxaNames.length*2 - 1; i++) {
 			internalNodes.add(nodes[i]);
 		}
 		return internalNodes;
@@ -198,7 +209,7 @@ public class BinaryTree extends StateNode implements TreeInterface {
 
 	@Override
 	public TaxonSet getTaxonset() {
-        return taxonsetInput.get();
+        return m_taxonset.get();
 	}
 
 	   /**
@@ -259,9 +270,9 @@ public class BinaryTree extends StateNode implements TreeInterface {
 	}
 
 	@Override
-	public StateNode copy() {
+	public Tree copy() {
         BinaryTree tree = new BinaryTree();
-        tree.initByName("taxonset", taxonsetInput.get());
+        tree.initByName("taxonset", m_taxonset.get());
         tree.setID(getID());
         tree.index = index;
         System.arraycopy(height, 0, tree.height, 0, height.length);
@@ -284,8 +295,12 @@ public class BinaryTree extends StateNode implements TreeInterface {
 	        assignFromFragile(other);
 	        setID(tree.getID());
 		} else if (other instanceof TreeInterface) {
-	        final TreeInterface tree = (TreeInterface) other;        
-	        initByName("taxonset", tree.getTaxonset());
+	        final TreeInterface tree = (TreeInterface) other;
+	        if (tree.getTaxonset() != null) {
+	        	initByName("taxonset", tree.getTaxonset());
+	        } else {
+	        	initByName("taxa", ((BEASTInterface)tree).getInput("taxa").get());
+	        }
 	        setID(tree.getID());
 	        assignFromFragile(other);
 		} else {
@@ -342,10 +357,10 @@ public class BinaryTree extends StateNode implements TreeInterface {
 	@Override
 	public int scale(double scale) {
         startEditing();
-        for (int i = taxa.length; i < taxa.length * 2 -1 ; i++) {
+        for (int i = m_sTaxaNames.length; i < m_sTaxaNames.length * 2 -1 ; i++) {
         	height[i] *= scale;
         }
-		return taxa.length - 1;
+		return m_sTaxaNames.length - 1;
 	}
 
 	@Override
@@ -369,4 +384,43 @@ public class BinaryTree extends StateNode implements TreeInterface {
 		startEditing(null);
 	}
 
+    public void setRoot(final Node newroot) {
+        final int n = nodes.length - 1;
+        final int m = newroot.getNr();
+        if (m != n) {
+            // ensure root is the last node
+        	int tmp = left[n];
+        	left[n] = left[m];
+        	left[m] = tmp;
+        	if (left[n] == n) {
+        		left[n] = m;
+        	}
+         	
+        	tmp = right[n];
+        	right[n] = right[m];
+        	right[m] = tmp;
+        	if (right[n] == n) {
+        		right[n] = m;
+        	}
+        	
+        	tmp = parent[n];
+        	parent[n] = parent[m];
+        	parent[m] = tmp;
+        	
+        	parent[left[n]] = n;
+        	parent[right[n]] = n;
+        	parent[left[m]] = m;
+        	parent[right[m]] = m;
+
+        	double tmp2 = height[n];
+        	height[n] = height[m];
+        	height[m] = tmp2;
+        	
+        	BinaryNode tmp3 = nodes[n];
+        	nodes[n] = nodes[m];
+        	nodes[m] = tmp3;
+        	nodes[n].setNr(n);
+        	nodes[m].setNr(m);
+        }
+    }
 }

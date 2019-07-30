@@ -1,11 +1,16 @@
 package starbeast3.tree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import beast.evolution.tree.Node;
+import beast.evolution.tree.Tree;
 
 
 /** node in a binary tree **/
 public class BinaryNode extends Node {
-	BinaryTree tree;
+	private BinaryTree tree;
+    private List<Node> children;
 	
 	public BinaryNode(int labelNr, BinaryTree tree) {
 		this.labelNr = labelNr;
@@ -14,8 +19,8 @@ public class BinaryNode extends Node {
 	
 	@Override
 	public String getID() {
-		if (labelNr < tree.taxa.length) {
-			return tree.taxa[labelNr];
+		if (labelNr < tree.getTaxaNames().length) {
+			return tree.getTaxaNames()[labelNr];
 		}
 		return null;
 	}
@@ -32,18 +37,27 @@ public class BinaryNode extends Node {
     }
 
     @Override
-	public Node getLeft() {		
-		return tree.nodes[tree.left[labelNr]];
+	public Node getLeft() {
+    	if (tree.left[labelNr] >= 0) {
+    		return tree.nodes[tree.left[labelNr]];
+    	}
+    	return null;
 	}
 
 	@Override
 	public Node getRight() {		
-		return tree.nodes[tree.right[labelNr]];
+    	if (tree.right[labelNr] >= 0) {
+    		return tree.nodes[tree.right[labelNr]];
+    	}
+    	return null;
 	}
 
 	@Override
 	public Node getParent() {		
-		return tree.nodes[tree.parent[labelNr]];
+    	if (tree.parent[labelNr] >= 0) {
+    		return tree.nodes[tree.parent[labelNr]];
+    	}
+    	return null;
 	}
 
 	@Override
@@ -56,27 +70,100 @@ public class BinaryNode extends Node {
 	
 	@Override
 	public boolean isRoot() {
-		return labelNr == tree.nodes.length - 1;
+		return getParent() == null;
 	}
 	
 	@Override
 	public boolean isLeaf() {
-		return labelNr < tree.taxa.length;
+		return labelNr < tree.getLeafNodeCount();
 	}
 
     public String toSortedNewick(final int[] maxNodeInClade) {
         return toSortedNewick(maxNodeInClade, false);
     }
+        
+    @Override
+    public List<Node> getChildren() {
+    	if (children == null) {
+    		children = new ArrayList<Node>(); 
+    		children.add(getLeft());
+    		children.add(getRight());
+    		return children;
+    	}
+    	children.set(0, getLeft());
+    	children.set(1, getRight());
+    	return children;
+    }
 
     @Override
-    public void setMetaData(String pattern, Object value) {
-    	// TODO Auto-generated method stub
-    	super.setMetaData(pattern, value);
+    public int getNodeCount() {
+		if (isLeaf()) {
+			return 1;
+		}
+        int nodes = 1;
+        nodes += getLeft().getNodeCount();
+        nodes += getRight().getNodeCount();
+        return nodes;
     }
     
     @Override
-    public Object getMetaData(String pattern) {
-    	// TODO Auto-generated method stub
-    	return super.getMetaData(pattern);
+    public void removeChild(Node child) {
+        startEditing();
+        if (getLeft().getNr() == child.getNr()) {
+        	tree.left[labelNr] = -1;
+        } else {
+        	tree.right[labelNr] = -1;
+        }
+    }
+    
+    @Override
+    public void removeAllChildren(final boolean inOperator) {
+    	throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public void addChild(Node child) {
+        startEditing();
+        child.setParent(this);
+        if (tree.left[labelNr] < 0) {
+    		tree.left[labelNr] = child.getNr();
+    	} else {
+    		tree.right[labelNr] = child.getNr();
+    	}
+    }
+    
+    @Override
+    public void setParent(Node parent) {
+    	if (parent == null) {
+    		tree.parent[labelNr] = -1;
+    	} else {
+    		tree.parent[labelNr] = parent.getNr();
+    	}
+    }
+    
+    @Override
+    public int scale(final double scale) {
+        startEditing();
+
+        int dof = 0;
+
+        makeDirty(Tree.IS_DIRTY);
+        if (!isLeaf() && !isFake()) {
+            setHeight(getHeight() * scale);
+
+            if (isRoot() || getParent().getHeight() != getHeight())
+                dof += 1;
+        }
+        if (!isLeaf()) {
+            dof += getLeft().scale(scale);
+            if (getRight() != null) {
+                dof += getRight().scale(scale);
+            }
+            if (height < getLeft().getHeight() || height < getRight().getHeight()) {
+                throw new IllegalArgumentException("Scale gives negative branch length");
+            }
+        }
+
+        return dof;
     }
 }
