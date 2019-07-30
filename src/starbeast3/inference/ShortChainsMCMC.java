@@ -1,8 +1,11 @@
 package starbeast3.inference;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -70,6 +73,7 @@ public class ShortChainsMCMC extends MCMC {
 		sXML = sXML.replaceAll("shortThreads=[^ >]*", "");		
 		sXML = sXML.replaceAll("pLevel=[^ >]*", "");
 		sXML = sXML.replaceAll("sampleCount=[^ >]*", "");
+		sXML = sXML.replaceAll("chainLengthMultiplier=[^ >]*", "");		
 		sXML = sXML.replaceAll("logEvery=\"[0-9]*\"", "logEvery=\"" + chainLength + "\"");
 		String ShortMCMCLogger = ShortMCMCLogger.class.getName();
 		sXML = sXML.replaceAll("spec=\"Logger\"", "spec=\"" + ShortMCMCLogger + "\"");
@@ -95,27 +99,6 @@ public class ShortChainsMCMC extends MCMC {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-//		for (int i = 0; i < mcmcs.length; i++) {
-//			String sXML2 = sXML;
-//			sXML2 = sXML2.replaceAll("fileName=\"","fileName=\"" + i);
-//			if (sXML2.equals(sXML)) {
-//				// Uh oh, no seed in log name => logs will overwrite
-//				throw new IllegalArgumentException("Use $(seed) in log file name to guarantee log files do not overwrite");
-//			}
-//			try {
-//				XMLParser parser = new XMLParser();
-//				mcmcs[i] = (MCMC) parser.parseFragment(sXML2, true);
-//			} catch (XMLParserException e) {
-//				throw new IllegalArgumentException(e);
-//			}
-//			// remove log to stdout, if any
-//			for (int iLogger = mcmcs[i].loggersInput.get().size()-1; iLogger >= 0; iLogger--) {
-//				if (mcmcs[i].loggersInput.get().get(iLogger).fileNameInput.get() == null) {
-//					mcmcs[i].loggersInput.get().remove(iLogger);
-//				}
-//			}
-//		}
 	
 	} // initAndValidate
 	
@@ -286,25 +269,106 @@ public class ShortChainsMCMC extends MCMC {
 		long endTime = System.currentTimeMillis();
         Log.info.println("Total calculation time: " + (endTime - startTime) / 1000.0 + " seconds");
 
+        
+        try {
+			combineLogs();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	} // run
+	
+	private void combineLogs() throws IOException {
         // combine logs
         for (Logger log : loggersInput.get()) {
         	if (log.fileNameInput.get() != null) {
-        		List<String> args = new ArrayList<>();
-        		args.add("-renumber");
-        		args.add("-burnin");
-        		args.add(100 * round / (round + 1) + "");        		
-        		args.add("-log");
+        		PrintStream out = new PrintStream(log.fileNameInput.get());
+        		boolean isTreeLog = processHeader(log.fileNameInput.get(), out);
+        		        		
+        		int start = 0;
+        		int sampleCount = 0;
         		for (int i = 0; i < nrOfThreads; i++) {
-        			args.add(i + log.fileNameInput.get());
-        		}
-        		args.add("-o");
-        		args.add(log.fileNameInput.get());
-            	LogCombiner.main(args.toArray(new String[]{}));
+        			int lineCount = 0;
+        	        BufferedReader fin = new BufferedReader(new FileReader(i + log.fileNameInput.get()));
+        	        while (fin.ready()) {
+        	        	lineCount++;
+        	        	fin.readLine();
+        	        }
+        	        fin.close();        			
+
+        	        fin = new BufferedReader(new FileReader(i + log.fileNameInput.get()));
+	                int end = sampleCountInput.get() * (i+1) / nrOfThreads;
+	                int samples = (end - start) * 2;
+	                int skip = lineCount - samples - (isTreeLog ? 1 : 0);
+	                for (int k = 0; k < skip; k++) {
+	                	fin.readLine();
+	                }
+	                for (int k = 0; k < samples; k++) {
+	                	String str = fin.readLine();
+	                	// renumber
+	                	if (isTreeLog) {
+	                		str = "tree STATE_" + sampleCount + str.substring(str.indexOf('='));
+	                	} else {
+	                		str = sampleCount + str.substring(str.indexOf('\t'));
+	                	}
+	                	sampleCount++;
+	                	out.println(str);
+	                }
+        			start = end;
+        	        fin.close();
+        		}        		
+        		
+        		out.close();
+        		
+//        		List<String> args = new ArrayList<>();
+//        		args.add("-renumber");
+//        		args.add("-burnin");
+//        		args.add(100 * round / (round + 1) + "");        		
+//        		args.add("-log");
+//        		for (int i = 0; i < nrOfThreads; i++) {
+//        			args.add(i + log.fileNameInput.get());
+//        		}
+//        		args.add("-o");
+//        		args.add(log.fileNameInput.get());
+//            	LogCombiner.main(args.toArray(new String[]{}));
         	}
+        }		
+	}
+
+
+	private boolean processHeader(String fileName, PrintStream out) throws IOException {
+        BufferedReader fin = new BufferedReader(new FileReader("0" + fileName));
+        String str = fin.readLine();
+        if (str.toUpperCase().startsWith("#NEXUS")) {
+    		out.println(str);
+        	while (fin.ready()) {
+        		str = fin.readLine();
+        		if (str.startsWith("tree STATE")) {
+        			return true;
+        		}
+        		out.println(str);
+        	}
+        	fin.close();
+        	return true;
         }
-	} // run
-	
-	
+        if (!str.startsWith("#")) {
+    		out.println(str);
+        	fin.close();
+    		return false;
+        }
+    	while (fin.ready()) {
+    		str = fin.readLine();
+    		if (!str.startsWith("#")) {
+        		out.println(str);
+    	    	fin.close();
+    			return false;
+    		}
+    	}		
+    	fin.close();
+		return false;
+	}
+
+
 	final static boolean debug = true;
 	
 	boolean stop(double [] sample1, double [] sample2) {
