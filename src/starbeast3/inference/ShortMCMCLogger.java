@@ -100,4 +100,9 @@ public class ShortMCMCLogger extends Logger {
 			return true;
 		}
 	} // openLogFile
+	
+	public void setEvery(long every) {
+		this.every = every;
+	}
+
 }

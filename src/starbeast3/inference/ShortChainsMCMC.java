@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,7 +19,6 @@ import org.apache.commons.math3.stat.inference.*;
 import org.xml.sax.SAXException;
 
 import beast.app.BeastMCMC;
-import beast.app.tools.LogCombiner;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Logger;
@@ -74,7 +71,7 @@ public class ShortChainsMCMC extends MCMC {
 		sXML = sXML.replaceAll("pLevel=[^ >]*", "");
 		sXML = sXML.replaceAll("sampleCount=[^ >]*", "");
 		sXML = sXML.replaceAll("chainLengthMultiplier=[^ >]*", "");		
-		sXML = sXML.replaceAll("logEvery=\"[0-9]*\"", "logEvery=\"" + chainLength + "\"");
+		sXML = sXML.replaceAll("logEvery=\"[0-9]*\"", "logEvery=\"" + Integer.MAX_VALUE + "\"");
 		String ShortMCMCLogger = ShortMCMCLogger.class.getName();
 		sXML = sXML.replaceAll("spec=\"Logger\"", "spec=\"" + ShortMCMCLogger + "\"");
 		String ShortChainsMCMC = this.getClass().getName();
@@ -144,11 +141,11 @@ public class ShortChainsMCMC extends MCMC {
     } // CoreInit
 	
     class CoreRunnable implements Runnable {
-        MCMC mcmc;
+    	ShortMCMC mcmc;
         double [] posterior;
         int start, end;
         
-        CoreRunnable(MCMC core, int start, int end, double [] posterior) {
+        CoreRunnable(ShortMCMC core, int start, int end, double [] posterior) {
             mcmc = core;
             this.start = start;
             this.end = end;
@@ -159,6 +156,7 @@ public class ShortChainsMCMC extends MCMC {
 		public void run() {
             try {
             	for (int i = start; i < end; i++) {
+            		mcmc.setChainLength(chainLength);
             		mcmc.setStateFile(stateFileName + i, true);
             		mcmc.run();
             		posterior[i] = mcmc.robustlyCalcPosterior(mcmc.posteriorInput.get());
@@ -255,7 +253,7 @@ public class ShortChainsMCMC extends MCMC {
 
 		Logger.FILE_MODE = LogFileMode.resume;
 		
-		long chainLength = chainLengthInput.get();
+		chainLength = chainLengthInput.get();
 		double [] newSample = calculateUsingThreads(chainLength);
 		double [] oldSample;
 		

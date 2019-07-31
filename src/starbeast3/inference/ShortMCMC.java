@@ -28,7 +28,7 @@ public class ShortMCMC extends MCMC {
         operatorSchedule.setStateFileName(stateFileName);
 
         burnIn = burnInInput.get();
-        chainLength = chainLengthInput.get();
+        // chainLength = chainLengthInput.get();
         state.setEverythingDirty(true);
         posterior = posteriorInput.get();
         
@@ -81,6 +81,7 @@ public class ShortMCMC extends MCMC {
         // initialises log so that log file headers are written, etc.
         for (final Logger log : loggers) {
             log.init();
+            ((ShortMCMCLogger) log).setEvery((int) chainLength);
         }
 
         doLoop();
@@ -92,7 +93,7 @@ public class ShortMCMC extends MCMC {
     } // run;
 
 	public void setChainLength(long chainLength) {
-		this.chainLength = chainLength;		
+		this.chainLength = chainLength;
 	}
 
 }
