@@ -38,16 +38,18 @@ public class BinaryNode extends Node {
 
     @Override
 	public Node getLeft() {
-    	if (tree.left[labelNr] >= 0) {
-    		return tree.nodes[tree.left[labelNr]];
+    	int k = tree.left[labelNr];
+    	if (k >= 0) {
+    		return tree.nodes[k];
     	}
     	return null;
 	}
 
 	@Override
 	public Node getRight() {		
-    	if (tree.right[labelNr] >= 0) {
-    		return tree.nodes[tree.right[labelNr]];
+    	int k = tree.right[labelNr];
+    	if (k >= 0) {
+    		return tree.nodes[k];
     	}
     	return null;
 	}
@@ -109,7 +111,7 @@ public class BinaryNode extends Node {
     @Override
     public void removeChild(Node child) {
         startEditing();
-        if (getLeft().getNr() == child.getNr()) {
+        if (tree.left[labelNr] == child.getNr()) {
         	tree.left[labelNr] = -1;
         } else {
         	tree.right[labelNr] = -1;
@@ -124,7 +126,7 @@ public class BinaryNode extends Node {
     @Override
     public void addChild(Node child) {
         startEditing();
-        child.setParent(this);
+        tree.parent[child.getNr()] = labelNr;
         if (tree.left[labelNr] < 0) {
     		tree.left[labelNr] = child.getNr();
     	} else {

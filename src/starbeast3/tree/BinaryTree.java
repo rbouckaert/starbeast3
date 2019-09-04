@@ -2,6 +2,7 @@ package starbeast3.tree;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -267,6 +268,15 @@ public class BinaryTree extends Tree implements TreeInterface {
 	@Override
 	public void setEverythingDirty(boolean isDirty) {
         setSomethingIsDirty(isDirty);
+        if (!isDirty) {
+            for( Node n : nodes ) {
+                n.makeDirty(IS_CLEAN);
+            }
+        } else {
+            for( Node n : nodes ) {
+                n.makeDirty(IS_FILTHY);
+            }
+        }
 	}
 
 	@Override
@@ -389,28 +399,37 @@ public class BinaryTree extends Tree implements TreeInterface {
         final int m = newroot.getNr();
         if (m != n) {
             // ensure root is the last node
-        	int tmp = left[n];
-        	left[n] = left[m];
-        	left[m] = tmp;
-        	if (left[n] == n) {
-        		left[n] = m;
-        	}
-         	
-        	tmp = right[n];
-        	right[n] = right[m];
-        	right[m] = tmp;
-        	if (right[n] == n) {
-        		right[n] = m;
+        	
+        	int leftRoot = left[m];
+        	if (leftRoot == n) {leftRoot = m;}
+        	int rightRoot = right[m];
+        	if (rightRoot == n) {rightRoot = m;}
+
+        	int leftI = left[n];
+        	int rightI = right[n];
+        	int parentI = parent[n];
+        	if (parentI == m) {
+        		parentI = n;
         	}
         	
-        	tmp = parent[n];
-        	parent[n] = parent[m];
-        	parent[m] = tmp;
+        	left[n] = leftRoot;
+        	parent[leftRoot] = n;
+        	right[n] = rightRoot;
+        	parent[rightRoot] = n;
+        	parent[n] = -1;
         	
-        	parent[left[n]] = n;
-        	parent[right[n]] = n;
-        	parent[left[m]] = m;
-        	parent[right[m]] = m;
+        	left[m] = leftI;
+        	parent[leftI] = m;
+        	right[m] = rightI;
+        	parent[rightI] = m;
+        	parent[m] = parentI;
+
+        	if (left[parentI] == n) {
+        		left[parentI] = m;
+        	}
+            if (right[parentI] == n) {
+        		right[parentI] = m;
+        	}
 
         	double tmp2 = height[n];
         	height[n] = height[m];
