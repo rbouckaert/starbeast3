@@ -387,6 +387,9 @@ public class BinaryTree extends Tree implements TreeInterface {
 		int [] tmp2 = left; left = storedLeft; storedLeft = tmp2;
 		int [] tmp3 = right; right = storedRight; storedRight = tmp3; 
 		int [] tmp4 = parent; parent = storedParent; storedParent = tmp4; 
+
+        getRoot().makeAllDirty(Tree.IS_CLEAN);
+        postCache = null;
 	}
 
 	
