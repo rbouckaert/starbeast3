@@ -66,7 +66,7 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 			+ "If not specified (or < 0), the operator uses 200 * paramater dimension", -1); 
 	final public Input<Integer> burninInput = new Input<>("burnin", "Number of proposals that are ignored before covariance matrix is being updated. "
 			+ "If initial is not specified, uses half the default initial value (which equals 100 * paramater dimension)", 0); 
-	final public Input<Integer> everyInput = new Input<>("every", "update interval for covarionce matrix, default 1 (that is, every step)", 1); 
+	final public Input<Integer> everyInput = new Input<>("every", "update interval for covariance matrix, default 1 (that is, every step)", 1); 
     final public Input<Boolean> optimiseInput = new Input<>("optimise", "flag to indicate that the scale factor is automatically changed in order to achieve a good acceptance rate (default true)", true);
 
 
