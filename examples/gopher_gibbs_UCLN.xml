@@ -203,7 +203,6 @@ name="alignment">
     <distribution id="posterior" spec="util.CompoundDistribution">
 
 
-	<!--
 
         <distribution id="speciescoalescent" spec="util.CompoundDistribution">
             <distribution idref="SpeciesTreePopSize.Species"/>
@@ -211,13 +210,7 @@ name="alignment">
             <distribution id="treePrior.t:29" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:29"/>
             <distribution id="treePrior.t:47" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:47"/>
         </distribution>
-	-->
-
- 	    <distribution id="speciescoalescent" spec="starbeast3.MultispeciesCoalescent">
- 		<distribution id="treePrior.t:26" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:26"/>
-            	<distribution id="treePrior.t:29" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:29"/>
-            	<distribution id="treePrior.t:47" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:47"/>
-            </distribution>
+	
 
 
         <distribution id="prior" spec="util.CompoundDistribution">
