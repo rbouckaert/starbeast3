@@ -380,7 +380,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     public void store() {
     	super.store();
     	
-    	/*
+    	
       
         System.arraycopy(coalescentCounts, 0, storedCoalescentCounts, 0, coalescentCounts.length);
         System.arraycopy(coalescentTimes, 0, storedCoalescentTimes, 0, coalescentTimesLength);
@@ -390,7 +390,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         System.arraycopy(speciesOccupancy, 0, storedSpeciesOccupancy, 0, speciesOccupancy.length);
 
         storedMaxCoalescentCounts = maxCoalescentCounts;
-        */
+        
     }
     
   
@@ -401,7 +401,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	clockuptodate = false;
     	super.restore();
     	
-    	/*
+    	
     	
     	double[] tmpCoalescentTimes = coalescentTimes;
     	int[] tmpCoalescentCounts = coalescentCounts;
@@ -422,7 +422,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	storedGeneNodeSpeciesAssignment = tmpGeneNodeSpeciesAssignment;
 
     	maxCoalescentCounts = storedMaxCoalescentCounts;
-		 */
+		 
     	
     	
     }
