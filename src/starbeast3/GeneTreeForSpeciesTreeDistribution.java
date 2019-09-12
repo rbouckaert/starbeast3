@@ -113,6 +113,11 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 
     
     
+    public TreeInterface getGeneTree() {
+    	return treeInput.get();
+    }
+    
+    
     public double getPloidy() {
     	return ploidy;
     }

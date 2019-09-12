@@ -16,16 +16,20 @@ import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeInterface;
 import beast.util.Randomizer;
+import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.SpeciesTree;
+
 
 
 
 @Description("Tree operator which randomly changes the height of a node, " +
         "then reconstructs the tree from node heights.")
 public class NodeReheight2 extends Operator {
-    public final Input<Tree> treeInput = new Input<>("tree", "the species tree", Validate.REQUIRED);
+    public final Input<SpeciesTree> treeInput = new Input<>("tree", "the species tree", Validate.REQUIRED);
     public final Input<TaxonSet> taxonSetInput = new Input<>("taxonset", "taxon set describing species tree taxa and their gene trees", Validate.REQUIRED);
-    public final Input<List<Tree>> geneTreesInput = new Input<>("geneTree", "list of gene trees that constrain species tree movement", new ArrayList<>());
+    public final Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreesInput = new Input<>("geneTree", "list of gene trees that constrain species tree movement", new ArrayList<>());
     Node[] m_nodes;
 
 
@@ -62,10 +66,12 @@ public class NodeReheight2 extends Operator {
         }
         
         int i = 0;
-        for (final Tree geneTree : geneTreesInput.get()) {
-            int [] localTipNumberMap = new int[geneTree.getLeafNodeCount()];
-            for (int j = 0; j < geneTree.getLeafNodeCount(); j++) {
-            	final Node geneTreeLeafNode = geneTree.getNode(j);
+        
+        for (final GeneTreeForSpeciesTreeDistribution geneTree : geneTreesInput.get()) {
+        	final TreeInterface theTree = geneTree.getGeneTree();
+            int [] localTipNumberMap = new int[theTree.getLeafNodeCount()];
+            for (int j = 0; j < theTree.getLeafNodeCount(); j++) {
+            	final Node geneTreeLeafNode = theTree.getNode(j);
             	final String geneTreeLeafName = geneTreeLeafNode.getID();
             	final int geneTreeLeafNumber = geneTreeLeafNode.getNr();
             	localTipNumberMap[geneTreeLeafNumber] = tipNumberMap.get(geneTreeLeafName);
@@ -190,7 +196,7 @@ public class NodeReheight2 extends Operator {
         
         // calculate for every species tree the maximum allowable merge point
         for (int i = 0; i < nrOfGeneTrees; i++) {
-            final Tree tree = geneTreesInput.get().get(i);
+            final TreeInterface tree = geneTreesInput.get().get(i).getGeneTree();
             findMaximaInGeneTree(tree.getRoot(), m_taxonMap[i], maxHeight, isUsedSpecies);
         }
 

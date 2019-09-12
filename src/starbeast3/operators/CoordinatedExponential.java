@@ -8,6 +8,8 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import beast.util.Randomizer;
+import starbeast3.SpeciesTree;
+import starbeast3.operators.CoordinatedOperator;
 
 /**
  * adapted from starbeast3
