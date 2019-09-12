@@ -15,6 +15,7 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.TreeDistribution;
 import beast.math.distributions.Gamma;
 import beast.math.distributions.InverseGamma;
+import starbeast3.evolution.speciation.PopulationModel;
 
 
 
@@ -36,6 +37,12 @@ public class SpeciesTreePrior extends TreeDistribution {
     		+ "This makes this parameter half the expected population size on all branches for constant population function, "
     		+ "but a quarter of the expected population size for tip branches only for linear population functions.", Validate.REQUIRED);
 
+    final public Input<PopulationModel> popModelInput = 
+    		new Input<>("populationModel", "Population model used to infer the multispecies coalescent probability", Validate.REQUIRED);
+    
+    
+    
+    
 //	public Input<RealParameter> m_rootHeightParameter = new Input<>("rootBranchHeight","height of the node above the root, representing the root branch", Validate.REQUIRED);
     /**
      * m_taxonSet is used by GeneTreeForSpeciesTreeDistribution *

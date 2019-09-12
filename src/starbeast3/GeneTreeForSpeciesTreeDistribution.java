@@ -14,18 +14,17 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeDistribution;
 import beast.evolution.tree.TreeInterface;
+import starbeast3.evolution.speciation.PopulationModel;
 
 
 
-@Description("Calculates probability of gene tree conditioned on a species tree (multi-species coalescent)"
-		+ "assuming a constant population size for each branch")
+@Description("Calculates probability of gene tree conditioned on a species tree (multi-species coalescent)")
 public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 
 	//TreeInterfaceSB3
@@ -38,6 +37,11 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     final public Input<SpeciesTreePrior> speciesTreePriorInput =
             new Input<>("speciesTreePrior", "defines population function and its parameters", Validate.REQUIRED);
 
+    final public Input<PopulationModel> popModelInput = 
+    		new Input<>("populationModel", "Population model used to infer the multispecies coalescent probability for this gene", Validate.REQUIRED);
+    
+    
+    
     // intervals for each of the species tree branches
     private PriorityQueue<Double>[] intervalsInput;
     
@@ -53,6 +57,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
    
     
     private RealParameter popSizesBottom;
+    private PopulationModel popModel;
 
     // Ploidy is a constant - cache value of input here
     private double ploidy;
@@ -126,6 +131,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	ploidy = ploidyInput.get();
     	logP = 0.0;
     	clockuptodate = false;
+    	popModel = popModelInput.get();
 
         final Node[] gtNodes = treeInput.get().getNodesAsArray();
         final int gtLineages = treeInput.get().getLeafNodeCount();
@@ -283,13 +289,12 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         final Node[] speciesTreeNodes = speciesTreeInput.get().getNodesAsArray();
         for (int speciesNodeI = 0; speciesNodeI < speciesNodeCount; speciesNodeI++) {
             Node speciesNode = speciesTreeNodes[speciesNodeI];
-            if (isDirtyBranch(speciesNodeI) || true) /*popModel.isDirtyBranch(speciesNode))*/ {
+            if (isDirtyBranch(speciesNodeI) || popModel.isDirtyBranch(speciesNode)) {
                 final int lineagesBottom = nrOfLineages[speciesNodeI];
                 final int k = coalescentCounts[speciesNodeI];
                 final double[] branchCoalescentTimes = getCoalescentTimes(speciesNodeI);
-
                 
-                perBranchLogP[speciesNodeI] = calcConstantPopSizeContribution(lineagesBottom, popSizesBottom.getValue(speciesNodeI), branchCoalescentTimes, k); 
+                perBranchLogP[speciesNodeI] = popModel.calculateBranchLogP(lineagesBottom, ploidy, popSizesBottom.getValue(speciesNodeI), branchCoalescentTimes, k); 
             }
 
             // System.out.println(String.format("%s-%d: %f", getID(), nodeI, logP));
@@ -299,35 +304,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         // System.out.println(String.format("%s-%d: %f", getID(), speciesNodeCount, logP));
         logPuptodate = true;
         return logP;
-        
-        /*
-        
-        for (final PriorityQueue<Double> m_interval : intervalsInput) {
-            m_interval.clear();
-        }
-
-        Arrays.fill(nrOfLineages, 0);
-
-        final TreeInterface stree = speciesTreeInput.get();
-        final Node[] speciesNodes = stree.getNodesAsArray();
-
-        traverseLineageTree(speciesNodes, treeInput.get().getRoot());
-        
-
-//        System.err.println(getID());
-//		for (int i = 0; i < m_intervals.length; i++) {
-//			System.err.println(m_intervals[i]);
-//		}
-
-        // If the gene tree does not fit the species tree, logP = -infinity by now
-        if (logP == 0) {
-            traverseSpeciesTree(stree.getRoot());
-        }
-        logPuptodate = true;
-        
-        
-        return logP;
-        */
+    
         
     }
     
@@ -337,102 +314,10 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	}
 
 
-    /**
-     * calculate contribution to logP for each of the branches of the species tree
-     *
-     * @param node*
-     */
-    private void traverseSpeciesTree(final Node node) {
-        if (!node.isLeaf()) {
-            traverseSpeciesTree(node.getLeft());
-            traverseSpeciesTree(node.getRight());
-        }
-        // calculate contribution of a branch in the species tree to the log probability
-        final int nodeIndex = node.getNr();
 
-        // k = nr of intervals, as defined in the *BEAST paper
-        final int k = intervalsInput[nodeIndex].size();
-
-        final double[] times = getCoalescentTimes(nodeIndex); 
-        times[0] = node.getHeight();
-        for (int i = 1; i <= k; i++) {
-            times[i] = intervalsInput[nodeIndex].poll();
-        }
-        if (!node.isRoot()) {
-        	// time at top of the branch
-            times[k + 1] = node.getParent().getHeight();
-        } else {
-        	// time at root of gene tree
-        	// RRB: why consider node.getHeight(), which is already what times[0] was set to,
-        	// which means treeInput.get().getRoot().getHeight() is always > node.getHeight()?
-            times[k + 1] = Math.max(node.getHeight(), treeInput.get().getRoot().getHeight());
-        }
-        // sanity check
-        for (int i = 0; i <= k; i++) {
-            if (times[i] > times[i + 1]) {
-            	Log.warning.println("invalid times");
-                calculateLogP();
-            }
-        }
-
-        final int lineagesBottom = nrOfLineages[nodeIndex];
-
-        logP += calcConstantPopSizeContribution(lineagesBottom, popSizesBottom.getValue(nodeIndex), times, k);
-    }
-
-    /* the contribution of a branch in the species tree to
-      * the log probability, for constant population function.
-      */
-    private double calcConstantPopSizeContribution(final int lineagesBottom, final double popSize2,
-                                                 final double[] times, final int k) {
-    	double logPBranch = 0.0;
-        final double popSize = popSize2 * ploidy;
-        logPBranch += -k * Math.log(popSize);
-        for (int i = 0; i <= k; i++) {
-        	logPBranch += -((lineagesBottom - i) * (lineagesBottom - i - 1.0) / 2.0) * (times[i + 1] - times[i]) / popSize;
-        }
-        return logPBranch;
-    }
-    
+ 
 
 
-    /**
-     * collect intervals for each of the branches of the species tree
-     * as defined by the lineage tree.
-     *
-     * @param speciesNodes
-     * @param node
-     * @return
-     */
-    private int traverseLineageTree(final Node[] speciesNodes, final Node node) {
-        if (node.isLeaf()) {
-            final int species = nrOfLineageToSpeciesMap[node.getNr()];
-            nrOfLineages[species]++;
-            return species;
-        } else {
-            int speciesLeft = traverseLineageTree(speciesNodes, node.getLeft());
-            int speciesRight = traverseLineageTree(speciesNodes, node.getRight());
-            final double height = node.getHeight();
-
-            while (!speciesNodes[speciesLeft].isRoot() && height > speciesNodes[speciesLeft].getParent().getHeight()) {
-                speciesLeft = speciesNodes[speciesLeft].getParent().getNr();
-                nrOfLineages[speciesLeft]++;
-            }
-            while (!speciesNodes[speciesRight].isRoot() && height > speciesNodes[speciesRight].getParent().getHeight()) {
-                speciesRight = speciesNodes[speciesRight].getParent().getNr();
-                nrOfLineages[speciesRight]++;
-            }
-            // validity check
-            if (speciesLeft != speciesRight) {
-                // if we got here, it means the gene tree does
-                // not fit in the species tree
-                logP = Double.NEGATIVE_INFINITY;
-            }
-            intervalsInput[speciesRight].add(height);
-            return speciesRight;
-        }
-    }
-    
     
 
     @Override
