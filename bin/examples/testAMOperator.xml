@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+
+
+
+<!-- sample from 2-dimensional multivariate Normal with strong correlation -->
+<map name="prior" >beast.math.distributions.Prior</map>
+
+<run id="mcmc" spec="MCMC" chainLength="200000">
+    <state id="state" spec="State" storeEvery="10000">
+        <stateNode idref="arg"/>
+        <stateNode idref="other"/>
+        <stateNode idref="freqParameter"/>
+        <stateNode idref="kappa"/>
+    </state>
+
+
+	<distribution id="posterior" spec="CompoundDistribution">
+           <distribution id="MultivariateNormal" spec='beast.math.distributions.MultivariateNormalDistribution'>
+                <arg id="arg" spec='parameter.RealParameter' value='0.0 0.0'/>
+                <mean id="mean" spec='parameter.RealParameter' value='0.0 0.0'/>
+                <precision id="precision" spec='parameter.RealParameter' minordimension='2'>
+                                3.0 2.99
+                                .0 3.0
+<!--
+                                3.0 5.99
+                                .0 3.0
+-->                                
+                </precision>
+           </distribution>
+           <distribution id="MultivariateNormal2" spec='beast.math.distributions.MultivariateNormalDistribution'>
+                <arg id="other" spec='parameter.RealParameter' value='0.0 0.0'/>
+                <mean id="mean2" spec='parameter.RealParameter' value='0.0 0.0'/>
+                <precision id="precision2" spec='parameter.RealParameter' minordimension='2'>
+                                3.0 0
+                                2.99 3.0
+                </precision>
+           </distribution>
+           <prior id="FrequenciesPrior" name="distribution">
+                <distr spec="beast.math.distributions.Dirichlet" alpha="4 1 1 4"/>
+                <parameter id="freqParameter" spec="parameter.RealParameter" dimension="4" lower="0.0" name="x" upper="1.0">0.25</parameter>
+            </prior>
+            <prior id="KappaPrior" name="distribution">
+            	<distr spec="beast.math.distributions.LogNormalDistributionModel" M="1.0" S="1.25"/>
+                <parameter id="kappa" spec="parameter.RealParameter" lower="0.0" name="x">2.0</parameter>
+            </prior>
+    </distribution>
+ 
+<!--
+    <operator id="FrequenciesExchanger" spec="DeltaExchangeOperator" delta="0.01" weight="1">
+        <parameter idref="freqParameter"/>
+    </operator>
+    <operator id="scaleOperator" spec="RealRandomWalkOperator" parameter="@kappa" windowSize="0.5" weight="2"/>
+    <operator id="randomWalkOperator" spec="RealRandomWalkOperator" parameter="@arg" windowSize="0.5" weight="20"/>
+-->    
+<!--
+    <operator id="AdaptableVarianceMultivariateNormalOperator" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+     		weight="30"
+    		coefficient="1.0"
+    		scaleFactor="1"
+    		beta="0.95"
+    		initial="500"
+    		burnin="250"
+    		every="1">
+    	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@arg"/>
+    	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
+    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" f="@freqParameter" sum="1.0"/>
+    </operator>
+-->    
+
+     <operator id="AdaptableVarianceMultivariateNormalOperator" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+     		weight="2"
+    		coefficient="1.0"
+    		scaleFactor="1"
+    		beta="0.05"
+    		initial="1000"
+    		burnin="200"
+    		every="1"
+    		optimise="true">
+    	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@arg"/>
+    	    <transformations spec="starbeast3.util.Transform$NoTransform" f="@other"/>
+    </operator>
+
+    <operator id="AdaptableVarianceMultivariateNormalOperator2" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+     		weight="3"
+    		coefficient="1.0"
+    		scaleFactor="1"
+    		beta="0.05"
+    		initial="1000"
+    		burnin="500"
+    		every="1">
+    	    <transformations spec="starbeast3.util.Transform$LogConstrainedSumTransform" f="@freqParameter" sum="1.0"/>
+    </operator>
+
+    <operator id="AdaptableVarianceMultivariateNormalOperator3" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+     		weight="1"
+    		coefficient="1.0"
+    		scaleFactor="1"
+    		beta="0.05"
+    		initial="1000"
+    		burnin="500"
+    		every="1">
+    	    <transformations spec="starbeast3.util.Transform$LogTransform" f="@kappa"/>
+    </operator>
+
+    <logger id="tracelog" spec="Logger" fileName="MultivariateNormal.log" logEvery="100" model="@MultivariateNormal" sanitiseHeaders="true" sort="smart">
+        <log idref="posterior"/>
+        <log idref="MultivariateNormal"/>
+        <log idref="FrequenciesPrior"/>
+        <log idref="KappaPrior"/>
+        <log idref="arg"/>
+        <log idref="other"/>
+        <log idref="freqParameter"/>
+        <log idref="kappa"/>
+    </logger>
+
+    <logger id="screenlog" spec="Logger" logEvery="100000">
+        <log idref="posterior"/>
+        <log idref="MultivariateNormal"/>
+        <log idref="FrequenciesPrior"/>
+    </logger>
+
+</run>
+
+</beast>
