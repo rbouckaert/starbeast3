@@ -1,6 +1,6 @@
 /**
  * @author Huw A. Ogilvie
- * Adapted for starbeast3 by Jordan Douglas
+ * @author Jordan Douglas
  */
 
 
@@ -18,16 +18,33 @@ import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.TreeInterface;
+import beast.util.Randomizer;
 import beast.evolution.branchratemodel.BranchRateModel;
 
 public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements BranchRateModelSB3 {
     final public Input<TreeInterface> treeInput = new Input<>("tree", "(Species) tree to apply per-branch rates to.", Input.Validate.REQUIRED);
-    final public Input<Integer> nBinsInput = new Input<>("nBins", "Number of discrete branch rate bins (default is equal to the number of estimated branch rates).", -1);
     final public Input<Boolean> estimateRootInput = new Input<>("estimateRoot", "Estimate rate of the root branch.", false);
     final public Input<Boolean> noCacheInput = new Input<>("noCache", "Always recalculate branch rates.", false);
     final public Input<RealParameter> stdevInput = new Input<>("stdev", "Standard deviation of the log-normal distribution for branch rates. If not supplied uses exponential.");
-    final public Input<IntegerParameter> branchRatesInput = new Input<>("rates", "Discrete per-branch rates.", Input.Validate.REQUIRED);
-
+    final public Input<IntegerParameter> discreteRatesInput = new Input<>("discreteRates", "The rate categories associated with nodes in the species tree for sampling of individual rates among branches.");
+    final public Input<RealParameter> realRatesInput = new Input<>("realRates", "The real rates associated with nodes in the species tree for sampling of individual rates among branches.", Input.Validate.XOR, discreteRatesInput);
+    final public Input<Integer> nBinsInput = new Input<>("nBins", "Number of discrete branch rate bins (default is equal to the number of estimated branch rates). Only used when branch rates are catrgories.", -1);
+    
+    final private double MEAN_CLOCK_RATE = 1.0; // Mean clock rate. Equal to 1/lambda for exponential, or exp(M + S^2/2) for lognormal
+    
+    enum Mode {
+        categories,
+        rates
+    }
+    
+    enum RateDistribution {
+        exponential,
+        lognormal
+    }
+    
+    Mode mode = Mode.categories;
+    RateDistribution rateDistribution = RateDistribution.exponential;
+    
     private int nBins;
     private double currentLogNormalStdev;
     private double storedLogNormalStdev;
@@ -42,11 +59,16 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     private boolean noCache;
     private boolean needsUpdate;
     private boolean binRatesNeedsUpdate;
-    private boolean useLogNormal;
+    
+    
+    private IntegerParameter categories;
+    private RealParameter realRates;
 
     @Override
     public boolean requiresRecalculation() {
-        if (useLogNormal) {
+    	
+    	// If lognormal S changes then branch rates require recalculation from bins
+        if (rateDistribution == RateDistribution.lognormal && mode == Mode.categories) {
             final double proposedLogNormalStdev = stdevInput.get().getValue();
             if (proposedLogNormalStdev != currentLogNormalStdev) {
                 binRatesNeedsUpdate = true;
@@ -55,45 +77,60 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
             }
         }
 
-        needsUpdate = binRatesNeedsUpdate || branchRatesInput.isDirty() || meanRateInput.isDirty();
+        needsUpdate = binRatesNeedsUpdate || meanRateInput.isDirty() || 
+        				(mode == Mode.categories && discreteRatesInput.isDirty()) ||
+        				(mode == Mode.rates && realRatesInput.isDirty());
+        
         return needsUpdate;
     }
 
     @Override
     public void store() {
         storedLogNormalStdev = currentLogNormalStdev;
-        System.arraycopy(binRates, 0, storedBinRates, 0, binRates.length);
         System.arraycopy(ratesArray, 0, storedRatesArray, 0, ratesArray.length);
+        
+        // Store the bin rates only if using categories
+        if (mode == Mode.categories) System.arraycopy(binRates, 0, storedBinRates, 0, binRates.length);
+        
         super.store();
     }
 
     @Override
     public void restore() {
         double tmpLogNormalStdev = currentLogNormalStdev;
-        double[] tmpBinRates = binRates;
         double[] tmpRatesArray = ratesArray;
 
         currentLogNormalStdev = storedLogNormalStdev;
-        binRates = storedBinRates;
         ratesArray = storedRatesArray;
         
         storedLogNormalStdev = tmpLogNormalStdev;
-        storedBinRates = tmpBinRates;
         storedRatesArray = tmpRatesArray;
+        
+        
+        // Restore the bin rates only if using categories
+        if (mode == Mode.categories) {
+        	double[] tmpBinRates = binRates;
+        	binRates = storedBinRates;
+        	storedBinRates = tmpBinRates;
+        }
+        
 
         super.restore();
     }
 
     @Override
     public void initAndValidate() {
-        final IntegerParameter branchRates = branchRatesInput.get();
+        categories = discreteRatesInput.get();
+        realRates = realRatesInput.get();
         final TreeInterface speciesTree = treeInput.get();
         final Node[] speciesNodes = speciesTree.getNodesAsArray();
         estimateRoot = estimateRootInput.get().booleanValue();
         noCache = noCacheInput.get().booleanValue();
         rootNodeNumber = speciesTree.getRoot().getNr();
-        ratesArray = new double[speciesNodes.length];
-        storedRatesArray = new double[speciesNodes.length];
+
+        
+        mode = realRates == null ? Mode.categories : Mode.rates;
+        rateDistribution = stdevInput.get() == null ? RateDistribution.exponential : RateDistribution.lognormal;
 
         if (estimateRoot) {
             nEstimatedRates = speciesNodes.length;
@@ -101,49 +138,122 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
             nEstimatedRates = speciesNodes.length - 1;
         }
 
-        final int nBinsSupplied = nBinsInput.get().intValue();
-        nBins = (nBinsSupplied <= 0) ? nEstimatedRates : nBinsSupplied;
-
-        branchRates.setDimension(nEstimatedRates);
-        branchRates.setLower(0);
-        branchRates.setUpper(nBins - 1);
 
         currentLogNormalStdev = -1.0;
         storedLogNormalStdev = -1.0;
 
-        binRates = new double[nBins];
-        storedBinRates = new double[nBins];
 
-        if (stdevInput.get() == null) {
-            useLogNormal = false;
+        ratesArray = new double[speciesNodes.length];
+        storedRatesArray = new double[speciesNodes.length];
+        
+        switch(mode) {
+        
+        
+        	// Initialise discrete branch rates
+	        case categories: {
+	        	
+	            final int nBinsSupplied = nBinsInput.get().intValue();
+	            nBins = (nBinsSupplied <= 0) ? nEstimatedRates : nBinsSupplied;
+	            
+	            binRates = new double[nBins];
+	            storedBinRates = new double[nBins];
+	        	
+	            categories.setDimension(nEstimatedRates);
+	            Integer[] initialCategories = new Integer[nEstimatedRates];
+	            for (int i = 0; i < nEstimatedRates; i++) {
+	                initialCategories[i] = Randomizer.nextInt(nBins);
+	            }
+	            
+	            // Set initial values of rate categories
+	            IntegerParameter other = new IntegerParameter(initialCategories);
+	            categories.assignFromWithoutID(other);
+	            categories.setLower(0);
+	            categories.setUpper(nBins - 1);
+	            
+	            // Special case: if using an exponential prior then set the bin rates now because they will never change
+	            if (rateDistribution == RateDistribution.exponential) {
+	            	
+	            	final ExponentialDistribution exponentialDistr = new ExponentialDistributionImpl(MEAN_CLOCK_RATE);
+	            	try {
+                        for (int i = 0; i < nBins; i++) {
+                        	binRates[i] = exponentialDistr.inverseCumulativeProbability((i + 0.5) / nBins);
+                        }
+                    } catch (MathException e) {
+                        throw new RuntimeException("Failed to compute exponential distribution inverse cumulative probability!");
+                    }
+	            	
+	            }
+	            
+	            break;
+	        }
+	        
+	        // Initialise real branch rates
+	        case rates: {
+	        	
+	        	if (realRates.getDimension() != nEstimatedRates) {
+	        		realRates.setDimension(nEstimatedRates);
+	        		
+	        		// Randomly draw rates from the appropriate distribution
+	        		Double [] initialRates = new Double[nEstimatedRates];
+	        		switch(rateDistribution) {
+	        	        
+	        			// Initialise continuous exponential rates
+	             		case exponential: {
+	             			for (int i = 0; i < nEstimatedRates; i++) {
+	             				initialRates[i] = Randomizer.nextExponential(1 / MEAN_CLOCK_RATE);
+	             			}
+	             			break;
+	             		}
+	             		
+	             		// Initialise continuous lognormal rates
+	             		case lognormal: {
+	             			
+	             			// Mean in log space
+	                        final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
+	    	        		for (int i = 0; i < nEstimatedRates; i++) {
+	    	        			initialRates[i] = Randomizer.nextLogNormal(M, currentLogNormalStdev, false);
+	    	        		}
+	             			
+	             			break;
+	             		}
+	        		
+	        		 }
 
-            final ExponentialDistribution exponentialDistr = new ExponentialDistributionImpl(1.0);
-            try {
-                for (int i = 0; i < nBins; i++) {
-                    binRates[i] = exponentialDistr.inverseCumulativeProbability((i + 0.5) / nBins);
-                }
-            } catch (MathException e) {
-                throw new RuntimeException("Failed to compute inverse cumulative probability!");
-            }
-
-            binRatesNeedsUpdate = false;
-        } else {
-            useLogNormal = true;
-            binRatesNeedsUpdate = true;
+				    RealParameter other = new RealParameter(initialRates);
+				    realRates.assignFromWithoutID(other);
+				    
+				}
+	        	
+	        	realRates.setLower(0.0);
+	        	break;
+	        }
+	        
         }
-
+        
+        
+        binRatesNeedsUpdate = false;
         needsUpdate = true;
+        
     }
+    
+    
 
     private void update() {
-        if (useLogNormal && (binRatesNeedsUpdate || noCache)) {
+    	
+    	
+    	// Recomputing per-branch raw rates is only required if using lognormal (due to changes in S) and only for categorical rates
+        if (rateDistribution == RateDistribution.lognormal && mode == Mode.categories && (binRatesNeedsUpdate || noCache)) {
             // set the mean in real space to equal 1
             currentLogNormalStdev = stdevInput.get().getValue();
-            final double newMean = -(0.5 * currentLogNormalStdev * currentLogNormalStdev);
-            final NormalDistribution normalDistr = new NormalDistributionImpl(newMean, currentLogNormalStdev);
+            
+            // Mean in log space
+            final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
+            final NormalDistribution normalDistr = new NormalDistributionImpl(M, currentLogNormalStdev);
 
             try {
                 for (int i = 0; i < nBins; i++) {
+                	
+                	// Discrete LogNormal distributed rates
                     binRates[i] = Math.exp(normalDistr.inverseCumulativeProbability((i + 0.5) / nBins));
                 }
             } catch (MathException e) {
@@ -159,21 +269,37 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
             estimatedMean = estimatedMeanParameter.getValue();
         }
 
-        final Integer[] branchRatePointers = branchRatesInput.get().getValues();
-        for (int i = 0; i < nEstimatedRates; i++) {
-            int b = branchRatePointers[i];
-            ratesArray[i] = binRates[b] * estimatedMean;
+        
+        
+        // Multiply the raw rate by the clock rate
+        switch(mode){
+        
+	        case categories: {
+	        	
+	        	final Integer[] branchRatePointers = discreteRatesInput.get().getValues();
+	            for (int i = 0; i < nEstimatedRates; i++) {
+	                int b = branchRatePointers[i];
+	                ratesArray[i] = estimatedMean * binRates[b];
+	            }
+	        	break;
+	        }
+	        
+	        case rates: {
+	        	
+	            for (int i = 0; i < nEstimatedRates; i++) {
+	                ratesArray[i] = estimatedMean * realRates.getValue(i);
+	            }
+	        	
+	        	break;
+	        }
+        
+        
         }
-
+        
+       
+        
         if (!estimateRoot) ratesArray[rootNodeNumber] = estimatedMean;
 
-        /* StringBuffer x = new StringBuffer();
-        x.append(treeInput.get().getID());
-        for (int i = 0; i < ratesArray.length; i++) {
-            x.append(" ");
-            x.append(ratesArray[i]);
-        }
-        System.out.println(x); */
     }
 
     @Override
@@ -187,6 +313,10 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 
         return ratesArray;
     }
+    
+    
+    
+    
 
     @Override
     public double getRateForBranch(Node node) {
@@ -198,6 +328,25 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         }
 
         assert ratesArray[node.getNr()] > 0.0;
-        return ratesArray[node.getNr()];
+        
+        
+        // Get the rate
+        int nodeNumber = node.getNr();
+        if (nodeNumber == nEstimatedRates) {
+            // Root node has nr less than #categories, so use that nr
+            nodeNumber = node.getTree().getRoot().getNr();
+        }
+        int category = categories.getValue(nodeNumber);
+        return ratesArray[category];
+        
     }
+    
+
+
+    
+    
 }
+
+
+
+
