@@ -73,7 +73,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
             if (proposedLogNormalStdev != currentLogNormalStdev) {
                 binRatesNeedsUpdate = true;
             } else {
-                binRatesNeedsUpdate = false;
+                //binRatesNeedsUpdate = false;
             }
         }
 
@@ -129,7 +129,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         rootNodeNumber = speciesTree.getRoot().getNr();
 
         
-        mode = realRates == null ? Mode.categories : Mode.rates;
+        mode = categories == null ?  Mode.rates : Mode.categories;
         rateDistribution = stdevInput.get() == null ? RateDistribution.exponential : RateDistribution.lognormal;
 
         if (estimateRoot) {
@@ -139,7 +139,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         }
 
 
-        currentLogNormalStdev = stdevInput.get().getValue();
+        currentLogNormalStdev = -1.0; 
         storedLogNormalStdev = -1.0;
 
 
@@ -170,19 +170,37 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	            categories.setLower(0);
 	            categories.setUpper(nBins - 1);
 	            
-	            // Special case: if using an exponential prior then set the bin rates now because they will never change
-	            if (rateDistribution == RateDistribution.exponential) {
-	            	
-	            	final ExponentialDistribution exponentialDistr = new ExponentialDistributionImpl(MEAN_CLOCK_RATE);
-	            	try {
-                        for (int i = 0; i < nBins; i++) {
-                        	binRates[i] = exponentialDistr.inverseCumulativeProbability((i + 0.5) / nBins);
-                        }
-                    } catch (MathException e) {
-                        throw new RuntimeException("Failed to compute exponential distribution inverse cumulative probability!");
-                    }
-	            	
+	            switch(rateDistribution) {
+	            
+		            // Initialise categorical exponential rates
+		            case exponential: {
+		            	
+		            	// Special case: if using an exponential prior then set the bin rates now because they will never change
+		            	final ExponentialDistribution exponentialDistr = new ExponentialDistributionImpl(MEAN_CLOCK_RATE);
+		            	try {
+	                        for (int i = 0; i < nBins; i++) {
+	                        	binRates[i] = exponentialDistr.inverseCumulativeProbability((i + 0.5) / nBins);
+	                        }
+	                    } catch (MathException e) {
+	                        throw new RuntimeException("Failed to compute exponential distribution inverse cumulative probability!");
+	                    }
+		            	
+		            	binRatesNeedsUpdate = false;
+		            	break;
+		            }
+		            
+		            // Initialise categorical lognormal rates
+		            case lognormal: {
+		            	
+		            	currentLogNormalStdev = stdevInput.get().getValue();
+		            	storedLogNormalStdev = currentLogNormalStdev;
+		            	binRatesNeedsUpdate = true;
+		            	break;
+		            }
+	            
 	            }
+	            
+
 	            
 	            break;
 	        }
@@ -208,6 +226,9 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	             		// Initialise continuous lognormal rates
 	             		case lognormal: {
 	             			
+	             			currentLogNormalStdev = stdevInput.get().getValue();
+	    	            	storedLogNormalStdev = currentLogNormalStdev;
+	             			
 	             			// Mean in log space
 	                        final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
 	    	        		for (int i = 0; i < nEstimatedRates; i++) {
@@ -225,13 +246,14 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 				}
 	        	
 	        	realRates.setLower(0.0);
+	        	binRatesNeedsUpdate = false;
 	        	break;
 	        }
 	        
         }
         
         
-        binRatesNeedsUpdate = false;
+      
         needsUpdate = true;
         
     }
@@ -239,8 +261,6 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     
 
     private void update() {
-    	
-    	
     	
 
         switch(mode) {
