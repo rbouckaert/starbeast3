@@ -139,7 +139,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         }
 
 
-        currentLogNormalStdev = -1.0;
+        currentLogNormalStdev = stdevInput.get().getValue();
         storedLogNormalStdev = -1.0;
 
 
@@ -241,25 +241,63 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     private void update() {
     	
     	
-    	// Recomputing per-branch raw rates is only required if using lognormal (due to changes in S) and only for categorical rates
-        if (rateDistribution == RateDistribution.lognormal && mode == Mode.categories && (binRatesNeedsUpdate || noCache)) {
-            // set the mean in real space to equal 1
-            currentLogNormalStdev = stdevInput.get().getValue();
-            
-            // Mean in log space
-            final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
-            final NormalDistribution normalDistr = new NormalDistributionImpl(M, currentLogNormalStdev);
+    	
 
-            try {
-                for (int i = 0; i < nBins; i++) {
-                	
-                	// Discrete LogNormal distributed rates
-                    binRates[i] = Math.exp(normalDistr.inverseCumulativeProbability((i + 0.5) / nBins));
-                }
-            } catch (MathException e) {
-                throw new RuntimeException("Failed to compute inverse cumulative probability!");
-            }
+        switch(mode) {
+        
+        	// Update discrete branch rates
+	        case categories: {
+	        
+        		switch(rateDistribution) {
+        	        
+        			// Update continuous exponential rates
+             		case exponential: {
+             			
+             			// Special case: no updating required
+             			
+             			break;
+             		}
+             		
+             		// Update continuous lognormal rates
+             		case lognormal: {
+             			
+             			if (binRatesNeedsUpdate || noCache) {
+             	            // set the mean in real space to equal 1
+             	            currentLogNormalStdev = stdevInput.get().getValue();
+             	            
+             	            // Mean in log space
+             	            final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
+             	            final NormalDistribution normalDistr = new NormalDistributionImpl(M, currentLogNormalStdev);
+
+             	            try {
+             	                for (int i = 0; i < nBins; i++) {
+             	                	
+             	                	// Discrete LogNormal distributed rates
+             	                    binRates[i] = Math.exp(normalDistr.inverseCumulativeProbability((i + 0.5) / nBins));
+             	                }
+             	            } catch (MathException e) {
+             	                throw new RuntimeException("Failed to compute inverse cumulative probability!");
+             	            }
+             	        }
+             			
+             			break;
+             		}
+        		
+        		 }
+	        	break;
+	        }
+	        
+	        // Update real branch rates
+	        case rates: {
+	        
+        		// No updates required
+	        	break;
+	        }
+	        
         }
+    	
+    	
+    	
 
         Double estimatedMean;
         final RealParameter estimatedMeanParameter = meanRateInput.get();
