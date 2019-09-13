@@ -245,10 +245,10 @@ name="alignment">
             </prior>
 
   		<prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
-                    <LogNormal id="LogNormalDistributionModel.04" meanInRealSpace="true" name="distr">
-                        <parameter id="branchRatesStdevPriorMean.Species" estimate="false" lower="0.0" name="M">1.0</parameter>
-                        <parameter id="branchRatesStdevPriorStdev.Species" estimate="false" lower="0.0" name="S">2.0</parameter>
-                    </LogNormal>
+	 	    <Gamma id="Gamma.0" name="distr">
+		        <parameter id="branchRatesStdevPriorMean.Species" spec="parameter.RealParameter" estimate="false" name="alpha">0.5396 </parameter>
+		        <parameter id="branchRatesStdevPriorStdev.Species" spec="parameter.RealParameter" estimate="false" name="beta">0.3819</parameter>
+		    </Gamma>
                 </prior>
 
 
@@ -289,7 +289,7 @@ name="alignment">
 
 
              <prior id="constPopSizesPrior.Species" name="distribution" x="@popSize">
-                    <Gamma id="Gamma.0" beta="@popMean" mode="ShapeMean" name="distr">
+                    <Gamma id="Gamma.1" beta="@popMean" mode="ShapeMean" name="distr">
                         <parameter id="constPopShape.Species" estimate="false" lower="0.0" name="alpha">3.0</parameter>
                     </Gamma>
              </prior>
@@ -412,7 +412,7 @@ name="alignment">
 	<!-- ConstantDistance operators -->
 
 	
-    <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.04" scaleFactor="0.8" weight="8.0"/>
+    <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.045" scaleFactor="0.8" weight="8.0"/>
 	
     <operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="1"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="5"/>
 
