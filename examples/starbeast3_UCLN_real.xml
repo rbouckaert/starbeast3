@@ -538,7 +538,7 @@ name="alignment">
         <operator id="molecularClockRateScaler.c:47" spec="ScaleOperator" parameter="@molecularClockRate.c:47" scaleFactor="0.5" weight="3.0"/>
 
 
-    <logger id="tracelog" fileName="benchmark_sb3.log" logEvery="5000" model="@posterior" sort="smart">
+    <logger id="tracelog" fileName="starbeast3_UCLN_real.log" logEvery="5000" model="@posterior" sort="smart">
         <log idref="posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>

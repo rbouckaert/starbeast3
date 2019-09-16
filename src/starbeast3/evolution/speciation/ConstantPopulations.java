@@ -49,14 +49,41 @@ public class ConstantPopulations extends CalculationNode implements PopulationMo
      * the log probability, for constant population function.
      */
     @Override
-    public double calculateBranchLogP(final int lineagesBottom, final double ploidy, final double popSize2, final double[] times, final int k) {
+    public double calculateBranchLogP(final int lineagesBottom, final double ploidy, final double popSize, final double[] times, final int k) {
     	
+    	
+    	/*
     	double logPBranch = 0.0;
         final double popSize = popSize2 * ploidy;
         logPBranch += -k * Math.log(popSize);
         for (int i = 0; i <= k; i++) {
         	logPBranch += -((lineagesBottom - i) * (lineagesBottom - i - 1.0) / 2.0) * (times[i + 1] - times[i]) / popSize;
         }
+        return logPBranch;
+        */
+        
+        
+        double partialGamma = 0.0;
+        for (int i = 0; i < k; i++) {
+            partialGamma += (times[i + 1] - times[i]) * (lineagesBottom - i) * (lineagesBottom - (i + 1.0)) / 2.0;
+        }
+        
+        if (lineagesBottom - k > 1) {
+            partialGamma += (times[k + 1] - times[k]) * (lineagesBottom - k) * (lineagesBottom - (k + 1.0)) / 2.0;
+        }
+
+        final double branchGamma = partialGamma / ploidy;
+        final double branchLogR = -k * Math.log(ploidy);
+        final double logPBranch = branchLogR - (k * Math.log(popSize)) - (branchGamma / popSize);
+
+        /* StringBuffer sb = new StringBuffer();
+        sb.append(popSize + "/" + ploidy + "/" + geneN + "/" + geneK + ": ");
+        for (int i = 0; i < geneTimes.length; i++) {
+            sb.append(geneTimes[i] + ", ");
+        }
+        sb.append(logP);
+        System.out.println(sb); */
+
         return logPBranch;
     	
     	
