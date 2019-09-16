@@ -279,7 +279,6 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	
         assert SanityChecks.checkTreeSanity(speciesTreeInput.get().getRoot());
         
-        
         update();
 
         if (!geneTreeCompatible) {

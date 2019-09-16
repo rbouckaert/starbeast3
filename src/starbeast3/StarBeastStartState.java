@@ -267,7 +267,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         };
         ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance);
 
-System.out.println(ctree.getRoot().toNewick());
+        System.out.println(ctree.getRoot().toNewick());
         
         final Map<String, Integer> sptips2SpeciesIndex = new HashMap<>();
         for(int i = 0; i < speciesNames.size(); ++i) {

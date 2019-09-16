@@ -178,7 +178,7 @@ name="alignment">
 
 
 	<stateNode id="branchRates.Species" spec="parameter.RealParameter" lower="0">1</stateNode>
-	<parameter id="branchRatesStdev.Species" lower="0.01" name="stateNode">0.3</parameter>
+	<parameter id="branchRatesStdev.Species" lower="0.01" estimate="false" name="stateNode">0.5</parameter>
 
 
         <parameter id="kappa.s:26" lower="0.0" name="stateNode">2.0</parameter>
@@ -244,12 +244,16 @@ name="alignment">
                 </LogNormal>
             </prior>
 
+		
+		<!--
+
   		<prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
-                    <LogNormal id="LogNormalDistributionModel.04" meanInRealSpace="true" name="distr">
-                        <parameter id="branchRatesStdevPriorMean.Species" estimate="false" lower="0.0" name="M">1.0</parameter>
-                        <parameter id="branchRatesStdevPriorStdev.Species" estimate="false" lower="0.0" name="S">2.0</parameter>
-                    </LogNormal>
+	 	    <Gamma id="Gamma.0" name="distr">
+		        <parameter id="branchRatesStdevPriorMean.Species" spec="parameter.RealParameter" estimate="false" name="alpha">0.5396 </parameter>
+		        <parameter id="branchRatesStdevPriorStdev.Species" spec="parameter.RealParameter" estimate="false" name="beta">0.3819</parameter>
+		    </Gamma>
                 </prior>
+		-->
 
 
 	    <prior id="branchRates.Species.Distribution" name="distribution" x="@branchRates.Species">
@@ -289,7 +293,7 @@ name="alignment">
 
 
              <prior id="constPopSizesPrior.Species" name="distribution" x="@popSize">
-                    <Gamma id="Gamma.0" beta="@popMean" mode="ShapeMean" name="distr">
+                    <Gamma id="Gamma.1" beta="@popMean" mode="ShapeMean" name="distr">
                         <parameter id="constPopShape.Species" estimate="false" lower="0.0" name="alpha">3.0</parameter>
                     </Gamma>
              </prior>
@@ -311,11 +315,12 @@ name="alignment">
 
 			<!-- Exponential clock with real rates -->
 			<!--
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" />
-			-->
+			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" /> -->
+			
 	
 			<!-- Lognormal clock with real rates -->
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species"  />
+			
+			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species"  /> 
 
 		</branchRateModel>
 
@@ -412,7 +417,7 @@ name="alignment">
 	<!-- ConstantDistance operators -->
 
 	
-    <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.04" scaleFactor="0.8" weight="8.0"/>
+   <!-- <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.045" scaleFactor="0.8" weight="8.0"/> -->
 	
     <operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="1"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="5"/>
 
@@ -428,7 +433,7 @@ name="alignment">
     <operator id="RatesScaleOperator.Species" spec="ScaleOperator" scaleFactor="0.5" parameter="@branchRates.Species" weight="14.0"/>
     
 
-    <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.5" weight="3.0"/>
+    <!-- <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.5" weight="3.0"/> -->
 
     <operator id="molecularClockRateScaler.c:26" spec="ScaleOperator" parameter="@molecularClockRate.c:26" scaleFactor="0.5" weight="3.0"/>
 
@@ -483,11 +488,11 @@ name="alignment">
 
 
 
-    <operator id="KappaScaler.s:26" spec="ScaleOperator" parameter="@kappa.s:26" scaleFactor="0.5" weight="0.1"/>
+    <operator id="KappaScaler.s:26" spec="ScaleOperator" parameter="@kappa.s:26" scaleFactor="0.5" weight="1.0"/>
 
-    <operator id="KappaScaler.s:29" spec="ScaleOperator" parameter="@kappa.s:29" scaleFactor="0.5" weight="0.1"/>
+    <operator id="KappaScaler.s:29" spec="ScaleOperator" parameter="@kappa.s:29" scaleFactor="0.5" weight="1.0"/>
 
-    <operator id="KappaScaler.s:47" spec="ScaleOperator" parameter="@kappa.s:47" scaleFactor="0.5" weight="0.1"/>
+    <operator id="KappaScaler.s:47" spec="ScaleOperator" parameter="@kappa.s:47" scaleFactor="0.5" weight="1.0"/>
 
     <logger id="tracelog" fileName="starbeast3_UCLN_real.log" logEvery="5000" model="@posterior" sort="smart">
         <log idref="posterior"/>

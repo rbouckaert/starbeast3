@@ -178,7 +178,7 @@ name="alignment">
 
 
 	<stateNode id="branchRates.Species" spec="parameter.IntegerParameter" lower="0">1</stateNode>
-	<parameter id="branchRatesStdev.Species" lower="0.01" name="stateNode">0.3</parameter>
+	<parameter id="branchRatesStdev.Species" lower="0.01" estimate="false" name="stateNode">0.5</parameter>
 
 
         <parameter id="kappa.s:26" lower="0.0" name="stateNode">2.0</parameter>
@@ -244,13 +244,15 @@ name="alignment">
                 </LogNormal>
             </prior>
 
+
+		<!--
   		<prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
                     <LogNormal id="LogNormalDistributionModel.04" meanInRealSpace="true" name="distr">
                         <parameter id="branchRatesStdevPriorMean.Species" estimate="false" lower="0.0" name="M">1.0</parameter>
                         <parameter id="branchRatesStdevPriorStdev.Species" estimate="false" lower="0.0" name="S">2.0</parameter>
                     </LogNormal>
                 </prior>
-
+		-->
 
   		<prior id="molecularClockRatePrior.c:26" name="distribution" x="@molecularClockRate.c:26">
                     <LogNormal id="LogNormalDistributionModel.2" meanInRealSpace="true" name="distr">
@@ -305,12 +307,12 @@ name="alignment">
 
 			<!-- Exponential clock with rate categories -->
 			<!--
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" discreteRates="@branchRates.Species" tree="@Tree.t:Species" />
-			-->
+			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" discreteRates="@branchRates.Species" tree="@Tree.t:Species" />-->
+			
 
 			<!-- Lognormal clock with rate categories -->
 			
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" discreteRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" />
+			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" discreteRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" /> 
 			
 
 		</branchRateModel>
@@ -408,8 +410,10 @@ name="alignment">
                 
         </operator>
 
-    <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.75" weight="10.0"/>
 
+	<!--
+    		<operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.75" weight="10.0"/>
+	-->
     <operator id="molecularClockRateScaler.c:26" spec="ScaleOperator" parameter="@molecularClockRate.c:26" scaleFactor="0.5" weight="3.0"/>
 
     <operator id="molecularClockRateScaler.c:29" spec="ScaleOperator" parameter="@molecularClockRate.c:29" scaleFactor="0.5" weight="3.0"/>
@@ -463,13 +467,13 @@ name="alignment">
 
 
 
-    <operator id="KappaScaler.s:26" spec="ScaleOperator" parameter="@kappa.s:26" scaleFactor="0.5" weight="0.1"/>
+    <operator id="KappaScaler.s:26" spec="ScaleOperator" parameter="@kappa.s:26" scaleFactor="0.5" weight="1.0"/>
 
-    <operator id="KappaScaler.s:29" spec="ScaleOperator" parameter="@kappa.s:29" scaleFactor="0.5" weight="0.1"/>
+    <operator id="KappaScaler.s:29" spec="ScaleOperator" parameter="@kappa.s:29" scaleFactor="0.5" weight="1.0"/>
 
-    <operator id="KappaScaler.s:47" spec="ScaleOperator" parameter="@kappa.s:47" scaleFactor="0.5" weight="0.1"/>
+    <operator id="KappaScaler.s:47" spec="ScaleOperator" parameter="@kappa.s:47" scaleFactor="0.5" weight="1.0"/>
 
-    <logger id="tracelog" fileName="starbeast3_UCLN.log" logEvery="5000" model="@posterior" sort="smart">
+    <logger id="tracelog" fileName="starbeast3_UCLN_cat.log" logEvery="5000" model="@posterior" sort="smart">
         <log idref="posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>

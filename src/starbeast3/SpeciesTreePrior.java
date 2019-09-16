@@ -122,7 +122,7 @@ public class SpeciesTreePrior extends TreeDistribution {
             switch (popFunction) {
                 case constant:
                     // constant pop size function
-                    logP += gamma2Prior.calcLogP(popSizesBottom);
+                    //logP += gamma2Prior.calcLogP(popSizesBottom);
 //			for (int i = 0; i < speciesNodes.length; i++) {
 //				double popSize = m_fPopSizesBottom.getValue(i);
 //				logP += m_bottomPrior.logDensity(popSize); 

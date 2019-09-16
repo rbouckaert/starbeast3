@@ -355,7 +355,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         }
         
        
-        
+        binRatesNeedsUpdate = false;
         if (!estimateRoot) ratesArray[rootNodeNumber] = estimatedMean;
 
     }
