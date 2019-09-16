@@ -319,7 +319,9 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 
 
 
- 
+	public int[] getTipNumberMap() {
+		return localTipNumberMap;
+	}
 
 
     

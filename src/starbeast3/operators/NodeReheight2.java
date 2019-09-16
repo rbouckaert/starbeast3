@@ -1,481 +1,337 @@
 package starbeast3.operators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.Operator;
-import beast.evolution.alignment.Taxon;
+import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeInterface;
 import beast.util.Randomizer;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.SpeciesTree;
 
+import java.util.ArrayList;
+import java.util.List;
 
-
+/**
+ * @author Huw Ogilvie
+ */
 
 @Description("Tree operator which randomly changes the height of a node, " +
         "then reconstructs the tree from node heights.")
 public class NodeReheight2 extends Operator {
     public final Input<SpeciesTree> treeInput = new Input<>("tree", "the species tree", Validate.REQUIRED);
-    public final Input<TaxonSet> taxonSetInput = new Input<>("taxonset", "taxon set describing species tree taxa and their gene trees", Validate.REQUIRED);
+    public final Input<TaxonSet> taxonSetInput = new Input<>("taxonset", "taxon set describing species tree taxa and their gene trees", Validate.REQUIRED); // left for compatibility with previous StarBEAST2 versions
     public final Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreesInput = new Input<>("geneTree", "list of gene trees that constrain species tree movement", new ArrayList<>());
-    Node[] m_nodes;
+    public final Input<Double> windowInput = new Input<>("window", "size of the random walk window", 10.0);
+    public final Input<RealParameter> originInput = new Input<RealParameter>("origin", "The time when the process started", (RealParameter) null);
 
+    private enum RelativePosition {LEFT, RIGHT, BOTH}
 
-    /**
-     * map node number of leafs in gene trees to leaf nr in species tree *
-     */
-    //List<Map<Integer, Integer>> m_taxonMap;
-    int[][] m_taxonMap;
-    int nrOfGeneTrees;
-    int nrOfSpecies;
+    private int nextIndex;
+    private int nodeCount;
+    private int geneTreeCount;
+    private int[][] leafNodeMaps;
+    private RelativePosition[][] leafPositionArrays;
+    private int trueBifurcationCount;
+    private Node[] canonicalOrder;
+    private int[] canonicalMap;
+    private int[] trueBifurcations;
+    private double[] nodeHeights;
+    private Node[] leftChildren;
+    private Node[] rightChildren;
+    private Node[] parents;
+    private boolean superimposedAncestors;
+    private double maxHeight;
+    private double window;
+    private boolean originSpecified;
 
     @Override
     public void initAndValidate() {
-        /** build the taxon map for each gene tree **/
-        m_taxonMap = new int[geneTreesInput.get().size()][];
-        
-        final Map<String, Integer> tipNumberMap = new LinkedHashMap<>();
+        final SpeciesTree speciesTree = treeInput.get();
+        nodeCount = speciesTree.getNodeCount();
+        canonicalOrder = new Node[nodeCount];
+        canonicalMap = new int[nodeCount];
+        trueBifurcations = new int[nodeCount];
+        nodeHeights = new double[nodeCount];
+        leftChildren = new Node[nodeCount];
+        rightChildren = new Node[nodeCount];
+        parents = new Node[nodeCount];
+        window = windowInput.get();
+        originSpecified = originInput.get() != null;
 
-        // generate map of gene tree tip node names to species tree tip node numbers
-        Map<String, TaxonSet> speciesMap = new LinkedHashMap<>();
-        for (Taxon ts : taxonSetInput.get().taxonsetInput.get()) {
-        	speciesMap.put(ts.getID(), (TaxonSet)ts);
+        final List<GeneTreeForSpeciesTreeDistribution> geneTrees = geneTreesInput.get();
+        geneTreeCount = geneTrees.size();
+        leafNodeMaps = new int[geneTreeCount][];
+        leafPositionArrays = new RelativePosition[geneTreeCount][];
+        for (int i = 0; i < geneTreeCount; i++) {
+            leafNodeMaps[i] = geneTrees.get(i).getTipNumberMap();
+            leafPositionArrays[i] = new RelativePosition[leafNodeMaps[i].length];
         }
-        
-        for (Node speciesNode : treeInput.get().getExternalNodes()) {
-            final String speciesName = speciesNode.getID();
-            int speciesNumber = speciesNode.getNr();
-
-            final Set<Taxon> tipSet = new LinkedHashSet<>(speciesMap.get(speciesName).taxonsetInput.get());
-            for (Taxon tip: tipSet) {
-                final String tipName = tip.getID();
-                tipNumberMap.put(tipName, speciesNumber);
-            }
-        }
-        
-        int i = 0;
-        
-        for (final GeneTreeForSpeciesTreeDistribution geneTree : geneTreesInput.get()) {
-        	final TreeInterface theTree = geneTree.getGeneTree();
-            int [] localTipNumberMap = new int[theTree.getLeafNodeCount()];
-            for (int j = 0; j < theTree.getLeafNodeCount(); j++) {
-            	final Node geneTreeLeafNode = theTree.getNode(j);
-            	final String geneTreeLeafName = geneTreeLeafNode.getID();
-            	final int geneTreeLeafNumber = geneTreeLeafNode.getNr();
-            	localTipNumberMap[geneTreeLeafNumber] = tipNumberMap.get(geneTreeLeafName);
-            }
-
-            m_taxonMap[i++] = localTipNumberMap;
-        }
-
-        nrOfGeneTrees = geneTreesInput.get().size();
-        nrOfSpecies = treeInput.get().getLeafNodeCount();
     }
 
+    /* This proposal improves TREE SLIDE, developed by Joseph Heled. See section 3.4.1 of Heled's 2011 PhD thesis
+    "Bayesian Computational Inference of Species Trees and Population Sizes". TREE SLIDE was developed for ultrametric
+    binary species trees, this proposal has been made compatible with sampled ancestors by enforcing a minimum height
+    and disallowing superimposed sampled ancestor nodes. Also uses a random walk window with reflection in order to
+    sample the heights of nodes without maximum height constraints. */
     @Override
     public double proposal() {
-        final Tree tree = treeInput.get();
-        m_nodes = tree.getNodesAsArray();
-        final int nodeCount = tree.getNodeCount();
-        // randomly change left/right order
-        tree.startEditing(this);  // we change the tree
-        reorder(tree.getRoot());
-        // collect heights
-        final double[] heights = new double[nodeCount];
-        final int[] reverseOrder = new int[nodeCount];
-        collectHeights(tree.getRoot(), heights, reverseOrder, 0);
-        // change height of an internal, non-sampled-ancestor node
-        int nodeIndex = Randomizer.nextInt(heights.length);
-        Node node = m_nodes[reverseOrder[nodeIndex]];
-        while (node.isLeaf() || node.isFake()) {
-            nodeIndex = Randomizer.nextInt(heights.length);
-            node = m_nodes[reverseOrder[nodeIndex]];
+        final SpeciesTree tree = treeInput.get();
+        final Node originalRoot = tree.getRoot();
+
+        // chooseCanonicalOrder also fills in nodeHeights and trueBifurcations
+        // the lastIndex will be the last and right-most node index
+        trueBifurcationCount = 0;
+        nextIndex = 0;
+        chooseCanonicalOrder(originalRoot);
+
+        // no nodes can be changed by this operator
+        if (trueBifurcationCount == 0) {
+            return Double.NEGATIVE_INFINITY;
         }
-        double maxHeight = calcMaxHeight(reverseOrder, nodeIndex);
-        double minHeight = calcMinHeight(node);
-        // debugging code to ensure the new maxHeight equals the original one
-        /*
-        double maxHeight2 = calcMaxHeight2(reverseOrder, nodeIndex);
-        if (Math.abs(maxHeight - maxHeight2) > 1e-10) {
-            maxHeight = calcMaxHeight(reverseOrder, nodeIndex);
-            maxHeight2 = calcMaxHeight2(reverseOrder, nodeIndex);
-        	
+
+        // pick a bifurcation at random and change the height
+        final int chosenNode = trueBifurcations[Randomizer.nextInt(trueBifurcationCount)];
+        final double originalHeight = nodeHeights[chosenNode];
+
+        // As long as the height is above the tips (or sampled ancestors) immediately either side in the canonical
+        // order, the species tree seems buildable from the new times. The exception is fake bifurcation nodes of equal
+        // height, which can result in the superimposition of those sampled ancestors.
+        final double minHeight = Double.max(nodeHeights[chosenNode - 1], nodeHeights[chosenNode + 1]);
+
+        recalculateMaxHeight(chosenNode);
+
+        // Use reflection to avoid invalid heights. Height returns to original position every 2 * (max - min) units,
+        // so modulus is used to avoid unnecessary looping if the difference between window size and the tree scale
+        // is extreme.
+        final double heightDelta = (window * (Randomizer.nextDouble() - 0.5)) % (2.0 * (maxHeight - minHeight));
+        double newHeight = originalHeight + heightDelta;
+        while (newHeight < minHeight || newHeight > maxHeight) {
+            if (newHeight < minHeight) {
+                newHeight = minHeight + minHeight - newHeight;
+            }
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight + maxHeight - newHeight;
+            }
         }
-        */
 
-        // sample a new height compatible with the gene trees
-        heights[nodeIndex] = minHeight + (Randomizer.nextDouble() * (maxHeight - minHeight));
-        node.setHeight(heights[nodeIndex]);
+        nodeHeights[chosenNode] = newHeight;
 
-        // leave sampled ancestors connected to their fake parents
-        boolean[] hasParent = new boolean[heights.length];
-        for (int i = 0; i < heights.length; i++)
-        	hasParent[i] = m_nodes[reverseOrder[i]].isDirectAncestor();
+        superimposedAncestors = false;
+        final int rootIndex = rebuildTree(0, nodeCount - 1);
+        parents[rootIndex] = null;
+        if (superimposedAncestors) {
+            return Double.NEGATIVE_INFINITY;
+        }
 
-        // reconstruct tree from heights
-        final Node root = reconstructTree(heights, reverseOrder, 0, heights.length, hasParent);
+        // wait until after checking for superimposed ancestors before modifying tree
+        canonicalOrder[chosenNode].setHeight(newHeight);
 
-        assert checkConsistency(root, new boolean[heights.length]) ;
-        //            System.err.println("Inconsistent tree");
-        //        }
-        root.setParent(null);
-        tree.setRoot(root);
-        return 0;
+        for (int i = 0; i < nodeCount; i++) {
+            canonicalOrder[i].setParent(parents[i]);
+
+            if (i % 2 == 1) { // internal node
+                canonicalOrder[i].setLeft(leftChildren[i]);
+                canonicalOrder[i].setRight(rightChildren[i]);
+            }
+        }
+
+        // for some reason if the root is not reset - even if the root node is the same node as before! - the
+        // morphological likelihood will be radically wrong (idk why)
+        final Node newRoot = canonicalOrder[rootIndex];
+        tree.setRoot(newRoot);
+
+        assert checkVisitedCounts(tree);
+
+        return 0.0;
     }
 
-    private double calcMinHeight(Node node) {
-		if (node.isLeaf()) {
-			return node.getHeight();
-		}
-		
-		double minHeight = 0.0;
-		for (Node child: node.getChildren()) {
-			minHeight = Math.max(minHeight, calcMinHeight(child));
-		}
-		
-		return minHeight;
-	}
-
-	private boolean checkConsistency(final Node node, final boolean[] used) {
-        if (used[node.getNr()]) {
-            // used twice? tha's bad
-            return false;
-        }
-        used[node.getNr()] = true;
-        if ( node.isLeaf() ) {
-            return true;
-        }
-        return checkConsistency(node.getLeft(), used) && checkConsistency(node.getRight(), used);
-    }
-
-    /**
-     * calculate maximum height that node nodeIndex can become restricted
-     * by nodes on the left and right
-     */
-    private double calcMaxHeight(final int[] reverseOrder, final int nodeIndex) {
-        // find maximum height between two species. Only upper right part is populated
-        final double[][] maxHeight = new double[nrOfSpecies][nrOfSpecies];
-        for (int i = 0; i < nrOfSpecies; i++) {
-            Arrays.fill(maxHeight[i], Double.POSITIVE_INFINITY);
-        }
-
-        // find species on the left of selected node
-        final boolean[] isLowerSpecies = new boolean[nrOfSpecies];
-        final Node[] nodes = treeInput.get().getNodesAsArray();
-        for (int i = 0; i < nodeIndex; i++) {
-            final Node node = nodes[reverseOrder[i]];
-            if (node.isLeaf()) {
-                isLowerSpecies[node.getNr()] = true;
-            }
-        }
-        // find species on the right of selected node
-        final boolean[] isUpperSpecies = new boolean[nrOfSpecies];
-        for (int i = nodeIndex + 1; i < nodes.length; i++) {
-            final Node node = nodes[reverseOrder[i]];
-            if (node.isLeaf()) {
-                isUpperSpecies[node.getNr()] = true;
-            }
-        }
-
-        final boolean[] isUsedSpecies = new boolean[nrOfSpecies];
-        for (int i = 0; i < nrOfSpecies; i++) {
-            isUsedSpecies[i] = isLowerSpecies[i] || isUpperSpecies[i];
-        }
-        
-        // calculate for every species tree the maximum allowable merge point
-        for (int i = 0; i < nrOfGeneTrees; i++) {
-            final TreeInterface tree = geneTreesInput.get().get(i).getGeneTree();
-            findMaximaInGeneTree(tree.getRoot(), m_taxonMap[i], maxHeight, isUsedSpecies);
-        }
-
-        // find max
-        double max = Double.POSITIVE_INFINITY;
-        for (int i = 0; i < nrOfSpecies; i++) {
-            if (isLowerSpecies[i]) {
-                for (int j = 0; j < nrOfSpecies; j++) {
-                    if (j != i && isUpperSpecies[j]) {
-                        // final int x = Math.min(i, j);
-                        // final int y = Math.max(i, j);
-                        max = Math.min(max, maxHeight[i][j]);
-                        max = Math.min(max, maxHeight[j][i]);
-                    }
-                }
-            }
-        }
-        return max;
-    } // calcMaxHeight
-
-
-    /**
-     * calculate maximum height that node nodeIndex can become restricted
-     * by nodes on the left and right
-     * 
-     * only used for debugging now
-     */
-    /* private double calcMaxHeight2(final int[] reverseOrder, final int nodeIndex) {
-        // find maximum height between two species. Only upper right part is populated
-        final double[][] maxHeight = new double[nrOfSpecies][nrOfSpecies];
-        for (int i = 0; i < nrOfSpecies; i++) {
-            Arrays.fill(maxHeight[i], Double.POSITIVE_INFINITY);
-        }
-
-        // calculate for every species tree the maximum allowable merge point
-        for (int i = 0; i < nrOfGeneTrees; i++) {
-            final GeneTree tree = geneTreesInput.get().get(i);
-            findMaximaInGeneTree(tree.getRoot(), new boolean[nrOfSpecies], m_taxonMap[i], maxHeight);
-        }
-
-        // find species on the left of selected node
-        final boolean[] isLowerSpecies = new boolean[nrOfSpecies];
-        final Node[] nodes = treeInput.get().getNodesAsArray();
-        for (int i = 0; i < nodeIndex; i++) {
-            final Node node = nodes[reverseOrder[i]];
-            if (node.isLeaf()) {
-                isLowerSpecies[node.getNr()] = true;
-            }
-        }
-        // find species on the right of selected node
-        final boolean[] isUpperSpecies = new boolean[nrOfSpecies];
-        for (int i = nodeIndex + 1; i < nodes.length; i++) {
-            final Node node = nodes[reverseOrder[i]];
-            if (node.isLeaf()) {
-                isUpperSpecies[node.getNr()] = true;
-            }
-        }
-
-        // find max
-        double max = Double.POSITIVE_INFINITY;
-        for (int i = 0; i < nrOfSpecies; i++) {
-            if (isLowerSpecies[i]) {
-                for (int j = 0; j < nrOfSpecies; j++) {
-                    if (j != i && isUpperSpecies[j]) {
-                        final int x = Math.min(i, j);
-                        final int y = Math.max(i, j);
-                        max = Math.min(max, maxHeight[x][y]);
-                    }
-                }
-            }
-        }
-        return max;
-    } */
-
-    /**
-     * for every species in the left on the gene tree and for every species in the right
-     * cap the maximum join height by the lowest place the two join in the gene tree
-     * 
-     * only used for debugging now
-     */
-    /* private void findMaximaInGeneTree(final Node node, final boolean[] taxonSet, final int [] taxonMap, final double[][] maxHeight) {
-        if (node.isLeaf()) {
-            final int species = taxonMap[node.getNr()];
-            taxonSet[species] = true;
+    private void recalculateMaxHeight(final int centerIndex) {
+        if (originSpecified) {
+            maxHeight = originInput.get().getValue();
         } else {
-            final boolean[] isLeftTaxonSet = new boolean[nrOfSpecies];
-            findMaximaInGeneTree(node.getLeft(), isLeftTaxonSet, taxonMap, maxHeight);
-            final boolean[] isRightTaxonSet = new boolean[nrOfSpecies];
-            findMaximaInGeneTree(node.getRight(), isRightTaxonSet, taxonMap, maxHeight);
-            for (int i = 0; i < nrOfSpecies; i++) {
-                if (isLeftTaxonSet[i]) {
-                    for (int j = 0; j < nrOfSpecies; j++) {
-                        if (j != i && isRightTaxonSet[j]) {
-                            final int x = Math.min(i, j);
-                            final int y = Math.max(i, j);
-                            maxHeight[x][y] = Math.min(maxHeight[x][y], node.getHeight());
-                        }
-                    }
-                }
-            }
-            for (int i = 0; i < nrOfSpecies; i++) {
-                taxonSet[i] = isLeftTaxonSet[i] | isRightTaxonSet[i];
-            }
+            maxHeight = Double.POSITIVE_INFINITY;
         }
-    } */
 
-    /**
-     * for every species in the left on the gene tree and for every species in the right
-     * cap the maximum join height by the lowest place the two join in the gene tree
-     */
-    private void findMaximaInGeneTree(final Node nodeX, final int [] taxonMap, final double[][] maxHeight, boolean[] isUsedSpecies) {
-        Tree tree = nodeX.getTree();
-        int nrOfNodes = tree.getNodeCount();
-        int [][] speciesList = new int[nrOfNodes][nrOfSpecies];
-        int [] speciesCount = new int[nrOfNodes];
-        for (Node node : tree.listNodesPostOrder(null, null)) { 	
-            if (node.isLeaf()) {
-                int nodeNr = node.getNr();
-                final int species = taxonMap[nodeNr];
-                if (isUsedSpecies[species]) {
-                    speciesList[nodeNr][0] = species;
-                    speciesCount[nodeNr] = 1;
+        final List<GeneTreeForSpeciesTreeDistribution> geneTrees = geneTreesInput.get();
+        for (int i = 0; i < geneTreeCount; i++) {
+            final int[] leafNodeMap = leafNodeMaps[i];
+            final RelativePosition[] leafPositions = leafPositionArrays[i];
+            for (int j = 0; j < leafNodeMap.length; j++) {
+                final int speciesNodeNumber = leafNodeMap[j];
+                final int speciesIndex = canonicalMap[speciesNodeNumber];
+                if (speciesIndex < centerIndex) {
+                    leafPositions[j] = RelativePosition.LEFT;
+                } else {
+                    leafPositions[j] = RelativePosition.RIGHT;
                 }
-            } else {
-                int left = node.getLeft().getNr();
-                int right = node.getRight().getNr();
-                for (int i = 0; i < speciesCount[left]; i++) {
-                    for (int j = 0; j < speciesCount[right]; j++) {
-                        if (speciesList[left][i] != speciesList[right][j]) {
-                            int sp1 = speciesList[left][i];
-                            int sp2 = speciesList[right][j];
-                            final int x;
-                            final int y;
-                            if (sp1 < sp2) {
-                                x = sp1; y = sp2;
-                            } else {
-                                x = sp2; y = sp1;
-                            }
-                            maxHeight[x][y] = Math.min(maxHeight[x][y], node.getHeight());
-                        }
-                    }
-                }
-                int i = 0;
-                int j = 0;
-                int k = 0;
-                int nodeNr = node.getNr();
-                int [] spList = speciesList[nodeNr];
-                int [] leftList = speciesList[left];
-                int [] rightList = speciesList[right];
-                while (i < speciesCount[left] && j < speciesCount[right]) {
-                    if (leftList[i] == rightList[j]) {
-                        spList[k++] = leftList[i];
-                        i++;
-                        j++;
-                    } else if (leftList[i] < rightList[j]) {
-                        spList[k++] = leftList[i++];
-                    } else {
-                        spList[k++] = rightList[j++];
-                    }
-                }
-                if (i == speciesCount[left]) {
-                    while (j < speciesCount[right]) {
-                        spList[k++] = rightList[j++];
-                    }
-                } else if (j == speciesCount[right]) {
-                    while (i < speciesCount[left]) {
-                        spList[k++] = leftList[i++];
-                    }
-                }
-                speciesCount[node.getNr()] = k;
             }
+
+            final Node geneTreeRoot = geneTrees.get(i).getGeneTree().getRoot();
+            recurseMaxHeight(geneTreeRoot, leafPositions);
         }
     }
 
-    private Node reconstructTree(final double[] heights, final int[] reverseOrder, final int from, final int to, final boolean[] hasParent) {
-        //nodeIndex = maxIndex(heights, 0, heights.length);
+    private RelativePosition recurseMaxHeight(final Node node, final RelativePosition[] leafPositions) {
+        final Node leftChild = node.getLeft();
+        final Node rightChild = node.getRight();
+
+        RelativePosition leftDescendantPosition;
+        if (leftChild.isLeaf()) {
+            leftDescendantPosition = leafPositions[leftChild.getNr()];
+        } else {
+            leftDescendantPosition = recurseMaxHeight(leftChild, leafPositions);
+        }
+
+        RelativePosition rightDescendantPosition;
+        if (rightChild.isLeaf()) {
+            rightDescendantPosition = leafPositions[rightChild.getNr()];
+        } else {
+            rightDescendantPosition = recurseMaxHeight(rightChild, leafPositions);
+        }
+
+        if (leftDescendantPosition == rightDescendantPosition) {
+            return leftDescendantPosition;
+        } else {
+            // if all descendants of one child are on the left, and all descendants of the other child are on the right
+            if (leftDescendantPosition != RelativePosition.BOTH && rightDescendantPosition != RelativePosition.BOTH) {
+                maxHeight = Double.min(maxHeight, node.getHeight());
+            }
+            return RelativePosition.BOTH;
+        }
+    }
+
+    /* Performs an in-order traversal of the species tree, randomly shuffling left and right nodes, to produce
+       a canonical order in the sense of Mau et al 1999. Also identify which nodes are true bifurcations
+       (not fake nodes used for sampled ancestors) */
+    private double chooseCanonicalOrder(final Node node) {
+        Node canonicalLeft;
+        Node canonicalRight;
+
+        if (Randomizer.nextBoolean()) {
+            canonicalLeft = node.getLeft();
+            canonicalRight = node.getRight();
+        } else {
+            canonicalLeft = node.getRight();
+            canonicalRight = node.getLeft();
+        }
+
+        double leftChildHeight;
+        if (canonicalLeft.isLeaf()) {
+            final int leftChildIndex = nextIndex;
+            nextIndex++;
+
+            canonicalMap[canonicalLeft.getNr()] = leftChildIndex;
+            canonicalOrder[leftChildIndex] = canonicalLeft;
+
+            leftChildHeight = canonicalLeft.getHeight();
+            nodeHeights[leftChildIndex] = leftChildHeight;
+        } else {
+            leftChildHeight = chooseCanonicalOrder(canonicalLeft);
+        }
+
+        final int thisIndex = nextIndex;
+        nextIndex++;
+
+        canonicalMap[node.getNr()] = thisIndex;
+        canonicalOrder[thisIndex] = node;
+
+        final double thisHeight = node.getHeight();
+        nodeHeights[thisIndex] = thisHeight;
+
+        double rightChildHeight;
+        if (canonicalRight.isLeaf()) {
+            final int rightChildIndex = nextIndex;
+            nextIndex++;
+
+            canonicalMap[canonicalRight.getNr()] = rightChildIndex;
+            canonicalOrder[rightChildIndex] = canonicalRight;
+
+            rightChildHeight = canonicalRight.getHeight();
+            nodeHeights[rightChildIndex] = rightChildHeight;
+        } else {
+            rightChildHeight = chooseCanonicalOrder(canonicalRight);
+        }
+
+        if (thisHeight > leftChildHeight && thisHeight > rightChildHeight) {
+            trueBifurcations[trueBifurcationCount] = thisIndex;
+            trueBifurcationCount++;
+        }
+
+        return thisHeight;
+    }
+
+    /* from and to are inclusive */
+    private int rebuildTree(final int from, final int to) {
+        double thisHeight = 0.0;
         int nodeIndex = -1;
-        double max = Double.NEGATIVE_INFINITY;
-        for (int j = from; j < to; j++) {
-            if (max < heights[j] && !m_nodes[reverseOrder[j]].isLeaf()) {
-                max = heights[j];
-                nodeIndex = j;
+
+        /* Only check internal nodes, which are odd numbered (leaves are even numbered). If there are multiple highest
+           internal nodes in the range, they are likely fake bifurcations, and connecting
+           them will result in multiple sampled ancestors at the same point in time along the same lineage.
+           In this case we reject the move.
+           This is similar to the following behaviour of LeafToSampledAncestorJump (see lines 68-70):
+           if (getOtherChild(parent, leaf).getHeight() >= leaf.getHeight()) return Double.NEGATIVE_INFINITY; */
+        for (int i = from + 1; i < to; i = i + 2) {
+            if (nodeHeights[i] > thisHeight) {
+                thisHeight = nodeHeights[i];
+                nodeIndex = i;
+            } else if (nodeHeights[i] == thisHeight) {
+                superimposedAncestors = true;
             }
         }
-        if (nodeIndex < 0) {
-            return null;
-        }
-        final Node node = m_nodes[reverseOrder[nodeIndex]];
-        final boolean keepLeftChild = node.getLeft().isDirectAncestor();
-        final boolean keepRightChild = node.getRight().isDirectAncestor();
 
-        if (!keepLeftChild) {
-	        //int left = maxIndex(heights, 0, nodeIndex);
-	        int left = -1;
-	        max = Double.NEGATIVE_INFINITY;
-	        for (int j = from; j < nodeIndex; j++) {
-	            if (max < heights[j] && !hasParent[j]) {
-	                max = heights[j];
-	                left = j;
-	            }
-	        }
-	        /* if (left >= reverseOrder.length || left < 0) {
-                System.out.println("(reverseOrder[" + left + "] out of bounds) Node number = " + node.getNr());
-                System.out.println(node.toNewick());
-            } */
-	        node.setLeft(m_nodes[reverseOrder[left]]);
-	        node.getLeft().setParent(node);
-	        if (node.getLeft().isLeaf()) {
-	            heights[left] = Double.NEGATIVE_INFINITY;
-	        }
-	        hasParent[left] = true;
-        }
-
-        if (!keepRightChild) {
-	        int right = -1;
-	        max = Double.NEGATIVE_INFINITY;
-	        for (int j = nodeIndex + 1; j < to; j++) {
-	            if (max < heights[j] && !hasParent[j]) {
-	                max = heights[j];
-	                right = j;
-	            }
-	        }
-	        node.setRight(m_nodes[reverseOrder[right]]);
-	        node.getRight().setParent(node);
-	        if (node.getRight().isLeaf()) {
-	            heights[right] = Double.NEGATIVE_INFINITY;
-	        }
-	        hasParent[right] = true;
-        }
-
-        heights[nodeIndex] = Double.NEGATIVE_INFINITY;
-        reconstructTree(heights, reverseOrder, from, nodeIndex, hasParent);
-        reconstructTree(heights, reverseOrder, nodeIndex, to, hasParent);
-        return node;
-    }
-
-    // helper for reconstructTree, to find maximum in range
-    //    private int maxIndex(final double[] heights, final int from, final int to) {
-    //        int maxIndex = -1;
-    //        double max = Double.NEGATIVE_INFINITY;
-    //        for (int i = from; i < to; i++) {
-    //            if (max < heights[i]) {
-    //                max = heights[i];
-    //                maxIndex = i;
-    //            }
-    //        }
-    //        return maxIndex;
-    //    }
-
-    /**
-     ** gather height of each node, and the node index associated with the height.*
-     **/
-    private int collectHeights(final Node node, final double[] heights, final int[] reverseOrder, int current) {
-        if (node.isLeaf()) {
-            heights[current] = node.getHeight();
-            reverseOrder[current] = node.getNr();
-            current++;
+        int leftNodeIndex;
+        if (from == nodeIndex - 1) {
+            leftNodeIndex = from;
         } else {
-            current = collectHeights(node.getLeft(), heights, reverseOrder, current);
-            heights[current] = node.getHeight();
-            reverseOrder[current] = node.getNr();
-            current++;
-            current = collectHeights(node.getRight(), heights, reverseOrder, current);
+            leftNodeIndex = rebuildTree(from, nodeIndex - 1);
         }
-        return current;
+
+        parents[leftNodeIndex] = canonicalOrder[nodeIndex];
+        leftChildren[nodeIndex] = canonicalOrder[leftNodeIndex];
+
+        int rightNodeIndex;
+        if (nodeIndex + 1 == to) {
+            rightNodeIndex = to;
+        } else {
+            rightNodeIndex = rebuildTree(nodeIndex + 1, to);
+        }
+
+        parents[rightNodeIndex] = canonicalOrder[nodeIndex];
+        rightChildren[nodeIndex] = canonicalOrder[rightNodeIndex];
+
+        return nodeIndex;
     }
 
-    /**
-     * randomly changes left and right children in every internal node *
-     */
-    private void reorder(final Node node) {
-        if (!node.isLeaf()) {
-            if (Randomizer.nextBoolean()) {
-                final Node tmp = node.getLeft();
-                node.setLeft(node.getRight());
-                node.setRight(tmp);
+    // for debugging, only called when assertions are enabled
+    private boolean checkVisitedCounts(SpeciesTree tree) {
+        int[] visitedCounts = new int[nodeCount];
+        recurseVisitedCounts(tree.getRoot(), visitedCounts);
+        for (int i = 0; i < nodeCount; i++) {
+            if (visitedCounts[i] != 1) {
+                return false;
             }
-            reorder(node.getLeft());
-            reorder(node.getRight());
+        }
+        return true;
+    }
+
+    // for debugging, only called when assertions are enabled
+    private void recurseVisitedCounts(Node node, int[] visitedCounts) {
+        visitedCounts[node.getNr()]++;
+        final List<Node> children = node.getChildren();
+        if (!node.isLeaf()) {
+            assert children.size() == 2;
+            final Node leftChild = children.get(0);
+            final Node rightChild = children.get(1);
+            assert leftChild.getParent() == node;
+            assert rightChild.getParent() == node;
+            assert leftChild.getHeight() <= node.getHeight();
+            assert rightChild.getHeight() <= node.getHeight();
+            recurseVisitedCounts(leftChild, visitedCounts);
+            recurseVisitedCounts(rightChild, visitedCounts);
         }
     }
-} // class NodeReheight
+}
