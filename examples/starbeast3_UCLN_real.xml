@@ -417,7 +417,9 @@ name="alignment">
 	<!-- ConstantDistance operators -->
 
 	
+
    <!-- <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.045" scaleFactor="0.8" weight="8.0"/> -->
+
 	
     <operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="1"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="5"/>
 
