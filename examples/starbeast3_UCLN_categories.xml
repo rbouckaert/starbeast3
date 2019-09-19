@@ -178,7 +178,7 @@ name="alignment">
 
 
 	<stateNode id="branchRates.Species" spec="parameter.IntegerParameter" lower="0">1</stateNode>
-	<parameter id="branchRatesStdev.Species" lower="0.01" estimate="false" name="stateNode">0.3</parameter>
+	<parameter id="branchRatesStdev.Species" lower="0.01" estimate="true" name="stateNode">0.3</parameter>
 
 
         <parameter id="kappa.s:26" lower="0.0" name="stateNode">2.0</parameter>
@@ -245,14 +245,14 @@ name="alignment">
             </prior>
 
 
-		<!--
+		
   		<prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
                     <LogNormal id="LogNormalDistributionModel.04" meanInRealSpace="true" name="distr">
                         <parameter id="branchRatesStdevPriorMean.Species" estimate="false" lower="0.0" name="M">1.0</parameter>
                         <parameter id="branchRatesStdevPriorStdev.Species" estimate="false" lower="0.0" name="S">2.0</parameter>
                     </LogNormal>
                 </prior>
-		-->
+	
 
   		<prior id="molecularClockRatePrior.c:26" name="distribution" x="@molecularClockRate.c:26">
                     <LogNormal id="LogNormalDistributionModel.2" meanInRealSpace="true" name="distr">
@@ -364,9 +364,9 @@ name="alignment">
         <operator id="branchRatesUniform.Species" spec="starbeast3.operators.DiscreteRateUniform" optimise="false" treeRates="@branchRates.Species" weight="9.0"/>
             
 
-	<!--
+	
         <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.55" weight="3.0"/>
-	-->
+	
             
         <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="75.0">
                     

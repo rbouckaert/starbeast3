@@ -1,0 +1,64 @@
+#NEXUS
+
+Begin taxa;
+	Dimensions ntax=26;
+		Taxlabels
+			Orthogeomys_heterodus 
+			Thomomys_bottae_albatus 
+			Thomomys_bottae_alpinus 
+			Thomomys_bottae_awahnee_a 
+			Thomomys_bottae_awahnee_b 
+			Thomomys_bottae_bottae 
+			Thomomys_bottae_cactophilus 
+			Thomomys_bottae_laticeps 
+			Thomomys_bottae_mewa 
+			Thomomys_bottae_riparius 
+			Thomomys_bottae_ruidosae 
+			Thomomys_bottae_saxatilis 
+			Thomomys_bottae_xerophilus 
+			Thomomys_idahoensis_pygmaeus_a 
+			Thomomys_idahoensis_pygmaeus_b 
+			Thomomys_mazama_mazama 
+			Thomomys_mazama_nasicus 
+			Thomomys_monticola_a 
+			Thomomys_monticola_b 
+			Thomomys_talpoides_bridgeri 
+			Thomomys_talpoides_ocius 
+			Thomomys_talpoides_yakimensis 
+			Thomomys_townsendii_relictus 
+			Thomomys_townsendii_townsendii 
+			Thomomys_umbrinus_atroavarius 
+			Thomomys_umbrinus_chihuahuae
+			;
+End;
+Begin trees;
+	Translate
+		   1 Orthogeomys_heterodus,
+		   2 Thomomys_bottae_albatus,
+		   3 Thomomys_bottae_alpinus,
+		   4 Thomomys_bottae_awahnee_a,
+		   5 Thomomys_bottae_awahnee_b,
+		   6 Thomomys_bottae_bottae,
+		   7 Thomomys_bottae_cactophilus,
+		   8 Thomomys_bottae_laticeps,
+		   9 Thomomys_bottae_mewa,
+		  10 Thomomys_bottae_riparius,
+		  11 Thomomys_bottae_ruidosae,
+		  12 Thomomys_bottae_saxatilis,
+		  13 Thomomys_bottae_xerophilus,
+		  14 Thomomys_idahoensis_pygmaeus_a,
+		  15 Thomomys_idahoensis_pygmaeus_b,
+		  16 Thomomys_mazama_mazama,
+		  17 Thomomys_mazama_nasicus,
+		  18 Thomomys_monticola_a,
+		  19 Thomomys_monticola_b,
+		  20 Thomomys_talpoides_bridgeri,
+		  21 Thomomys_talpoides_ocius,
+		  22 Thomomys_talpoides_yakimensis,
+		  23 Thomomys_townsendii_relictus,
+		  24 Thomomys_townsendii_townsendii,
+		  25 Thomomys_umbrinus_atroavarius,
+		  26 Thomomys_umbrinus_chihuahuae
+;
+tree STATE_5000000 = (((1:0.055135256410966116,(2:0.009828006750728426,9:0.009828006750728426):0.04530724966023769):0.012193199591261097,((((3:0.0015787463299102677,(5:1.38233695366456E-4,12:1.38233695366456E-4):0.0014405126345438117):0.0014713711004866194,(10:6.240434628694925E-4,13:6.240434628694925E-4):0.0024260739675273945):0.003931865988703703,((((4:0.0014169927387158048,8:0.0014169927387158048):0.002134459952923466,(7:0.0017915865974219296,25:0.0017915865974219296):0.001759866094217341):0.0017917151907890709,23:0.0053431678824283416):5.782755017858876E-4,24:0.005921443384214229):0.0010605400348863607):0.003046949428011111,((6:0.0010878335707839616,11:0.0010878335707839616):0.0017805484222201784,26:0.00286838199300414):0.007160550854107561):0.05729952315511551):0.051414551371594966,((((14:0.001572860071814044,15:0.001572860071814044):0.008528367195630084,(20:0.004479714098136922,(21:4.0854034673668E-5,22:4.0854034673668E-5):0.004438860063463254):0.005621513169307206):0.0036316067485554476,(16:0.002537720207519982,17:0.002537720207519982):0.011195113808479594):6.555441563433802E-4,(18:0.0054730904748712846,19:0.0054730904748712846):0.008915287697471672):0.10435462920147923):0.0;
+End;

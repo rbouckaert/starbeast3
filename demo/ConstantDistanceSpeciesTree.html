@@ -1,0 +1,717 @@
+<html>
+
+
+
+	<head>
+
+		<style>
+
+			@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
+			body {
+				font-family: "Source Sans Pro", "Arial"; 
+				background-color:#d3d3d3;
+			}
+
+
+			table {
+			   	%font-family: Courier New; 
+				font-size:16px;
+				position:relative;
+			}
+
+			table td {
+				margin:0;
+			}
+
+			table {
+			   	border-collapse: collapse;
+			}
+
+			.node {
+				cursor:pointer;
+			}
+
+			
+
+		</style>
+
+		
+	<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+	    tex2jax: {
+	      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+	      processEscapes: true
+	    }
+	  });
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="icytree-master/js/tree.js"></script>
+		<script src="icytree-master/js/treeparsing.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src='lib/d3.v5.min.js'></script> 
+		<script>
+
+
+			function init(){
+
+
+				NODE_SIZE = 10;
+				SPECIES_NODE_SIZE = 3;
+				SVG_TOP_MARGIN = 20;
+				SVG_BOTTOM_MARGIN = 20;
+				SVG_LEFT_MARGIN = 20;
+				SVG_RIGHT_MARGIN = 20;
+				SPECIES_LEAVES = [];
+				textLabelPadding = 5;
+				SPECIES_TREE = null;
+				GENE_TREES = [];
+				MAX_TREE_HEIGHT = 0;
+
+				
+				yScaler = 1;
+
+
+				// Species tree
+				loadFileAsString("trees/speciesTree.nexus", function(str1) { loadFileAsString("trees/gene26.nexus", function(str2) { loadFileAsString("trees/gene29.nexus", function(str3) {
+
+
+					SPECIES_TREE = getTreesFromString(str1)[0];
+					console.log("speciesTree", SPECIES_TREE);
+
+					var gene_tree1 = getTreesFromString(str2)[0];
+					var gene_tree = gene_tree1;
+					GENE_TREES.push(gene_tree1);
+
+					var gene_tree2 = getTreesFromString(str3)[0];
+					GENE_TREES.push(gene_tree2);
+
+					console.log("gene_tree1", gene_tree1);
+					console.log("gene_tree2", gene_tree2);
+
+
+					var svg = $("#tree");
+					SVG_HEIGHT = 800;
+					SVG_WIDTH = 800;
+					svg.height(SVG_HEIGHT);
+					svg.width(SVG_WIDTH);
+
+				
+
+
+					// Get max tree height 
+					MAX_TREE_HEIGHT = Math.max(Math.max(SPECIES_TREE.root.height, gene_tree1.root.height), gene_tree2.root.height);
+
+					var totalNAtLeaves = 0;
+					SPECIES_LEAVES = [];
+					for (var i = 0; i < SPECIES_TREE.nodeList.length; i ++) {
+						SPECIES_TREE.nodeList[i].rate = Math.random() * 2;
+						SPECIES_TREE.nodeList[i].populationsize = Math.random() * 50 + 20;
+						
+						if (SPECIES_TREE.nodeList[i].label != null) {	
+							SPECIES_TREE.nodeList[i].height = 0;
+							totalNAtLeaves += SPECIES_TREE.nodeList[i].populationsize;
+							SPECIES_LEAVES.push(SPECIES_TREE.nodeList[i]);
+						}
+					}
+
+					console.log(SPECIES_LEAVES);
+
+
+					// Plot the species tree leaves
+					var widthBetweenLeavesMultiplier = 1.5;
+					WIDTH_SCALE = (SVG_WIDTH - SVG_RIGHT_MARGIN - SVG_LEFT_MARGIN) / (widthBetweenLeavesMultiplier*totalNAtLeaves);  
+					var ypos = SVG_HEIGHT - SVG_BOTTOM_MARGIN;
+					var cum_N = 0;
+					for (var i = 0; i < SPECIES_LEAVES.length; i ++){
+
+						
+						var halfPop = SPECIES_LEAVES[i].populationsize/2;
+						var xpos = WIDTH_SCALE * (cum_N * widthBetweenLeavesMultiplier + halfPop) + SVG_RIGHT_MARGIN;
+						cum_N += SPECIES_LEAVES[i].populationsize;
+						//drawSVGobj(svg, "circle", {id: "node_species_" + SPECIES_LEAVES[i].id, cx: xpos, cy: ypos, r:NODE_SIZE, label: SPECIES_LEAVES[i].id + ", " +SPECIES_LEAVES[i].label }, "<title>" + SPECIES_LEAVES[i].label + "</title>", true);
+
+
+						drawSVGobj(svg, "line", {class: "speciesbranch", id: "node_species_" + SPECIES_LEAVES[i].id + "_B", x1: xpos- WIDTH_SCALE*halfPop, y1: ypos, x2: xpos+ WIDTH_SCALE*halfPop, y2: ypos, style: "stroke:black; stroke-width:2px"});
+					
+					  
+						console.log("halfPop", halfPop, totalNAtLeaves, SVG_WIDTH, WIDTH_SCALE)
+
+					}
+					drawSpeciesTree(svg, "species", SPECIES_TREE, SPECIES_TREE.root, true);
+
+
+					// Draw the gene tree
+					for (var g = 0; g < GENE_TREES.length - 1; g++){
+
+						var gene_tree = GENE_TREES[g];
+
+
+						// Get the leaves
+						var leaves = [];
+						for (var i = 0; i < gene_tree.nodeList.length; i ++) {
+							
+							if (gene_tree.nodeList[i].children.length == 0) {
+								leaves.push(gene_tree.nodeList[i]);
+								gene_tree.nodeList[i].height = 0;
+							}
+						}
+
+
+						// Plot the leaves
+						for (var i = 0; i < SPECIES_LEAVES.length; i ++){
+
+							var speciesTreeSVGid = "node_species_" + SPECIES_LEAVES[i].id + "_B";
+
+							var gene_leaves_for_species = [];
+							for (var j = 0; j < leaves.length; j ++) {
+								var leaf = leaves[j];
+								var speciesOfGene = leaf.label.split("_")[1];
+								//console.log(speciesOfGene, SPECIES_LEAVES[i].label);
+								if (SPECIES_LEAVES[i].label == speciesOfGene) {
+									gene_leaves_for_species.push(leaf);
+								}
+
+							}
+
+							console.log("speciesOfGene", SPECIES_LEAVES[i].label, gene_leaves_for_species.length);
+
+
+							var geneLeafScale = (SPECIES_LEAVES[i].populationsize * WIDTH_SCALE) / gene_leaves_for_species.length;
+							var ypos = SVG_HEIGHT - SVG_BOTTOM_MARGIN;
+							var dx =  parseFloat($("#" + speciesTreeSVGid).attr("x1"));
+							for (var j = 0; j < gene_leaves_for_species.length; j ++) {
+
+
+								var xpos = geneLeafScale * (j+0.5) + dx;
+								drawSVGobj(svg, "circle", {class: "genenode", id: "node_gene" + g + "_" + gene_leaves_for_species[j].id, cx: xpos, cy: ypos, fill: "red", r:SPECIES_NODE_SIZE, name: gene_leaves_for_species[j].id + ", " + gene_leaves_for_species[j].label }, "", true);
+							}
+
+						
+
+
+						}
+						
+
+						drawGeneTree(svg, "gene" + g, gene_tree, gene_tree.root, true);
+
+						
+
+					}
+
+
+					
+
+				}); }); });
+
+
+
+
+			}
+
+
+
+			var drawSpeciesTree = function(svg, treename, tree, node, root = false) {
+
+
+				
+				var treeHeightScale = (SVG_HEIGHT - SVG_BOTTOM_MARGIN - SVG_TOP_MARGIN) / MAX_TREE_HEIGHT;
+				console.log("node", node);
+
+				// Leaf node. Draw branch and return x,y values of parent node
+				if (node.children.length == 0){
+
+					//console.log("leaf", node.label, node.id);
+					var id = "node_species_" + node.id;
+
+					var species = node.label;
+					console.log(species);
+					var leafSvgId = "node_species_" + node.id + "_B";
+					
+					var y = parseFloat($("#" + leafSvgId).attr("y1"));
+					var x1 = parseFloat($("#" + leafSvgId).attr("x1"));
+					var x2 = parseFloat($("#" + leafSvgId).attr("x2"));
+					
+					//var id = leafSvgId + "_branch";
+
+					//drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_L", x1: x, y1: y, x2: x, y2: y - nodeParentHeight, style: "stroke:" + styles.col + "; stroke-width:2px"});
+					//$("#" + leafSvgId).attr("branchID", id);
+
+
+
+					
+
+					return {x1: x1, x2: x2, y: y, N: node.populationsize, id: id, name: node.id + ", " + node.label};
+
+				}
+
+
+				
+				var id = "node_species_" + node.id;
+
+				// Internal/root node. Find the (x,y) of its two shoulders and draw the shoulders. Then draw its parent branch
+				var r_left = drawSpeciesTree(svg, treename, tree, node.children[0]);
+				var r_right = drawSpeciesTree(svg, treename, tree, node.children[1]);
+
+				var thisHeight = SVG_HEIGHT - treeHeightScale*node.height - SVG_BOTTOM_MARGIN;
+				var thisX = (r_left.x2 + r_right.x1) / 2;
+
+
+				// Draw a line from the left child's right side to this node (inner)
+				drawSVGobj(svg, "line", {class: "speciesbranch", id: r_left.id + "_I", x1: r_left.x2, y1: r_left.y, x2: thisX, y2: thisHeight, style: "stroke:black; stroke-width:2px"});
+
+
+				// Draw a line from the left child's left side to the left of this node (outer)
+				drawSVGobj(svg, "line", {class: "speciesbranch", id: r_left.id + "_O", x1: r_left.x1, y1: r_left.y, x2: thisX - r_left.N * WIDTH_SCALE, y2: thisHeight, style: "stroke:black; stroke-width:2px"});
+
+
+				// Draw a line from the right child's left side to this node (inner)
+				drawSVGobj(svg, "line", {class: "speciesbranch", id: r_right.id + "_I", x1: r_right.x1, y1: r_right.y, x2: thisX, y2: thisHeight, style: "stroke:black; stroke-width:2px"});
+
+
+				// Draw a line from the right child's right side to the left of this node (outer)
+				drawSVGobj(svg, "line", {class: "speciesbranch", id: r_right.id + "_O", x1: r_right.x2, y1: r_right.y, x2: thisX + r_right.N * WIDTH_SCALE, y2: thisHeight, style: "stroke:black; stroke-width:2px"});
+
+
+				var N = node.populationsize;
+
+				// Draw a dashed line across this node
+				var x1 = thisX - 0.5*N * WIDTH_SCALE;
+				var x2 = thisX + 0.5*N * WIDTH_SCALE;
+				drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_B", x1: Math.min(x1, thisX - r_left.N * WIDTH_SCALE), y1: thisHeight, x2: Math.max(x2, thisX + r_right.N * WIDTH_SCALE), y2: thisHeight,  stroke_dasharray: 4, style: "stroke:black; stroke-width:1px;"});
+
+
+				// Mouse enter parallelogram for left branch
+				drawSVGobj(svg, "path", {class:"specieshoverbranch", id: r_left.id + "_P", d: "M " + r_left.x1 + " " + r_left.y + " H " + r_left.x2 + " L " + thisX + " " + thisHeight + " H " +  (thisX - r_left.N * WIDTH_SCALE) + " Z", fill:"transparent", stroke:"black", name: r_left.name }, "", true);
+
+
+				// Mouse enter parallelogram for right branch
+				drawSVGobj(svg, "path", {class:"specieshoverbranch", id: r_right.id + "_P", d: "M " + r_right.x2 + " " + r_right.y + " H " + r_right.x1 + " L " + thisX + " " + thisHeight + " H " +  (thisX + r_right.N * WIDTH_SCALE) + " Z", fill:"transparent", stroke:"black", name: r_right.name }, "", true);
+
+
+				
+				return {x1:  x1, x2: x2, y: thisHeight, N: node.populationsize, id: id, name: node.id};
+
+
+			}
+
+
+
+
+
+			var drawGeneTree = function(svg, treename, tree, node, root = false) {
+
+
+				
+				var treeHeightScale = (SVG_HEIGHT - SVG_BOTTOM_MARGIN - SVG_TOP_MARGIN) / MAX_TREE_HEIGHT;
+				console.log("node", node);
+
+				// Leaf node. Draw branch and return x,y values of parent node
+				if (node.children.length == 0){
+
+					//console.log("leaf", node.label, node.id);
+					var id = "node_" + treename + "_" + node.id;
+
+					var leafSvgId = "node_" + treename + "_" + node.id;
+					
+					var y = parseFloat($("#" + leafSvgId).attr("cy"));
+					var x = parseFloat($("#" + leafSvgId).attr("cx"));
+					
+					//var id = leafSvgId + "_branch";
+
+					
+
+					return {x: x, y: y, id: id, name: node.id + ", " + node.label};
+
+				}
+
+
+				
+				var id = "node_" + treename + "_" + node.id;
+
+				// Internal/root node. Find the (x,y) of its two shoulders and draw the shoulders. Then draw its parent branch
+				var r_left = drawGeneTree(svg, treename, tree, node.children[0]);
+				var r_right = drawGeneTree(svg, treename, tree, node.children[1]);
+
+				var thisHeight = SVG_HEIGHT - treeHeightScale*node.height - SVG_BOTTOM_MARGIN;
+				var thisX = (r_left.x + r_right.x) / 2;
+
+
+				console.log("XXXXX", r_left, r_right, thisHeight, thisX);
+
+
+				// Draw a line from the left child to this node
+				drawSVGobj(svg, "line", {class: "branch", id: r_left.id + "_branch", x1: r_left.x, y1: r_left.y, x2: thisX, y2: thisHeight, style: "stroke:red; stroke-width:1px"});
+
+
+				// Draw a line from the right child to this node
+				drawSVGobj(svg, "line", {class: "branch", id: r_right.id + "_branch", x1: r_right.x, y1: r_right.y, x2: thisX, y2: thisHeight, style: "stroke:red; stroke-width:1px"});
+
+				
+
+				// Draw the node
+				drawSVGobj(svg, "circle", {class: "genenode", id: id, cx: thisX, cy: thisHeight, fill: "red", r:SPECIES_NODE_SIZE, name: node.id }, "", true);
+
+
+				return {x: thisX, y: thisHeight, id: id, name: node.id};
+
+
+			}
+
+
+
+
+			function drawSVGobj(svg, type, attr, val = null, isNode = false, addBackground = false){
+
+				//console.log("attr", attr);
+				var newObj = document.createElementNS('http://www.w3.org/2000/svg', type);
+				for (var a in attr){
+					if (a == "text_anchor") newObj.setAttribute("text-anchor", attr[a]);
+					else if (a == "alignment_baseline") newObj.setAttribute("alignment-baseline", attr[a]);
+					else if (a == "stroke_dasharray") newObj.setAttribute("stroke-dasharray", attr[a]);
+					else newObj.setAttribute(a, attr[a]);
+				}
+				if (val != null) newObj.innerHTML = val;
+
+
+
+				// Set some of the styles as attributes because safari and IE do not like styles for svgs
+				var styles = getComputedStyle(newObj);
+				//if (styles.fill != null) newObj.setAttribute("fill", styles.fill);
+				if (styles.stroke != null) newObj.setAttribute("stroke", styles.stroke);
+				if (styles["stroke-width"] != null) newObj.setAttribute("stroke-width", styles["stroke-width"]);
+				if (isNode) newObj.setAttribute("class", "node");
+				//console.log(styles["stroke-width"]);
+
+
+				svg.append(newObj);
+
+				
+				if (isNode && attr.id != null){
+					$("#" + attr.id).hover(function() { hoverNode(attr.id) },  function() {  });
+				}
+				
+				
+				// Add a background box behind the label
+				if (addBackground && attr.id != null) {
+					
+					var boundingBox = document.getElementById(attr.id).getBBox();						
+					var bg = drawSVGobj(svg, "rect", {class: "barLabelBg", 	x: boundingBox.x - textLabelPadding,
+																y: boundingBox.y - textLabelPadding,
+																width: boundingBox.width + 2*textLabelPadding,
+																height: boundingBox.height + 2*textLabelPadding,
+																style: "fill:#d3d3d3"});
+				
+					$(bg).prev().insertAfter($(bg));
+
+				}
+
+				
+				return newObj;
+
+			}	
+
+
+
+
+			function hoverNode(id){
+
+			
+
+				unhover();
+
+
+				
+				$("#" + id).attr("fill", "orange");
+				
+
+
+				if($("#" + id).attr("name") == null) return;
+
+				$("#currentNodeName").html("(" + $("#" + id).attr("name") + ")");
+
+
+				//console.log("node.id", node.id);
+
+				var treeName = id.split("_")[1];
+
+
+				var tree = treeName == "species" ? SPECIES_TREE : GENE_TREES[parseFloat(treeName.split("gene")[1])];
+				var nodeID = parseFloat(id.split("_")[2]);
+
+				if (treeName != "species") {
+					$("#" + id + "_branch").css("stroke", "orange");
+					$("#" + id + "_branch").css("stroke-width", "3px");
+				}
+
+
+
+
+				var node = null;
+				for (var i = 0; i < tree.nodeList.length; i ++) {
+					if (tree.nodeList[i].id == nodeID) {
+						node = tree.nodeList[i];
+						break;
+					}
+				}
+
+				$("#currentNodeTime").html(roundToSF(node.height));
+				$("#currentNodeRate").html(roundToSF(node.rate));
+				if (node.parent != null){
+					$("#currentNodeSize").html(roundToSF(node.populationsize));
+					$("#currentNodeDistance").html(roundToSF(node.rate * (node.parent.height - node.height)));
+				}else {
+					$("#currentNodeSize").html("NA");
+					$("#currentNodeDistance").html("NA");
+				}
+
+
+
+
+			}
+
+			function unhover(){
+				$("path.node").attr("fill", "transparent");
+				$("circle.node").attr("fill", "red");
+				$(".branch").css("stroke", "red");
+				$(".branch").css("stroke-width", "1px");
+				//$(".branch").css("stroke", "black");
+				$(".currentNodeInfo").html("");
+			}
+
+
+
+
+			function loadFileAsString(url, resolve = function(result) { }){
+			    
+				console.log("Trying to open", url);
+				var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+
+						if (xhttp == null || xhttp.responseXML == "") return resolve( {error: "Error: cannot open " + url});
+						var str = xhttp.responseText;
+						resolve(str);
+
+					}
+				}
+				xhttp.open("GET", url, true);
+			    	xhttp.send();
+
+			}
+
+
+
+		
+			// Loads a .csv file and returns as an object
+			function loadCSV(url, resolve = function(result) { }){
+			    
+			    console.log("Trying to open", url);
+			    var xhttp = new XMLHttpRequest();
+			    xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+				  
+				    if (xhttp == null || xhttp.responseXML == "") return resolve( {error: "Error: cannot open " + url});
+
+				    //console.log("xhttp.responseText", xhttp.responseText);
+				    var csvString = xhttp.responseText.split("\n");
+						if (csvString.length == 0)  return resolve( {error: "Error: empty csv file detected at " + url} );
+						
+						
+						var CSV_obj = {};
+						var column_names = [];
+						
+						
+						// Parse the file
+						var haveParsedHeader = false;
+						var nrows = 0;
+						for (var i = 0; i < csvString.length; i ++){
+							var line = csvString[i].trim();
+							if (line == "") continue;
+							
+							var splitLine = line.split("\t");
+							
+							
+							
+							
+							var rowIsHeader = false;
+							for (var j = 0; j < splitLine.length; j ++){
+							
+								// Parse the header
+								if (!haveParsedHeader){
+									rowIsHeader = true;
+									
+									column_names.push(splitLine[j]);
+									CSV_obj[splitLine[j]] = [];
+									
+									
+
+								
+								} else {
+								
+									var value = splitLine[j];
+									var colName = column_names[j];
+									if (colName == null)  return resolve( {error: "Error: too many columns in row " + i + " of file " + url} );
+									
+									CSV_obj[colName].push(value);
+									
+									
+								
+								}
+								
+							}
+							
+							if (rowIsHeader) haveParsedHeader = true;
+							else nrows ++;
+						
+						
+						}
+				    
+
+						CSV_obj.nrows = nrows;
+						return resolve(CSV_obj);
+
+				   
+				}
+			    };
+			    xhttp.open("GET", url, true);
+			    xhttp.send();
+			    
+			    
+			}
+
+
+
+
+			function roundToSF(val, sf=2, ceilOrFloor = "none", precise = true){
+				
+				var magnitude = Math.floor(log(val, 10));
+
+				if (val < 0 && ceilOrFloor == "ceil") ceilOrFloor = "floor";
+				else if (val < 0 && ceilOrFloor == "floor") ceilOrFloor = "ceil";
+
+				var num = val * tenToThePowerOf(sf-magnitude, precise);
+				if (ceilOrFloor == "ceil") num = Math.ceil(num)
+				else if (ceilOrFloor == "floor") num = Math.floor(num)
+				else num = Math.round(num);
+
+				num = num * tenToThePowerOf(magnitude-sf, precise);
+				
+				// Sometimes this picks up a trailing .00000000001 which we want to remove
+
+				var expectedStringLength = 0;
+				if (magnitude >= 0) expectedStringLength = magnitude >= sf ? magnitude+1 : sf+2; // Add 1 for the decimal point
+				else expectedStringLength = 2 -magnitude + sf;
+				if (num < 0) expectedStringLength++; // Also need the negative symbol
+
+
+
+				num = parseFloat(num.toString().substring(0, expectedStringLength+1));
+				
+				return num;
+					
+			}
+
+
+
+
+			// Compute 10^n without using Math.pow for negative n which presents numerical instabilities
+			function tenToThePowerOf(n, precise = true){
+
+				if (!precise) return Math.pow(10, n);
+
+				if (n == Infinity || n == -Infinity) return n;
+
+				if (n == 0) return 1;
+				var val = "1";
+				if (n < 0) {
+				
+				
+					for (var index = -1; index > n; index --){
+						val = "0" + val;
+					}
+					val = "." + val;
+				}
+
+				else if (n > 0) {
+					return Math.pow(10, n);
+
+				}
+				else {
+					return 1;
+				}
+				//console.log(n, "->", parseFloat(val));
+				return parseFloat(val);
+
+
+			}
+
+
+			function log(num, base = null){
+				
+				if (num == 0) return 0;
+				if (base == null) return Math.log(Math.abs(num));
+				return Math.log(Math.abs(num)) / Math.log(base);
+				
+				
+			}
+
+
+
+
+		</script>
+
+	</head>
+	<body  onload="init()">
+
+
+
+		<div style="width:70%;  min-width:900px; margin-left:15%; text-align:center; border-style:solid; border-radius:5px; border-width:0.5px; background-color:white; border-color:#696969">
+
+			<h1 style="margin-bottom:0px">ConstantDistanceSpeciesTree operator</h1><br>
+			<table style="vertical-align:top; text-align:center; width:100%; padding: 20" cellpadding=0 cellspacing=0>
+				<tr>
+
+
+					<td  style="width:50px"></td>
+
+					<td  style="vertical-align:top; width:700px">
+						<svg id="tree" style=" border-style:solid; border-radius:5px; border-width:0.5px;" height = 0 width = 0>
+						</svg>
+					</td>
+
+
+					<td  style="vertical-align:bottom; width:200px">
+						
+						<div style="color:white; word-break: break-all; border-radius:5px; text-align:left; font-size:120%; padding: 20; border-style:solid; background-color:#008cba">
+							<div style="text-align:center">
+								<b>Selected node</b><br>
+								<i class="currentNodeInfo" id="currentNodeName"></i><br>
+							</div> 
+
+							<span title="Time / height"> $t$ = <span class="currentNodeInfo" id="currentNodeTime" style="padding:5; margin-right:20px"></span></span> <br> 
+							<span title="Rate of above branch"> $r$ = <span class="currentNodeInfo"  id="currentNodeRate" style="padding:5; margin-right:20px"></span></span> <br>
+							<span title="Genetic distance of above branch"> $d$ = <span class="currentNodeInfo"  id="currentNodeDistance" style="padding:5; margin-right:20px"></span></span> <br>
+							<span title="Effective population size of above branch"> $N$ = <span class="currentNodeInfo"  id="currentNodeSize" style="padding:5; margin-right:20px"></span></span> <br>
+						</div>
+
+
+					</td>
+
+					<td  style="width:50px"></td>
+
+				</tr>
+			</table>
+
+			<br><br><br>
+		</div>
+			
+
+
+
+	</body>
+
+
+
+
+</html>
