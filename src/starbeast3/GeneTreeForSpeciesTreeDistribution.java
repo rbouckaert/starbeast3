@@ -2,6 +2,7 @@ package starbeast3;
 
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +90,8 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     									 // branch with each species tree node's branch
     protected int[] geneNodeSpeciesAssignment;
     protected int[] storedGeneNodeSpeciesAssignment;
+    protected List<Integer>[] speciesTreeNodeGeneNodeAssignment;
+    protected List<Integer>[] storedSpeciesTreeNodeGeneNodeAssignment;
     protected double[] storedSpeciesOccupancy;
     protected boolean geneTreeCompatible;
     protected boolean storedGeneTreeCompatible;
@@ -202,6 +205,14 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         storedGeneNodeSpeciesAssignment = new int[geneTreeNodeCount];
         
         
+        speciesTreeNodeGeneNodeAssignment = new List[speciesNodeCount];
+        storedSpeciesTreeNodeGeneNodeAssignment = new List[speciesNodeCount];
+        for (int i = 0; i < speciesTreeNodeGeneNodeAssignment.length; i ++) {
+        	speciesTreeNodeGeneNodeAssignment[i] = new ArrayList<Integer>();
+        	storedSpeciesTreeNodeGeneNodeAssignment[i] = new ArrayList<Integer>();
+        }
+        
+        
       
         // Generate map of species tree tip node names to node numbers
         final Map<String, Integer> tipNumberMap = speciesTreeInput.get().getTipNumberMap();
@@ -272,10 +283,22 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         }
         return null;
     }
+    
+    
+    // Returns an array of gene tree nodes which map to this species tree node
+    public Node[] mapSpeciesNodeToGeneTreeNodes(Node species) {
+    	List<Integer> mappedNodeIntegers = speciesTreeNodeGeneNodeAssignment[species.getNr()];
+    	Node[] mappedNodes = new Node[mappedNodeIntegers.size()];
+    	for (int i = 0; i < mappedNodeIntegers.size(); i ++) {
+    		mappedNodes[i] = treeInput.get().getNode(mappedNodeIntegers.get(i));
+    	}
+    	return mappedNodes;
+    }
+    
 
     @Override
     public double calculateLogP() {
-    	
+
     	
         assert SanityChecks.checkTreeSanity(speciesTreeInput.get().getRoot());
         
@@ -337,6 +360,12 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         System.arraycopy(nrOfLineages, 0, nrOfLineagesStored, 0, nrOfLineages.length);
 
         System.arraycopy(geneNodeSpeciesAssignment, 0, storedGeneNodeSpeciesAssignment, 0, geneNodeSpeciesAssignment.length);
+        
+        for (int i = 0; i < speciesTreeNodeGeneNodeAssignment.length; i ++) {
+        	storedSpeciesTreeNodeGeneNodeAssignment[i].clear();
+        	storedSpeciesTreeNodeGeneNodeAssignment[i].addAll(speciesTreeNodeGeneNodeAssignment[i]);
+        }
+        
         System.arraycopy(speciesOccupancy, 0, storedSpeciesOccupancy, 0, speciesOccupancy.length);
 
         System.arraycopy(perBranchLogP, 0, storedPerBranchLogP, 0, perBranchLogP.length);
@@ -360,6 +389,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	int[] tmpCoalescentCounts = coalescentCounts;
     	int[] tmpCoalescentLineageCounts = nrOfLineages;
     	int[] tmpGeneNodeSpeciesAssignment = geneNodeSpeciesAssignment;
+    	List<Integer>[] tmpSpeciesTreeNodeGeneNodeAssignment = speciesTreeNodeGeneNodeAssignment;
     	double[] tmpSpeciesOccupancy = speciesOccupancy;
     	double[] tmpPerBranchLogP = perBranchLogP;
     	boolean tmpGeneTreeCompatible = geneTreeCompatible;
@@ -369,6 +399,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	nrOfLineages = nrOfLineagesStored;
     	speciesOccupancy = storedSpeciesOccupancy;
     	geneNodeSpeciesAssignment = storedGeneNodeSpeciesAssignment;
+    	speciesTreeNodeGeneNodeAssignment = storedSpeciesTreeNodeGeneNodeAssignment;
     	perBranchLogP = storedPerBranchLogP;
     	geneTreeCompatible = storedGeneTreeCompatible;
 
@@ -377,6 +408,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	nrOfLineagesStored = tmpCoalescentLineageCounts;
     	storedSpeciesOccupancy = tmpSpeciesOccupancy;
     	storedGeneNodeSpeciesAssignment = tmpGeneNodeSpeciesAssignment;
+    	storedSpeciesTreeNodeGeneNodeAssignment = tmpSpeciesTreeNodeGeneNodeAssignment;
     	storedPerBranchLogP = tmpPerBranchLogP;
     	storedGeneTreeCompatible = tmpGeneTreeCompatible;
 
@@ -469,6 +501,11 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	        // reset arrays as these values need to be recomputed after any changes to the species or gene tree
 	        //Arrays.fill(geneNodeSpeciesAssignment, -1); // -1 means no species assignment for that gene tree node has been made yet
 	        System.arraycopy(nrOfLineageToSpeciesMap, 0, geneNodeSpeciesAssignment, 0, geneTreeNodeCount);
+	        
+	        
+	        for (int i = 0; i < speciesTreeNodeGeneNodeAssignment.length; i ++) {
+	        	speciesTreeNodeGeneNodeAssignment[i].clear();
+	        }
 	
 	        
 	        // Arrays.fill(coalescentLineageCounts, 0);
@@ -589,6 +626,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
             final int existingSpeciesAssignment = geneNodeSpeciesAssignment[geneTreeNodeNumber];
             if (existingSpeciesAssignment == -1) {
                 geneNodeSpeciesAssignment[geneTreeNodeNumber] = speciesTreeNodeNumber;
+                speciesTreeNodeGeneNodeAssignment[speciesTreeNodeNumber].add(geneTreeNodeNumber);
 
                 coalescentTimes[speciesTreeNodeNumber * blocksize + coalescentCounts[speciesTreeNodeNumber]++] = geneTreeNodeHeight;
 
