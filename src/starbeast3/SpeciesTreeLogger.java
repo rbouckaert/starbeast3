@@ -24,6 +24,7 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
     final public Input<Tree> treeInput = new Input<>("tree", "tree to be logged", Validate.REQUIRED);
     final public Input<Function> parameterInput = new Input<>("popSize", "population size parameter associated with tree nodes", Validate.REQUIRED);
     final public Input<Function> parameterTopInput = new Input<>("popSizeTop", "population size parameter associated with top of tree branches, only used for non-constant *beast analysis");
+    final public Input<Function> branchRatesInput = new Input<>("realRates", "Real branch rates associated with tree nodes", Validate.REQUIRED);
     final public Input<SpeciesTreePrior> speciesTreePriorInput = new Input<>("speciesTreePrior", "species tree prior, used to find which Population Size Function is used. If not specified, assumes 'constant'");
     final public Input<TreeTopFinder> treeTopFinderInput = new Input<>("treetop", "calculates height of species tree", Validate.REQUIRED);
     final public Input<List<Function>> metadataInput = new Input<>("metadata", "meta data to be logged with the tree nodes",new ArrayList<>());
@@ -31,12 +32,12 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
     // TreePopSizeFunction popSizeFunction;
     String metaDataLabel;
 
-    static final String dmv = "dmv";
-    static final String dmt = "dmt";
+    static final String pop_label = "pop";
+    static final String rate_label = "rate";
 
     @Override
     public void initAndValidate() {
-        metaDataLabel = "[&" + dmv + "=";
+        metaDataLabel = "[&" + pop_label + "=";
 //        if (speciesTreePriorInput.get() != null) {
 //            popSizeFunction = speciesTreePriorInput.get().popFunctionInput.get();
 //        } else {
@@ -61,6 +62,10 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
         if (metadataTop != null && metadataTop instanceof StateNode) {
             metadataTop = ((StateNode) metadataTop).getCurrent();
         }
+        Function branchrateMetadata = branchRatesInput.get();
+        if (branchrateMetadata != null && branchrateMetadata instanceof StateNode) {
+        	branchrateMetadata = ((StateNode) branchrateMetadata).getCurrent();
+        }
 
         List<Function> metadataList = metadataInput.get();
         for (int i = 0; i < metadataList.size(); i++) {
@@ -72,21 +77,21 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
         // write out the log tree with meta data
         out.print("tree STATE_" + sample + " = ");
         tree.getRoot().sort();
-        out.print(toNewick(tree.getRoot(), metadata, metadataTop, metadataList));
+        out.print(toNewick(tree.getRoot(), metadata, metadataTop, branchrateMetadata, metadataList));
         //out.print(tree.getRoot().toShortNewick(false));
         out.print(";");
     }
 
 
-    String toNewick(final Node node, final Function metadata, final Function metadataTop, List<Function> metadataList) {
+    String toNewick(final Node node, final Function metadata, final Function metadataTop, final Function branchrateMetadata, List<Function> metadataList) {
         final StringBuilder buf = new StringBuilder();
 
         if (node.getLeft() != null) {
             buf.append("(");
-            buf.append(toNewick(node.getLeft(), metadata, metadataTop, metadataList));
+            buf.append(toNewick(node.getLeft(), metadata, metadataTop, branchrateMetadata, metadataList));
             if (node.getRight() != null) {
                 buf.append(',');
-                buf.append(toNewick(node.getRight(), metadata, metadataTop, metadataList));
+                buf.append(toNewick(node.getRight(), metadata, metadataTop, branchrateMetadata, metadataList));
             }
             buf.append(")");
         } else {
@@ -96,7 +101,10 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
 //        switch (popSizeFunction) {
 //            case constant: {
                 final double popStart = metadata.getArrayValue(node.getNr());
-                buf.append(dmv + "=").append(popStart);
+                final double rateBranch = branchrateMetadata.getArrayValue(node.getNr());
+                buf.append(pop_label + "=").append(popStart);
+                buf.append(",");
+                buf.append(rate_label + "=").append(rateBranch);
 //                break;
 //            }
 //            case linear:

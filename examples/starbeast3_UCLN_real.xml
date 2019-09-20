@@ -567,7 +567,7 @@ name="alignment">
     </logger>
 
     <logger id="speciesTreeLogger" fileName="starbeast3_UCLN.species.trees" logEvery="5000" mode="tree">
-        <log id="SpeciesTreeLoggerX" spec="starbeast3.SpeciesTreeLogger" popSize="@popSize" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
+        <log id="SpeciesTreeLoggerX" spec="starbeast3.SpeciesTreeLogger" realRates="@branchRates.Species" popSize="@popSize" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
         <!--popSizeTop="@popSizeTop" -->
             <treetop id="treeTopFinder" spec="beast.evolution.speciation.TreeTopFinder">
                 <tree idref="Tree.t:47"/>
