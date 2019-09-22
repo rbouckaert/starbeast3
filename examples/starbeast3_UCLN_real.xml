@@ -104,7 +104,7 @@ name="alignment">
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="5000000"  sampleFromPrior="true" storeEvery="5000">
+<run id="mcmc" spec="MCMC" chainLength="5000000"  sampleFromPrior="false" storeEvery="5000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" dimension="8" name="stateNode">100.0</parameter>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
@@ -359,12 +359,14 @@ name="alignment">
 
 	   <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.045" scaleFactor="0.8" weight="20.0"/>
 
-
-	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.00001" tree="@Tree.t:Species" rates="@branchRates.Species" popsizes="@popSize" coalescentModel="@speciescoalescent" weight="20"/>
+	
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.0001" tree="@Tree.t:Species" rates="@branchRates.Species" popsizes="@popSize" coalescentModel="@speciescoalescent" weight="20"/>
+	
 
 	<!--
-		<operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="1"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="5"/>
+		<operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="0.000005"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="20"/>
 	-->
+
 	<operator id="FastRootOperator1.Species" spec="consoperators.SimpleDistance" rates="@branchRates.Species" tree="@Tree.t:Species" twindowSize="1.0" weight="2.0"/>
 
 	<operator id="FastRootOperator2.Species" spec="consoperators.SmallPulley"  dwindowSize="0.1" rates="@branchRates.Species" tree="@Tree.t:Species" weight="2.0"/>
@@ -549,21 +551,26 @@ name="alignment">
         <log idref="birthRate.t:Species"/>
         <log idref="YuleModel.t:Species"/>
         <log id="TreeHeight.Species" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:Species"/>
+	<log id="BranchLength.Species" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:Species"/>
         <log idref="treeLikelihood.47"/>
         <log idref="treePrior.t:47"/>
         <log id="TreeHeight.t:47" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:47"/>
+	<log id="BranchLength.t:47" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:47"/>
         <log idref="treeLikelihood.26"/>
         <log idref="treePrior.t:26"/>
         <log id="TreeHeight.t:26" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:26"/>
+	<log id="BranchLength.t:26" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:26"/>
         <log idref="treeLikelihood.29"/>
         <log idref="treePrior.t:29"/>
         <log id="TreeHeight.t:29" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:29"/>
+	<log id="BranchLength.t:29" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:29"/>
         <log idref="kappa.s:26"/>
         <log idref="kappa.s:29"/>
         <log idref="kappa.s:47"/>
         <log idref="popSize"/>
         <log idref="popMean"/>
 	<log idref="branchRatesStdev.Species"/>
+	<log idref="branchRates.Species"/>
 	<log idref="molecularClockRate.c:26"/>
 	<log idref="molecularClockRate.c:29"/>
 	<log idref="molecularClockRate.c:47"/>
