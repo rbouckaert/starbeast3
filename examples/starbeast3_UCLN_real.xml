@@ -295,9 +295,7 @@ name="alignment">
             </prior>
 
              <prior id="constPopSizesPrior.Species" name="distribution" x="@popSize">
-                    <Gamma id="Gamma.0" beta="@popMean" mode="ShapeMean" name="distr">
-                        <parameter id="constPopShape.Species" estimate="false" lower="0.0" name="alpha">3.0</parameter>
-                    </Gamma>
+					<distr id="popPriorDistr" spec="beast.math.distributions.InverseGamma" alpha="2.0" beta="@popMean"/>
              </prior>
 
         </distribution>
@@ -378,14 +376,19 @@ name="alignment">
 
 	<operator id="RatesScaleOperator.Species" spec="ScaleOperator" scaleFactor="0.5" parameter="@branchRates.Species" weight="14.0"/>
 
-
 	<operator id="PopSizeGibbsSampler" spec='starbeast3.operators.PopSizeGibbsSampler' weight="1.0" popSizes="@popSize">
-		<gammaprior id="gammaPrior" spec="beast.math.distributions.Gamma" alpha="2.0" beta="@popMean"/>
+		<gammaprior idref="popPriorDistr"/>
 		<gene idref="treePrior.t:26"/>
 		<gene idref="treePrior.t:29"/>
 		<gene idref="treePrior.t:47"/>
 	</operator>
 
+        <operator id="constPopSizesSwap.Species" spec="starbeast3.operators.RealCycle" k="2" optimise="false" parameter="@popSize" weight="3.0"/>
+            
+        <operator id="constPopSizesScale.Species" spec="ScaleOperator" parameter="@popSize" scaleFactor="0.5" weight="3.0"/>
+            
+        <operator id="constPopMeanScale.Species" spec="ScaleOperator" parameter="@popMean" scaleFactor="0.75" weight="1.0"/>
+            
 
 
             
@@ -526,12 +529,6 @@ name="alignment">
             
         <operator id="WilsonBalding.t:29" spec="WilsonBalding" tree="@Tree.t:29" weight="15.0"/>
             
-        <operator id="constPopSizesSwap.Species" spec="starbeast3.operators.RealCycle" k="2" optimise="false" parameter="@popSize" weight="3.0"/>
-            
-        <operator id="constPopSizesScale.Species" spec="ScaleOperator" parameter="@popSize" scaleFactor="0.5" weight="3.0"/>
-            
-        <operator id="constPopMeanScale.Species" spec="ScaleOperator" parameter="@popMean" scaleFactor="0.75" weight="1.0"/>
-            
         <operator id="KappaScaler.s:26" spec="ScaleOperator" parameter="@kappa.s:26" scaleFactor="0.75" weight="1.0"/>
         <operator id="KappaScaler.s:29" spec="ScaleOperator" parameter="@kappa.s:29" scaleFactor="0.75" weight="1.0"/>
         <operator id="KappaScaler.s:47" spec="ScaleOperator" parameter="@kappa.s:47" scaleFactor="0.75" weight="1.0"/>
@@ -577,7 +574,7 @@ name="alignment">
     </logger>
 
     <logger id="speciesTreeLogger" fileName="starbeast3_UCLN.species.trees" logEvery="5000" mode="tree">
-        <log id="SpeciesTreeLoggerX" spec="starbeast3.SpeciesTreeLogger" realRates="@branchRates.Species" popSize="@popSize" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
+        <log id="SpeciesTreeLoggerX" spec="starbeast3.SpeciesTreeLogger" metadata="@branchRates.Species" popSize="@popSize" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
         <!--popSizeTop="@popSizeTop" -->
             <treetop id="treeTopFinder" spec="beast.evolution.speciation.TreeTopFinder">
                 <tree idref="Tree.t:47"/>

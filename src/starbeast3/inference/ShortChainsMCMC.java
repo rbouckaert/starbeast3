@@ -376,14 +376,14 @@ public class ShortChainsMCMC extends MCMC {
 		}
 		
 		
-		KolmogorovSmirnovTest test = new KolmogorovSmirnovTest();
-		double pValue = test.kolmogorovSmirnovTest(sample1, sample2);
-		Log.info("pValue = " + pValue);
-		return (pValue > pLevel);
+//		KolmogorovSmirnovTest test = new KolmogorovSmirnovTest();
+//		double pValue = test.kolmogorovSmirnovTest(sample1, sample2);
+//		Log.info("pValue = " + pValue);
+//		return (pValue > pLevel);
 		
-//		MannWhitneyUTest test = new MannWhitneyUTest();
-//		double pValue = test.mannWhitneyUTest(sample1, sample2);
-//		return (pValue < 0.05);
+		MannWhitneyUTest test = new MannWhitneyUTest();
+		double pValue = test.mannWhitneyUTest(sample1, sample2);
+		return (pValue > pLevel);
 	}
 
 
