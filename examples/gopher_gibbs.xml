@@ -107,7 +107,7 @@ name="alignment">
 <run id="mcmc" spec="MCMC" chainLength="5000000" storeEvery="5000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" dimension="8" name="stateNode">100.0</parameter>
-        <tree id="Tree.t:Species" name="stateNode">
+        <tree id="Tree.t:Species" name="stateNode"  spec="starbeast3.SpeciesTree">
             <taxonset id="taxonsuperset" spec="TaxonSet">
                 <taxon id="townsendii" spec="TaxonSet">
                     <taxon id="Thomomys_townsendii_townsendii" spec="Taxon"/>
@@ -184,15 +184,18 @@ name="alignment">
         <gene idref="Tree.t:26"/>
         <gene idref="Tree.t:29"/>
         <gene idref="Tree.t:47"/>
-        <speciesTreePrior id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" bottomPopSize="@popSize" gammaParameter="@popMean" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species"/> <!--topPopSize="@popSizeTop" -->
+        <speciesTreePrior id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" bottomPopSize="@popSize" gammaParameter="@popMean" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species"
+	        > <!--topPopSize="@popSizeTop" -->
+		  <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
+		</speciesTreePrior>
     </init>
 
     <distribution id="posterior" spec="util.CompoundDistribution">
         <distribution id="speciescoalescent" spec="util.CompoundDistribution">
             <distribution idref="SpeciesTreePopSize.Species"/>
-            <distribution id="treePrior.t:26" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:26"/>
-            <distribution id="treePrior.t:29" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:29"/>
-            <distribution id="treePrior.t:47" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:47"/>
+            <distribution id="treePrior.t:26" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:26"/>
+            <distribution id="treePrior.t:29" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:29"/>
+            <distribution id="treePrior.t:47" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:47"/>
         </distribution>
         <distribution id="prior" spec="util.CompoundDistribution">
             <distribution id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:Species" tree="@Tree.t:Species"/>
@@ -236,6 +239,9 @@ name="alignment">
                     <parameter id="RealParameter.011" estimate="false" lower="0.0" name="S" upper="5.0">1.25</parameter>
                 </LogNormal>
             </prior>
+             <prior id="constPopSizesPrior.Species" name="distribution" x="@popSize">
+					<distr id="popPriorDistr" spec="beast.math.distributions.InverseGamma" alpha="2.0" beta="@popMean"/>
+             </prior>
 
         </distribution>
         <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
@@ -281,7 +287,7 @@ name="alignment">
 -->
     <operator id="popMeanScale.t:Species" spec="ScaleOperator" parameter="@popMean" scaleFactor="0.75" weight="1.3273128598848374"/>
     <operator id="PopSizeGibbsSampler" spec='starbeast3.operators.PopSizeGibbsSampler' weight="1.0" popSizes="@popSize">
-    	<gammaprior id="gammaPrior" spec="beast.math.distributions.Gamma" alpha="2.0" beta="@popMean"/>
+		<gammaprior idref="popPriorDistr"/>
     	<gene idref="treePrior.t:26"/>
         <gene idref="treePrior.t:29"/>
         <gene idref="treePrior.t:47"/>

@@ -746,14 +746,6 @@ public class AdaptableVarianceMultivariateNormalOperator extends Operator {
 
         double newDelta = delta * ratio;
 
-        
-        StringBuilder b = new StringBuilder();
-        for (double [] e : empirical) {
-        	b.append(Arrays.toString(e));
-        	b.append("\n");
-        }
-        // Log.warning("Covariance matrix:\n" + b.toString());
-        
         String adaptationParameterName = "scalefactor";
         final DecimalFormat formatter = new DecimalFormat("#.###");
         if (prob < MINIMUM_ACCEPTANCE_LEVEL) {

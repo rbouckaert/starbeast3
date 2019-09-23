@@ -325,7 +325,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        //logJD += Math.log(tree.getRoot().getHeight());
        
-       
+       //return 0;
        return logJD;
     }
     
