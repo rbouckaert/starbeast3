@@ -292,6 +292,8 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	for (int i = 0; i < mappedNodeIntegers.size(); i ++) {
     		mappedNodes[i] = treeInput.get().getNode(mappedNodeIntegers.get(i));
     	}
+
+    	
     	return mappedNodes;
     }
     
@@ -502,10 +504,10 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	        //Arrays.fill(geneNodeSpeciesAssignment, -1); // -1 means no species assignment for that gene tree node has been made yet
 	        System.arraycopy(nrOfLineageToSpeciesMap, 0, geneNodeSpeciesAssignment, 0, geneTreeNodeCount);
 	        
-	        
 	        for (int i = 0; i < speciesTreeNodeGeneNodeAssignment.length; i ++) {
 	        	speciesTreeNodeGeneNodeAssignment[i].clear();
 	        }
+	      
 	
 	        
 	        // Arrays.fill(coalescentLineageCounts, 0);
@@ -534,7 +536,18 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	            	clockuptodate = true;
 	                return;
 	            }
+
+	            
 	        }
+	        
+	        
+	        
+	        // Reverse map the geneToSpecies map into the speciesToGene map
+	        for (int geneTreeNodeNumber = 0; geneTreeNodeNumber < geneTreeNodeCount; geneTreeNodeNumber++) {
+	        	int speciesTreeNodeNumber =  geneNodeSpeciesAssignment[geneTreeNodeNumber];
+	        	speciesTreeNodeGeneNodeAssignment[speciesTreeNodeNumber].add(geneTreeNodeNumber);
+	        }
+	        
 	
 	        maxCoalescentCounts = 0;
 	        for (int j : coalescentCounts) {
@@ -626,7 +639,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
             final int existingSpeciesAssignment = geneNodeSpeciesAssignment[geneTreeNodeNumber];
             if (existingSpeciesAssignment == -1) {
                 geneNodeSpeciesAssignment[geneTreeNodeNumber] = speciesTreeNodeNumber;
-                speciesTreeNodeGeneNodeAssignment[speciesTreeNodeNumber].add(geneTreeNodeNumber);
+                
 
                 coalescentTimes[speciesTreeNodeNumber * blocksize + coalescentCounts[speciesTreeNodeNumber]++] = geneTreeNodeHeight;
 

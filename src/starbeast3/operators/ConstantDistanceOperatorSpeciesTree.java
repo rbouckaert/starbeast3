@@ -182,6 +182,9 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        
        
+       String speciesNewick = tree.toString();
+       String geneTree1 = geneTreeDistributions.get(0).getGeneTree().toString();
+       
        
        // Iterate through gene trees
        Node geneTreeNode;
@@ -220,6 +223,16 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     			   System.out.println("X distance has changed from " + d_g + " to " + d_g);    		   
     		   }
     		   
+    		   double d_cg = r_x * (t_g - t_x);
+    		   double d_cg_ = r_x_ * (t_g_ - t_x_);
+    		   
+    		   
+    		   if (Math.abs(d_cg - d_cg_) > 0.000001) {
+    			   System.out.println("X lower distance has changed from " + d_cg + " to " + d_cg_);    		   
+    		   }
+    		   
+    		   
+    		   
     		   geneTreeNode.setHeight(t_g_);
     	   }
     	   
@@ -246,6 +259,16 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     		   if (Math.abs(d_g - d_g_) > 0.000001) {
     			   System.out.println("L distance has changed from " + d_g + " to " + d_g);    		   
     		   }
+    		   
+    		   double d_cg = r_L * (t_x - t_g);
+    		   double d_cg_ = r_L_ * (t_x_ - t_g_);
+    		   
+    		   
+    		   if (Math.abs(d_cg - d_cg_) > 0.000001) {
+    			   System.out.println("L lower distance has changed from " + d_cg + " to " + d_cg_);    		   
+    		   }
+    		   
+    		   
     		   
     		   geneTreeNode.setHeight(t_g_);
     	   }
@@ -274,6 +297,16 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     		   if (Math.abs(d_g - d_g_) > 0.000001) {
     			   System.out.println("R distance has changed from " + d_g + " to " + d_g);    		   
     		   }
+    		   
+    		   
+    		   double d_cg = r_R * (t_x - t_g);
+    		   double d_cg_ = r_R_ * (t_x_ - t_g_);
+    		   
+    		   
+    		   if (Math.abs(d_cg - d_cg_) > 0.000001) {
+    			   System.out.println("R lower distance has changed from " + d_cg + " to " + d_cg_);    		   
+    		   }
+    		   
     		   
     		   
     		   geneTreeNode.setHeight(t_g_);
