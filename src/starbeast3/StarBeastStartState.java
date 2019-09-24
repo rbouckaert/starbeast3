@@ -30,6 +30,7 @@ import beast.evolution.tree.Tree;
 import beast.evolution.tree.coalescent.ConstantPopulation;
 import beast.math.distributions.MRCAPrior;
 import beast.util.ClusterTree;
+import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 
 /**
 * @author Joseph Heled
@@ -77,6 +78,11 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
     final public Input<Function> muInput = new Input<>("baseRate",
             "Main clock rate used to scale trees (default 1).");
+    
+    
+    final public Input<BranchRateModelSB3> speciesTreeRatesInput =
+            new Input<>("speciesTreeRates", "Clock model for species tree");
+    
 
 
     private boolean hasCalibrations;

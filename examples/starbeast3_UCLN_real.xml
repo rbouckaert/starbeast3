@@ -104,7 +104,7 @@ name="alignment">
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="5000000"  sampleFromPrior="false" storeEvery="5000">
+<run id="mcmc" spec="MCMC" chainLength="10000000"  sampleFromPrior="true" storeEvery="5000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" dimension="8" name="stateNode">100.0</parameter>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
@@ -200,6 +200,8 @@ name="alignment">
         <speciesTreePrior id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" bottomPopSize="@popSize" gammaParameter="@popMean" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species" >
 		 <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
 	</speciesTreePrior>
+
+	<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" />
 
     </init>
 
@@ -309,20 +311,8 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:26" spec="Frequencies" data="@26"/>
                     </substModel>
                 </siteModel>
-		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" geneTree="@treePrior.t:26">
-			
+		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" geneTree="@treePrior.t:26" speciesTreeRates="@branchRatesModel.Species"/>
 
-			<!-- Exponential clock with real rates -->
-			<!--
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" />
-			-->
-
-			<!-- Lognormal clock with real rates -->
-			
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" />
-			
-
-		</branchRateModel>
 
             </distribution>
             <distribution id="treeLikelihood.29" spec="TreeLikelihood" data="@29" tree="@Tree.t:29">
@@ -358,12 +348,16 @@ name="alignment">
 	   <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.045" scaleFactor="0.8" weight="20.0"/>
 
 	
-	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.0001" tree="@Tree.t:Species" rates="@branchRates.Species" popsizes="@popSize" coalescentModel="@speciescoalescent" weight="20"/>
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.2" tree="@Tree.t:Species" rates="@branchRates.Species" popsizes="@popSize" adjustPopulationSizes="false" weight="20.0">
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
+	</operator>
 	
 
-	<!--
-		<operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="0.000005"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="20"/>
-	-->
+	
+	<operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="0.005"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="2.0"/>
+	
 
 	<operator id="FastRootOperator1.Species" spec="consoperators.SimpleDistance" rates="@branchRates.Species" tree="@Tree.t:Species" twindowSize="1.0" weight="2.0"/>
 

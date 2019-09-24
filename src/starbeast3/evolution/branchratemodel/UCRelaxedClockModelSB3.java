@@ -386,16 +386,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         }
 
         assert ratesArray[node.getNr()] > 0.0;
-        
-        
-        // Get the rate
-        int nodeNumber = node.getNr();
-        if (nodeNumber == nEstimatedRates) {
-            // Root node has nr less than #categories, so use that nr
-            nodeNumber = node.getTree().getRoot().getNr();
-        }
-        int category = categories.getValue(nodeNumber);
-        return ratesArray[category];
+        return ratesArray[node.getNr()];
         
     }
     

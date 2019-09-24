@@ -541,10 +541,9 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	        }
 	        
 	        
-	        
 	        // Reverse map the geneToSpecies map into the speciesToGene map
 	        for (int geneTreeNodeNumber = 0; geneTreeNodeNumber < geneTreeNodeCount; geneTreeNodeNumber++) {
-	        	int speciesTreeNodeNumber =  geneNodeSpeciesAssignment[geneTreeNodeNumber];
+	        	int speciesTreeNodeNumber = geneNodeSpeciesAssignment[geneTreeNodeNumber];
 	        	speciesTreeNodeGeneNodeAssignment[speciesTreeNodeNumber].add(geneTreeNodeNumber);
 	        }
 	        
@@ -612,7 +611,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	}
 	
 
-    // Non-recursively populates speciesOccupancy, 
+    // Iteratively populates speciesOccupancy, coalescentTimes, and geneNodeSpeciesAssignment
     private boolean collateCoalescenceEvents(int lastGeneTreeNodeNumber, double lastHeight, Node geneTreeNode, int geneTreeNodeNumber, Node speciesTreeNode, int speciesTreeNodeNumber) {
         while (true) {
             final double geneTreeNodeHeight = geneTreeNode.getHeight();

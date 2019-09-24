@@ -201,6 +201,10 @@ name="alignment">
 		 <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
 	</speciesTreePrior>
 
+
+	<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" discreteRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" />
+
+
     </init>
 
     <distribution id="posterior" spec="util.CompoundDistribution">
@@ -301,20 +305,7 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:26" spec="Frequencies" data="@26"/>
                     </substModel>
                 </siteModel>
-		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" geneTree="@treePrior.t:26">
-			
-
-			<!-- Exponential clock with rate categories -->
-			<!--
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" discreteRates="@branchRates.Species" tree="@Tree.t:Species" />
-			-->
-
-			<!-- Lognormal clock with rate categories -->
-			
-			<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" discreteRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" />
-			
-
-		</branchRateModel>
+		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" geneTree="@treePrior.t:26" speciesTreeRates="@branchRatesModel.Species"/>
 
             </distribution>
             <distribution id="treeLikelihood.29" spec="TreeLikelihood" data="@29" tree="@Tree.t:29">

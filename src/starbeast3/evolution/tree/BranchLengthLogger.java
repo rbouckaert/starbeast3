@@ -33,7 +33,7 @@ public class BranchLengthLogger extends CalculationNode implements Loggable, Fun
         }
         
         for (int nodeNr = 0; nodeNr < getDimension(); nodeNr++) {
-        	out.print(id + "." + (nodeNr-1) + "\t");
+        	out.print(id + "." + (nodeNr+1) + "\t");
         }
         
     }
