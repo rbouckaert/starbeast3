@@ -42,10 +42,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     private Node[] geneNodeMap_R;
     
     
-    
-    private double[] geneNodeHeightsBeforeProposal;
-    private double[] geneParentHeightsBeforeProposal;
-    
    
 
     //protected BranchRateModel.Base branchRateModel;
@@ -77,9 +73,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         		maxNumGeneNodes = Math.max(maxNumGeneNodes, geneTreeDistributions.get(i).getNodeCount());
         	}
         	
-        	 geneNodeHeightsBeforeProposal = new double[maxNumGeneNodes];
-        	 geneParentHeightsBeforeProposal = new double[maxNumGeneNodes];
-        	
         }
         
         
@@ -87,7 +80,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
 
     @Override
     public double proposal() {
-
+    	
+    	
     	
         final Tree tree = treeInput.get(this);
         int nodeCount = tree.getNodeCount(); //return the number of nodes in the tree
@@ -101,9 +95,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         double t_x;
         double t_L;
         double t_R;
-        //the original distances
-        double d_L;
-        double d_R;
         //the original rates
         double r_R;
         double r_L;
@@ -143,8 +134,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         }
 
        r_L = rates.getValues()[leftNr]; // rate of branch above left child
-       d_L = r_L * (t_x - t_L); // distance of branch above left child
-
 
        // Right child
        Node rightNode = node.getChild(1);//get the right child of this node
@@ -156,21 +145,22 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        }
 
        r_R = rates.getValues()[rightNr];// rate of branch above right child
-       d_R = r_R * (t_x - t_R);// distance of branch above right child
-
-
 
 
        //Step3-4: to propose a new node time for this node
        double alpha = Randomizer.uniform(-twindowSize, twindowSize);
        t_x_ = t_x + alpha;
        
-       //double beta = alpha * (node.getLength() + Math.min(leftNode.getLength(), rightNode.getLength()));
-       //t_x_ = t_x + beta;
+      
 
        //reject the proposal if exceeds the boundary
        double upper = node.getParent().getHeight();
        double lower = Math.max(t_L, t_R);
+       
+       
+       //double beta = alpha * (upper - lower);
+       //t_x_ = t_x + beta;
+       
 
        if (t_x_<= lower || t_x_ >= upper) {
             return Double.NEGATIVE_INFINITY;
@@ -214,8 +204,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        Node geneTreeNode;
        double t_g;
        double t_g_;
-       double t_pg;
-       double t_pg_;
        int numNodesMappedX = 0;
        int numNodesMappedL = 0;
        int numNodesMappedR = 0;
@@ -231,48 +219,12 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     	   geneNodeMap_L = geneTreeDistributions.get(i).mapSpeciesNodeToGeneTreeNodes(leftNode);
     	   geneNodeMap_R = geneTreeDistributions.get(i).mapSpeciesNodeToGeneTreeNodes(rightNode);
     	   
+
     	   
     	   // Count the number of nodes mapped to each branch (for computing Green ratio)
     	   numNodesMappedX += geneNodeMap_x.length;
     	   numNodesMappedL += geneNodeMap_L.length;
     	   numNodesMappedR += geneNodeMap_R.length;
-    	   
-
-    	   
-    	   
-    	   /* -------------------------------
-	   	  	  ----------  Caching  ----------
-	          -------------------------------  */
-    	   
-    	   // Store the original node and parent heights so they can be used to compute the Jacobian determinant
-    	   // Important to move everything before computing this term because some of the parents
-    	   // are also being moved by the operation
-    	   
-    	   
-    	   // Cache node heights for gene nodes mapped to x
-    	   for (int j = 0; j < geneNodeMap_x.length; j ++) {
-    		   geneTreeNode = geneNodeMap_x[j];
-    		   int geneNodeNr = geneTreeNode.getNr();
-    		   geneParentHeightsBeforeProposal[geneNodeNr] = geneTreeNode.getParent().getHeight();
-    		   geneNodeHeightsBeforeProposal[geneNodeNr] = geneTreeNode.getHeight();
-    	   }
-    	   
-    	   // Cache node heights for gene nodes mapped to L
-    	   for (int j = 0; j < geneNodeMap_L.length; j ++) {
-    		   geneTreeNode = geneNodeMap_L[j];
-    		   int geneNodeNr = geneTreeNode.getNr();
-    		   geneParentHeightsBeforeProposal[geneNodeNr] = geneTreeNode.getParent().getHeight();
-    		   geneNodeHeightsBeforeProposal[geneNodeNr] = geneTreeNode.getHeight();
-    	   }
-    	   
-    	   // Cache node heights for gene nodes mapped to R
-    	   for (int j = 0; j < geneNodeMap_R.length; j ++) {
-    		   geneTreeNode = geneNodeMap_R[j];
-    		   int geneNodeNr = geneTreeNode.getNr();
-    		   geneParentHeightsBeforeProposal[geneNodeNr] = geneTreeNode.getParent().getHeight();
-    		   geneNodeHeightsBeforeProposal[geneNodeNr] = geneTreeNode.getHeight();
-    	   }
-    	   
     	   
     	   
     	   
@@ -307,109 +259,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     	   }
     	   
     	   
-    	   
-    	  
-    	   
-    	   
-    	   /* -------------------------------
-    	   	  ---------- Jacobians ----------
-    	      -------------------------------  */
-    	   
-    	   /*
-    	   
-    	   // Compute the Jacobian determinant with respect to gene tree rate changes for branches mapped to x
-    	   for (int j = 0; j < geneNodeMap_x.length; j ++) {
-    		   geneTreeNode = geneNodeMap_x[j];
-    		   int geneNodeNr = geneTreeNode.getNr();
-    		   final double heightBefore = geneNodeHeightsBeforeProposal[geneNodeNr];
-    		   final double parentHeightBefore = geneParentHeightsBeforeProposal[geneNodeNr];
-    		   final double heightAfter = geneTreeNode.getHeight();
-    		   final double parentHeightAfter = geneTreeNode.getParent().getHeight();
-    		   
-    		   logJD += Math.log(parentHeightBefore - heightBefore) - Math.log(parentHeightAfter - heightAfter);
-    	   
-    		   
-    		
-    		   
-    		   // Account for rate of change of child nodes which are not mapped to x, L or R
-			   for (int c = 0; c < geneTreeNode.getChildCount(); c++) {
-				   
-				   Node child = geneTreeNode.getChild(c);
-				   
-				   // Check that this node has not already been mapped to
-				   if (nodeIsInList(child.getNr(), geneNodeMap_x)) continue;
-				   if (nodeIsInList(child.getNr(), geneNodeMap_L)) continue;
-				   if (nodeIsInList(child.getNr(), geneNodeMap_R)) continue;
-
-				   logJD += Math.log(heightBefore - child.getHeight()) - Math.log(heightAfter - child.getHeight());
-				   
-				   
-			   }
-    			   
-    			   
-    	   
-    	   }
-    	   
-    	   
-    	   // Compute the Jacobian determinant with respect to gene tree rate changes for branches mapped to L
-    	   for (int j = 0; j < geneNodeMap_L.length; j ++) {
-    		   geneTreeNode = geneNodeMap_L[j];
-    		   int geneNodeNr = geneTreeNode.getNr();
-    		   final double heightBefore = geneNodeHeightsBeforeProposal[geneNodeNr];
-    		   final double parentHeightBefore = geneParentHeightsBeforeProposal[geneNodeNr];
-    		   final double heightAfter = geneTreeNode.getHeight();
-    		   final double parentHeightAfter = geneTreeNode.getParent().getHeight();
-    		   
-    		   logJD += Math.log(parentHeightBefore - heightBefore) - Math.log(parentHeightAfter - heightAfter);
-    	   
-    		
-    		   
-    		   // Account for rate of change of child nodes which are not mapped to x, L or R
-			   for (int c = 0; c < geneTreeNode.getChildCount(); c++) {
-				   
-				   Node child = geneTreeNode.getChild(c);
-				   
-				   // Check that this node has not already been mapped to
-				   if (nodeIsInList(child.getNr(), geneNodeMap_L)) continue;
-				   
-				   logJD += Math.log(heightBefore - child.getHeight()) - Math.log(heightAfter - child.getHeight());
-				   
-				   
-			   }
-    	   
-    	   }
-    	   
-    	   
-    	   // Compute the Jacobian determinant with respect to gene tree rate changes for branches mapped to R
-    	   for (int j = 0; j < geneNodeMap_R.length; j ++) {
-    		   geneTreeNode = geneNodeMap_R[j];
-    		   int geneNodeNr = geneTreeNode.getNr();
-    		   final double heightBefore = geneNodeHeightsBeforeProposal[geneNodeNr];
-    		   final double parentHeightBefore = geneParentHeightsBeforeProposal[geneNodeNr];
-    		   final double heightAfter = geneTreeNode.getHeight();
-    		   final double parentHeightAfter = geneTreeNode.getParent().getHeight();
-    		   
-    		   logJD += Math.log(parentHeightBefore - heightBefore) - Math.log(parentHeightAfter - heightAfter);
-
-    		   // Account for rate of change of child nodes which are not mapped to x, L or R
-			   for (int c = 0; c < geneTreeNode.getChildCount(); c++) {
-				   
-				   Node child = geneTreeNode.getChild(c);
-				   
-				   // Check that this node has not already been mapped to
-				   if (nodeIsInList(child.getNr(), geneNodeMap_R)) continue;
-				   
-				   logJD += Math.log(heightBefore - child.getHeight()) - Math.log(heightAfter - child.getHeight());
-				   
-				   
-			   }
-    	   
-    	   
-    	   }
-    	   
-    	   */
-    	   
-    	   
 
        }
        
@@ -418,7 +267,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        // or the species to gene tree mapper will no longer apply
        node.setHeight(t_x_);
        
-       
+
        
        if (!adjustPopulationSizesInput.get()) {
     	   numNodesMappedX -= 1;
@@ -431,37 +280,16 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        logJD += numNodesMappedX * (Math.log(r_x) - Math.log(r_x_));
        logJD += numNodesMappedL * (Math.log(r_L) - Math.log(r_L_));
        logJD += numNodesMappedR * (Math.log(r_R) - Math.log(r_R_));
-       
-       
-      
-       
-       
+
+ 
        return logJD;
        
-       //logJD += Math.log(tree.getRoot().getHeight());
-       
-       /*
-       
-       double nu = (upper - t_x) * (t_x - t_L) * (t_x - t_R) ;
-       double de = (upper - t_x_) * (t_x_ - t_L) * (t_x_ - t_L);
-       double JD = nu /de;
 
-       return Math.log(JD);
-       
-       */
        
     }
     
     
-    
-    private boolean nodeIsInList(int nodeNr, Node[] listOfNodes) {
-		 for (int k = 0; k < listOfNodes.length; k ++) {
-			   if (listOfNodes[k].getNr() == nodeNr) return true;
-		 }
-		 return false;
-    }
-    
-    
+
     
     /*
     Tuning the parameter: twindowsize represents the range of Uniform distribution

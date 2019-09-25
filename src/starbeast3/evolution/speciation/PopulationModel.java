@@ -19,4 +19,8 @@ public interface PopulationModel {
     // Checks if the population function for a given branch has been changed 
     boolean isDirtyBranch(Node speciesTreeNode);
     
+    
+    
+    
+    
 }

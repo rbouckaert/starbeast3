@@ -154,7 +154,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         speciesNodeCount = speciesTreeInput.get().getNodeCount();
 
 
-        if (Beauti.isInBeauti()) {
+        if (false && Beauti.isInBeauti()) {
             // we are in BEAUti, so do not initialise
             return;
         }
