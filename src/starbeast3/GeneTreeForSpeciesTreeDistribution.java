@@ -90,8 +90,8 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     									 // branch with each species tree node's branch
     protected int[] geneNodeSpeciesAssignment;
     protected int[] storedGeneNodeSpeciesAssignment;
-    protected List<Integer>[] speciesTreeNodeGeneNodeAssignment;
-    protected List<Integer>[] storedSpeciesTreeNodeGeneNodeAssignment;
+    protected boolean[] speciesTreeNodeGeneNodeAssignment;
+    protected boolean[] storedSpeciesTreeNodeGeneNodeAssignment;
     protected double[] storedSpeciesOccupancy;
     protected boolean geneTreeCompatible;
     protected boolean storedGeneTreeCompatible;
@@ -154,7 +154,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         speciesNodeCount = speciesTreeInput.get().getNodeCount();
 
 
-        if (false && Beauti.isInBeauti()) {
+        if (Beauti.isInBeauti()) {
             // we are in BEAUti, so do not initialise
             return;
         }
@@ -205,13 +205,8 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         storedGeneNodeSpeciesAssignment = new int[geneTreeNodeCount];
         
         
-        speciesTreeNodeGeneNodeAssignment = new List[speciesNodeCount];
-        storedSpeciesTreeNodeGeneNodeAssignment = new List[speciesNodeCount];
-        for (int i = 0; i < speciesTreeNodeGeneNodeAssignment.length; i ++) {
-        	speciesTreeNodeGeneNodeAssignment[i] = new ArrayList<Integer>();
-        	storedSpeciesTreeNodeGeneNodeAssignment[i] = new ArrayList<Integer>();
-        }
-        
+        speciesTreeNodeGeneNodeAssignment = new boolean[speciesNodeCount * geneTreeNodeCount];
+        storedSpeciesTreeNodeGeneNodeAssignment = new boolean[speciesNodeCount * geneTreeNodeCount];
         
       
         // Generate map of species tree tip node names to node numbers
@@ -287,14 +282,31 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     
     // Returns an array of gene tree nodes which map to this species tree node
     public Node[] mapSpeciesNodeToGeneTreeNodes(Node species) {
-    	List<Integer> mappedNodeIntegers = speciesTreeNodeGeneNodeAssignment[species.getNr()];
-    	Node[] mappedNodes = new Node[mappedNodeIntegers.size()];
-    	for (int i = 0; i < mappedNodeIntegers.size(); i ++) {
-    		mappedNodes[i] = treeInput.get().getNode(mappedNodeIntegers.get(i));
+    	
+    	int speciesStartIndex = geneTreeNodeCount * species.getNr();
+    	int speciesEndIndex = geneTreeNodeCount * (species.getNr()+1);
+    	
+    	// Find how many nodes are mapped to this species node
+    	int numMapped = 0;
+    	for (int i = speciesStartIndex; i < speciesEndIndex; i ++) {
+    		if (speciesTreeNodeGeneNodeAssignment[i]) numMapped++;
+    	}
+    	
+    	// Return an array of that length with the gene nodes stored in it
+    	Node[] mappedNodes = new Node[numMapped];
+    	int j = 0;
+    	for (int i = speciesStartIndex; i < speciesEndIndex; i ++) {
+    		if (speciesTreeNodeGeneNodeAssignment[i]) {
+    			int geneNodeNr = i % geneTreeNodeCount;
+    			mappedNodes[j] = treeInput.get().getNode(geneNodeNr);
+    			j++;
+    		}
     	}
 
-    	
     	return mappedNodes;
+    	
+
+        
     }
     
 
@@ -362,11 +374,9 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         System.arraycopy(nrOfLineages, 0, nrOfLineagesStored, 0, nrOfLineages.length);
 
         System.arraycopy(geneNodeSpeciesAssignment, 0, storedGeneNodeSpeciesAssignment, 0, geneNodeSpeciesAssignment.length);
+        System.arraycopy(speciesTreeNodeGeneNodeAssignment, 0, storedSpeciesTreeNodeGeneNodeAssignment, 0, speciesTreeNodeGeneNodeAssignment.length);
         
-        for (int i = 0; i < speciesTreeNodeGeneNodeAssignment.length; i ++) {
-        	storedSpeciesTreeNodeGeneNodeAssignment[i].clear();
-        	storedSpeciesTreeNodeGeneNodeAssignment[i].addAll(speciesTreeNodeGeneNodeAssignment[i]);
-        }
+        
         
         System.arraycopy(speciesOccupancy, 0, storedSpeciesOccupancy, 0, speciesOccupancy.length);
 
@@ -391,7 +401,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	int[] tmpCoalescentCounts = coalescentCounts;
     	int[] tmpCoalescentLineageCounts = nrOfLineages;
     	int[] tmpGeneNodeSpeciesAssignment = geneNodeSpeciesAssignment;
-    	List<Integer>[] tmpSpeciesTreeNodeGeneNodeAssignment = speciesTreeNodeGeneNodeAssignment;
+    	boolean[] tmpSpeciesTreeNodeGeneNodeAssignment = speciesTreeNodeGeneNodeAssignment;
     	double[] tmpSpeciesOccupancy = speciesOccupancy;
     	double[] tmpPerBranchLogP = perBranchLogP;
     	boolean tmpGeneTreeCompatible = geneTreeCompatible;
@@ -505,7 +515,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	        System.arraycopy(nrOfLineageToSpeciesMap, 0, geneNodeSpeciesAssignment, 0, geneTreeNodeCount);
 	        
 	        for (int i = 0; i < speciesTreeNodeGeneNodeAssignment.length; i ++) {
-	        	speciesTreeNodeGeneNodeAssignment[i].clear();
+	        	speciesTreeNodeGeneNodeAssignment[i] = false;
 	        }
 	      
 	
@@ -542,12 +552,14 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	        
 	        
 	        // Reverse map the geneToSpecies map into the speciesToGene map
-	        for (int geneTreeNodeNumber = 0; geneTreeNodeNumber < geneTreeNodeCount; geneTreeNodeNumber++) {
-	        	int speciesTreeNodeNumber = geneNodeSpeciesAssignment[geneTreeNodeNumber];
-	        	speciesTreeNodeGeneNodeAssignment[speciesTreeNodeNumber].add(geneTreeNodeNumber);
+	        for (int geneTreeNodeNr = 0; geneTreeNodeNr < geneTreeNodeCount; geneTreeNodeNr++) {
+	        	final int speciesNodeNrMappedTo = geneNodeSpeciesAssignment[geneTreeNodeNr];
+	        	final int mapIndex = speciesNodeNrMappedTo * geneTreeNodeCount + geneTreeNodeNr;
+	        	speciesTreeNodeGeneNodeAssignment[mapIndex] = true;
+	        	
 	        }
 	        
-	
+	        
 	        maxCoalescentCounts = 0;
 	        for (int j : coalescentCounts) {
 	        	if (j > maxCoalescentCounts) {maxCoalescentCounts = j;}

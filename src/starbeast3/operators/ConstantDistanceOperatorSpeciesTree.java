@@ -26,16 +26,15 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     //public final Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel",
             //"A model describing the rates on the branches of the beast.tree.");
     final public Input<RealParameter> rateInput = new Input<>("rates", "the rates associated with nodes in the tree for sampling of individual rates among branches.", Input.Validate.REQUIRED);
-    final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.", Input.Validate.REQUIRED);
+    final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
     final public Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreeDistributionsInput = new Input<>("gene", "gene tree for species tree distribution for each of the genes", new ArrayList<>());
-    final public Input<Boolean> adjustPopulationSizesInput = new Input<>("adjustPopulationSizes", "Propose new population sizes?", false);
-    
+    final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", "Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
     
     private double twindowSize;
     private RealParameter rates;
     private RealParameter popsizes;
     private List<GeneTreeForSpeciesTreeDistribution> geneTreeDistributions;
-    
+    private boolean proposeNewPopulationSizes;
     
     private Node[] geneNodeMap_x;
     private Node[] geneNodeMap_L;
@@ -53,8 +52,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         twindowSize = twindowSizeInput.get();
         //branchRateModel = branchRateModelInput.get();
         rates = rateInput.get();
-        popsizes = popSizeInput.get();
-        
+        proposeNewPopulationSizes = popSizeInput.get() != null;
+        if (proposeNewPopulationSizes) popsizes = popSizeInput.get();
         
        
         
@@ -102,21 +101,14 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         //the proposed node time
         double t_x_;
 
-       // /Step 1: randomly select an internal node, denoted by node x
-       do {
-            final int nodeNr = nodeCount / 2 + 1 + Randomizer.nextInt(nodeCount / 2);
-            node = tree.getNode(nodeNr);
-       } while (node.isRoot() || node.isLeaf());
-       
-       
-       // if (!node.getChild(0).isLeaf() || !node.getChild(1).isLeaf()) return Double.NEGATIVE_INFINITY;
+       // Step 1: randomly select an internal, denoted by node x. x can be a root node as long as there are gene trees
+       final int firstNonLeafNr = tree.getLeafNodeCount();
+       final int lastNodeNr = geneTreeDistributions.size() == 0 ? nodeCount - 1 : nodeCount;
+       final int nodeNr = firstNonLeafNr + Randomizer.nextInt(lastNodeNr - firstNonLeafNr);
+       node = tree.getNode(nodeNr);
+      
        
 
-       // the number of this node
-        int nodeNr = node.getNr();
-        if (nodeNr == branchCount) {
-            nodeNr = node.getTree().getRoot().getNr();
-        }
 
        //rate and time for this node
        t_x = node.getHeight();
@@ -147,21 +139,43 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        r_R = rates.getValues()[rightNr];// rate of branch above right child
 
 
-       //Step3-4: to propose a new node time for this node
-       double alpha = Randomizer.uniform(-twindowSize, twindowSize);
-       t_x_ = t_x + alpha;
-       
       
 
-       //reject the proposal if exceeds the boundary
-       double upper = node.getParent().getHeight();
-       double lower = Math.max(t_L, t_R);
-       
-       
-       //double beta = alpha * (upper - lower);
-       //t_x_ = t_x + beta;
-       
 
+       // Compute lower and upper bounds
+       final double lower = Math.max(t_L, t_R);
+       double upper = 0 ;
+       if (node.isRoot()) {
+    	   
+    	   // If this is the root node then the upper limit is the maximum gene tree height
+    	   for (int i = 0; i < geneTreeDistributions.size(); i ++) {
+    		   upper = Math.max(upper, geneTreeDistributions.get(i).getGeneTree().getRoot().getHeight());
+    	   }
+    	   
+    	   
+       }else {
+    	   upper = node.getParent().getHeight();
+       }
+       
+       
+       
+       
+       //Step3-4: to propose a new node time for this node
+       double alpha = Randomizer.uniform(-twindowSize, twindowSize);
+       if (proportionalToBranchLengthInput.get()) {
+    	   
+    	   // Proposal size is proportional to branch length
+    	   double beta = alpha * (upper - lower);
+    	   t_x_ = t_x + beta;
+       }else {
+    	   
+    	   // Constant proposal width
+    	   t_x_ = t_x + alpha;
+       }
+       
+       
+       
+       // Reject the proposal if exceeds the boundary
        if (t_x_<= lower || t_x_ >= upper) {
             return Double.NEGATIVE_INFINITY;
         }
@@ -182,7 +196,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        
        // Step6: propose new population sizes
-       if (adjustPopulationSizesInput.get()) {
+       if (proposeNewPopulationSizes) {
     	   
 	       double N_x = popsizes.getValues()[nodeNr];
 	       double N_L = popsizes.getValues()[leftNr];
@@ -269,7 +283,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
 
        
-       if (!adjustPopulationSizesInput.get()) {
+       if (!proposeNewPopulationSizes) {
     	   numNodesMappedX -= 1;
     	   numNodesMappedL -= 1;
     	   numNodesMappedR -= 1;
@@ -318,7 +332,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         // must be overridden by operator implementation to have an effect
         double delta = calcDelta(logAlpha);
 
-        delta += -Math.log(twindowSize);
+        delta += Math.log(twindowSize);
         twindowSize = Math.exp(delta);
     }
 

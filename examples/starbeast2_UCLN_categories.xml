@@ -193,7 +193,7 @@
     
     <map name="OneOnX" >beast.math.distributions.OneOnX</map>
     
-    <run id="mcmc" spec="MCMC" chainLength="5000000" sampleFromPrior="false" storeEvery="5000">
+    <run id="mcmc" spec="MCMC" chainLength="3000000" sampleFromPrior="false" storeEvery="5000">
             
         <state id="state" storeEvery="5000">
                     
@@ -381,16 +381,14 @@
                 	</LogNormal>
             	</prior>
                             
-
 		<!--
-                <prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
-                    <LogNormal id="LogNormalDistributionModel.0" meanInRealSpace="true" name="distr">
-                        <parameter id="branchRatesStdevPriorMean.Species" estimate="false" lower="0.0" name="M">1.0</parameter>
-                        <parameter id="branchRatesStdevPriorStdev.Species" estimate="false" lower="0.0" name="S">2.0</parameter>
-                    </LogNormal>
+  		<prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
+	            <Exponential name="distr">
+			<parameter id="branchRatesStdevPriorMean.Species" estimate="false" name="mean">0.2</parameter>
+		    </Exponential>
                 </prior>
-		-->
-                            
+		-->                    
+        
             	<prior id="popMean.prior" name="distribution" x="@popMean">
                 	<LogNormal id="LogNormalDistributionModel.03" name="distr">
                     		<parameter id="RealParameter.010" estimate="false" name="M">-5.0</parameter>
