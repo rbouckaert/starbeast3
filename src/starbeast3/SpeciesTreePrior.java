@@ -1,6 +1,7 @@
 package starbeast3;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +40,9 @@ public class SpeciesTreePrior extends TreeDistribution {
 
     final public Input<PopulationModel> popModelInput = 
     		new Input<>("populationModel", "Population model used to infer the multispecies coalescent probability", Validate.REQUIRED);
+    
+    final public Input<TreeDistribution> treePriorInput =
+    		new Input<>("treePrior", "Prior distribution behind the species tree");
     
     
     
@@ -107,6 +111,12 @@ public class SpeciesTreePrior extends TreeDistribution {
 //			}
 //		}
     }
+    
+    
+    public RealParameter getPopulationSizes() {
+    	return popSizesBottomInput.get();
+    }
+    
 
     @Override
     public double calculateLogP() {
@@ -195,10 +205,23 @@ public class SpeciesTreePrior extends TreeDistribution {
 
     @Override
     public List<String> getConditions() {
-        return null;
+        List<String> arguments = new ArrayList<>();
+        arguments.add(treeInput.get().getID());
+        if (popSizesBottomInput.get() != null) arguments.add(popSizesBottomInput.get().getID());
+        if (popSizesTopInput.get() != null) arguments.add(popSizesTopInput.get().getID());
+        return arguments;
     }
 
     @Override
     public void sample(final State state, final Random random) {
+    	
+    	if (sampledFlag) return;
+        sampledFlag = true;
+        
+        
+        // Sample the species tree
+        sampleConditions(state, random);
+        
+        
     }
 }

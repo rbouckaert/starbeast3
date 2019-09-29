@@ -17,10 +17,12 @@ import beast.core.State;
 import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
+import starbeast3.SpeciesTreePrior;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeDistribution;
 import beast.evolution.tree.TreeInterface;
+import beast.util.Randomizer;
 import starbeast3.evolution.speciation.PopulationModel;
 
 
@@ -112,6 +114,10 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     private boolean[] speciesBranchIsDirty;
     private double[] perBranchLogP;
     private double[] storedPerBranchLogP;
+    
+    
+    // For sampling a gene tree
+    private int currentGeneTreeNodeNumber;
     
 
     
@@ -447,11 +453,9 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 
     @Override
     public List<String> getConditions() {
-        return null;
-    }
-
-    @Override
-    public void sample(final State state, final Random random) {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(speciesTreePriorInput.get().getID());
+        return arguments;
     }
 
 
@@ -696,8 +700,115 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 
 		return branchCoalescentTimes;
 	}
+	
+	
+	
+	@Override
+    public void sample(final State state, final Random random) {
+    	
+    	if (sampledFlag) return;
+        sampledFlag = true;
+        
+        
+        // Sample 
+        sampleConditions(state, random);
+        
+        
+        // Get branch population size
+        SpeciesTreePrior speciesTreePrior = speciesTreePriorInput.get();
+        RealParameter popSizes = speciesTreePrior.getPopulationSizes();
+        
+        currentGeneTreeNodeNumber = treeInput.get().getLeafNodeCount();
+        
+        List<Node> root = sampleBranchRecursive(speciesTreeInput.get().getRoot(), random, popSizes);
+        final Tree geneTree = (Tree) treeInput.get();
+        assert root.size() == 1;
+        
+        Tree sampledGeneTree = new Tree(root.get(0));
+        assert sampledGeneTree.getNodeCount() == treeInput.get().getNodeCount();
+        geneTree.assignFromWithoutID(sampledGeneTree);
+        
+    	
+    	
+    }
     
+    
+    private List<Node> sampleBranchRecursive(final Node node, final Random random, final RealParameter popSizes) {
+    	
+    	
+    	List<Node> geneTreeNodesInLineage = new ArrayList<Node>();
+    	
+    	// Population size of this species branch
+    	final double popSizeBranch = popSizes.getValue(node.getNr()) * ploidy;
+    	
+    	
+    	// Sample coalescent events of children first
+    	if (!node.isLeaf()) {
+    		
+    		for (Node c : node.getChildren()) {
+    			List<Node> childsTopNodes = sampleBranchRecursive(c, random, popSizes);
+    			geneTreeNodesInLineage.addAll(childsTopNodes);
+    			
+    		}
+    		
+    	}
+    	
+    	
+    	// Find all the gene tree leaves which map to this species node
+    	final Map<String, Integer> tipNumberMap = speciesTreeInput.get().getTipNumberMap();
+        for (int i = 0; i < treeInput.get().getLeafNodeCount(); i++) {
+        	final Node geneTreeLeafNode = treeInput.get().getNode(i);
+        	final String geneTreeLeafName = geneTreeLeafNode.getID();
 
+        	if (tipNumberMap.get(geneTreeLeafName) == node.getNr()) {
+        		geneTreeNodesInLineage.add(geneTreeLeafNode);
+        	}
+        	    
+        } 
+    	
+    	
+    		
+        // Simulate coalescence along this branch
+        // Stop when either there is only 1 more lineage or there is no time remaining
+        int numLineages = geneTreeNodesInLineage.size();
+        double time = node.getHeight();
+        double parentTime = node.isRoot() ? Double.POSITIVE_INFINITY : node.getParent().getHeight();
+        while (numLineages > 1) {
+        	
+        	
+        	// Sample the time to the next coalescence
+        	double rateOfCoalescence = numLineages * (numLineages-1) / 2 / popSizeBranch;
+        	double timeToCoalescence = -Math.log(random.nextDouble())/rateOfCoalescence;
+        	time += timeToCoalescence;
+        	if (time > parentTime) break;
+        	
+        	
+        	// Uniformly at random select two nodes to coalesce
+        	int leftChildNr = random.nextInt(numLineages);
+        	int rightChildNr = random.nextInt(numLineages);
+        	while (leftChildNr == rightChildNr) rightChildNr = random.nextInt(numLineages);
+        	Node parentNode = new Node();
+        	parentNode.setNr(currentGeneTreeNodeNumber);
+        	parentNode.setHeight(time);
+        	parentNode.addChild(geneTreeNodesInLineage.get(leftChildNr));
+        	parentNode.addChild(geneTreeNodesInLineage.get(rightChildNr));
+        	currentGeneTreeNodeNumber++;
+        	
+        	
+        	// Remove children from list and add parent
+        	geneTreeNodesInLineage.remove(Math.max(leftChildNr, rightChildNr));
+        	geneTreeNodesInLineage.remove(Math.min(leftChildNr, rightChildNr));
+        	geneTreeNodesInLineage.add(parentNode);
+        	numLineages--;
+        	
+        }
+    	
+    	
+    	
+    	return geneTreeNodesInLineage;
+    	
+	    	
+    }
 	
 	
 	
