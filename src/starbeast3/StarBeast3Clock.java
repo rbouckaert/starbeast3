@@ -94,4 +94,11 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         return branchRates[node.getNr()];
     }
     
+    
+    
 }
+
+
+
+
+

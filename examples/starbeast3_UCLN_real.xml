@@ -589,17 +589,22 @@ name="alignment">
         <log idref="prior"/>
     </logger>
 
-    <logger id="treelog.t:47" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="5000" mode="tree">
-        <log id="TreeWithMetaDataLogger.t:47" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:47"/>
-    </logger>
 
-    <logger id="treelog.t:26" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="5000" mode="tree">
-        <log id="TreeWithMetaDataLogger.t:26" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:26"/>
-    </logger>
 
-    <logger id="treelog.t:29" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="5000" mode="tree">
-        <log id="TreeWithMetaDataLogger.t:29" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:29"/>
-    </logger>
+	<logger id="treelog.t:26" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="5000" mode="tree">
+		<log id="TreeWithMetaDataLogger.t:26" spec="starbeast3.GeneTreeLogger" clockModel="@SpeciesTreeRelaxedClock.c:26" tree="@Tree.t:26"/>
+	</logger>
+
+	<logger id="treelog.t:29" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="5000" mode="tree">
+		<log id="TreeWithMetaDataLogger.t:29" spec="starbeast3.GeneTreeLogger" clockModel="@SpeciesTreeRelaxedClock.c:29" tree="@Tree.t:29"/>
+	</logger>
+
+	<logger id="treelog.t:47" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="5000" mode="tree">
+		<log id="TreeWithMetaDataLogger.t:47" spec="starbeast3.GeneTreeLogger" clockModel="@SpeciesTreeRelaxedClock.c:47" tree="@Tree.t:47"/>
+	</logger>
+
+
+
 
         <operatorschedule id="operatorSchedule" spec="OperatorSchedule">
                     

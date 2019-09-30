@@ -22,7 +22,6 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeDistribution;
 import beast.evolution.tree.TreeInterface;
-import beast.util.Randomizer;
 import starbeast3.evolution.speciation.PopulationModel;
 
 
@@ -37,12 +36,19 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     final public Input<Double> ploidyInput =
             new Input<>("ploidy", "ploidy (copy number) for this gene, typically a whole number or half (default 2 for autosomal_nuclear)", 2.0);
     
+    final public Input<Boolean> samplingAlignmentInput =
+            new Input<>("sampling", "Set to true if using this class for simulating sequences", false);
+    
     final public Input<SpeciesTreePrior> speciesTreePriorInput =
-            new Input<>("speciesTreePrior", "defines population function and its parameters", Validate.REQUIRED);
+            new Input<>("speciesTreePrior", "defines population function and its parameters");
 
     final public Input<PopulationModel> popModelInput = 
-    		new Input<>("populationModel", "Population model used to infer the multispecies coalescent probability for this gene", Validate.REQUIRED);
+    		new Input<>("populationModel", "Population model used to infer the multispecies coalescent probability for this gene");
     
+    
+    
+    
+    private SpeciesTree speciesTree;
     
     
     // intervals for each of the species tree branches
@@ -147,17 +153,31 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	clockuptodate = false;
     	popModel = popModelInput.get();
 
+    	
+    	// Coerce to SpeciesTree if it is not already (this enables user to parse TreeParser)
+    	//if (speciesTreeInput.get() instanceof SpeciesTree) {
+    		//speciesTree = (SpeciesTree) speciesTreeInput.get();
+    	//}else {
+    		//speciesTree = new SpeciesTree(speciesTreeInput.get().getRoot());
+    	//}
+    	speciesTree = speciesTreeInput.get();
+    	
         final Node[] gtNodes = treeInput.get().getNodesAsArray();
         final int gtLineages = treeInput.get().getLeafNodeCount();
-        final Node[] sptNodes = speciesTreeInput.get().getNodesAsArray();
-        final int speciesCount = speciesTreeInput.get().getNodeCount();
+        final Node[] sptNodes = speciesTree.getNodesAsArray();
+        final int speciesCount = speciesTree.getNodeCount();
         
         
+        
+        System.out.println("XXX");
+        System.out.println(speciesTree.getRoot().toNewick());
+        
+        System.out.println(treeInput.get().getRoot().toNewick());
 
         // Calculate node counts
         geneTreeNodeCount = treeInput.get().getNodeCount();
         geneTreeLeafNodeCount = treeInput.get().getLeafNodeCount();
-        speciesNodeCount = speciesTreeInput.get().getNodeCount();
+        speciesNodeCount = speciesTree.getNodeCount();
 
 
         if (Beauti.isInBeauti()) {
@@ -203,9 +223,10 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         nrOfLineages = new int[speciesCount];
         nrOfLineagesStored = new int[speciesCount];
 
-        final SpeciesTreePrior popInfo = speciesTreePriorInput.get();
-        popSizesBottom = popInfo.popSizesBottomInput.get();
-    
+        if (!samplingAlignmentInput.get()) {
+        	final SpeciesTreePrior popInfo = speciesTreePriorInput.get();
+        	popSizesBottom = popInfo.popSizesBottomInput.get();
+        }
         
         geneNodeSpeciesAssignment = new int[geneTreeNodeCount];
         storedGeneNodeSpeciesAssignment = new int[geneTreeNodeCount];
@@ -216,7 +237,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         
       
         // Generate map of species tree tip node names to node numbers
-        final Map<String, Integer> tipNumberMap = speciesTreeInput.get().getTipNumberMap();
+        final Map<String, Integer> tipNumberMap = speciesTree.getTipNumberMap();
         localTipNumberMap = new int[treeInput.get().getLeafNodeCount()];
         for (int i = 0; i < treeInput.get().getLeafNodeCount(); i++) {
         	final Node geneTreeLeafNode = treeInput.get().getNode(i);
@@ -320,7 +341,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     public double calculateLogP() {
 
     	
-        assert SanityChecks.checkTreeSanity(speciesTreeInput.get().getRoot());
+        assert SanityChecks.checkTreeSanity(speciesTree.getRoot());
         
         update();
 
@@ -333,7 +354,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         logP = 0.0;
         
         // Recompute log priors for all branches which are dirty
-        final Node[] speciesTreeNodes = speciesTreeInput.get().getNodesAsArray();
+        final Node[] speciesTreeNodes = speciesTree.getNodesAsArray();
         for (int speciesNodeI = 0; speciesNodeI < speciesNodeCount; speciesNodeI++) {
             Node speciesNode = speciesTreeNodes[speciesNodeI];
             if (isDirtyBranch(speciesNodeI) || popModel.isDirtyBranch(speciesNode)) {
@@ -537,7 +558,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	        for (int geneTreeLeafNumber = 0; geneTreeLeafNumber < geneTreeLeafNodeCount; geneTreeLeafNumber++) {
 	            final Node geneTreeLeafNode = geneTree.getNode(geneTreeLeafNumber);
 	            final int speciesTreeLeafNumber = localTipNumberMap[geneTreeLeafNode.getNr()];
-	            final Node speciesTreeLeafNode = speciesTreeInput.get().getNode(speciesTreeLeafNumber);	
+	            final Node speciesTreeLeafNode = speciesTree.getNode(speciesTreeLeafNumber);	
 	            final Node firstCoalescenceNode = geneTreeLeafNode.getParent();
 	            final int firstCoalescenceNumber = firstCoalescenceNode.getNr();
 	            final double lastHeight = 0.0;
@@ -599,7 +620,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	        		coalescentCounts[i] != storedCoalescentCounts[i]) {
 	        		speciesBranchIsDirty[i] = true;
 	        	} else {
-	        		Node node = speciesTreeInput.get().getNode(i);
+	        		Node node = speciesTree.getNode(i);
 	        		if (node.isDirty() != Tree.IS_CLEAN ||
 	        			(!node.isRoot() && node.getParent().isDirty() != Tree.IS_CLEAN) ||
 	        			coalescentTimesChanged(i)) speciesBranchIsDirty[i] = true;
@@ -682,7 +703,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 	public double[] getCoalescentTimes(int nodeI) {
         if (!clockuptodate) update();
 
-        final Node speciesNode = speciesTreeInput.get().getNode(nodeI);
+        final Node speciesNode = speciesTree.getNode(nodeI);
 
         final double speciesEndTime = speciesNode.getHeight();
         
@@ -720,7 +741,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         
         currentGeneTreeNodeNumber = treeInput.get().getLeafNodeCount();
         
-        List<Node> root = sampleBranchRecursive(speciesTreeInput.get().getRoot(), random, popSizes);
+        List<Node> root = sampleBranchRecursive(speciesTree.getRoot(), random, popSizes);
         final Tree geneTree = (Tree) treeInput.get();
         assert root.size() == 1;
         
@@ -755,7 +776,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     	
     	
     	// Find all the gene tree leaves which map to this species node
-    	final Map<String, Integer> tipNumberMap = speciesTreeInput.get().getTipNumberMap();
+    	final Map<String, Integer> tipNumberMap = speciesTree.getTipNumberMap();
         for (int i = 0; i < treeInput.get().getLeafNodeCount(); i++) {
         	final Node geneTreeLeafNode = treeInput.get().getNode(i);
         	final String geneTreeLeafName = geneTreeLeafNode.getID();

@@ -59,7 +59,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             Method.POINT, Method.values());
 
     final public Input<Tree> speciesTreeInput = new Input<>("speciesTree", "The species tree to initialize");
-
+    
     final public Input<List<Tree>> genes = new Input<>("gene", "Gene trees to initialize", new ArrayList<>());
     //,
     //        Validate.REQUIRED);
@@ -104,6 +104,8 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
                 calibrations.add((MRCAPrior) plugin);
             }
         }
+        
+        
 
         if( hasCalibrations ) {
             if( calibrations.size() > 0 ) {

@@ -12,13 +12,20 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 
 /**
- * adapted from starbeast2
+ * Adapted from starbeast2
 * @author Huw Ogilvie
  */
 
 public class SpeciesTree extends Tree  {
     Map<String, Integer> tipNumberMap;
     Map<Integer, Set<String>> numberTipMap;
+    
+    /*
+    public SpeciesTree(final Node rootNode) {
+        setRoot(rootNode);
+        initAndValidate();
+    }
+	*/
 
     @Override
     public void initAndValidate() {
@@ -41,6 +48,7 @@ public class SpeciesTree extends Tree  {
 	}
 	
 	
+
 	
     // generate map of species tree tip node names to node numbers
     private void makeMaps(Map<String, Integer> tipNumberMapx, Map<Integer, Set<String>> numberTipMap) {
