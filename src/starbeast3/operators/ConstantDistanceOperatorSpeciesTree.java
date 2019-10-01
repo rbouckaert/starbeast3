@@ -218,13 +218,16 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        Node geneTreeNode;
        double t_g;
        double t_g_;
+       
+       
+       // Count the number of nodes mapped to each branch (for computing Green ratio). Only count the nodes which change heights (ie. not the ultrametric leaves)
        int numNodesMappedX = 0;
        int numNodesMappedL = 0;
        int numNodesMappedR = 0;
 
 
        
-       double logJD = 0;
+       
        for (int i = 0; i < geneTreeDistributions.size(); i ++) {
     	   
     	   
@@ -234,12 +237,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     	   geneNodeMap_R = geneTreeDistributions.get(i).mapSpeciesNodeToGeneTreeNodes(rightNode);
     	   
 
-    	   
-    	   // Count the number of nodes mapped to each branch (for computing Green ratio)
-    	   numNodesMappedX += geneNodeMap_x.length;
-    	   numNodesMappedL += geneNodeMap_L.length;
-    	   numNodesMappedR += geneNodeMap_R.length;
-    	   
     	   
     	   
     	   /* -------------------------------
@@ -252,6 +249,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = upper - (r_x / r_x_) * (upper - t_g);
     		   geneTreeNode.setHeight(t_g_);
+    		   if(t_g != t_g_) numNodesMappedX ++;
     	   }
     	   
     	   
@@ -261,6 +259,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = t_L + (r_L / r_L_) * (t_g - t_L);
     		   geneTreeNode.setHeight(t_g_);
+    		   if(t_g != t_g_) numNodesMappedL ++;
     	   }
     	   
     	   
@@ -270,6 +269,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = t_R + (r_R / r_R_) * (t_g - t_R);
     		   geneTreeNode.setHeight(t_g_);
+    		   if(t_g != t_g_) numNodesMappedR ++;
     	   }
     	   
     	   
@@ -291,9 +291,11 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        
        // Calculate Green ratio
+       double logJD = 0;
        logJD += numNodesMappedX * (Math.log(r_x) - Math.log(r_x_));
        logJD += numNodesMappedL * (Math.log(r_L) - Math.log(r_L_));
        logJD += numNodesMappedR * (Math.log(r_R) - Math.log(r_R_));
+
 
  
        return logJD;

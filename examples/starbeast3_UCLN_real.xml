@@ -104,7 +104,7 @@ name="alignment">
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="3000000"  sampleFromPrior="true" storeEvery="5000">
+<run id="mcmc" spec="MCMC" chainLength="3000000"  sampleFromPrior="false" storeEvery="5000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" dimension="8" name="stateNode">100.0</parameter>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
@@ -221,9 +221,9 @@ name="alignment">
         <distribution id="prior" spec="util.CompoundDistribution">
             <distribution id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:Species" tree="@Tree.t:Species"/>
             <prior id="YuleBirthRatePrior.t:Species" name="distribution" x="@birthRate.t:Species">
-                <LogNormal id="LogNormalDistributionModel.0" name="distr">
-                    <parameter id="RealParameter.0" estimate="false" name="M">4.0</parameter>
-                    <parameter id="RealParameter.01" estimate="false" lower="0.0" name="S" upper="5.0">1.25</parameter>
+                <LogNormal id="LogNormalDistributionModel.0" name="distr" meanInRealSpace="false">
+                    <parameter id="RealParameter.0" estimate="false" name="M">0.7</parameter>
+                    <parameter id="RealParameter.01" estimate="false" lower="0.0" name="S" upper="5.0">0.2</parameter>
                 </LogNormal>
             </prior>
 

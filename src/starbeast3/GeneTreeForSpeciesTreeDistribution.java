@@ -41,11 +41,12 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     
     final public Input<SpeciesTreePrior> speciesTreePriorInput =
             new Input<>("speciesTreePrior", "defines population function and its parameters");
-
+    
     final public Input<PopulationModel> popModelInput = 
     		new Input<>("populationModel", "Population model used to infer the multispecies coalescent probability for this gene");
     
     
+    final public Input<TaxonSet> taxonSetInput = new Input<>("taxonset", "set of taxa mapping lineages to species");
     
     
     private SpeciesTree speciesTree;
@@ -168,11 +169,6 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
         final int speciesCount = speciesTree.getNodeCount();
         
         
-        
-        System.out.println("XXX");
-        System.out.println(speciesTree.getRoot().toNewick());
-        
-        System.out.println(treeInput.get().getRoot().toNewick());
 
         // Calculate node counts
         geneTreeNodeCount = treeInput.get().getNodeCount();
@@ -293,7 +289,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
      * @return species ID to which the lineage ID belongs according to the TaxonSets
      */
     private String getSpeciesID(final String lineageID) {
-        final TaxonSet taxonSuperset = speciesTreePriorInput.get().taxonSetInput.get();
+        final TaxonSet taxonSuperset = taxonSetInput.get() != null ? taxonSetInput.get() : speciesTreePriorInput.get().taxonSetInput.get();
         final List<Taxon> taxonSets = taxonSuperset.taxonsetInput.get();
         for (final Taxon taxonSet : taxonSets) {
             final List<Taxon> taxa = ((TaxonSet) taxonSet).taxonsetInput.get();
