@@ -233,7 +233,7 @@ function planSpeciesTree(node) {
 function drawASpeciesTree(svg, tree, treename, node, styles = {col: "black"}) {
 
 
-	var strokeWidth = Math.min(roundToSF(node.rate), 3);
+	var strokeWidth = Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
 	
 	//console.log("node", node);
 
@@ -367,7 +367,7 @@ function proposeMoveSpeciesTreeNode(node, alpha){
 	// Stores the changes in the event of the user pressing UNDO to watch the asnimation again
 	storeProposedTree(node);
 	
-	console.log(node.height, alpha, node.height + alpha, node.parent.height, node.children[0].height, node.children[1].height);
+	//console.log(node.height, alpha, node.height + alpha, node.parent.height, node.children[0].height, node.children[1].height);
 
 	if (node.height >= node.parent.height || node.height <= node.children[0].height || node.height <= node.children[1].height) return false;
 	
@@ -383,7 +383,7 @@ function proposeMoveSpeciesTreeNode(node, alpha){
 
 function moveSpeciesTreeNode(tree, node, animation_time = 1000){
 
-	console.log("Moving by alpha");
+	//console.log("Moving by alpha");
 
 	var svg = $("#tree");
 	svg.velocity("finish");
@@ -444,7 +444,7 @@ function moveSpeciesTreeNode(tree, node, animation_time = 1000){
 					" H " + parseFloat($("#" + id + "_I").attr("x2")) +
 					" Z", fill:"transparent", stroke:"black", name: node.id }, "", true);
 	*/
-	console.log(id + "_P");
+	//console.log(id + "_P");
 
 
 
@@ -666,7 +666,7 @@ function planGeneTree(geneTreeNum, node) {
 			
 			var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < childNode.speciesNodeMap.parent.coords.bottomLeft.x + childNode.speciesNodeMap.parent.populationsize*0.5;
 			var leftMappedToSpeciesNode = childNode.speciesNodeMap.parent;
-			console.log(node.id, "Above", childNode.id, childNode.speciesNodeMap.id, leftMappedToSpeciesNode.nodeToGeneBranchMap);
+			//console.log(node.id, "Above", childNode.id, childNode.speciesNodeMap.id, leftMappedToSpeciesNode.nodeToGeneBranchMap);
 			
 			
 			while(leftMappedToSpeciesNode.nodeToGeneBranchMap[geneTreeNum][childNode.id] != null){
@@ -732,7 +732,7 @@ function planGeneTree(geneTreeNum, node) {
 	
 	/// (leftX + rightX) / 2 * 
 	
-	console.log(thisX, thisY, gradient, speciesNode.coords.bottomLeft.y);
+	//console.log(thisX, thisY, gradient, speciesNode.coords.bottomLeft.y);
 	
 	node.coords = { cx: thisX, cy: thisY, x: [thisX], y: [thisY], strokeWidths: [speciesNode.rate] };
 	left.coords.x.push(thisX);

@@ -104,7 +104,7 @@ name="alignment">
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="3000000"  sampleFromPrior="false" storeEvery="5000">
+<run id="mcmc" spec="MCMC" chainLength="50000000"  sampleFromPrior="false" storeEvery="5000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" dimension="8" name="stateNode">100.0</parameter>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
@@ -178,7 +178,7 @@ name="alignment">
 
 
 	<stateNode id="branchRates.Species" spec="parameter.RealParameter" lower="0">1</stateNode>
-	<parameter id="branchRatesStdev.Species" estimate="true" name="stateNode">0.3</parameter>
+	<parameter id="branchRatesStdev.Species" estimate="true" upper="2" name="stateNode">0.3</parameter>
 
 
         <parameter id="kappa.s:26" lower="0.0" name="stateNode">2.0</parameter>
@@ -257,16 +257,16 @@ name="alignment">
 
 		
   		<prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
-		<!--
 		    <Gamma name="distr">
 			<parameter id="branchRatesStdevPriorAlpha.Species" estimate="false" name="alpha">0.5396</parameter>
 			<parameter id="branchRatesStdevPriorBeta.Species" estimate="false" name="beta">0.3819</parameter>
 		    </Gamma>
-		-->
+
+		<!--
 	            <Exponential name="distr">
 			<parameter id="branchRatesStdevPriorMean.Species" estimate="false" name="mean">0.2</parameter>
 		    </Exponential>
-
+		-->
                 </prior>
 		
 
