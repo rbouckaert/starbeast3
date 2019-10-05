@@ -102,17 +102,37 @@
 				-o-user-select: none;
 				user-select: none;
 			}
+			
+			.button.large{
+				font-size:150%;
+				padding: 10;
+			}
+			
+			.button.disabled {
+				background-color:#696969;
+				cursor:auto;
+				color:white;
+			}
 
 
 			.button:hover{
 				color:white;
 				background-color:#DB5079;
 			}
+			
+			.button.disabled:hover {
+				background-color:#696969;
+			}
 
 
 			#main{
 				margin-left:50px;
 				margin-right:20px;
+			}
+
+			.outlinedText{
+				color:white;
+				text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 			}
 
 
@@ -123,10 +143,10 @@
 				width:50%;
 				text-align:center;
 				margin-left:25%;
-				top:10vh; 
+				top:20vh; 
 				%min-height:200px;
 				text-align:center;
-				background-color:#DB5079; 
+				background-color:#708090; 
 				padding: 10 10; 
 				%margin:auto;
 				border-radius: 5px;
@@ -179,12 +199,14 @@
 
 			.numberinput{
 				background: transparent;
+				background-color:#DB5079;
 				border: none;
 				text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 				color:white;
 				min-width:10px!important;
 				max-width:99.99%!important;
 				transition: width 0s;
+				padding: 5;
 			}
 
 
@@ -220,9 +242,9 @@
 			#footer{
 				z-index:1;
 				text-align:center;
-				line-height:1.5em;
+				line-height:3em;
 				background-color:#DB5079;
-				font-size:140%;
+				font-size:100%;
 				color:white;
 				width:99%;
 				margin-left:0.5%;
@@ -232,8 +254,8 @@
 				%border-color: white; 
 				%border-style:solid;
 				%%border-width:2px;
-			    	 position:fixed;
-   				 bottom:-2px;
+				position:fixed;
+   				bottom:-5px;
 				border-color:black;
 				border-style:solid;
 				border-width:1px;
@@ -254,6 +276,18 @@
 				margin-top:-0.65em;
 				font-size:23%;
 				line-height:1.7em;
+			}
+
+			.rotate90{
+				transform: rotate(90deg);
+			}
+			
+			.rotate180{
+				transform: rotate(180deg);
+			}
+			
+			.rotate270{
+				transform: rotate(270deg);
 			}
 
 
@@ -287,7 +321,19 @@
 				color:white;
 				background-color:#DB5079;
 			}
-
+			
+			#treeNumContainer{
+				line-height:250%;
+				font-size:140%;
+			}
+			 
+			.icon{
+				width:40px;
+				height:40px;
+				cursor:pointer;
+				padding: 3;
+			
+			}
 
 			.arrow{
 				position:relative;
@@ -352,7 +398,69 @@
 				text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 			}
 			
+			@import "compass/css3";
 
+
+			.thicklines {
+				line-height:3em;
+			
+			}
+			
+			.dropdown{
+				background-color:#DB5079;
+				padding:5;
+				color:white;
+				text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+			}
+			
+			
+			.dropdown:after{
+				width: 0; 
+				height: 0; 
+				border-left: 6px solid transparent;
+				border-right: 6px solid transparent;
+				border-top: 6px solid #f00;
+				position: absolute;
+				top: 40%;
+				right: 5px;
+				content: "";
+				z-index: 98;
+			}
+			
+			.dropdown select{
+				width: 220px;
+				border: 0;
+				position: relative;
+				z-index: 99;
+				background: none;
+			}
+
+			.flex-container {
+				padding: 0;
+				margin: 0;
+				list-style: none;
+				
+
+				display: -webkit-box;
+				display: -moz-box;
+				display: -ms-flexbox;
+				display: -webkit-flex;
+				display: flex;
+
+				-webkit-flex-flow: row wrap;
+				justify-content: space-around;
+				vertical-align:middle;
+			}
+
+			.flex-item {
+				%width: 33%;
+			}
+			
+			
+			.textbutton:hover{
+				color:black;
+				text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+			}
 
 
 						
@@ -373,6 +481,7 @@
 		<script language='JavaScript' type='text/JavaScript' src="icytree-master/js/tree.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="icytree-master/js/treeparsing.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="src/drawTrees.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src="src/util.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/velocity.min.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src='lib/d3.v5.min.js'></script> 
 		<script language='JavaScript' type='text/JavaScript' src="lib/dropzone.js"></script>
@@ -422,6 +531,7 @@
 
 				$("#treeNum").val(0);
 				resizable(document.getElementById("treeNum"));
+				$(".showAfterTreeUpload").hide(0);
 				
 				$("#speciesTreeUploadMsg").hide(0);
 				$("#geneTreeUploadMsg").hide(0);
@@ -459,9 +569,9 @@
 							NTREES = SPECIES_TREES_ALL.length;
 							TREE_NUM = Math.floor(NTREES * BURNIN) + 1;
 							console.log(theFile);
-							$("#speciesTreeUploadMsg").html("Species tree successfully parsed");
+							$("#speciesTreeUploadMsg").html(theFile.name + " successfully parsed<br>");
 							$("#speciesTreeUploadMsg").show(300);
-							if (SPECIES_TREES_ALL.length > 0 && GENE_TREES_ALL.length > 0) renderTrees();
+							if (SPECIES_TREES_ALL.length > 0 && GENE_TREES_ALL.length > 0) $("#renderTreesBtn").removeClass("disabled");
 							$("#treeLoader").remove();
 
 						};
@@ -493,7 +603,7 @@
 								GENE_TREES_ALL.push(tree);
 							} 
 							catch(err){
-								$("#geneTreeUploadMsg").html("<b>Error parsing " + theFile.name + ":</b>  " + err.message);
+								$("#geneTreeUploadMsg").append("<b>Error parsing " + theFile.name + ":</b>  " + err.message);
 								$("#geneTreeUploadMsg").show(300);
 								$("#treeLoader").remove();
 								return;
@@ -502,9 +612,9 @@
 
 
 
-							$("#geneTreeUploadMsg").html("Gene tree successfully parsed");
+							$("#geneTreeUploadMsg").append(theFile.name + " successfully parsed<br>");
 							$("#geneTreeUploadMsg").show(300);
-							if (SPECIES_TREES_ALL.length > 0 && GENE_TREES_ALL.length > 0) renderTrees();
+							if (SPECIES_TREES_ALL.length > 0 && GENE_TREES_ALL.length > 0) $("#renderTreesBtn").removeClass("disabled");
 							$("#treeLoader").remove();
 
 						};
@@ -580,6 +690,7 @@
 			var resizeId;
 			$(window).resize(function() {
 				$("#tree").html("");
+				closeDialogs();
 				clearTimeout(resizeId);
 				resizeId = setTimeout(doneResizing, 300);
 			});
@@ -590,11 +701,12 @@
 
 
 
-			function renderTrees() {
+			function renderTrees(options = null) {
 
 
 				if (SPECIES_TREES_ALL.length == 0 || GENE_TREES_ALL.length == 0) return;
-				$("#fileUploading").hide(300);
+				$("#fileUploading").hide(0);
+				$(".showAfterTreeUpload").show(0);
 				
 				SPECIES_TREE_X = null;
 				unhover();
@@ -613,19 +725,29 @@
 	
 
 
+				var svg;
+				if (options == null) {
 
-				var svg = $("#tree");
-				svg.html("");
-				svg.height(0);
-				svg.width(0);
+					svg = $("#tree");
+					svg.html("");
+					svg.height(0);
+					svg.width(0);
 
 
-				SVG_HEIGHT = parseFloat($("body").height()) - parseFloat($("#header").height()) - parseFloat($("#footer").height()) - SVG_UNDER_BOTTOM_MARGIN;
-				SVG_WIDTH = parseFloat($("#main").width());
+					SVG_HEIGHT = parseFloat($("body").height()) - parseFloat($("#header").height()) - parseFloat($("#footer").height()) - SVG_UNDER_BOTTOM_MARGIN;
+					SVG_WIDTH = parseFloat($("#main").width());
+					
+
+					svg.height(SVG_HEIGHT);
+					svg.width(SVG_WIDTH);
+					
 				
-
-				svg.height(SVG_HEIGHT);
-				svg.width(SVG_WIDTH);
+				}else{
+					svg = $(options.svgSelector);
+					svg.html("");
+					svg.height(options.height);
+					svg.width(options.width);
+				}
 
 
 				$("#treeNum").val(TREE_NUM);
@@ -668,7 +790,7 @@
 				GAP_BETWEEN_SUBTREES = 0.2 * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root);
-				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN, SVG_HEIGHT-SVG_BOTTOM_MARGIN, SVG_WIDTH-SVG_RIGHT_MARGIN, SVG_TOP_MARGIN);
+				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN, svg.height()-SVG_BOTTOM_MARGIN, svg.width()-SVG_RIGHT_MARGIN, SVG_TOP_MARGIN);
 	
 				console.log("SPECIES_TREE", SPECIES_TREE);
 				drawASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
@@ -802,7 +924,7 @@
 
 
 				$(".dialog").remove();
-				$("body").append(getdialogTemplate(step, desc));
+				$("body").append(getstepDialogTemplate(step, desc));
 				//var math=MathJax.Hub.getAllJax("dialogDesc")[0];
 				//MathJax.Hub.Queue(["Text",math,desc]); 
 
@@ -916,7 +1038,7 @@
 
 
 
-			function getdialogTemplate(stepNum, desc){
+			function getstepDialogTemplate(stepNum, desc){
 				return `
 						<div id="operatorDialog" class="dialog">
 							<div class="dialog_inner">
@@ -1152,9 +1274,18 @@
 				if (key == 39) { // Right arrow
 					if (e.ctrlKey) nextTree(true); // Ctrl + right = last tree
 					else nextTree();
-				}else if (key == 37) { // Left arrow
+				
+				
+				}
+				
+				else if (key == 37) { // Left arrow
 					if (e.ctrlKey) prevTree(true); // Ctrl + left = first tree
 					else prevTree();
+				
+				}
+				
+				else if (key == 27){ // Escape
+					closeDialogs();
 				}
 
 
@@ -1365,119 +1496,163 @@
 
 
 
-		<div id="header">
-			UglyTrees
-			<div class="subheader">A multispecies coalescent tree visualiser </div>
+		<div id="innerBody">
+
+
+			<div id="header">
+				UglyTrees
+				<div class="subheader">A multispecies coalescent tree visualiser </div>
+				
+			</div>
+
+
+
+			<div class="sideTab" style="top:300px">&#9776; Species tree</div>
 			
-		</div>
+			<div class="sideTab" style="top:450px">&#9776; Gene trees</div>
+			
+
+			
+
+			<div id="main">
+
+				<table id="fileUploading" cellspacing=10>
+					<tr>
+						<td>
+							<div id="species_tree_upload" class="uploader">
+								<div>Upload a species tree file</div>
+								<span id="speciesTreeUploadMsg"></span>
+								
+							</div>
+						</td>
+
+						<td>
+							<div id="gene_tree_upload" class="uploader">
+								<div>Upload one or more gene tree files</div>
+								<span id="geneTreeUploadMsg"></span>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="text-align:center" colspan=2>
+							<br><br><br><br>
+							<span id="renderTreesBtn" onclick="renderTrees();" class="button large disabled">Draw trees</span>
+						</td>
+					</tr>
+					
+				</table>		
+
+				<svg id="tree" height = 0 width = 0></svg>
+			</div>
+
+			<!--
+			<div style="width:70%;  min-width:900px; margin-left:15%; margin-top:50px; text-align:center; background-color:white; border-color:#696969">
+
+				<table style="vertical-align:top; text-align:center; width:100%; padding: 20" cellpadding=0 cellspacing=0>
+					<tr>
 
 
+						<td  style="width:50px"></td>
 
-		<div class="sideTab" style="top:300px">&#9776; Species tree</div>
-		
-		<div class="sideTab" style="top:450px">&#9776; Gene trees</div>
-		
+						<td  style="vertical-align:top; width:700px">
+							<svg id="tree" style=" border-style:solid; border-radius:5px; border-width:0.5px;" height = 0 width = 0></svg>
+						</td>
 
-		
 
-		<div id="main">
+						<td style="vertical-align:bottom; width:200px">
 
-			<table id="fileUploading" cellspacing=10>
-				<tr>
-					<td>
-						<div id="species_tree_upload" class="uploader">
-							<div>Upload a species tree file</div>
-							<span id="speciesTreeUploadMsg"></span>
 							
-						</div>
-					</td>
 
-					<td>
-						<div id="gene_tree_upload" class="uploader">
-							<div>Upload one or more gene tree files</div>
-							<span id="geneTreeUploadMsg"></span>
-						</div>
-					</td>
-				</tr>
-			</table>		
+							<div id="operatorPanel"></div> <br><br><br>
 
-			<svg id="tree" height = 0 width = 0></svg>
+
+							<span class="button" onclick="operate()">Apply operator</span> <br><br>
+
+
+							<div style="text-align:left; margin-left: 10px">
+								<span title="Window size" style="padding:5"> $w$ = <input onchange="updateAlphaWindow()" type="number" min=0 step=0.0005 id="windowInput" value=0.01 style="width: 80px; padding:5; margin-bottom:5px"></span>  <br>
+								<span title="Sampled alpha" style="padding:5"> $\alpha$ = <span id="sampledAlpha" style="padding:5; margin-right:20px"></span></span> <br> 
+							</div> <br>
+			
+							
+							
+							
+							<div style="color:white; word-break: break-all; border-radius:5px; text-align:left; font-size:120%; padding: 20; border-style:solid; background-color:#DB5079">
+								<div style="text-align:center">
+									<b>Selected node</b><br>
+									<i class="currentNodeInfo" id="currentNodeName"></i><br>
+								</div> 
+
+								<span title="Time / height"> $t$ = <span class="currentNodeInfo" id="currentNodeTime" style="padding:5; margin-right:20px"></span></span> <br> 
+								<span title="Rate of above branch"> $r$ = <span class="currentNodeInfo"  id="currentNodeRate" style="padding:5; margin-right:20px"></span></span> <br>
+								<span title="Genetic distance of above branch"> $d$ = <span class="currentNodeInfo"  id="currentNodeDistance" style="padding:5; margin-right:20px"></span></span> <br>
+								<span title="Effective population size of above branch"> $N$ = <span class="currentNodeInfo"  id="currentNodeSize" style="padding:5; margin-right:20px"></span></span> <br>
+							</div>
+
+
+						</td>
+
+						<td  style="width:50px"></td>
+
+					</tr>
+				</table>
+
+				<br><br><br>
+
+
+
+
+			</div>
+			-->
+
+			
+
+
+			<div id="footer" >
+
+
+				
+
+
+				
+				
+					<ul class="flex-container thicklines">
+				
+						<li class="flex-item"  style="float:left; width: 20%;">
+					
+								
+								
+			
+			
+						</li>
+						
+						
+						<li class="flex-item" style="width: 60%;">
+					
+							<span title="Go to first tree (ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
+							<span title="Go to previous tree (&larr;)" class="arrow" onclick="prevTree()">&#x2039;</span> 
+							<span id="treeNumContainer">Tree number: <input class="numberinput" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
+							<span title="Go to next tree (&rarr;)" class="arrow" onclick="nextTree()">&#x203A;</span>
+							<span title="Go to last tree (ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
+							
+						</li>
+						
+						
+						<li class="flex-item" style="float:right; width:20%;">
+						
+							<div class="textbutton showAfterTreeUpload" onclick="openDownloadDialog()" title="Download" style="margin-right:20px; float:right; cursor:pointer">Save As</div>
+							<div class="textbutton showAfterTreeUpload" onclick="uploadNewFiles()" title="Upload additional files" style="margin-right:20px; float:right; cursor:pointer">Open</div>
+							
+						</li>
+
+					</ul>
+				
+
+				
+			</div>
+
 		</div>
-
-		<!--
-		<div style="width:70%;  min-width:900px; margin-left:15%; margin-top:50px; text-align:center; background-color:white; border-color:#696969">
-
-			<table style="vertical-align:top; text-align:center; width:100%; padding: 20" cellpadding=0 cellspacing=0>
-				<tr>
-
-
-					<td  style="width:50px"></td>
-
-					<td  style="vertical-align:top; width:700px">
-						<svg id="tree" style=" border-style:solid; border-radius:5px; border-width:0.5px;" height = 0 width = 0></svg>
-					</td>
-
-
-					<td style="vertical-align:bottom; width:200px">
-
-						
-
-						<div id="operatorPanel"></div> <br><br><br>
-
-
-						<span class="button" onclick="operate()">Apply operator</span> <br><br>
-
-
-						<div style="text-align:left; margin-left: 10px">
-							<span title="Window size" style="padding:5"> $w$ = <input onchange="updateAlphaWindow()" type="number" min=0 step=0.0005 id="windowInput" value=0.01 style="width: 80px; padding:5; margin-bottom:5px"></span>  <br>
-							<span title="Sampled alpha" style="padding:5"> $\alpha$ = <span id="sampledAlpha" style="padding:5; margin-right:20px"></span></span> <br> 
-						</div> <br>
-		
-						
-						
-						
-						<div style="color:white; word-break: break-all; border-radius:5px; text-align:left; font-size:120%; padding: 20; border-style:solid; background-color:#DB5079">
-							<div style="text-align:center">
-								<b>Selected node</b><br>
-								<i class="currentNodeInfo" id="currentNodeName"></i><br>
-							</div> 
-
-							<span title="Time / height"> $t$ = <span class="currentNodeInfo" id="currentNodeTime" style="padding:5; margin-right:20px"></span></span> <br> 
-							<span title="Rate of above branch"> $r$ = <span class="currentNodeInfo"  id="currentNodeRate" style="padding:5; margin-right:20px"></span></span> <br>
-							<span title="Genetic distance of above branch"> $d$ = <span class="currentNodeInfo"  id="currentNodeDistance" style="padding:5; margin-right:20px"></span></span> <br>
-							<span title="Effective population size of above branch"> $N$ = <span class="currentNodeInfo"  id="currentNodeSize" style="padding:5; margin-right:20px"></span></span> <br>
-						</div>
-
-
-					</td>
-
-					<td  style="width:50px"></td>
-
-				</tr>
-			</table>
-
-			<br><br><br>
-
-
-
-
-		</div>
-		-->
-
-		
-
-
-		<div id="footer" >
-
-				<span title="Go to first tree (ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
-				<span title="Go to previous tree (&larr;)" class="arrow" onclick="prevTree()">&#x2039;</span> 
-				<span style="line-height:200%">Tree number: <input class="numberinput" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
-				<span title="Go to next tree (&rarr;)" class="arrow" onclick="nextTree()">&#x203A;</span>
-				<span title="Go to last tree (ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
-
-		</div>
-
-
 
 	</body>
 
