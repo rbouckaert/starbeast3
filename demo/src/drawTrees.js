@@ -608,7 +608,7 @@ function getPositionInMap(map, id){
 
 
 // Generate unscaled coordinates for a gene tree
-function planGeneTree(geneTreeNum, node) {
+function planGeneTree(geneTreeNum, node, geneTree) {
 	
 
 
@@ -628,7 +628,7 @@ function planGeneTree(geneTreeNum, node) {
 		var strokeWidth = roundToSF(0.5*speciesRate);
 
 		var widthScale = (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x) / mappedPos.n;
-		var cx = (mappedPos.index + 0.5) * widthScale + speciesNode.coords.bottomLeft.x;
+		var cx = (mappedPos.index + geneTree.offset) * widthScale + speciesNode.coords.bottomLeft.x;
 		var cy = 0;
 		
 		//console.log("Mapped", node.id, "to", mappedPos, widthScale, (mappedPos.index + 0.5) * widthScale);
@@ -643,8 +643,8 @@ function planGeneTree(geneTreeNum, node) {
 	// Get initial coordinates of children
 	var left = node.children[0];
 	var right = node.children[1];
-	planGeneTree(geneTreeNum, left);
-	planGeneTree(geneTreeNum, right);
+	planGeneTree(geneTreeNum, left, geneTree);
+	planGeneTree(geneTreeNum, right, geneTree);
 	
 	
 	// Get species tree node this node is mapped to
@@ -694,7 +694,7 @@ function planGeneTree(geneTreeNum, node) {
 				}
 
 				var widthScale = (endX - startX) / mappedPos.n;
-				var segmentX = (mappedPos.index + 0.5) * widthScale + startX;
+				var segmentX = (mappedPos.index + geneTree.offset) * widthScale + startX;
 				var segmentY = leftMappedToSpeciesNode.coords.bottomLeft.y;
 				
 				childNode.coords.x.push(segmentX);
@@ -756,7 +756,7 @@ function planGeneTree(geneTreeNum, node) {
 
 
 // Draws a gene tree onto the svg
-function drawAGeneTree(svg, treename, node, speciesTree, styles = {col: "#7950DB"}) {
+function drawAGeneTree(svg, treename, node, speciesTree, geneTreeNum, styles = {col: "black"}) {
 	
 	
 	
@@ -771,8 +771,8 @@ function drawAGeneTree(svg, treename, node, speciesTree, styles = {col: "#7950DB
 		//console.log("Drawing", node.coords, speciesTree.scaleX_fn(node.coords.cx));
 
 		// Internal/root node. Draw children first
-		drawAGeneTree(svg, treename, node.children[0], speciesTree, styles)
-		drawAGeneTree(svg, treename, node.children[1], speciesTree, styles)
+		drawAGeneTree(svg, treename, node.children[0], speciesTree, geneTreeNum, styles)
+		drawAGeneTree(svg, treename, node.children[1], speciesTree, geneTreeNum, styles)
 
 	}
 
@@ -792,6 +792,7 @@ function drawAGeneTree(svg, treename, node, speciesTree, styles = {col: "#7950DB
 									y1: speciesTree.scaleY_fn(y1), 
 									x2: speciesTree.scaleX_fn(x2),
 									y2: speciesTree.scaleY_fn(y2), 
+									gNum: geneTreeNum,
 									branchfornode: id,
 									style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});
 		
@@ -806,6 +807,7 @@ function drawAGeneTree(svg, treename, node, speciesTree, styles = {col: "#7950DB
 								cx: speciesTree.scaleX_fn(node.coords.cx), 
 								cy: speciesTree.scaleY_fn(node.coords.cy), 
 								r: GENE_NODE_SIZE,
+								gNum: geneTreeNum,
 								name: (node.children.length == 0 ? node.id + "," + node.label : node.id),
 								fill: styles.col}, "", true);
 

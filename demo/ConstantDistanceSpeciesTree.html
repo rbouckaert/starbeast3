@@ -9,6 +9,37 @@
 
 			@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
+
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+
+			.loader {
+				border: 16px solid white; 
+				border-top: 16px solid #DB5079; 
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+				animation: spin 2s linear infinite;
+
+			}
+			
+			line.selected {
+				stroke: #DB5079 !important;
+				stroke-width: 3px !important;
+			}
+			
+			circle.selected {
+				fill: #DB5079 !important;
+			}
+			
+	
+			#tree{
+				z-index:100;
+			
+			}
+
 			body {
 				font-family: "Source Sans Pro", "Arial"; 
 				background-color:white;
@@ -187,6 +218,7 @@
 
 
 			#footer{
+				z-index:1;
 				text-align:center;
 				line-height:1.5em;
 				background-color:#DB5079;
@@ -219,8 +251,8 @@
 
 
 			.subheader{
-				margin-top:-0.6em;
-				font-size:25%;
+				margin-top:-0.65em;
+				font-size:23%;
 				line-height:1.7em;
 			}
 
@@ -300,6 +332,11 @@
 				vertical-align:middle;
 				margin: 20px;
 			}
+			
+			
+			.uploader.dz-drag-hover, .uploader:hover {
+				background-color:#DB5079;
+			}
 
 			.uploader  div {
 				font-size:200%;
@@ -307,6 +344,12 @@
 				color:#DB5079;
 				padding: 10;
 				%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+			}
+			
+			
+			.uploader.dz-drag-hover div, .uploader:hover div {
+				color:white;
+				text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 			}
 			
 
@@ -345,8 +388,8 @@
 				NODE_SIZE = 10;
 				GENE_NODE_SIZE = 4;
 				SVG_TOP_MARGIN = 20;
-				SVG_BOTTOM_MARGIN = 10;
-				SVG_UNDER_BOTTOM_MARGIN = 10;
+				SVG_BOTTOM_MARGIN = 5;
+				SVG_UNDER_BOTTOM_MARGIN = 25;
 				SVG_LEFT_MARGIN = 20;
 				SVG_RIGHT_MARGIN = 20;
 				SPECIES_LEAVES = [];
@@ -370,9 +413,18 @@
 				yScaler = 1;
 				BURNIN = 0.1;
 				TREE_NUM = 0;
+				NTREES = 0;
+				
+				
+				GENE_TREE_COLOURS = ["#50b2db",  "#50db79", "#db506d", "#7950DB", "#b2db50", "#db7950"];
+				
+				
 
 				$("#treeNum").val(0);
 				resizable(document.getElementById("treeNum"));
+				
+				$("#speciesTreeUploadMsg").hide(0);
+				$("#geneTreeUploadMsg").hide(0);
 
 
 				// Operator
@@ -385,8 +437,8 @@
 
 				var speciesTreeDropzone = new Dropzone("div#species_tree_upload", { url: "/file/post"});
 				speciesTreeDropzone.on("addedfile", function(file) {
-					console.log("Uploading species tree", file);
-
+					
+					addLoader("#species_tree_upload", "treeLoader");
 					var reader = new FileReader();
 
 					// Closure to capture the file information.
@@ -394,12 +446,23 @@
 						return function(e) {
 
 							if (e == null || e.target.result == "") return;
-							SPECIES_TREES_ALL = getTreesFromString(e.target.result);
+							try {
+								SPECIES_TREES_ALL = getTreesFromString(e.target.result);
+							} 
+							catch(err){
+								$("#speciesTreeUploadMsg").html("<b>Error parsing " + theFile.name + ":</b>  " + err.message);
+								$("#speciesTreeUploadMsg").show(300);
+								$("#treeLoader").remove();
+								return;
+							}
+							
 							NTREES = SPECIES_TREES_ALL.length;
 							TREE_NUM = Math.floor(NTREES * BURNIN) + 1;
-
+							console.log(theFile);
+							$("#speciesTreeUploadMsg").html("Species tree successfully parsed");
+							$("#speciesTreeUploadMsg").show(300);
 							if (SPECIES_TREES_ALL.length > 0 && GENE_TREES_ALL.length > 0) renderTrees();
-
+							$("#treeLoader").remove();
 
 						};
 
@@ -414,7 +477,8 @@
 
 				var geneTreeDropzone = new Dropzone("div#gene_tree_upload", { url: "/file/post"});
 				geneTreeDropzone.on("addedfile", function(file) {
-					console.log("Uploading gene tree", file);
+					
+					addLoader("#gene_tree_upload", "treeLoader");
 
 					var reader = new FileReader();
 
@@ -424,13 +488,24 @@
 
 							if (e == null || e.target.result == "") return;
 
+							try{
+								var tree = getTreesFromString(e.target.result);
+								GENE_TREES_ALL.push(tree);
+							} 
+							catch(err){
+								$("#geneTreeUploadMsg").html("<b>Error parsing " + theFile.name + ":</b>  " + err.message);
+								$("#geneTreeUploadMsg").show(300);
+								$("#treeLoader").remove();
+								return;
+							}
 							
-							GENE_TREES_ALL.push(getTreesFromString(e.target.result));
-
-console.log("gene tree", GENE_TREES_ALL[0]);
 
 
+
+							$("#geneTreeUploadMsg").html("Gene tree successfully parsed");
+							$("#geneTreeUploadMsg").show(300);
 							if (SPECIES_TREES_ALL.length > 0 && GENE_TREES_ALL.length > 0) renderTrees();
+							$("#treeLoader").remove();
 
 						};
 
@@ -496,7 +571,9 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 			}
 
 
-
+			function addLoader(eleAddTo, id = "loader"){
+				$(eleAddTo).append(`<div  id="` + id + `" title="Loading file..." class="loader" style="margin:auto"></div>`);
+			}
 
 
 			// Don't redraw the tree until the user has stopped resizing for a period of time
@@ -525,7 +602,9 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 				
 				GENE_TREES = [];
-
+				for (var g = 0;  g < GENE_TREES_ALL.length; g ++){
+					GENE_TREES.push(GENE_TREES_ALL[g][TREE_NUM]);
+				}
 
 
 				SPECIES_TREE = SPECIES_TREES_ALL[TREE_NUM];
@@ -533,14 +612,6 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 				//console.log("speciesTree", SPECIES_TREE);
 	
 
-				var gene_tree1 = GENE_TREES_ALL[0][TREE_NUM];
-				GENE_TREES.push(gene_tree1);
-
-				var gene_tree2 = GENE_TREES_ALL[0][TREE_NUM];
-				GENE_TREES.push(gene_tree2);
-
-				console.log("gene_tree1", gene_tree1);
-				console.log("gene_tree2", gene_tree2);
 
 
 				var svg = $("#tree");
@@ -562,8 +633,11 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 
 				// Get max tree height 
-				MAX_TREE_HEIGHT = Math.max(Math.max(SPECIES_TREE.root.height, gene_tree1.root.height), gene_tree2.root.height);
-				HEIGHT_SCALE = (SVG_HEIGHT - SVG_BOTTOM_MARGIN - SVG_TOP_MARGIN) / MAX_TREE_HEIGHT;
+				MAX_TREE_HEIGHT = SPECIES_TREE.root.height;
+				for (var g = 0;  g < GENE_TREES.length; g ++){
+					MAX_TREE_HEIGHT = Math.max(MAX_TREE_HEIGHT, GENE_TREES[g].root.height);
+				}
+
 
 				var totalNAtLeaves = 0;
 				SPECIES_LEAVES = [];
@@ -601,9 +675,14 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 				storeTree(SPECIES_TREE.root);
 
 			
+				// Add gene tree offsets so that nodes don't overlap
+				for (var g = 0;  g < GENE_TREES.length; g ++){
+					GENE_TREES[g].offset = (g + 1) / (GENE_TREES.length + 1)
+				}
+			
 
 				// Draw the gene tree
-				for (var g = 0; g < GENE_TREES.length - 1; g++){
+				for (var g = 0; g < GENE_TREES.length; g++){
 
 					var gene_tree = GENE_TREES[g];
 					//gene_tree.speciesNodeMap = {};
@@ -649,8 +728,8 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 					//drawGeneTree(svg, "gene" + g, gene_tree, gene_tree.root, true);
 					buildGeneTreeSpeciesTreeMap(g, gene_tree.root);
-					planGeneTree(g, gene_tree.root);
-					drawAGeneTree(svg, "gene" + g, gene_tree.root, SPECIES_TREE);
+					planGeneTree(g, gene_tree.root, gene_tree);
+					drawAGeneTree(svg, "gene" + g, gene_tree.root, SPECIES_TREE, g, {col: getGeneTreeColour(g)});
 					console.log("gene_tree", gene_tree);
 					console.log("SPECIES_TREE", SPECIES_TREE);
 					
@@ -729,6 +808,14 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 				
 
+			}
+
+
+			function getGeneTreeColour(geneTreeNumber){
+			
+				var index = geneTreeNumber % GENE_TREE_COLOURS.length;
+				return GENE_TREE_COLOURS[index];
+			
 			}
 
 
@@ -956,7 +1043,7 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 				unhover();
 
-				$("#" + id).attr("fill", "#DB5079");
+				
 
 				if(SPECIES_TREE_X != null) highlightNode(SPECIES_TREE_X.htmlID + "_P");
 
@@ -977,22 +1064,34 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 
 				if (treeName != "speciestree") {
-					$(`[branchfornode="` + id + `"].genebranch`).css("stroke", "#DB5079");
-					$(`[branchfornode="` + id + `"].genebranch`).css("stroke-width", "3px");
+					//$(`[branchfornode="` + id + `"].genebranch`).css("stroke", "#DB5079");
+					//$(`[branchfornode="` + id + `"].genebranch`).css("stroke-width", "3px");
+					$(`[branchfornode="` + id + `"].genebranch`).addClass("selected");
+					$("#" + id).addClass("selected");
+					
 				}else {
 					$("#" + id).attr("opacity", "0.5");
+					$("#" + id).attr("fill", "#DB5079");
 					
 					// Get the node
 					for (var s = 0; s < SPECIES_TREE.nodeList.length; s++){
 						if (SPECIES_TREE.nodeList[s].id == nodeID){
 							var node = SPECIES_TREE.nodeList[s];
-							for (var m in node.branchToGeneNodeMap[0]){
-								$("#gene0_" + m).attr("fill", "#DB5079");
+							for (var g = 0; g < GENE_TREES.length; g++){
+							
+								console.log(g, GENE_TREES.length);
+							
+								for (var m in node.branchToGeneNodeMap[g]){
+									$("#gene" + g + "_" + m).addClass("selected");
+								}
+								
+								for (var m in node.nodeToGeneBranchMap[g]){
+									$(`[branchfornode="gene` + g + `_` + m + `"].genebranch`).addClass("selected");
+								}
+								
 							}
 							
-							for (var m in node.nodeToGeneBranchMap[0]){
-								$(`[branchfornode="gene0_` + m + `"].genebranch`).css("stroke", "#DB5079");
-							}
+	
 							
 							break;
 													
@@ -1030,12 +1129,13 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 			function unhover(){
 				$("path.node").attr("fill", "transparent");
-				$("circle.node").attr("fill", "#7950DB");
+				$("circle.node").removeClass("selected");
 				$(".node").attr("opacity", "1");
-				$(".genebranch").css("stroke", "#7950DB");
-				$(".genebranch").css("stroke-width", "1px");
+				$(".genebranch").removeClass("selected");
 				//$(".branch").css("stroke", "black");
 				$(".currentNodeInfo").html("");
+
+				
 			}
 
 
@@ -1266,16 +1366,18 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 
 
 		<div id="header">
-			Ugly Trees
+			UglyTrees
 			<div class="subheader">A multispecies coalescent tree visualiser </div>
 			
 		</div>
 
 
+
+		<div class="sideTab" style="top:300px">&#9776; Species tree</div>
 		
-		<div class="sideTab" style="top:250px">&#9776; Trees</div>
+		<div class="sideTab" style="top:450px">&#9776; Gene trees</div>
 		
-		<div class="sideTab" style="top:350px">&#9776; Model</div>
+
 		
 
 		<div id="main">
@@ -1285,12 +1387,15 @@ console.log("gene tree", GENE_TREES_ALL[0]);
 					<td>
 						<div id="species_tree_upload" class="uploader">
 							<div>Upload a species tree file</div>
+							<span id="speciesTreeUploadMsg"></span>
+							
 						</div>
 					</td>
 
 					<td>
 						<div id="gene_tree_upload" class="uploader">
 							<div>Upload one or more gene tree files</div>
+							<span id="geneTreeUploadMsg"></span>
 						</div>
 					</td>
 				</tr>
