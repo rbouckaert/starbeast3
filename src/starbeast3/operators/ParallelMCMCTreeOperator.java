@@ -30,7 +30,7 @@ import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.util.Transform;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
-public class ParallelMCMCTreeOperator extends Operator {
+public class ParallelMCMCTreeOperator extends Operator implements MultiStepOperator {
 	
 	@Description("Distribution n a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
 	public class TreeDistribution {
@@ -95,6 +95,11 @@ public class ParallelMCMCTreeOperator extends Operator {
 	    for (ParallelMCMC pMCMC : mcmcs) {
 	    	pMCMC.setOtherState(otherState);
 	    }
+	}
+
+	@Override
+	public int stepCount() {
+		return mcmcs.size();
 	}
 
 	private ParallelMCMC createParallelMCMC(List<TreeDistribution> distributions, long chainLength) {

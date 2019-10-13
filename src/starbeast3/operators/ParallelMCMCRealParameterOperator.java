@@ -25,7 +25,7 @@ import beast.core.util.Log;
 import starbeast3.util.Transform;
 
 @Description("Run MCMC on different treelikelihood parts of the model in parallel before combining them in a single Gibbs move")
-public class ParallelMCMCRealParameterOperator extends Operator {
+public class ParallelMCMCRealParameterOperator extends Operator implements MultiStepOperator {
 	
     final public Input<Long> chainLengthInput =
             new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples",
@@ -68,6 +68,12 @@ public class ParallelMCMCRealParameterOperator extends Operator {
 	    }
 	}
 
+	@Override
+	public int stepCount() {
+		return mcmcs.size();
+	}
+
+	
 	private ParallelMCMC createParallelMCMC(List<Distribution> distributions, long chainLength) {
 		List<Distribution> distrs = new ArrayList<>();
 		List<StateNode> stateNodes = new ArrayList<>();
