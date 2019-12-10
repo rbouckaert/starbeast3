@@ -1,11 +1,10 @@
 package starbeast3.operators;
 
 
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,7 +26,7 @@ import beast.evolution.likelihood.GenericTreeLikelihood;
 import beast.evolution.operators.*;
 import beast.evolution.tree.Tree;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
-import starbeast3.util.Transform;
+import beast.util.Transform;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
 public class ParallelMCMCTreeOperator extends Operator implements MultiStepOperator {

@@ -1,6 +1,7 @@
 package starbeast3.operators;
 
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -22,7 +23,8 @@ import beast.core.StateNode;
 import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
-import starbeast3.util.Transform;
+import beast.evolution.operators.AdaptableVarianceMultivariateNormalOperator;
+import beast.util.Transform;
 
 @Description("Run MCMC on different treelikelihood parts of the model in parallel before combining them in a single Gibbs move")
 public class ParallelMCMCRealParameterOperator extends Operator implements MultiStepOperator {

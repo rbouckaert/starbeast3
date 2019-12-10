@@ -3670,7 +3670,7 @@
       	</plate>
     </operator>
 
-	<operator id="AdaptableVarianceMultivariateNormalOperator1" spec="starbeast3.operators.AdaptableVarianceMultivariateNormalOperator" 
+	<operator id="AdaptableVarianceMultivariateNormalOperator1" spec="beast.evolution.operators.AdaptableVarianceMultivariateNormalOperator" 
                 weight="1"
                 coefficient="1"
                 scaleFactor="1"
@@ -3678,7 +3678,7 @@
                 initial="1000"
                 burnin="500"
                 every="1">
-            <transformations spec="starbeast3.util.Transform$LogTransform">
+            <transformations spec="beast.util.Transform$LogTransform">
         <f idref="kappa.s:SB_all_07"/>
         <f idref="gammaShape.s:SB_all_07"/>
         <f idref="gammaShape.s:SB_all_08"/>
@@ -4602,6 +4602,9 @@
 
     <operator id="KappaScaler.s:SB_all_92" parameter="@kappa.s:SB_all_92" scaleFactor="0.5" spec="ScaleOperator" weight="0.1"/>
 -->
+
+    <operatorschedule id="operatorschedule" spec="starbeast3.operators.MultiStepOperatorSchedule" logger="@tracelog"/>
+
     <logger fileName="beast.log" id="tracelog" logEvery="1000" model="@posterior" sort="smart">
         <log idref="posterior"/>
         <log idref="likelihood"/>
