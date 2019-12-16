@@ -352,7 +352,7 @@ name="alignment">
 	   <operator id="FastUcldStdevScaler.Species" spec="consoperators.UcldScalerOperator" rates="@branchRates.Species" stdev="@branchRatesStdev.Species" distr="@LogNormalDistributionModel.045" scaleFactor="0.8" weight="5.0"/>
 	
 	
-	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" rates="@branchRates.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="2.0">
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@branchRatesModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="2.0">
 		<gene idref="treePrior.t:26"/>
 		<gene idref="treePrior.t:29"/>
 		<gene idref="treePrior.t:47"/>

@@ -8,8 +8,9 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/beast2/lib/jam.jar"/>
 	<classpathentry kind="lib" path="/beast2/lib/commons-math3-3.1.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/BEASTLabs"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/beast-classic"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/beast2"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/beast-classic"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BEASTLabs"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ConstantDistanceOperator"/>
 	<classpathentry kind="output" path="bin1"/>
 </classpath>

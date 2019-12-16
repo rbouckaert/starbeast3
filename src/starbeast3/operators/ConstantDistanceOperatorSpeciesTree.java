@@ -11,27 +11,38 @@ import beast.evolution.operators.TreeOperator;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
+import beast.math.distributions.PiecewiseLinearDistribution;
 import beast.util.Randomizer;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.StarBeast3Clock;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
+import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.math.MathException;
 
 @Description("For internal nodes: propose a new node time")
 public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
 	final public Input<Double> twindowSizeInput = new Input<>("twindowSize", "the size of the window when proposing new node time", Input.Validate.REQUIRED);
     //public final Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel",
             //"A model describing the rates on the branches of the beast.tree.");
-    final public Input<RealParameter> rateInput = new Input<>("rates", "the rates associated with nodes in the tree for sampling of individual rates among branches.", Input.Validate.REQUIRED);
+   // final public Input<RealParameter> rateInput = new Input<>("rates", "the rates associated with nodes in the tree for sampling of individual rates among branches.");
+    //final public Input<RealParameter> quantilesInput = new Input<>("quantiles", "The real branch rates of the species tree, parameterised as quantiles", Input.Validate.XOR, rateInput);
     final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
     final public Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreeDistributionsInput = new Input<>("gene", "gene tree for species tree distribution for each of the genes", new ArrayList<>());
     final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", "Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
+    final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree brancg rates.", Input.Validate.REQUIRED);
+    
+    
+    
+    UCRelaxedClockModelSB3 clockModel;
     
     private double twindowSize;
     private RealParameter rates;
+    private RealParameter quantiles;
     private RealParameter popsizes;
     private List<GeneTreeForSpeciesTreeDistribution> geneTreeDistributions;
     private boolean proposeNewPopulationSizes;
@@ -50,11 +61,26 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     @Override
     public void initAndValidate() {
         twindowSize = twindowSizeInput.get();
-        //branchRateModel = branchRateModelInput.get();
-        rates = rateInput.get();
+        clockModel = clockModelInput.get();
+        
+        
+        // Ensure that either rates or quantiles are used and not categories
+        if (clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.rates && clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.quantiles) {
+        	throw new IllegalArgumentException("Clock model must parameterise rates as real numbers or quantiles! This operator does not work with categories.");
+        }
+        
+        
+        // Get rate parameter
+        if (clockModel.getRateMode() == UCRelaxedClockModelSB3.Mode.rates) {
+        	rates = clockModel.realRatesInput.get();
+        }else {
+        	quantiles = clockModel.quantilesInput.get();
+        }
+        
+        
+        // Are population sizes being proposed?
         proposeNewPopulationSizes = popSizeInput.get() != null;
         if (proposeNewPopulationSizes) popsizes = popSizeInput.get();
-        
        
         
         
@@ -89,14 +115,11 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         //the chosen node to work on
         Node node;
 
- 
-        //the original node times
-        double t_x;
-        double t_L;
-        double t_R;
-        //the original rates
-        double r_R;
-        double r_L;
+        // Original node times
+        double t_x, t_L, t_R;
+        
+        // Original rates
+        double r_x, r_R, r_L;
 
         //the proposed node time
         double t_x_;
@@ -106,15 +129,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        final int lastNodeNr = geneTreeDistributions.size() == 0 ? nodeCount - 1 : nodeCount;
        final int nodeNr = firstNonLeafNr + Randomizer.nextInt(lastNodeNr - firstNonLeafNr);
        node = tree.getNode(nodeNr);
-      
        
-
-
-       //rate and time for this node
-       t_x = node.getHeight();
-       double r_x = rates.getValues()[nodeNr];
        
-
        //Step 2: Access to the child nodes of this node
        // Left child
        Node leftNode = node.getChild(0);//get the left child of this node
@@ -124,9 +140,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        if (leftNr == branchCount) {
            leftNr = leftNode.getTree().getRoot().getNr();
         }
-
-       r_L = rates.getValues()[leftNr]; // rate of branch above left child
-
+       
+       
        // Right child
        Node rightNode = node.getChild(1);//get the right child of this node
        t_R = rightNode.getHeight();//node time of right child
@@ -135,11 +150,39 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        if (rightNr == branchCount) {
             rightNr = rightNode.getTree().getRoot().getNr();
        }
-
-       r_R = rates.getValues()[rightNr];// rate of branch above right child
-
-
+       
       
+       // Original node times
+       t_x = node.getHeight();
+
+       // Rates
+       switch(clockModel.getRateMode()) {
+       
+	       case rates: {
+	    	   r_x = rates.getValues()[nodeNr];
+	    	   r_L = rates.getValues()[leftNr]; // Rate of branch above left child
+	    	   r_R = rates.getValues()[rightNr]; // Rate of branch above right child
+	    	   break;
+	       }
+	       
+	       case quantiles: {
+	    	   try {
+	    		    PiecewiseLinearDistribution piecewise = clockModel.getQuantileApproximation();
+					r_x = piecewise.inverseCumulativeProbability(quantiles.getValues()[nodeNr]);
+					r_L = piecewise.inverseCumulativeProbability(quantiles.getValues()[leftNr]);
+					r_R = piecewise.inverseCumulativeProbability(quantiles.getValues()[rightNr]);
+				} catch (MathException e) {
+					e.printStackTrace();
+					return Double.NEGATIVE_INFINITY;
+				}
+	    	   break;
+	       }
+	       
+	       default: {
+	    	   return Double.NEGATIVE_INFINITY;
+	       }
+       
+       }
 
 
        // Compute lower and upper bounds
@@ -152,7 +195,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     		   upper = Math.max(upper, geneTreeDistributions.get(i).getGeneTree().getRoot().getHeight());
     	   }
     	   
-    	   
        }else {
     	   upper = node.getParent().getHeight();
        }
@@ -160,7 +202,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        
        
-       //Step3-4: to propose a new node time for this node
+       // Step3-4: propose a new node time for this node
        double alpha = Randomizer.uniform(-twindowSize, twindowSize);
        if (proportionalToBranchLengthInput.get()) {
     	   
@@ -182,17 +224,68 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
 
 
-       //Step5: propose the new rates
-       //there are three rates in total
-       //r_x, r_L, r_R
+       // Step5: propose new rates - r_x, r_L, r_R
        double r_x_ = r_x * (upper - t_x) / (upper - t_x_);
        double r_L_ = r_L * (t_x - t_L) / (t_x_ - t_L);
        double r_R_ = r_R * (t_x - t_R) / (t_x_ - t_R);
 
-       // set the proposed new rates
-       rates.setValue(nodeNr, r_x_);
-       rates.setValue(leftNr, r_L_);
-       rates.setValue(rightNr, r_R_);
+       // Set the proposed new rates (and calculate the Jacobian contribution from quantiles if applicable)
+       double logJD_quantiles = 0;
+       switch(clockModel.getRateMode()) {
+       
+	       case rates: {
+	           rates.setValue(nodeNr, r_x_);
+	           rates.setValue(leftNr, r_L_);
+	           rates.setValue(rightNr, r_R_);
+	           logJD_quantiles = 0;
+	    	   break;
+	       }
+	       
+	       case quantiles: {
+	    	   try {
+	    		   
+	    		   // Calculate quantiles from rates
+	    		   PiecewiseLinearDistribution piecewise = clockModel.getQuantileApproximation();
+		    	   double q_x_ = piecewise.cumulativeProbability(r_x_);
+		    	   double q_L_ = piecewise.cumulativeProbability(r_L_);
+		    	   double q_R_ = piecewise.cumulativeProbability(r_R_);
+		    	   
+		    	   // Jacobian contribution from the icdf derivative
+	    		   double q_x = quantiles.getValues()[nodeNr];
+	    		   double q_L = quantiles.getValues()[leftNr];
+	    		   double q_R = quantiles.getValues()[rightNr];
+		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_x));
+		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_L));
+		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_R));
+		    	   
+		    	   // Jacobian contribution from the cdf derivative
+		    	   double dqx = piecewise.getDerivativeAtQuantile(q_x_);
+		    	   double drx = piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_);
+		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_));
+		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_L_, q_L_));
+		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_R_, q_R_));
+		    	   
+		    	   // Set new quantiles
+		           quantiles.setValue(nodeNr, q_x_);
+		           quantiles.setValue(leftNr, q_L_);
+		           quantiles.setValue(rightNr, q_R_);
+		    	   
+				} catch (MathException e) {
+					e.printStackTrace();
+					return Double.NEGATIVE_INFINITY;
+				}
+	    	   break;
+	    	   
+	       }
+	       
+	       default: {
+	    	   
+	       }
+	   
+       }
+
+       
+
        
        
        // Step6: propose new population sizes
@@ -295,6 +388,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        logJD += numNodesMappedX * (Math.log(r_x) - Math.log(r_x_));
        logJD += numNodesMappedL * (Math.log(r_L) - Math.log(r_L_));
        logJD += numNodesMappedR * (Math.log(r_R) - Math.log(r_R_));
+       logJD += logJD_quantiles;
 
 
  

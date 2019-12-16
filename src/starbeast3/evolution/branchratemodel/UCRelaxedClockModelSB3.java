@@ -18,6 +18,8 @@ import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.TreeInterface;
+import beast.math.distributions.ParametricDistribution;
+import beast.math.distributions.PiecewiseLinearDistribution;
 import beast.util.Randomizer;
 import beast.evolution.branchratemodel.BranchRateModel;
 
@@ -27,17 +29,21 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     final public Input<Boolean> noCacheInput = new Input<>("noCache", "Always recalculate branch rates.", false);
     final public Input<RealParameter> stdevInput = new Input<>("stdev", "Standard deviation of the log-normal distribution for branch rates. If not supplied uses exponential.");
     final public Input<IntegerParameter> discreteRatesInput = new Input<>("discreteRates", "The rate categories associated with nodes in the species tree for sampling of individual rates among branches.");
-    final public Input<RealParameter> realRatesInput = new Input<>("realRates", "The real rates associated with nodes in the species tree for sampling of individual rates among branches.", Input.Validate.XOR, discreteRatesInput);
+    final public Input<RealParameter> realRatesInput = new Input<>("realRates", "The real rates associated with nodes in the species tree for sampling of individual rates among branches.");
+    final public Input<RealParameter> quantilesInput = new Input<>("rateQuantiles", "The rate quantiles for sampling of individual rates among branches.");
     final public Input<Integer> nBinsInput = new Input<>("nBins", "Number of discrete branch rate bins (default is equal to the number of estimated branch rates). Only used when branch rates are catrgories.", -1);
+    
+    
     
     final private double MEAN_CLOCK_RATE = 1.0; // Mean clock rate. Equal to 1/lambda for exponential, or exp(M + S^2/2) for lognormal
     
-    enum Mode {
+    public enum Mode {
         categories,
-        rates
+        rates,
+        quantiles
     }
     
-    enum RateDistribution {
+    public enum RateDistribution {
         exponential,
         lognormal
     }
@@ -63,65 +69,22 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     
     private IntegerParameter categories;
     private RealParameter realRates;
-
-    @Override
-    public boolean requiresRecalculation() {
-    	
-    	// If lognormal S changes then branch rates require recalculation from bins
-        if (rateDistribution == RateDistribution.lognormal && mode == Mode.categories) {
-            final double proposedLogNormalStdev = stdevInput.get().getValue();
-            if (proposedLogNormalStdev != currentLogNormalStdev) {
-                binRatesNeedsUpdate = true;
-            } else {
-                //binRatesNeedsUpdate = false;
-            }
-        }
-
-        needsUpdate = binRatesNeedsUpdate || meanRateInput.isDirty() || 
-        				(mode == Mode.categories && discreteRatesInput.isDirty()) ||
-        				(mode == Mode.rates && realRatesInput.isDirty());
-        
-        return needsUpdate;
-    }
-
-    @Override
-    public void store() {
-        storedLogNormalStdev = currentLogNormalStdev;
-        System.arraycopy(ratesArray, 0, storedRatesArray, 0, ratesArray.length);
-        
-        // Store the bin rates only if using categories
-        if (mode == Mode.categories) System.arraycopy(binRates, 0, storedBinRates, 0, binRates.length);
-        
-        super.store();
-    }
-
-    @Override
-    public void restore() {
-        double tmpLogNormalStdev = currentLogNormalStdev;
-        double[] tmpRatesArray = ratesArray;
-
-        currentLogNormalStdev = storedLogNormalStdev;
-        ratesArray = storedRatesArray;
-        
-        storedLogNormalStdev = tmpLogNormalStdev;
-        storedRatesArray = tmpRatesArray;
-        
-        
-        // Restore the bin rates only if using categories
-        if (mode == Mode.categories) {
-        	double[] tmpBinRates = binRates;
-        	binRates = storedBinRates;
-        	storedBinRates = tmpBinRates;
-        }
-        
-
-        super.restore();
-    }
+    private RealParameter quantiles;
+    
+    final int LATTICE_SIZE_FOR_DISCRETIZED_RATES = 100;
+    
+    // Piecewise linear approximation for quantiles
+    PiecewiseLinearDistribution piecewiseLinearQuantiles = null;
+    
+    
+    
+    
 
     @Override
     public void initAndValidate() {
         categories = discreteRatesInput.get();
         realRates = realRatesInput.get();
+        quantiles = quantilesInput.get();
         final TreeInterface speciesTree = treeInput.get();
         final Node[] speciesNodes = speciesTree.getNodesAsArray();
         estimateRoot = estimateRootInput.get().booleanValue();
@@ -129,8 +92,29 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         rootNodeNumber = speciesTree.getRoot().getNr();
 
         
-        mode = categories == null ?  Mode.rates : Mode.categories;
+        // Exponential or lognormal rate distribution
         rateDistribution = stdevInput.get() == null ? RateDistribution.exponential : RateDistribution.lognormal;
+        
+        
+        // Get the rates and their parameterisation model
+        if ((realRates != null && categories != null) ||
+            	(realRates != null && quantiles != null) ||
+            	(quantiles != null && categories != null)) {
+            	throw new IllegalArgumentException("Only one of rateCategories, rateQuantiles or rates should be specified");
+            }
+        if (categories != null) mode = Mode.categories;
+        else if (realRates != null) mode = Mode.rates;
+        else if (quantiles != null) {
+        	
+        	// Quantiles + exponential currently not supported
+        	if (rateDistribution == RateDistribution.exponential) {
+        		throw new IllegalArgumentException("Rate quantiles with exponentially distributed rates are currently not supported. ");
+        	}
+        	mode = Mode.quantiles;
+        }
+        
+        
+       
 
         if (estimateRoot) {
             nEstimatedRates = speciesNodes.length;
@@ -250,6 +234,27 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	        	break;
 	        }
 	        
+	        
+	        // Initialise quantiles
+	        case quantiles: {
+	        	
+	        	
+	            binRates = new double[LATTICE_SIZE_FOR_DISCRETIZED_RATES];
+	            storedBinRates = new double[LATTICE_SIZE_FOR_DISCRETIZED_RATES];
+	            piecewiseLinearQuantiles = new PiecewiseLinearDistribution(stdevInput.get());
+	        	
+                quantiles.setDimension(nEstimatedRates);
+                Double[] initialQuantiles = new Double[nEstimatedRates];
+                for (int i = 0; i < nEstimatedRates; i++) {
+                    initialQuantiles[i] = Randomizer.nextDouble();
+                }
+                RealParameter other = new RealParameter(initialQuantiles);
+                quantiles.assignFromWithoutID(other);
+                quantiles.setLower(0.0);
+                quantiles.setUpper(1.0);
+	        	break;
+	        }
+	        
         }
         
         
@@ -259,6 +264,64 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     }
     
     
+    
+    
+
+    @Override
+    public boolean requiresRecalculation() {
+    	
+    	// If lognormal S changes then branch rates require recalculation from bins
+        if (rateDistribution == RateDistribution.lognormal && mode == Mode.categories) {
+            final double proposedLogNormalStdev = stdevInput.get().getValue();
+            if (proposedLogNormalStdev != currentLogNormalStdev) {
+                binRatesNeedsUpdate = true;
+            } else {
+                //binRatesNeedsUpdate = false;
+            }
+        }
+
+        needsUpdate = binRatesNeedsUpdate || meanRateInput.isDirty() || 
+        				(mode == Mode.categories && discreteRatesInput.isDirty()) ||
+        				(mode == Mode.rates && realRatesInput.isDirty()) ||
+        				(mode == Mode.quantiles && quantilesInput.isDirty());
+        
+        return needsUpdate;
+    }
+
+    @Override
+    public void store() {
+        storedLogNormalStdev = currentLogNormalStdev;
+        System.arraycopy(ratesArray, 0, storedRatesArray, 0, ratesArray.length);
+        
+        // Store the bin rates only if using categories/quantiles
+        if (mode == Mode.categories || mode == Mode.quantiles) System.arraycopy(binRates, 0, storedBinRates, 0, binRates.length);
+        
+        super.store();
+    }
+
+    @Override
+    public void restore() {
+        double tmpLogNormalStdev = currentLogNormalStdev;
+        double[] tmpRatesArray = ratesArray;
+
+        currentLogNormalStdev = storedLogNormalStdev;
+        ratesArray = storedRatesArray;
+        
+        storedLogNormalStdev = tmpLogNormalStdev;
+        storedRatesArray = tmpRatesArray;
+        
+        
+        // Restore the bin rates only if using categories
+        if (mode == Mode.categories) {
+        	double[] tmpBinRates = binRates;
+        	binRates = storedBinRates;
+        	storedBinRates = tmpBinRates;
+        }
+        
+
+        super.restore();
+    }
+
 
     private void update() {
     	
@@ -314,6 +377,52 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	        	break;
 	        }
 	        
+	        
+	        
+	        case quantiles: {
+	        	
+	        	for (int nodeNumber = 0; nodeNumber < nEstimatedRates; nodeNumber++) {
+					
+				    // use cached rates
+				    double q = quantiles.getValue(nodeNumber);
+				    double v = q * (binRates.length - 1);
+				    int i = (int) v;
+				    
+				    // make sure cached rates are calculated
+				    if (binRates[i] == 0.0) {
+				        try {
+				        	if (i > 0) {
+				        		binRates[i] = piecewiseLinearQuantiles.inverseCumulativeProbability(((double)i) / (binRates.length-1));
+				        	} else {
+				        		binRates[i] = piecewiseLinearQuantiles.inverseCumulativeProbability(0.1 / (binRates.length-1));
+				        	}
+				        } catch (MathException e) {
+				            throw new RuntimeException("Failed to compute inverse cumulative probability!");
+				        }
+				    }
+				    if (i < binRates.length - 1 && binRates[i + 1] == 0.0) {
+				        try {
+				        	if (i < binRates.length - 2) {
+				        		binRates[i + 1] = piecewiseLinearQuantiles.inverseCumulativeProbability(((double)(i + 1)) / (binRates.length-1));
+				        	} else {
+				        		binRates[i + 1] = piecewiseLinearQuantiles.inverseCumulativeProbability((binRates.length - 1 - 0.1) / (binRates.length-1));
+				        	}
+				        } catch (MathException e) {
+				            throw new RuntimeException("Failed to compute inverse cumulative probability!");
+				        }
+				    }
+				    
+				    // Calculate piecewise linear approximation
+				    double r = binRates[i];
+				    if (i < binRates.length - 1) {
+				    	r += (binRates[i+1] - binRates[i]) * (v - i);
+				    }
+				    ratesArray[nodeNumber] = r;
+				}
+	        	
+	        	break;
+	        }
+	        
         }
     	
     	
@@ -332,9 +441,11 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         // Multiply the raw rate by the clock rate
         switch(mode){
         
+        
+        	// Categories
 	        case categories: {
 	        	
-	        	final Integer[] branchRatePointers = discreteRatesInput.get().getValues();
+	        	final Integer[] branchRatePointers = categories.getValues();
 	            for (int i = 0; i < nEstimatedRates; i++) {
 	                int b = branchRatePointers[i];
 	                ratesArray[i] = estimatedMean * binRates[b];
@@ -342,10 +453,23 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	        	break;
 	        }
 	        
+	        
+	        // Real numbers
 	        case rates: {
 	        	
 	            for (int i = 0; i < nEstimatedRates; i++) {
 	                ratesArray[i] = estimatedMean * realRates.getValue(i);
+	            }
+	        	
+	        	break;
+	        }
+	        
+	        
+	        // Quantiles
+	        case quantiles: {
+	        	
+	        	for (int i = 0; i < nEstimatedRates; i++) {
+	                ratesArray[i] = estimatedMean * ratesArray[i];
 	            }
 	        	
 	        	break;
@@ -389,6 +513,19 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         return ratesArray[node.getNr()];
         
     }
+
+
+
+
+
+	public Mode getRateMode() {
+		return this.mode;
+	}
+	
+	
+	public PiecewiseLinearDistribution getQuantileApproximation() {
+		return this.piecewiseLinearQuantiles;
+	}
     
 
 

@@ -18,12 +18,14 @@ import beast.evolution.tree.Node;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 
 public class StarBeast3Clock extends BranchRateModel.Base {
+	
     public Input<GeneTreeForSpeciesTreeDistribution> geneTreeInput = new Input<>("geneTree", "The gene tree this relaxed clock is associated with.", Input.Validate.REQUIRED);
-    public Input<BranchRateModelSB3> speciesTreeRatesInput = new Input<>("speciesTreeRates", "The per-branch rates for the species tree", Input.Validate.REQUIRED);
-
-    private int geneNodeCount;
-    private double[] branchRates;
-    private double[] storedBranchRates;
+    public Input<BranchRateModelSB3> speciesTreeRatesInput = new Input<>("speciesTreeRates", "The real branch rates of the species tree");
+   
+    
+    protected int geneNodeCount;
+    protected double[] branchRates;
+    protected double[] storedBranchRates;
     private boolean needsUpdate;
 
     RealParameter meanRate;
