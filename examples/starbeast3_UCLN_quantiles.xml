@@ -343,7 +343,7 @@ name="alignment">
 
 	
 	
-	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@branchRatesModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="20.0">
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@branchRatesModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="0.0">
 		<gene idref="treePrior.t:26"/>
 		<gene idref="treePrior.t:29"/>
 		<gene idref="treePrior.t:47"/>
@@ -376,7 +376,7 @@ name="alignment">
             
 
 	
-        <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.55" weight="3.0"/>
+        <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.55" weight="30.0"/>
 	
             
         <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="75.0">
@@ -571,6 +571,7 @@ name="alignment">
         <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
+	<log idref="branchRatesStdev.Species"/>
     </logger>
 
 

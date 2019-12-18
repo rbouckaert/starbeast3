@@ -248,6 +248,10 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	            storedBinRates = new double[LATTICE_SIZE_FOR_DISCRETIZED_RATES];
 	            piecewiseLinearQuantiles = new PiecewiseLinearDistribution(stdevInput.get());
 	            
+	            currentLogNormalStdev = stdevInput.get().getValue();
+            	storedLogNormalStdev = currentLogNormalStdev;
+            	binRatesNeedsUpdate = true;
+	            
 	            if (quantiles.getDimension() != nEstimatedRates) {
 	        	
 	            	quantiles.setDimension(nEstimatedRates);
@@ -284,9 +288,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
             final double proposedLogNormalStdev = stdevInput.get().getValue();
             if (proposedLogNormalStdev != currentLogNormalStdev) {
                 binRatesNeedsUpdate = true;
-            } else {
-                //binRatesNeedsUpdate = false;
-            }
+            } 
         }
 
         needsUpdate = binRatesNeedsUpdate || meanRateInput.isDirty() || 
@@ -390,15 +392,11 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	        
 	        case quantiles: {
 	        	
-	        	if (binRatesNeedsUpdate || noCache) {
-	        		currentLogNormalStdev = stdevInput.get().getValue();
-	        		piecewiseLinearQuantiles = new PiecewiseLinearDistribution(stdevInput.get());
-		        	for (int i = 0; i < binRates.length; i++) {
-	                    binRates[i] = 0;
-	                }
-	        	}
-	        	
-
+	        	currentLogNormalStdev = stdevInput.get().getValue();
+        		piecewiseLinearQuantiles = new PiecewiseLinearDistribution(stdevInput.get());
+	        	for (int i = 0; i < binRates.length; i++) {
+                    binRates[i] = 0;
+                }
 	        	
 	        	for (int nodeNumber = 0; nodeNumber < nEstimatedRates; nodeNumber++) {
 					
@@ -440,7 +438,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 				    ratesArray[nodeNumber] = r;
 				    
 				}
-	        	
+		        	
 	        	break;
 	        }
 	        
@@ -514,8 +512,8 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
             }
         }
         
-        //final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
-        //System.out.println("M = " + M + " SD = " + stdevInput.get().getValue() + " q1 = " + quantiles.getValue(0) +  " r1 = " + ratesArray[0]);
+        final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
+       // System.out.println("M = " + M + " SD = " + stdevInput.get().getValue() + " q1 = " + quantiles.getValue(0) +  " r1 = " + ratesArray[0]);
         //for (int i = 0; i < ratesArray.length; i ++) {
         	//System.out.print(ratesArray[i] + "\t");
         //}
