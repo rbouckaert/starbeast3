@@ -52,6 +52,10 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     private Node[] geneNodeMap_R;
     
     
+    // Quantiles
+    PiecewiseLinearDistribution piecewise = null;
+    
+    
    
 
     //protected BranchRateModel.Base branchRateModel;
@@ -154,6 +158,9 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
       
        // Original node times
        t_x = node.getHeight();
+       
+       
+       
 
        // Rates
        switch(clockModel.getRateMode()) {
@@ -166,8 +173,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
 	       }
 	       
 	       case quantiles: {
+	    	   piecewise = clockModel.getPiecewiseQuantileApproximation();
 	    	   try {
-	    		    PiecewiseLinearDistribution piecewise = clockModel.getQuantileApproximation();
 					r_x = piecewise.inverseCumulativeProbability(quantiles.getValues()[nodeNr]);
 					r_L = piecewise.inverseCumulativeProbability(quantiles.getValues()[leftNr]);
 					r_R = piecewise.inverseCumulativeProbability(quantiles.getValues()[rightNr]);
@@ -245,7 +252,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
 	    	   try {
 	    		   
 	    		   // Calculate quantiles from rates
-	    		   PiecewiseLinearDistribution piecewise = clockModel.getQuantileApproximation();
 		    	   double q_x_ = piecewise.cumulativeProbability(r_x_);
 		    	   double q_L_ = piecewise.cumulativeProbability(r_L_);
 		    	   double q_R_ = piecewise.cumulativeProbability(r_R_);

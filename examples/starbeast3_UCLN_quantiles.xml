@@ -201,7 +201,13 @@ name="alignment">
 		 <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
 	</speciesTreePrior>
 
-	<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" rateQuantiles="@quantileRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" />
+	<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" rateQuantiles="@quantileRates.Species" tree="@Tree.t:Species">
+		<distr id="ApproxLogNormal.c:anolis" spec="beast.math.distributions.PiecewiseLinearDistribution">
+			<LogNormal id="LogNormalDistributionModel.quantiles" S="@branchRatesStdev.Species" meanInRealSpace="true" name="distr">
+				<parameter id="RealParameter.3" spec="parameter.RealParameter" estimate="false" lower="0.0" name="M" upper="1.0">1.0</parameter>
+			</LogNormal>
+                 </distr>
+	</speciesTreeRates>
 
     </init>
 
