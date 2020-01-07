@@ -35,7 +35,6 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     final public Input<ParametricDistribution> rateDistInput = new Input<>("distr", "the distribution governing the rates among branches, for quantiles only. Must have mean of 1. The clock.rate parameter can be used to change the mean rate.");
     
     
-    
     final private double MEAN_CLOCK_RATE = 1.0; // Mean clock rate. Equal to 1/lambda for exponential, or exp(M + S^2/2) for lognormal
     
     public enum Mode {
@@ -518,7 +517,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         }
         
         //final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
-       // System.out.println(quantileDistribution + " q1 = " + quantiles.getValue(0) +  " r1 = " + ratesArray[0]);
+        //System.out.println(quantileDistribution + " q1 = " + quantiles.getValue(0) +  " r1 = " + ratesArray[0]);
         //for (int i = 0; i < ratesArray.length; i ++) {
         	//System.out.print(ratesArray[i] + "\t");
         //}
