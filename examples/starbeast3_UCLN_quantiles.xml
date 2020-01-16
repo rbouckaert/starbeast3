@@ -349,7 +349,7 @@ name="alignment">
 
 	
 	
-	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@branchRatesModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="0.0">
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@branchRatesModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="10.0">
 		<gene idref="treePrior.t:26"/>
 		<gene idref="treePrior.t:29"/>
 		<gene idref="treePrior.t:47"/>

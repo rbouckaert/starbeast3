@@ -251,30 +251,38 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
 	       case quantiles: {
 	    	   try {
 	    		   
-	    		   // Calculate quantiles from rates
-		    	   double q_x_ = piecewise.cumulativeProbability(r_x_);
-		    	   double q_L_ = piecewise.cumulativeProbability(r_L_);
-		    	   double q_R_ = piecewise.cumulativeProbability(r_R_);
-		    	   
-		    	   // Jacobian contribution from the icdf derivative
-	    		   double q_x = quantiles.getValues()[nodeNr];
-	    		   double q_L = quantiles.getValues()[leftNr];
-	    		   double q_R = quantiles.getValues()[rightNr];
-		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_x));
-		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_L));
-		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_R));
-		    	   
-		    	   // Jacobian contribution from the cdf derivative
-		    	   double dqx = piecewise.getDerivativeAtQuantile(q_x_);
-		    	   double drx = piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_);
-		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_));
-		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_L_, q_L_));
-		    	   logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_R_, q_R_));
-		    	   
-		    	   // Set new quantiles
-		           quantiles.setValue(nodeNr, q_x_);
-		           quantiles.setValue(leftNr, q_L_);
-		           quantiles.setValue(rightNr, q_R_);
+   
+					// Ensure that proposed rates are within the piecewise approximation's range
+					double rmin = piecewise.getRangeMin();
+					double rmax = piecewise.getRangeMax();
+					if (r_x_ < rmin || r_x_ > rmax) return Double.NEGATIVE_INFINITY;
+					if (r_L_ < rmin || r_L_ > rmax) return Double.NEGATIVE_INFINITY;
+					if (r_R_ < rmin || r_R_ > rmax) return Double.NEGATIVE_INFINITY;
+					
+					// Calculate quantiles from rates
+					double q_x_ = piecewise.cumulativeProbability(r_x_);
+					double q_L_ = piecewise.cumulativeProbability(r_L_);
+					double q_R_ = piecewise.cumulativeProbability(r_R_);
+					   
+					// Jacobian contribution from the icdf derivative
+					double q_x = quantiles.getValues()[nodeNr];
+					double q_L = quantiles.getValues()[leftNr];
+					double q_R = quantiles.getValues()[rightNr];
+					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_x));
+					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_L));
+					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_R));
+					   
+					// Jacobian contribution from the cdf derivative
+					// double dqx = piecewise.getDerivativeAtQuantile(q_x_);
+					//double drx = piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_);
+					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_));
+					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_L_, q_L_));
+					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_R_, q_R_));
+					   
+					// Set new quantiles
+					quantiles.setValue(nodeNr, q_x_);
+					quantiles.setValue(leftNr, q_L_);
+					quantiles.setValue(rightNr, q_R_);
 		    	   
 				} catch (MathException e) {
 					e.printStackTrace();
