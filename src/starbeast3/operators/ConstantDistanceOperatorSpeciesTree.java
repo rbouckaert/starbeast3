@@ -87,22 +87,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         if (proposeNewPopulationSizes) popsizes = popSizeInput.get();
        
         
-        
         // Get the gene tree distributions
         geneTreeDistributions = geneTreeDistributionsInput.get();
-        
-        
-        // Initialise gene node height caches with length equal to the number of gene tree nodes
-        // In practice not every element will be filled however this way the array does not need
-        // to be created again every time
-        if (geneTreeDistributions.size() > 0) {
-        	
-        	int maxNumGeneNodes = 0;
-        	for (int i = 0; i < geneTreeDistributions.size(); i ++) {
-        		maxNumGeneNodes = Math.max(maxNumGeneNodes, geneTreeDistributions.get(i).getNodeCount());
-        	}
-        	
-        }
         
         
     }

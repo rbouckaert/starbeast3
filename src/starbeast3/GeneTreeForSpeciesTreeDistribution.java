@@ -373,6 +373,22 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     }
     
     
+    // Calculates the prior density contribution from this branches lineage history (without using the population size)
+    public double calculatePartialLogPBranch(Node speciesNode) {
+    	
+    	
+    	update();
+    	
+    	final int lineagesBottom = nrOfLineages[speciesNode.getNr()];
+        final int k = coalescentCounts[speciesNode.getNr()];
+        final double[] branchCoalescentTimes = getCoalescentTimes(speciesNode.getNr());
+        
+        return popModel.calculatePartialLogPBranch(lineagesBottom, branchCoalescentTimes, k);
+    	
+    }
+    
+    
+    
     protected boolean isDirtyBranch(int nodeNr) {
 		return speciesBranchIsDirty[nodeNr];
 	}

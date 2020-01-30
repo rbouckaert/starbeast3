@@ -2,3 +2,5 @@
 /release
 /build
 /doc
+.classpath
+.project
