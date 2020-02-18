@@ -201,7 +201,7 @@ name="alignment">
 		 <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
 	</speciesTreePrior>
 
-	<speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" rateQuantiles="@quantileRates.Species" tree="@Tree.t:Species">
+	<speciesTreeRates id="clockModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" rateQuantiles="@quantileRates.Species" tree="@Tree.t:Species">
 		<distr id="ApproxLogNormal.c:anolis" spec="beast.math.distributions.PiecewiseLinearDistribution">
 			<LogNormal id="LogNormalDistributionModel.quantiles" S="@branchRatesStdev.Species" meanInRealSpace="true" name="distr">
 				<parameter id="RealParameter.3" spec="parameter.RealParameter" estimate="false" lower="0.0" name="M" upper="1.0">1.0</parameter>
@@ -313,7 +313,7 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:26" spec="Frequencies" data="@26"/>
                     </substModel>
                 </siteModel>
-		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" geneTree="@treePrior.t:26" speciesTreeRates="@branchRatesModel.Species"/>
+		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" geneTree="@treePrior.t:26" speciesTreeRates="@clockModel.Species"/>
 
 
             </distribution>
@@ -326,7 +326,7 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:29" spec="Frequencies" data="@29"/>
                     </substModel>
                 </siteModel>
-                <branchRateModel id="SpeciesTreeRelaxedClock.c:29" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:29" geneTree="@treePrior.t:29" speciesTreeRates="@branchRatesModel.Species"/>
+                <branchRateModel id="SpeciesTreeRelaxedClock.c:29" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:29" geneTree="@treePrior.t:29" speciesTreeRates="@clockModel.Species"/>
 
             </distribution>
             <distribution id="treeLikelihood.47" spec="TreeLikelihood" data="@47" tree="@Tree.t:47">
@@ -338,7 +338,7 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:47" spec="Frequencies" data="@47"/>
                     </substModel>
                 </siteModel>
-                <branchRateModel id="SpeciesTreeRelaxedClock.c:47" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:47" geneTree="@treePrior.t:47" speciesTreeRates="@branchRatesModel.Species"/>
+                <branchRateModel id="SpeciesTreeRelaxedClock.c:47" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:47" geneTree="@treePrior.t:47" speciesTreeRates="@clockModel.Species"/>
 
             </distribution>
         </distribution>
@@ -346,8 +346,218 @@ name="alignment">
 
 
 
-	<operator id="NarrowExchange_dAE_dBE_dCE_genes_pop" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" weight="2">
+	<operator id="NarrowExchange" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" popSizes="@popSize" weight="2">
         </operator>
+
+	<operator id="NarrowExchange_pop" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" weight="2">
+        </operator>
+
+	<operator id="CoordinatedNarrowExchange" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" weight="2">
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
+        </operator>
+
+
+	<operator id="CoordinatedNarrowExchange_pop" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" popSizes="@popSize" weight="2">
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
+        </operator>
+
+
+	<operator id="CoordinatedNarrowExchange_dAE_dBE_dCE_genes" spec="NERVariants.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" weight="2">
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
+        </operator>
+
+
+	<operator id="CoordinatedNarrowExchange_dAE_dBE_dCE_genes_pop" spec="NERVariants.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" popSizes="@popSize" weight="2">
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
+        </operator>
+
+	
+	   <operator id="FastUcldStdevScaler.Species" spec="UniformOperator" parameter="@quantileRates.Species"  weight="5.0"/>
+	
+	
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@clockModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="2.0">
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
+	</operator>
+	
+
+	
+	<operator id="RatesRandomWalk.Species" spec="RealRandomWalkOperator" parameter="@quantileRates.Species" weight="14.0" windowSize="1"/>
+
+	<operator id="RatesScaleOperator.Species" spec="ScaleOperator" scaleFactor="0.5" parameter="@quantileRates.Species" weight="14.0"/>
+
+	<operator id="PopSizeGibbsSampler" spec='starbeast3.operators.PopSizeGibbsSampler' weight="1.0" popSizes="@popSize">
+		<gammaprior idref="popPriorDistr"/>
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
+	</operator>
+
+        <operator id="constPopSizesSwap.Species" spec="starbeast3.operators.RealCycle" k="2" optimise="false" parameter="@popSize" weight="3.0"/>
+            
+        <operator id="constPopSizesScale.Species" spec="ScaleOperator" parameter="@popSize" scaleFactor="0.5" weight="3.0"/>
+            
+        <operator id="constPopMeanScale.Species" spec="ScaleOperator" parameter="@popMean" scaleFactor="0.75" weight="1.0"/>
+            
+
+
+            
+
+	
+        <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.55" weight="3.0"/>
+	
+            
+        <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="75.0">
+                    
+            <geneTree idref="treePrior.t:26"/>
+                    
+            <geneTree idref="treePrior.t:47"/>
+                    
+            <geneTree idref="treePrior.t:29"/>
+                
+        </operator>
+            
+        <operator id="coordinatedUniform.t:Species" spec="starbeast3.operators.CoordinatedUniform" speciesTree="@Tree.t:Species" weight="15.0">
+                    
+            <geneTree idref="Tree.t:26"/>
+                    
+            <geneTree idref="Tree.t:47"/>
+                    
+            <geneTree idref="Tree.t:29"/>
+                
+        </operator>
+            
+        <operator id="coordinatedExponential.t:Species" spec="starbeast3.operators.CoordinatedExponential" speciesTree="@Tree.t:Species" weight="15.0">
+                    
+            <geneTree idref="Tree.t:26"/>
+                    
+            <geneTree idref="Tree.t:47"/>
+                    
+            <geneTree idref="Tree.t:29"/>
+                
+        </operator>
+
+	<operator id="YuleBirthRateScaler.t:Species" spec="ScaleOperator" parameter="@birthRate.t:Species" scaleFactor="0.75" weight="1.3273128598848374"/>
+            
+        <operator id="SubtreeSlide.t:Species" spec="SubtreeSlide" size="0.002" tree="@Tree.t:Species" weight="15.0"/>
+            
+        <operator id="WilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
+            
+        <operator id="Wide.t:Species" spec="Exchange" isNarrow="false" tree="@Tree.t:Species" weight="15.0"/>
+            
+        <operator id="Narrow.t:Species" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
+            
+        <operator id="UniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="15.0"/>
+            
+        <operator id="TreeRootScaler.t:Species" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:Species" weight="3.0"/>
+            
+        <operator id="TreeScaler.t:Species" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:Species" weight="3.0"/>
+            
+        <operator id="speciationRateScale.t:Species" spec="ScaleOperator" parameter="@birthRate.t:Species" scaleFactor="0.5" weight="1.0"/>
+            
+        <operator id="updownAll:Species" spec="UpDownOperator" scaleFactor="0.75" weight="6.0">
+                    
+            <up idref="birthRate.t:Species"/>
+                    
+            <up idref="molecularClockRate.c:26"/>
+                    
+            <up idref="molecularClockRate.c:29"/>
+                    
+            <up idref="molecularClockRate.c:47"/>
+                    
+            <down idref="Tree.t:Species"/>
+                    
+            <down idref="Tree.t:26"/>
+                    
+            <down idref="Tree.t:47"/>
+                    
+            <down idref="Tree.t:29"/>
+                    
+            <down idref="popSize"/>
+                    
+            <down idref="popMean"/>
+                
+        </operator>
+            
+        <operator id="clockUpDownOperator.c:26" spec="UpDownOperator" scaleFactor="0.95" weight="3.0">
+                    
+            <down idref="Tree.t:26"/>
+                
+        </operator>
+            
+        <operator id="TreeScaler.t:26" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:26" weight="3.0"/>
+            
+        <operator id="TreeRootScaler.t:26" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:26" weight="3.0"/>
+            
+        <operator id="UniformOperator.t:26" spec="Uniform" tree="@Tree.t:26" weight="15.0"/>
+            
+        <operator id="SubtreeSlide.t:26" spec="SubtreeSlide" size="0.002" tree="@Tree.t:26" weight="15.0"/>
+            
+        <operator id="Narrow.t:26" spec="Exchange" tree="@Tree.t:26" weight="15.0"/>
+            
+        <operator id="Wide.t:26" spec="Exchange" isNarrow="false" tree="@Tree.t:26" weight="15.0"/>
+            
+        <operator id="WilsonBalding.t:26" spec="WilsonBalding" tree="@Tree.t:26" weight="15.0"/>
+            
+        <operator id="clockUpDownOperator.c:47" spec="UpDownOperator" scaleFactor="0.95" weight="3.0">
+                    
+            <down idref="Tree.t:47"/>
+                
+        </operator>
+            
+        <operator id="TreeScaler.t:47" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:47" weight="3.0"/>
+            
+        <operator id="TreeRootScaler.t:47" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:47" weight="3.0"/>
+            
+        <operator id="UniformOperator.t:47" spec="Uniform" tree="@Tree.t:47" weight="15.0"/>
+            
+        <operator id="SubtreeSlide.t:47" spec="SubtreeSlide" size="0.002" tree="@Tree.t:47" weight="15.0"/>
+            
+        <operator id="Narrow.t:47" spec="Exchange" tree="@Tree.t:47" weight="15.0"/>
+            
+        <operator id="Wide.t:47" spec="Exchange" isNarrow="false" tree="@Tree.t:47" weight="15.0"/>
+            
+        <operator id="WilsonBalding.t:47" spec="WilsonBalding" tree="@Tree.t:47" weight="15.0"/>
+            
+        <operator id="clockUpDownOperator.c:29" spec="UpDownOperator" scaleFactor="0.95" weight="3.0">
+                    
+            <down idref="Tree.t:29"/>
+                
+        </operator>
+            
+        <operator id="TreeScaler.t:29" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:29" weight="3.0"/>
+            
+        <operator id="TreeRootScaler.t:29" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:29" weight="3.0"/>
+            
+        <operator id="UniformOperator.t:29" spec="Uniform" tree="@Tree.t:29" weight="15.0"/>
+            
+        <operator id="SubtreeSlide.t:29" spec="SubtreeSlide" size="0.002" tree="@Tree.t:29" weight="15.0"/>
+            
+        <operator id="Narrow.t:29" spec="Exchange" tree="@Tree.t:29" weight="15.0"/>
+            
+        <operator id="Wide.t:29" spec="Exchange" isNarrow="false" tree="@Tree.t:29" weight="15.0"/>
+            
+        <operator id="WilsonBalding.t:29" spec="WilsonBalding" tree="@Tree.t:29" weight="15.0"/>
+            
+        <operator id="KappaScaler.s:26" spec="ScaleOperator" parameter="@kappa.s:26" scaleFactor="0.75" weight="1.0"/>
+        <operator id="KappaScaler.s:29" spec="ScaleOperator" parameter="@kappa.s:29" scaleFactor="0.75" weight="1.0"/>
+        <operator id="KappaScaler.s:47" spec="ScaleOperator" parameter="@kappa.s:47" scaleFactor="0.75" weight="1.0"/>
+            
+        <operator id="molecularClockRateScaler.c:26" spec="ScaleOperator" parameter="@molecularClockRate.c:26" scaleFactor="0.5" weight="3.0"/>
+            
+        <operator id="molecularClockRateScaler.c:29" spec="ScaleOperator" parameter="@molecularClockRate.c:29" scaleFactor="0.5" weight="3.0"/>
+            
+        <operator id="molecularClockRateScaler.c:47" spec="ScaleOperator" parameter="@molecularClockRate.c:47" scaleFactor="0.5" weight="3.0"/>
+
 
 
 

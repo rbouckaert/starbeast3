@@ -241,9 +241,13 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
 					// Ensure that proposed rates are within the piecewise approximation's range
 					double rmin = piecewise.getRangeMin();
 					double rmax = piecewise.getRangeMax();
-					if (r_x_ < rmin || r_x_ > rmax) return Double.NEGATIVE_INFINITY;
-					if (r_L_ < rmin || r_L_ > rmax) return Double.NEGATIVE_INFINITY;
-					if (r_R_ < rmin || r_R_ > rmax) return Double.NEGATIVE_INFINITY;
+					if (r_x_ <= rmin || r_x_ >= rmax) return Double.NEGATIVE_INFINITY;
+					if (r_L_ <= rmin || r_L_ >= rmax) return Double.NEGATIVE_INFINITY;
+					if (r_R_ <= rmin || r_R_ >= rmax) return Double.NEGATIVE_INFINITY;
+					
+					
+					//System.out.println(quantiles.getValues()[nodeNr] + "," + r_x + "," + r_x_ + "," + r_L_ + "," + r_R_);
+					
 					
 					// Calculate quantiles from rates
 					double q_x_ = piecewise.cumulativeProbability(r_x_);
