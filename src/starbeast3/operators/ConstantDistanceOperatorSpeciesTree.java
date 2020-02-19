@@ -7,6 +7,7 @@ import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.UCRelaxedClockModel;
+import beast.evolution.operators.KernelDistribution;
 import beast.evolution.operators.TreeOperator;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
@@ -35,7 +36,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     final public Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreeDistributionsInput = new Input<>("gene", "gene tree for species tree distribution for each of the genes", new ArrayList<>());
     final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", "Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
     final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree brancg rates.", Input.Validate.REQUIRED);
-    
+    final public Input<KernelDistribution> proposalKernelInput = new Input<>("kernelDistribution", "Proposal kernel for a random walk on the internal node height.");
+	
     
     
     UCRelaxedClockModelSB3 clockModel;
@@ -55,7 +57,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     // Quantiles
     PiecewiseLinearDistribution piecewise = null;
     
-    
+    // Proposal kernel
+    private KernelDistribution kernel;
    
 
     //protected BranchRateModel.Base branchRateModel;
@@ -89,6 +92,8 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         
         // Get the gene tree distributions
         geneTreeDistributions = geneTreeDistributionsInput.get();
+        
+        kernel = proposalKernelInput.get();
         
         
     }
@@ -196,7 +201,9 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        
        // Step3-4: propose a new node time for this node
-       double alpha = Randomizer.uniform(-twindowSize, twindowSize);
+       double alpha;
+       if (kernel != null) alpha = kernel.getRandomDelta(twindowSize);
+       else alpha = Randomizer.uniform(-twindowSize, twindowSize);
        if (proportionalToBranchLengthInput.get()) {
     	   
     	   // Proposal size is proportional to branch length

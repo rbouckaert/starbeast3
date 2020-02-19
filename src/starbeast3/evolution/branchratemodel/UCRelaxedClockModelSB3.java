@@ -94,9 +94,6 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         rootNodeNumber = speciesTree.getRoot().getNr();
 
         
-      
-        
-        
         // Get the rates and their parameterisation model
         if ((realRates != null && categories != null) ||
             	(realRates != null && quantiles != null) ||
@@ -146,7 +143,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 	            storedBinRates = new double[nBins];
 	            
 	        	if (categories.getDimension() != nEstimatedRates) {
-            		realRates.setDimension(nEstimatedRates);
+	        		categories.setDimension(nEstimatedRates);
             
 		            Integer[] initialCategories = new Integer[nEstimatedRates];
 		            for (int i = 0; i < nEstimatedRates; i++) {
