@@ -202,7 +202,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        // Step3-4: propose a new node time for this node
        double alpha;
-       if (kernel != null) alpha = kernel.getRandomDelta(twindowSize);
+       if (kernel != null) alpha = kernel.getRandomDelta(1, twindowSize);
        else alpha = Randomizer.uniform(-twindowSize, twindowSize);
        if (proportionalToBranchLengthInput.get()) {
     	   
@@ -440,7 +440,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         double delta = calcDelta(logAlpha);
 
         delta += Math.log(twindowSize);
-        twindowSize = Math.exp(delta);
+       // twindowSize = Math.exp(delta);
     }
 
     @Override
