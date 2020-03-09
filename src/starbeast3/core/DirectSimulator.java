@@ -22,6 +22,7 @@ import java.util.Random;
  * direct simulation.
  *
  * Created by Tim Vaughan <tgvaughan@gmail.com> on 16/06/17.
+ * Modified for StarBeast3 by Jordan Douglas 
  */
 @Description("Runnable for generating a fixed number of samples from a prior distribution" +
              "using direct simulation.")
@@ -31,7 +32,7 @@ public class DirectSimulator extends Runnable {
             "Distribution to sample from via direct simulation.",
             Input.Validate.REQUIRED);
     
-    
+    // Init nodes
     final public Input<List<StateNodeInitialiser>> initialisersInput =
             new Input<>("init", "one or more state node initilisers used for determining " +
                     "the start state of the chain",
@@ -44,6 +45,8 @@ public class DirectSimulator extends Runnable {
     public Input<Integer> nSamplesInput = new Input<>("nSamples",
             "Number of independent samples to generate.",
             Input.Validate.REQUIRED);
+    
+
 
     State state;
     Distribution distribution;
@@ -127,8 +130,8 @@ public class DirectSimulator extends Runnable {
 
         // Perform simulations
         for (int i=0; i<nSamples; i++) {
-            clearSampledFlags(distribution);
-            distribution.sample(state, random);
+        	
+        	this.doASimulation();
 
             for (Logger logger : loggers) {
                 logger.log(i);
@@ -141,5 +144,18 @@ public class DirectSimulator extends Runnable {
 
         System.out.println("Direct simulation of " + nSamples + " samples completed.");
     }
+    
+    
+    public void doASimulation() {
+        clearSampledFlags(distribution);
+        distribution.sample(state, random);
+    }
+    
+    
+    
 }
+
+
+
+
 
