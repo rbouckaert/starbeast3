@@ -103,7 +103,6 @@ name="alignment">
 <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
-
 <run id="mcmc" spec="MCMC" chainLength="10000000"  sampleFromPrior="false" storeEvery="5000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" dimension="8" name="stateNode">100.0</parameter>
@@ -155,18 +154,18 @@ name="alignment">
         </tree>
         <parameter id="birthRate.t:Species" lower="0.0" name="stateNode">1.0</parameter>
         <parameter id="popMean" name="stateNode">1.0</parameter>
-        <tree id="Tree.t:26" name="stateNode">
+        <tree id="Tree.t:26" spec="genekernel.GTKPointerTree" name="stateNode" estimate="false" kernel="@geneKernel" indicator="@geneKernelIndicator" index="0">
             <taxonset id="TaxonSet.26" spec="TaxonSet">
                 <alignment idref="26"/>
             </taxonset>
         </tree>
-        <tree id="Tree.t:29" name="stateNode">
+        <tree id="Tree.t:29" spec="genekernel.GTKPointerTree" name="stateNode" estimate="false" kernel="@geneKernel" indicator="@geneKernelIndicator" index="1">
             <taxonset id="TaxonSet.29" spec="TaxonSet">
                 <alignment idref="29"/>
             </taxonset>
         </tree>
      
-        <tree id="Tree.t:47" name="stateNode">
+        <tree id="Tree.t:47" spec="genekernel.GTKPointerTree" name="stateNode" estimate="false" kernel="@geneKernel" indicator="@geneKernelIndicator" index="2">
             <taxonset id="TaxonSet.47" spec="TaxonSet">
                 <alignment idref="47"/>
             </taxonset>
@@ -176,6 +175,11 @@ name="alignment">
 -->        
 
 
+	
+	<stateNode id="geneKernel" spec="genekernel.GeneTreeKernel" />
+	<stateNode id="geneKernelSize" spec="parameter.IntegerParameter">3</stateNode>
+	<stateNode id="geneKernelIndicator" spec="parameter.IntegerParameter">0</stateNode>
+	
 
 	<stateNode id="quantileRates.Species" spec="parameter.RealParameter">0.5</stateNode>
 	<parameter id="branchRatesStdev.Species" estimate="true" upper="2" name="stateNode">0.3</parameter>
@@ -193,10 +197,8 @@ name="alignment">
 
     </state>
 
-    <init id="SBI" spec="starbeast3.StarBeastStartState" birthRate="@birthRate.t:Species" estimate="false" method="point-estimate" popMean="@popMean" speciesTree="@Tree.t:Species">
-        <gene idref="Tree.t:26"/>
-        <gene idref="Tree.t:29"/>
-        <gene idref="Tree.t:47"/>
+    <init id="SBI" spec="starbeast3.StarBeastStartState" birthRate="@birthRate.t:Species" estimate="false" method="random" popMean="@popMean" speciesTree="@Tree.t:Species" kernel="@geneTreePrior">
+
         <speciesTreePrior id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" bottomPopSize="@popSize" gammaParameter="@popMean" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species" >
 		 <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
 	</speciesTreePrior>
@@ -214,17 +216,24 @@ name="alignment">
     <distribution id="posterior" spec="util.CompoundDistribution">
 
 
-
         <distribution id="speciescoalescent" spec="util.CompoundDistribution">
             <distribution idref="SpeciesTreePopSize.Species"/>
-            <distribution id="treePrior.t:26" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:26"/>
-            <distribution id="treePrior.t:29" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:29"/>
-            <distribution id="treePrior.t:47" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:47"/>
+
+	    	<distribution id="geneTreePrior" spec="genekernel.GTKPrior" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species"  kernel="@geneKernel" geneKernelSize="@geneKernelSize" indicator="@geneKernelIndicator">
+			<pointer idref="Tree.t:26"/>
+			<pointer idref="Tree.t:29"/>
+			<pointer idref="Tree.t:47"/>
+		</distribution>
+
         </distribution>
 	
 
 
         <distribution id="prior" spec="util.CompoundDistribution">
+
+
+
+
             <distribution id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:Species" tree="@Tree.t:Species"/>
             <prior id="YuleBirthRatePrior.t:Species" name="distribution" x="@birthRate.t:Species">
                 <LogNormal id="LogNormalDistributionModel.0" name="distr" meanInRealSpace="false">
@@ -266,6 +275,12 @@ name="alignment">
 		    </Exponential>
 		-->
                 </prior>
+
+
+
+		<prior id="geneTreeSizePrior"  name="distribution" x="@geneKernelSize" >
+			<distr spec="beast.math.distributions.Poisson" lambda="2" />
+		</prior>
 		
 
   		<prior id="molecularClockRatePrior.c:26" name="distribution" x="@molecularClockRate.c:26">
@@ -303,6 +318,11 @@ name="alignment">
              </prior>
 
         </distribution>
+
+
+
+
+
         <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
             <distribution id="treeLikelihood.26" spec="TreeLikelihood" data="@26" tree="@Tree.t:26">
                 <siteModel id="SiteModel.s:26" spec="SiteModel">
@@ -313,7 +333,7 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:26" spec="Frequencies" data="@26"/>
                     </substModel>
                 </siteModel>
-		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" geneTree="@treePrior.t:26" speciesTreeRates="@clockModel.Species"/>
+		<branchRateModel id="SpeciesTreeRelaxedClock.c:26" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:26" kernel="@geneTreePrior" pointer="@Tree.t:26" speciesTreeRates="@clockModel.Species"/>
 
 
             </distribution>
@@ -326,7 +346,7 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:29" spec="Frequencies" data="@29"/>
                     </substModel>
                 </siteModel>
-                <branchRateModel id="SpeciesTreeRelaxedClock.c:29" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:29" geneTree="@treePrior.t:29" speciesTreeRates="@clockModel.Species"/>
+                <branchRateModel id="SpeciesTreeRelaxedClock.c:29" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:29" kernel="@geneTreePrior" pointer="@Tree.t:29" speciesTreeRates="@clockModel.Species"/>
 
             </distribution>
             <distribution id="treeLikelihood.47" spec="TreeLikelihood" data="@47" tree="@Tree.t:47">
@@ -338,55 +358,30 @@ name="alignment">
                         <frequencies id="empiricalFreqs.s:47" spec="Frequencies" data="@47"/>
                     </substModel>
                 </siteModel>
-                <branchRateModel id="SpeciesTreeRelaxedClock.c:47" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:47" geneTree="@treePrior.t:47" speciesTreeRates="@clockModel.Species"/>
+                <branchRateModel id="SpeciesTreeRelaxedClock.c:47" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:47" kernel="@geneTreePrior" pointer="@Tree.t:47" speciesTreeRates="@clockModel.Species"/>
 
             </distribution>
         </distribution>
     </distribution>
-
-
-
-	<operator id="NarrowExchange" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" popSizes="@popSize" weight="2">
-        </operator>
-
-	<operator id="NarrowExchange_pop" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" weight="2">
-        </operator>
-
-	<operator id="CoordinatedNarrowExchange" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" weight="2">
-		<gene idref="treePrior.t:26"/>
-		<gene idref="treePrior.t:29"/>
-		<gene idref="treePrior.t:47"/>
-        </operator>
-
-
-	<operator id="CoordinatedNarrowExchange_pop" spec="operators.MetaNEROperator" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" popSizes="@popSize" weight="2">
-		<gene idref="treePrior.t:26"/>
-		<gene idref="treePrior.t:29"/>
-		<gene idref="treePrior.t:47"/>
-        </operator>
-
-
-	<operator id="CoordinatedNarrowExchange_dAE_dBE_dCE_genes" spec="NERVariants.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" weight="2">
-		<gene idref="treePrior.t:26"/>
-		<gene idref="treePrior.t:29"/>
-		<gene idref="treePrior.t:47"/>
-        </operator>
-
-
-	<operator id="CoordinatedNarrowExchange_dAE_dBE_dCE_genes_pop" spec="NERVariants.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" quantiles="@quantileRates.Species" distr="@ApproxLogNormal.c:anolis" popSizes="@popSize" weight="2">
-		<gene idref="treePrior.t:26"/>
-		<gene idref="treePrior.t:29"/>
-		<gene idref="treePrior.t:47"/>
-        </operator>
-
-	
-	   <operator id="FastUcldStdevScaler.Species" spec="UniformOperator" parameter="@quantileRates.Species"  weight="5.0"/>
 	
 	
-	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@clockModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="2.0">
-		<gene idref="treePrior.t:26"/>
-		<gene idref="treePrior.t:29"/>
-		<gene idref="treePrior.t:47"/>
+	<operator id="IndicatorSampler" spec="consoperators.UniformOperatorChange" parameter="@geneKernelIndicator" weight="10" />
+	<!-- Do not user UniformOperator because the operator does not handle when a parameter's lower/upper change
+		<operator id="IndicatorUniform" spec="UniformOperator" parameter="@geneKernelIndicator" weight="0" /> 
+	-->
+
+
+	<operator id="IndicatorSwapper" spec="SwapOperator" intparameter="@geneKernelIndicator" weight="10" />
+	<operator id="GTKExpander" spec="starbeast3.operators.GTKExpander" kernel="@geneTreePrior" indicator="@geneKernelIndicator" geneKernelSize="@geneKernelSize" weight="0">
+		<pointer idref="Tree.t:26"/>
+		<pointer idref="Tree.t:29"/>
+		<pointer idref="Tree.t:47"/>
+	</operator>
+	
+	<operator id="FastUcldStdevScaler.Species" spec="UniformOperator" parameter="@quantileRates.Species"  weight="5.0" />
+	
+	
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@clockModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="10.0" kernel="@geneTreePrior">
 		<kernelDistribution spec="beast.evolution.operators.KernelDistribution$Bactrian" mode="bactrian_normal" m="0.95"/>
 	</operator>
 	
@@ -396,18 +391,15 @@ name="alignment">
 
 	<operator id="RatesScaleOperator.Species" spec="ScaleOperator" scaleFactor="0.5" parameter="@quantileRates.Species" weight="14.0"/>
 
-	<operator id="PopSizeGibbsSampler" spec='starbeast3.operators.PopSizeGibbsSampler' weight="1.0" popSizes="@popSize">
+	<operator id="PopSizeGibbsSampler" spec='starbeast3.operators.PopSizeGibbsSampler' weight="0.0" popSizes="@popSize" kernel="@geneTreePrior">
 		<gammaprior idref="popPriorDistr"/>
-		<gene idref="treePrior.t:26"/>
-		<gene idref="treePrior.t:29"/>
-		<gene idref="treePrior.t:47"/>
 	</operator>
 
         <operator id="constPopSizesSwap.Species" spec="starbeast3.operators.RealCycle" k="2" optimise="false" parameter="@popSize" weight="3.0"/>
             
         <operator id="constPopSizesScale.Species" spec="ScaleOperator" parameter="@popSize" scaleFactor="0.5" weight="3.0"/>
             
-        <operator id="constPopMeanScale.Species" spec="ScaleOperator" parameter="@popMean" scaleFactor="0.75" weight="1.0"/>
+        <operator id="constPopMeanScale.Species" spec="ScaleOperator" parameter="@popMean" scaleFactor="0.75" weight="10.0"/>
             
 
 
@@ -417,35 +409,13 @@ name="alignment">
         <operator id="branchRatesStdevScaler.Species" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.55" weight="3.0"/>
 	
             
-        <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="75.0">
-                    
-            <gene idref="treePrior.t:26"/>
-                    
-            <gene idref="treePrior.t:47"/>
-                    
-            <gene idref="treePrior.t:29"/>
-                
-        </operator>
+        <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="10.0" kernel="@geneTreePrior" />
             
-        <operator id="coordinatedUniform.t:Species" spec="starbeast3.operators.CoordinatedUniform" speciesTree="@Tree.t:Species" weight="15.0">
-                    
-           <gene idref="treePrior.t:26"/>
-                    
-           <gene idref="treePrior.t:47"/>
-                    
-           <gene idref="treePrior.t:29"/>
-                
-        </operator>
+        <operator id="coordinatedUniform.t:Species" spec="starbeast3.operators.CoordinatedUniform" speciesTree="@Tree.t:Species" weight="10.0" kernel="@geneTreePrior" />
+
             
-        <operator id="coordinatedExponential.t:Species" spec="starbeast3.operators.CoordinatedExponential" speciesTree="@Tree.t:Species" weight="15.0">
-                    
-           <gene idref="treePrior.t:26"/>
-                    
-           <gene idref="treePrior.t:47"/>
-                    
-           <gene idref="treePrior.t:29"/>
-                
-        </operator>
+        <operator id="coordinatedExponential.t:Species" spec="starbeast3.operators.CoordinatedExponential" speciesTree="@Tree.t:Species" weight="10.0" kernel="@geneTreePrior" />
+
 
 	<operator id="YuleBirthRateScaler.t:Species" spec="ScaleOperator" parameter="@birthRate.t:Species" scaleFactor="0.75" weight="1.3273128598848374"/>
             
@@ -465,6 +435,9 @@ name="alignment">
             
         <operator id="speciationRateScale.t:Species" spec="ScaleOperator" parameter="@birthRate.t:Species" scaleFactor="0.5" weight="1.0"/>
             
+
+	<!-- TODO:
+
         <operator id="updownAll:Species" spec="UpDownOperator" scaleFactor="0.75" weight="6.0">
                     
             <up idref="birthRate.t:Species"/>
@@ -489,65 +462,27 @@ name="alignment">
                 
         </operator>
             
-        <operator id="clockUpDownOperator.c:26" spec="UpDownOperator" scaleFactor="0.95" weight="3.0">
-                    
-            <down idref="Tree.t:26"/>
-                
-        </operator>
+	
+	<operator id="clockUpDownOperator.c:26" spec="UpDownOperator" scaleFactor="0.95" weight="3.0">
+	            
+	    <down idref="Tree.t:26"/>
+	        
+	</operator>
+	-->	    
+
+
+	<!-- Single gene tree operators  -->
+	<operator id="GTKTreeScaler" spec="starbeast3.operators.BactrianTreeScaleOperator" scaleFactor="0.95" kernel="@geneTreePrior" weight="10.0"/>
+	<operator id="GTKRootScaler" spec="starbeast3.operators.BactrianTreeScaleOperator" rootOnly="true" scaleFactor="0.7" kernel="@geneTreePrior" weight="10.0"/>
+	<operator id="GTKUniformOperator" spec="starbeast3.operators.Uniform" kernel="@geneTreePrior" weight="15.0"/>
+	<operator id="GTKSubtreeSlide" spec="starbeast3.operators.BactrianSubtreeSlide" size="0.002" kernel="@geneTreePrior" weight="10.0"/>
+	    
+	<operator id="GTKNarrow" spec="starbeast3.operators.Exchange" kernel="@geneTreePrior" weight="10.0"/>
+	<operator id="GTKWide" spec="starbeast3.operators.Exchange" isNarrow="false" kernel="@geneTreePrior" weight="10.0"/>
+	<operator id="GTKWilsonBalding" spec="starbeast3.operators.WilsonBalding" kernel="@geneTreePrior" weight="10.0"/>
+	
+
             
-        <operator id="TreeScaler.t:26" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:26" weight="3.0"/>
-            
-        <operator id="TreeRootScaler.t:26" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:26" weight="3.0"/>
-            
-        <operator id="UniformOperator.t:26" spec="Uniform" tree="@Tree.t:26" weight="15.0"/>
-            
-        <operator id="SubtreeSlide.t:26" spec="SubtreeSlide" size="0.002" tree="@Tree.t:26" weight="15.0"/>
-            
-        <operator id="Narrow.t:26" spec="Exchange" tree="@Tree.t:26" weight="15.0"/>
-            
-        <operator id="Wide.t:26" spec="Exchange" isNarrow="false" tree="@Tree.t:26" weight="15.0"/>
-            
-        <operator id="WilsonBalding.t:26" spec="WilsonBalding" tree="@Tree.t:26" weight="15.0"/>
-            
-        <operator id="clockUpDownOperator.c:47" spec="UpDownOperator" scaleFactor="0.95" weight="3.0">
-                    
-            <down idref="Tree.t:47"/>
-                
-        </operator>
-            
-        <operator id="TreeScaler.t:47" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:47" weight="3.0"/>
-            
-        <operator id="TreeRootScaler.t:47" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:47" weight="3.0"/>
-            
-        <operator id="UniformOperator.t:47" spec="Uniform" tree="@Tree.t:47" weight="15.0"/>
-            
-        <operator id="SubtreeSlide.t:47" spec="SubtreeSlide" size="0.002" tree="@Tree.t:47" weight="15.0"/>
-            
-        <operator id="Narrow.t:47" spec="Exchange" tree="@Tree.t:47" weight="15.0"/>
-            
-        <operator id="Wide.t:47" spec="Exchange" isNarrow="false" tree="@Tree.t:47" weight="15.0"/>
-            
-        <operator id="WilsonBalding.t:47" spec="WilsonBalding" tree="@Tree.t:47" weight="15.0"/>
-            
-        <operator id="clockUpDownOperator.c:29" spec="UpDownOperator" scaleFactor="0.95" weight="3.0">
-                    
-            <down idref="Tree.t:29"/>
-                
-        </operator>
-            
-        <operator id="TreeScaler.t:29" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:29" weight="3.0"/>
-            
-        <operator id="TreeRootScaler.t:29" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:29" weight="3.0"/>
-            
-        <operator id="UniformOperator.t:29" spec="Uniform" tree="@Tree.t:29" weight="15.0"/>
-            
-        <operator id="SubtreeSlide.t:29" spec="SubtreeSlide" size="0.002" tree="@Tree.t:29" weight="15.0"/>
-            
-        <operator id="Narrow.t:29" spec="Exchange" tree="@Tree.t:29" weight="15.0"/>
-            
-        <operator id="Wide.t:29" spec="Exchange" isNarrow="false" tree="@Tree.t:29" weight="15.0"/>
-            
-        <operator id="WilsonBalding.t:29" spec="WilsonBalding" tree="@Tree.t:29" weight="15.0"/>
             
         <operator id="KappaScaler.s:26" spec="ScaleOperator" parameter="@kappa.s:26" scaleFactor="0.75" weight="1.0"/>
         <operator id="KappaScaler.s:29" spec="ScaleOperator" parameter="@kappa.s:29" scaleFactor="0.75" weight="1.0"/>
@@ -561,10 +496,7 @@ name="alignment">
 
 
 
-
-	
-
-    <logger id="tracelog" fileName="starbeast3_UCLN_quantiles.log" logEvery="1000" model="@posterior" sort="smart">
+    <logger id="tracelog" fileName="starbeast3_GTK.log" logEvery="1000" model="@posterior" sort="smart">
         <log idref="posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
@@ -592,11 +524,29 @@ name="alignment">
 	<log idref="molecularClockRate.c:26"/>
 	<log idref="molecularClockRate.c:29"/>
 	<log idref="molecularClockRate.c:47"/>
+	<log idref="geneKernelIndicator"/>
+	<log idref="geneKernelSize" />
     </logger>
+
+
+
+    <logger id="screenlog" logEvery="10000" >
+        <log idref="posterior"/>
+        <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+        <log idref="likelihood"/>
+        <log idref="geneTreePrior"/>
+	<log idref="branchRatesStdev.Species"/>
+	<log idref="geneKernelIndicator"/>
+	<log idref="geneKernelSize" />
+    </logger>
+
+
+
+
+	<!--
 
     <logger id="speciesTreeLogger" fileName="starbeast3_UCLN.species.trees" logEvery="1" mode="tree">
         <log id="SpeciesTreeLoggerX" spec="starbeast3.SpeciesTreeLogger" metadata="@quantileRates.Species" popSize="@popSize" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
-        <!--popSizeTop="@popSizeTop" -->
             <treetop id="treeTopFinder" spec="beast.evolution.speciation.TreeTopFinder">
                 <tree idref="Tree.t:47"/>
                 <tree idref="Tree.t:26"/>
@@ -605,13 +555,6 @@ name="alignment">
         </log>
     </logger>
 
-    <logger id="screenlog" logEvery="100000" >
-        <log idref="posterior"/>
-        <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
-        <log idref="likelihood"/>
-        <log idref="prior"/>
-	<log idref="branchRatesStdev.Species"/>
-    </logger>
 
 
 
@@ -626,6 +569,11 @@ name="alignment">
 	<logger id="treelog.t:47" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="1" mode="tree">
 		<log id="TreeWithMetaDataLogger.t:47" spec="starbeast3.GeneTreeLogger" clockModel="@SpeciesTreeRelaxedClock.c:47" tree="@Tree.t:47"/>
 	</logger>
+
+
+	-->
+
+
 
 
 

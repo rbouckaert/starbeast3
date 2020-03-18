@@ -15,6 +15,8 @@ import beast.evolution.tree.coalescent.TreeIntervals;
 import beast.math.distributions.Gamma;
 import beast.math.distributions.InverseGamma;
 import beast.math.distributions.ParametricDistribution;
+import genekernel.GTKOperator;
+import genekernel.GTKPrior;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.util.*;
 
@@ -56,15 +58,14 @@ freqParameter.4                                 92	   4348.83  3316.36
 
  */
 @Description("Samples population sizes of constant populations for multi species coalescent model")
-public class PopSizeGibbsSampler extends Operator {
+public class PopSizeGibbsSampler extends GTKOperator {
 	final public Input<RealParameter> popSizesInput = new Input<>("popSizes", "constant population size parameter, one dimension for each branch of the species tree", Validate.REQUIRED);
 	final public Input<ParametricDistribution> priorInput = new Input<>("gammaprior", "gamma distributed prior for population sizes", Validate.REQUIRED);
-	final public Input<List<GeneTreeForSpeciesTreeDistribution>> genePriorsInput = new Input<>("gene", "gene tree for species tree distribution for each of the genes", new ArrayList<>());
 	final public Input<TreeIntervals> treeIntervalsInput = new Input<>("intervals", "tree intervals for use with single tree -- should not be used if gene-attribute is used");
-
+	
+	
 	RealParameter popSizes, priorAlpha, priorBeta;
 	ParametricDistribution prior;
-	List<GeneTreeForSpeciesTreeDistribution> genePriors;
 	TreeIntervals treeIntervals;
 
 	// used to sample a gamma distribution
@@ -74,7 +75,6 @@ public class PopSizeGibbsSampler extends Operator {
 	public void initAndValidate() {
 		popSizes = popSizesInput.get();
 		prior = priorInput.get();
-		genePriors = genePriorsInput.get();
 		treeIntervals = treeIntervalsInput.get();
 		priorAlpha = (RealParameter) prior.getInput("alpha").get();
 		priorBeta = (RealParameter) prior.getInput("beta").get();
@@ -82,20 +82,23 @@ public class PopSizeGibbsSampler extends Operator {
 			return;
 		}
 		
-		if (genePriors.size() == 0) {
-			throw new IllegalArgumentException("At least one gene needs to be prodided (or intervals specified)");
-		}
+		super.initAndValidate();
 		
-		TreeInterface speciesTree = genePriors.get(0).speciesTreeInput.get();
+		TreeInterface speciesTree = geneTreeDistributions.get(0).speciesTreeInput.get();
 		if (speciesTree.getNodeCount() != popSizes.getDimension()) {
 			throw new IllegalArgumentException("The dimension of the population size parameter (" + popSizes.getDimension()+ ") "
 					+ "should be equal to the number of branches in the species tree ( " + speciesTree.getNodeCount() + ")");
 		}
+		
+		
 	}
 	
 
 	@Override
 	public double proposal() {
+		
+		geneTreeDistributions = this.getTreeDistributions(this);
+		
 		double lower = popSizes.getLower();
 		double upper = popSizes.getUpper();
 		for (int i = 0; i < popSizes.getDimension(); i++) {
@@ -121,12 +124,12 @@ public class PopSizeGibbsSampler extends Operator {
 		}
 		
 		double a = 0; // = sum_j k_{jb}
-		for (GeneTreeForSpeciesTreeDistribution prior : genePriors) {
+		for (GeneTreeForSpeciesTreeDistribution prior : geneTreeDistributions) {
 			a += prior.getCoalescentCount(branch);
 		}
 		
 		double b = 0; // = sum_j 1/ploidy \sum_i c_jbi(2 choose (n_jb - i))
-		for (GeneTreeForSpeciesTreeDistribution prior : genePriors) {
+		for (GeneTreeForSpeciesTreeDistribution prior : geneTreeDistributions) {
 			double c = 0;
 			double [] times = prior.getTimes(branch);
 			double nbj = prior.getLineageCount(branch);

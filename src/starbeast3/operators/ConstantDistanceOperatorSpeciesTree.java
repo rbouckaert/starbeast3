@@ -14,6 +14,8 @@ import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import beast.math.distributions.PiecewiseLinearDistribution;
 import beast.util.Randomizer;
+import genekernel.GTKPrior;
+import genekernel.GTKTreeOperator;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.StarBeast3Clock;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
@@ -26,19 +28,12 @@ import java.util.List;
 import org.apache.commons.math.MathException;
 
 @Description("For internal nodes: propose a new node time")
-public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
+public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 	final public Input<Double> twindowSizeInput = new Input<>("twindowSize", "the size of the window when proposing new node time", Input.Validate.REQUIRED);
-    //public final Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel",
-            //"A model describing the rates on the branches of the beast.tree.");
-   // final public Input<RealParameter> rateInput = new Input<>("rates", "the rates associated with nodes in the tree for sampling of individual rates among branches.");
-    //final public Input<RealParameter> quantilesInput = new Input<>("quantiles", "The real branch rates of the species tree, parameterised as quantiles", Input.Validate.XOR, rateInput);
-    final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
-    final public Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreeDistributionsInput = new Input<>("gene", "gene tree for species tree distribution for each of the genes", new ArrayList<>());
+ final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
     final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", "Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
     final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree brancg rates.", Input.Validate.REQUIRED);
-    final public Input<KernelDistribution> proposalKernelInput = new Input<>("kernelDistribution", "Proposal kernel for a random walk on the internal node height.");
 	
-    
     
     UCRelaxedClockModelSB3 clockModel;
     
@@ -46,7 +41,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     private RealParameter rates;
     private RealParameter quantiles;
     private RealParameter popsizes;
-    private List<GeneTreeForSpeciesTreeDistribution> geneTreeDistributions;
     private boolean proposeNewPopulationSizes;
     
     private Node[] geneNodeMap_x;
@@ -57,8 +51,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     // Quantiles
     PiecewiseLinearDistribution piecewise = null;
     
-    // Proposal kernel
-    private KernelDistribution kernel;
    
 
     //protected BranchRateModel.Base branchRateModel;
@@ -69,6 +61,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     public void initAndValidate() {
         twindowSize = twindowSizeInput.get();
         clockModel = clockModelInput.get();
+       
         
         
         // Ensure that either rates or quantiles are used and not categories
@@ -90,18 +83,14 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
         if (proposeNewPopulationSizes) popsizes = popSizeInput.get();
        
         
-        // Get the gene tree distributions
-        geneTreeDistributions = geneTreeDistributionsInput.get();
-        
-        kernel = proposalKernelInput.get();
-        
+        super.initAndValidate();
         
     }
 
     @Override
     public double proposal() {
     	
-    	
+    	geneTreeDistributions = this.getTreeDistributions(this);
     	
         final Tree tree = treeInput.get(this);
         int nodeCount = tree.getNodeCount(); //return the number of nodes in the tree
@@ -202,7 +191,7 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
        
        // Step3-4: propose a new node time for this node
        double alpha;
-       if (kernel != null) alpha = kernel.getRandomDelta(1, twindowSize);
+       if (kernelDistribution != null) alpha = kernelDistribution.getRandomDelta(1, twindowSize);
        else alpha = Randomizer.uniform(-twindowSize, twindowSize);
        if (proportionalToBranchLengthInput.get()) {
     	   

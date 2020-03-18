@@ -353,21 +353,14 @@ name="alignment">
 	
 	
 	
-	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.5" tree="@Tree.t:Species" rates="@branchRates.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="0">
+	<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.5" tree="@Tree.t:Species" clock="@branchRatesModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="0">
 		<gene idref="treePrior.t:26"/>
 		<gene idref="treePrior.t:29"/>
 		<gene idref="treePrior.t:47"/>
 	</operator>
 
 	
-	<operator id="InternalnodesOperator.c:dna" spec="consoperators.InConstantDistanceOperator" twindowSize="0.2"  tree="@Tree.t:Species" rates="@branchRates.Species"  weight="0"/>
 	
-
-	<operator id="FastRootOperator1.Species" spec="consoperators.SimpleDistance" rates="@branchRates.Species" tree="@Tree.t:Species" twindowSize="1.0" weight="0"/>
-
-	<operator id="FastRootOperator2.Species" spec="consoperators.SmallPulley"  dwindowSize="0.1" rates="@branchRates.Species" tree="@Tree.t:Species" weight="0"/>
-
-	<operator id="FastRootOperator3.Species" spec="consoperators.BigPulley"  dwindowSize="0.1" rates="@branchRates.Species" tree="@Tree.t:Species" twindowSize="1.0" weight="0"/>
 	 
 
 	<operator id="RatesRandomWalk.Species" spec="RealRandomWalkOperator" parameter="@branchRates.Species" windowSize="0.3" weight="0"/>
@@ -397,31 +390,31 @@ name="alignment">
             
         <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="0">
                     
-            <geneTree idref="treePrior.t:26"/>
+            <gene idref="treePrior.t:26"/>
                     
-            <geneTree idref="treePrior.t:47"/>
+            <gene idref="treePrior.t:47"/>
                     
-            <geneTree idref="treePrior.t:29"/>
+            <gene idref="treePrior.t:29"/>
                 
         </operator>
             
         <operator id="coordinatedUniform.t:Species" spec="starbeast3.operators.CoordinatedUniform" speciesTree="@Tree.t:Species" weight="0">
                     
-            <geneTree idref="Tree.t:26"/>
+            <gene idref="treePrior.t:26"/>
                     
-            <geneTree idref="Tree.t:47"/>
+            <gene idref="treePrior.t:47"/>
                     
-            <geneTree idref="Tree.t:29"/>
+            <gene idref="treePrior.t:29"/>
                 
         </operator>
             
         <operator id="coordinatedExponential.t:Species" spec="starbeast3.operators.CoordinatedExponential" speciesTree="@Tree.t:Species" weight="0">
                     
-            <geneTree idref="Tree.t:26"/>
+            <gene idref="treePrior.t:26"/>
                     
-            <geneTree idref="Tree.t:47"/>
+            <gene idref="treePrior.t:47"/>
                     
-            <geneTree idref="Tree.t:29"/>
+            <gene idref="treePrior.t:29"/>
                 
         </operator>
 

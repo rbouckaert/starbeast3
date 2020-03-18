@@ -4,21 +4,22 @@ import java.util.*;
 
 
 import beast.core.Input;
-import beast.core.Operator;
 import beast.core.Input.Validate;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import genekernel.GTKOperator;
 import starbeast3.SpeciesTree;
 
-public abstract class CoordinatedOperator extends Operator {
+
+public abstract class CoordinatedOperator extends GTKOperator {
     public Input<SpeciesTree> speciesTreeInput = new Input<>("speciesTree", "The species tree state node.", Validate.REQUIRED);
-    public Input<List<Tree>> geneTreeInput = new Input<>("geneTree", "Gene tree within the species tree.", new ArrayList<>());
 
     protected int nGeneTrees;
 
     @Override
     public void initAndValidate() {
-        nGeneTrees = geneTreeInput.get().size();
+    	geneTrees = this.getTrees(this);
+        nGeneTrees = this.getGeneTreeCount(this);
+        super.initAndValidate();
     }
 
     protected Set<String> findDescendants(Node speciesTreeNode, int speciesTreeNodeNumber) {

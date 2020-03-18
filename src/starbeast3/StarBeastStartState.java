@@ -30,6 +30,7 @@ import beast.evolution.tree.Tree;
 import beast.evolution.tree.coalescent.ConstantPopulation;
 import beast.math.distributions.MRCAPrior;
 import beast.util.ClusterTree;
+import genekernel.GTKPrior;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 
 /**
@@ -60,7 +61,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
     final public Input<Tree> speciesTreeInput = new Input<>("speciesTree", "The species tree to initialize");
     
-    final public Input<List<Tree>> genes = new Input<>("gene", "Gene trees to initialize", new ArrayList<>());
+    final public Input<List<Tree>> genesInput = new Input<>("gene", "Gene trees to initialize", new ArrayList<>());
     //,
     //        Validate.REQUIRED);
 
@@ -83,8 +84,13 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     final public Input<BranchRateModelSB3> speciesTreeRatesInput =
             new Input<>("speciesTreeRates", "Clock model for species tree");
     
-
-
+    
+    // A gene tree kernel
+    final public Input<GTKPrior> geneKernelPriorInput =
+            new Input<>("kernel", "Clock model for species tree", Input.Validate.OPTIONAL);
+    
+    
+    List<Tree> genes;
     private boolean hasCalibrations;
 
     @Override
@@ -92,6 +98,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         // what does this do and is it dangerous to call it or not to call it at the start or at the end??????
         super.initAndValidate();
         hasCalibrations = calibratedYule.get() != null;
+        genes = genesInput.get();
     }
 
     @Override
@@ -105,6 +112,21 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             }
         }
         
+        
+        
+        // If a gene tree kernel is being used, then initialise the gene trees here to those in the kernel
+        if (geneKernelPriorInput.get() != null) {
+        	GTKPrior kernel = geneKernelPriorInput.get();
+        	
+        	// There should not be any genes added to the gene list
+        	if (genes.size() > 0) {
+        		throw new IllegalArgumentException("Make sure you do not provide any gene trees when using a gene tree kernel");
+        	}
+        	
+        	// Set the genes tree list as the kernel gene tree list
+        	genes = kernel.kernelInput.get().getCoercedTrees();
+        	
+        }
         
 
         if( hasCalibrations ) {
@@ -134,6 +156,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
                     break;
             }
         }
+
     }
 
     private double[] firstMeetings(final Tree gtree, final Map<String, Integer> tipName2Species, final int speciesCount) {
@@ -184,6 +207,12 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
     private void fullInit() {
         // Build gene trees from  alignments
+    	
+    	
+    	if (geneKernelPriorInput.get() != null) {
+    		throw new IllegalArgumentException("Point-estimates are currently not supported when using a gene tree kernel. Please use method='random'.");
+    	}
+    	
 
         final Function muInput = this.muInput.get();
         final double mu =  (muInput != null )  ? muInput.getArrayValue() : 1;
@@ -193,7 +222,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         final List<String> speciesNames = species.asStringList();
         final int speciesCount = speciesNames.size();
 
-        final List<Tree> geneTrees = genes.get();
+        final List<Tree> geneTrees = genes;
 
         //final List<Alignment> alignments = genes.get();
         //final List<Tree> geneTrees = new ArrayList<>(alignments.size());
@@ -385,7 +414,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     }
 
     private void randomInitGeneTrees(double speciesTreeHeight) {
-      final List<Tree> geneTrees = genes.get();
+      final List<Tree> geneTrees = genes;
         for (final Tree gtree : geneTrees) {
             gtree.makeCaterpillar(speciesTreeHeight, speciesTreeHeight/gtree.getInternalNodeCount(), true);
         }
@@ -471,7 +500,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
           stateNodes.add(speciesTreeInput.get());
         }
 
-        for( final Tree g : genes.get() ) {
+        for( final Tree g : genes ) {
             stateNodes.add(g);
         }
 

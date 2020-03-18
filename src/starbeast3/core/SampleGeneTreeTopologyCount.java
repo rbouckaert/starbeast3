@@ -110,7 +110,7 @@ public class SampleGeneTreeTopologyCount extends DirectSimulator{
         	geneTreePrior.speciesTreePriorInput.get().sampledFlag = true;
         	geneTreePrior.sample(state, random);
         	
-        	
+        	//System.out.println(newick);
         	
         	 // Cache the newick
         	 newick = TreeTopologySerialiser.serialiseNode(geneTree.getRoot());

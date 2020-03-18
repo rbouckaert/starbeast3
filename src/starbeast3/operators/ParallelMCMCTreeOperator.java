@@ -114,19 +114,19 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 			
 			if (useBactrianOperatorsInput.get()) {
 //			    <operator id="treeScaler.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
-				BactrianScaleOperator treeScaler = new BactrianScaleOperator();
+				beast.evolution.operators.BactrianScaleOperator treeScaler = new beast.evolution.operators.BactrianScaleOperator();
 				treeScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0);
 				operators.add(treeScaler);
 //		    	<operator id="treeRootScaler.t:$(n)" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
-				BactrianScaleOperator treeRootScaler = new BactrianScaleOperator();
+				beast.evolution.operators.BactrianScaleOperator treeRootScaler = new beast.evolution.operators.BactrianScaleOperator();
 				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0, "rootOnly", true);
 				operators.add(treeRootScaler);
 //			    <operator id="UniformOperator.t:$(n)" spec="Uniform" tree="@Tree.t:$(n)" weight="30.0"/>
-				BactrianNodeOperator UniformOperator = new BactrianNodeOperator();
+				beast.evolution.operators.BactrianNodeOperator UniformOperator = new beast.evolution.operators.BactrianNodeOperator();
 				UniformOperator.initByName("tree", d.tree, "weight", 30.0);
 				operators.add(UniformOperator);
 //		    	<operator id="SubtreeSlide.t:$(n)" spec="SubtreeSlide" tree="@Tree.t:$(n)" weight="15.0"/>
-				BactrianSubtreeSlide SubtreeSlide = new BactrianSubtreeSlide();
+				beast.evolution.operators.BactrianSubtreeSlide SubtreeSlide = new beast.evolution.operators.BactrianSubtreeSlide();
 				SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
 				operators.add(SubtreeSlide);
 			} else {
@@ -139,7 +139,7 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0, "rootOnly", true);
 				operators.add(treeRootScaler);
 //			    <operator id="UniformOperator.t:$(n)" spec="Uniform" tree="@Tree.t:$(n)" weight="30.0"/>
-				Uniform UniformOperator = new Uniform();
+				beast.evolution.operators.Uniform UniformOperator = new beast.evolution.operators.Uniform();
 				UniformOperator.initByName("tree", d.tree, "weight", 30.0);
 				operators.add(UniformOperator);
 //		    	<operator id="SubtreeSlide.t:$(n)" spec="SubtreeSlide" tree="@Tree.t:$(n)" weight="15.0"/>
@@ -148,15 +148,15 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 				operators.add(SubtreeSlide);
 			}
 //		    <operator id="narrow.t:$(n)" spec="Exchange" tree="@Tree.t:$(n)" weight="15.0"/>
-			Exchange narrow = new Exchange();
+			beast.evolution.operators.Exchange narrow = new beast.evolution.operators.Exchange();
 			narrow.initByName("tree", d.tree, "weight", 15.0);
 			operators.add(narrow);
 //	    	<operator id="wide.t:$(n)" spec="Exchange" isNarrow="false" tree="@Tree.t:$(n)" weight="3.0"/>
-			Exchange wide = new Exchange();
+			beast.evolution.operators.Exchange wide = new beast.evolution.operators.Exchange();
 			wide.initByName("tree", d.tree, "isNarrow", false, "weight", 3.0);
 			operators.add(wide);
 //		    <operator id="WilsonBalding.t:$(n)" spec="WilsonBalding" tree="@Tree.t:$(n)" weight="3.0"/>
-			WilsonBalding WilsonBalding = new WilsonBalding();
+			beast.evolution.operators.WilsonBalding WilsonBalding = new beast.evolution.operators.WilsonBalding();
 			WilsonBalding.initByName("tree", d.tree, "weight", 3.0);
 			operators.add(WilsonBalding);
 			if (includeRealParametersInput.get()) {

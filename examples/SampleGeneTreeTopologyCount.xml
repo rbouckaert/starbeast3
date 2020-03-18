@@ -25,6 +25,7 @@
         <sequence taxon="B1">?</sequence>
         <sequence taxon="B2">?</sequence>
 	<sequence taxon="B3">?</sequence>
+	
 	<sequence taxon="C1">?</sequence>
 	<sequence taxon="C2">?</sequence>
 	<sequence taxon="C3">?</sequence>
@@ -46,6 +47,7 @@
 	<sequence taxon="G10">?</sequence>
 	<sequence taxon="H1">?</sequence>
 	<sequence taxon="H2">?</sequence>
+	
     </data>
 
 
@@ -66,6 +68,7 @@
 		        <taxon id="B2" spec="Taxon"/>
 			<taxon id="B3" spec="Taxon"/>
                 </taxon>
+		
                <taxon id="C" spec="TaxonSet">
 	           	<taxon id="C1" spec="Taxon"/>
 		        <taxon id="C2" spec="Taxon"/>
@@ -99,6 +102,7 @@
 	           	<taxon id="H1" spec="Taxon"/>
 			<taxon id="H2" spec="Taxon"/>
                 </taxon>
+		
 	</taxonset>
         </tree>
 
@@ -125,7 +129,7 @@
 
 
 
-<run id="sampler" spec="starbeast3.core.SampleGeneTreeTopologyCount" nSamples="10000" nGeneRange="100" geneTree="@geneTree" geneTreePrior="@geneTreePrior" numTopologies="@numberOfGeneTreeTopologies">
+<run id="sampler" spec="starbeast3.core.SampleGeneTreeTopologyCount" nSamples="10000" nGeneRange="10000" geneTree="@geneTree" geneTreePrior="@geneTreePrior" numTopologies="@numberOfGeneTreeTopologies">
 
     <init id="SBI" spec="starbeast3.StarBeastStartState" birthRate="@birthRate.t:Species" estimate="false" method="random" popMean="@popMean" speciesTree="@Tree.t:Species">
       
@@ -188,6 +192,7 @@
 
     <logger id="screenlog" logEvery="1" >
 	<log id="TreeHeight.Species" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:Species"/>
+	<log idref="popMean"/>
 	<log idref="numberOfGeneTreeTopologies"/>
     </logger>
 

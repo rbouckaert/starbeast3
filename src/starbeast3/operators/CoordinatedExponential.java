@@ -12,8 +12,8 @@ import starbeast3.SpeciesTree;
 import starbeast3.operators.CoordinatedOperator;
 
 /**
- * adapted from starbeast3
 * @author Huw Ogilvie
+* @author Jordan Douglas: adapted from starbeast2 
  */
 
 @Description("Implements a version of the co-ordinated species and gene tree operator described in Jones (2015)."
@@ -54,6 +54,10 @@ public class CoordinatedExponential extends CoordinatedOperator {
      */
     @Override
     public double proposal() {
+    	
+    	geneTrees = this.getTrees(this);
+        nGeneTrees = this.getGeneTreeCount(this);
+    	
         // always operate on the root node
         final Node speciesTreeRoot = speciesTree.getRoot();
         
@@ -82,8 +86,6 @@ public class CoordinatedExponential extends CoordinatedOperator {
 
         for (Node geneTreeNode: connectingNodes) {
         	if (geneTreeNode.getLength() < 0) {
-        		int h = 3;
-        		h++;
         		return Double.NEGATIVE_INFINITY;
         	}
         }
@@ -105,7 +107,6 @@ public class CoordinatedExponential extends CoordinatedOperator {
         final Set<String> rightChildDescendants = findDescendants(rightChildNode, rightChildNodeNumber);
 
         final Set<Node> allConnectingNodes = new LinkedHashSet<>();
-        final List<Tree> geneTrees = geneTreeInput.get();
         for (int j = 0; j < nGeneTrees; j++) {
             final Tree geneTree = geneTrees.get(j);
             final Node geneTreeRootNode = geneTree.getRoot();

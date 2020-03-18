@@ -358,31 +358,25 @@ name="alignment">
             
         <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="75.0">
                     
-            <geneTree idref="treePrior.t:26"/>
-                    
-            <geneTree idref="treePrior.t:47"/>
-                    
-            <geneTree idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
                 
         </operator>
             
         <operator id="coordinatedUniform.t:Species" spec="starbeast3.operators.CoordinatedUniform" speciesTree="@Tree.t:Species" weight="15.0">
                     
-            <geneTree idref="Tree.t:26"/>
-                    
-            <geneTree idref="Tree.t:47"/>
-                    
-            <geneTree idref="Tree.t:29"/>
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
                 
         </operator>
             
         <operator id="coordinatedExponential.t:Species" spec="starbeast3.operators.CoordinatedExponential" speciesTree="@Tree.t:Species" weight="15.0">
                     
-            <geneTree idref="Tree.t:26"/>
-                    
-            <geneTree idref="Tree.t:47"/>
-                    
-            <geneTree idref="Tree.t:29"/>
+		<gene idref="treePrior.t:26"/>
+		<gene idref="treePrior.t:29"/>
+		<gene idref="treePrior.t:47"/>
                 
         </operator>
 

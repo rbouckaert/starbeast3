@@ -9,8 +9,8 @@ import beast.evolution.tree.TreeInterface;
 import beast.util.Randomizer;
 
 /**
- * adapter from startbeast2
 * @author Huw Ogilvie
+* @author Jordan Douglas: adapted from starbeast2 
  */
 
 @Description("Implements a version of the co-ordinated species and gene tree operator described in Jones (2015)."
@@ -26,7 +26,7 @@ public class CoordinatedUniform extends CoordinatedOperator {
 
     @Override
     public void initAndValidate() {
-        speciesTree = speciesTreeInput.get();
+        speciesTree = speciesTreeInput.get(this);
         super.initAndValidate();
     }
 
@@ -37,6 +37,10 @@ public class CoordinatedUniform extends CoordinatedOperator {
      */
     @Override
     public double proposal() {
+    	
+    	geneTrees = this.getTrees(this);
+        nGeneTrees = this.getGeneTreeCount(this);
+    	
         final double fLogHastingsRatio = 0.0; // this move is uniform in both directions
 
         final int nInternalNodes = speciesTree.getInternalNodeCount();
@@ -88,7 +92,6 @@ public class CoordinatedUniform extends CoordinatedOperator {
         final Set<String> rightChildDescendants = findDescendants(rightChildNode, rightChildNodeNumber);
 
         final Set<Node> allConnectingNodes = new LinkedHashSet<>();
-        final List<Tree> geneTrees = geneTreeInput.get();
         for (int j = 0; j < nGeneTrees; j++) {
             final Tree geneTree = geneTrees.get(j);
             final Node geneTreeRootNode = geneTree.getRoot();

@@ -293,10 +293,10 @@ name="alignment">
         <gene idref="treePrior.t:47"/>
     </operator>
 
-    <operator id="Reheight.t:Species" spec="NodeReheight" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="41.71554702495203">
-        <genetree idref="Tree.t:47"/>
-        <genetree idref="Tree.t:26"/>
-        <genetree idref="Tree.t:29"/>
+    <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="41.71554702495203">
+    	<gene idref="treePrior.t:26"/>
+        <gene idref="treePrior.t:29"/>
+        <gene idref="treePrior.t:47"/>
     </operator>
 
     <operator id="updown.all.Species" spec="UpDownOperator" scaleFactor="0.75" weight="8.91195777351248">

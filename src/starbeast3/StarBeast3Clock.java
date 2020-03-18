@@ -11,23 +11,34 @@
 
 package starbeast3;
 
+
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.tree.Node;
+import genekernel.GTKPointerTree;
+import genekernel.GTKPrior;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 
 public class StarBeast3Clock extends BranchRateModel.Base {
 	
-    public Input<GeneTreeForSpeciesTreeDistribution> geneTreeInput = new Input<>("geneTree", "The gene tree this relaxed clock is associated with.", Input.Validate.REQUIRED);
     public Input<BranchRateModelSB3> speciesTreeRatesInput = new Input<>("speciesTreeRates", "The real branch rates of the species tree");
-   
+    
+    
+    final public Input<GeneTreeForSpeciesTreeDistribution> geneTreeInput = new Input<>("geneTree", "The gene tree this relaxed clock is associated with.", Input.Validate.OPTIONAL);
+	final public Input<GTKPrior> geneTreeKernelPriorInput = new Input<>("kernel", "the kernel of gene trees", Input.Validate.XOR, geneTreeInput);
+	final public Input<GTKPointerTree> geneTreePointerInput = new Input<>("pointer", "the tree which points to the kernel", Input.Validate.XOR, geneTreeInput);
+	
+	
     
     protected int geneNodeCount;
     protected double[] branchRates;
     protected double[] storedBranchRates;
     private boolean needsUpdate;
 
+    GTKPrior kernel;
+    GTKPointerTree pointer;
+    
     RealParameter meanRate;
     BranchRateModelSB3 speciesTreeRatesX;
     GeneTreeForSpeciesTreeDistribution geneTree;
@@ -36,17 +47,51 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     public void initAndValidate() {
         meanRate = meanRateInput.get();
         speciesTreeRatesX = speciesTreeRatesInput.get();
-        geneTree = geneTreeInput.get();
+        
+        // Must specify either A) a gene tree prior, or B) a gene tree kernel AND the pointer
+        if (this.geneTreeInput.get() == null) {
+        	if (geneTreeKernelPriorInput.get() == null || this.geneTreePointerInput.get() == null) {
+        		throw new IllegalArgumentException("Must specify either A) 'geneTree', or B) 'kernel' AND 'pointer', but not both A and B.");
+        	}
+        } 
+        else if (geneTreeKernelPriorInput.get() != null || this.geneTreePointerInput.get() != null) {
+        	throw new IllegalArgumentException("Must specify either A) 'geneTree', or B) 'kernel' AND 'pointer', but not both A and B.");
+        }
+        
+        this.kernel = geneTreeKernelPriorInput.get();
+        this.pointer = geneTreePointerInput.get();
+        geneTree = this.getGeneTreePrior();
     
         geneNodeCount = geneTree.getNodeCount();
         branchRates = new double[geneNodeCount];
         storedBranchRates = new double[geneNodeCount];
         needsUpdate = true;
     }
+    
+    
+    
+    public GeneTreeForSpeciesTreeDistribution getGeneTreePrior() {
+    	
+    	// If using a gene kernel, then the gene tree prior will change as the pointer changes
+    	if (this.kernel != null) {
+    		int indicatorOfPointer = this.pointer.getIndicatorValue();
+    		return this.kernel.getGeneTreeDistributions(indicatorOfPointer);
+    	}
+    	
+    	// Otherwise, use the one which was parsed
+    	else {
+    		return this.geneTreeInput.get();
+    	}
+    	
+    }
+    
 
     @Override
     public boolean requiresRecalculation() {
-        needsUpdate = geneTreeInput.isDirty() || speciesTreeRatesInput.isDirty() || meanRateInput.isDirty();
+        needsUpdate = speciesTreeRatesInput.isDirty() || meanRateInput.isDirty();
+        if (this.kernel == null) needsUpdate = needsUpdate || geneTreeInput.isDirty();
+        else needsUpdate = needsUpdate || geneTreeKernelPriorInput.isDirty() || geneTreePointerInput.isDirty();
+        
         return needsUpdate;
     }
 
@@ -65,6 +110,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     }
 
     private void update() {
+    	geneTree = this.getGeneTreePrior();
         final double geneTreeRate = meanRate.getValue();
         final double[] speciesTreeRates = speciesTreeRatesX.getRatesArray();
         final double[] speciesOccupancy = geneTree.getSpeciesOccupancy();

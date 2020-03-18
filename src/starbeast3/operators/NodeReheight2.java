@@ -8,10 +8,9 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.tree.Node;
 import beast.util.Randomizer;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import genekernel.GTKOperator;
 import starbeast3.SpeciesTree;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,15 +19,17 @@ import java.util.List;
 
 @Description("Tree operator which randomly changes the height of a node, " +
         "then reconstructs the tree from node heights.")
-public class NodeReheight2 extends Operator {
+public class NodeReheight2 extends GTKOperator {
+	
     public final Input<SpeciesTree> treeInput = new Input<>("tree", "the species tree", Validate.REQUIRED);
     public final Input<TaxonSet> taxonSetInput = new Input<>("taxonset", "taxon set describing species tree taxa and their gene trees", Validate.REQUIRED); // left for compatibility with previous StarBEAST2 versions
-    public final Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreesInput = new Input<>("geneTree", "list of gene trees that constrain species tree movement", new ArrayList<>());
     public final Input<Double> windowInput = new Input<>("window", "size of the random walk window", 10.0);
     public final Input<RealParameter> originInput = new Input<RealParameter>("origin", "The time when the process started", (RealParameter) null);
 
+    
+    
     private enum RelativePosition {LEFT, RIGHT, BOTH}
-
+    
     private int nextIndex;
     private int nodeCount;
     private int geneTreeCount;
@@ -61,15 +62,32 @@ public class NodeReheight2 extends Operator {
         window = windowInput.get();
         originSpecified = originInput.get() != null;
 
-        final List<GeneTreeForSpeciesTreeDistribution> geneTrees = geneTreesInput.get();
-        geneTreeCount = geneTrees.size();
+        
+        // Get the gene tree distributions
+        // If a gene tree kernel is being used, then initialise the gene trees here to those in the kernel
+        super.initAndValidate();
+        
+        // Assumption: if there is a gene tree kernel, all trees in the kernel have the same taxonset and tip number map
+        // Therefore only need to cache these maps once and not every time
+        this.calculateMaps();
+        
+    }
+    
+    
+    
+    private void calculateMaps() {
+    	
+    	
+    	geneTreeCount = geneTreeDistributions.size();
         leafNodeMaps = new int[geneTreeCount][];
         leafPositionArrays = new RelativePosition[geneTreeCount][];
         for (int i = 0; i < geneTreeCount; i++) {
-            leafNodeMaps[i] = geneTrees.get(i).getTipNumberMap();
+            leafNodeMaps[i] = geneTreeDistributions.get(i).getTipNumberMap();
             leafPositionArrays[i] = new RelativePosition[leafNodeMaps[i].length];
         }
+    	
     }
+    
 
     /* This proposal improves TREE SLIDE, developed by Joseph Heled. See section 3.4.1 of Heled's 2011 PhD thesis
     "Bayesian Computational Inference of Species Trees and Population Sizes". TREE SLIDE was developed for ultrametric
@@ -78,6 +96,13 @@ public class NodeReheight2 extends Operator {
     sample the heights of nodes without maximum height constraints. */
     @Override
     public double proposal() {
+    	
+    	geneTreeDistributions = this.getTreeDistributions(this);
+    	//geneTreeCount = geneTreeDistributions.size();
+    	calculateMaps();
+    	
+    	
+    	
         final SpeciesTree tree = treeInput.get();
         final Node originalRoot = tree.getRoot();
 
@@ -155,7 +180,6 @@ public class NodeReheight2 extends Operator {
             maxHeight = Double.POSITIVE_INFINITY;
         }
 
-        final List<GeneTreeForSpeciesTreeDistribution> geneTrees = geneTreesInput.get();
         for (int i = 0; i < geneTreeCount; i++) {
             final int[] leafNodeMap = leafNodeMaps[i];
             final RelativePosition[] leafPositions = leafPositionArrays[i];
@@ -169,7 +193,7 @@ public class NodeReheight2 extends Operator {
                 }
             }
 
-            final Node geneTreeRoot = geneTrees.get(i).getGeneTree().getRoot();
+            final Node geneTreeRoot = geneTreeDistributions.get(i).getGeneTree().getRoot();
             recurseMaxHeight(geneTreeRoot, leafPositions);
         }
     }

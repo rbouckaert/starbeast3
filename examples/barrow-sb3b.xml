@@ -2318,7 +2318,7 @@
 <!--
 <run chainLength="13500" id="mcmc" spec="MCMC" storeEvery="50000">
 -->
-<run chainLength="1000000000" id="mcmc" spec="MCMC" storeEvery="50000">
+<run chainLength="1000000000" id="mcmc" spec="beast.core.MCMCsb3" storeEvery="50000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" name="stateNode" value="1"/>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
@@ -3587,19 +3587,19 @@
 
     <operator id="Reheight" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="31.0">
         <plate var="n" range="SB_all_07,SB_all_169,SB_all_102,SB_all_140,SB_all_116,SB_all_182,SB_all_148,SB_all_57,SB_all_80,SB_all_17,SB_all_108,SB_all_183,SB_all_137,SB_all_08,SB_all_167,SB_all_104,SB_all_82,SB_all_166,SB_all_129,SB_all_92,SB_all_58,SB_all_172,SB_all_125,SB_all_168,SB_all_71,SB_all_162">
-	        <geneTree idref="treePrior.t:$(n)" name="geneTree"/>
+	        <gene idref="treePrior.t:$(n)" name="gene"/>
         </plate>
     </operator>
 
     <operator id="CoordinatedExponential" spec="starbeast3.operators.CoordinatedExponential" speciesTree="@Tree.t:Species" weight="31.0">
         <plate var="n" range="SB_all_07,SB_all_169,SB_all_102,SB_all_140,SB_all_116,SB_all_182,SB_all_148,SB_all_57,SB_all_80,SB_all_17,SB_all_108,SB_all_183,SB_all_137,SB_all_08,SB_all_167,SB_all_104,SB_all_82,SB_all_166,SB_all_129,SB_all_92,SB_all_58,SB_all_172,SB_all_125,SB_all_168,SB_all_71,SB_all_162">
-	        <geneTree idref="Tree.t:$(n)"/>
+	        <gene idref="treePrior.t:$(n)"/>
         </plate>
     </operator>
 
     <operator id="CoordinatedUniform" spec="starbeast3.operators.CoordinatedUniform" speciesTree="@Tree.t:Species" weight="31.0">
         <plate var="n" range="SB_all_07,SB_all_169,SB_all_102,SB_all_140,SB_all_116,SB_all_182,SB_all_148,SB_all_57,SB_all_80,SB_all_17,SB_all_108,SB_all_183,SB_all_137,SB_all_08,SB_all_167,SB_all_104,SB_all_82,SB_all_166,SB_all_129,SB_all_92,SB_all_58,SB_all_172,SB_all_125,SB_all_168,SB_all_71,SB_all_162">
-	        <geneTree idref="Tree.t:$(n)"/>
+	        <gene idref="treePrior.t:$(n)"/>
         </plate>
     </operator>
 
