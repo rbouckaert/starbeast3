@@ -183,6 +183,8 @@ public class GeneTreeKernel extends StateNode {
 			this.storedTrees.add(tree);
 			tree.store();
 		}
+		
+		
 	}
 
 	@Override
@@ -201,9 +203,8 @@ public class GeneTreeKernel extends StateNode {
 		// Point 'trees' to temp
 		this.trees = temp;
 
-		
-		
 		hasStartedEditing = false;
+		
 		
 	}
 

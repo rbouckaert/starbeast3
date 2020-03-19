@@ -103,7 +103,7 @@ name="alignment">
 <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
-<run id="mcmc" spec="MCMC" chainLength="10000000"  sampleFromPrior="false" storeEvery="5000">
+<run id="mcmc" spec="MCMC" chainLength="50000000"  sampleFromPrior="false" storeEvery="5000">
     <state id="state" storeEvery="5000">
         <parameter id="popSize" dimension="8" name="stateNode">100.0</parameter>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
@@ -219,7 +219,7 @@ name="alignment">
         <distribution id="speciescoalescent" spec="util.CompoundDistribution">
             <distribution idref="SpeciesTreePopSize.Species"/>
 
-	    	<distribution id="geneTreePrior" spec="genekernel.GTKPrior" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species"  kernel="@geneKernel" geneKernelSize="@geneKernelSize" indicator="@geneKernelIndicator">
+	    	<distribution id="geneTreePrior" spec="genekernel.GTKPrior" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species"  kernel="@geneKernel" geneKernelSize="@geneKernelSize" indicator="@geneKernelIndicator" pointerPrior="false">
 			<pointer idref="Tree.t:26"/>
 			<pointer idref="Tree.t:29"/>
 			<pointer idref="Tree.t:47"/>
@@ -279,7 +279,7 @@ name="alignment">
 
 
 		<prior id="geneTreeSizePrior"  name="distribution" x="@geneKernelSize" >
-			<distr spec="beast.math.distributions.Poisson" lambda="2" />
+			<distr spec="beast.math.distributions.Poisson" lambda="5" />
 		</prior>
 		
 
@@ -364,7 +364,6 @@ name="alignment">
         </distribution>
     </distribution>
 	
-	
 	<operator id="IndicatorSampler" spec="consoperators.UniformOperatorChange" parameter="@geneKernelIndicator" weight="10" />
 	<!-- Do not user UniformOperator because the operator does not handle when a parameter's lower/upper change
 		<operator id="IndicatorUniform" spec="UniformOperator" parameter="@geneKernelIndicator" weight="0" /> 
@@ -372,11 +371,8 @@ name="alignment">
 
 
 	<operator id="IndicatorSwapper" spec="SwapOperator" intparameter="@geneKernelIndicator" weight="10" />
-	<operator id="GTKExpander" spec="starbeast3.operators.GTKExpander" kernel="@geneTreePrior" indicator="@geneKernelIndicator" geneKernelSize="@geneKernelSize" weight="0">
-		<pointer idref="Tree.t:26"/>
-		<pointer idref="Tree.t:29"/>
-		<pointer idref="Tree.t:47"/>
-	</operator>
+	<operator id="GTKExpander" spec="starbeast3.operators.GTKExpander" kernel="@geneTreePrior" p="100" indicator="@geneKernelIndicator" geneKernelSize="@geneKernelSize" weight="0" />
+
 	
 	<operator id="FastUcldStdevScaler.Species" spec="UniformOperator" parameter="@quantileRates.Species"  weight="5.0" />
 	
@@ -496,6 +492,8 @@ name="alignment">
 
 
 
+
+
     <logger id="tracelog" fileName="starbeast3_GTK.log" logEvery="1000" model="@posterior" sort="smart">
         <log idref="posterior"/>
         <log idref="likelihood"/>
@@ -506,10 +504,13 @@ name="alignment">
         <log id="TreeHeight.Species" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:Species"/>
 	<log id="BranchLength.Species" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:Species"/>
 
-	<!--
-        	<log id="TreeHeight.t:47" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:47"/>
-		<log id="BranchLength.t:47" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:47"/>
-	-->
+	<log id="TreeHeight.t:26" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:26"/>
+	<log id="BranchLength.t:26" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:26"/>
+	<log id="TreeHeight.t:29" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:29"/>
+	<log id="BranchLength.t:29" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:29"/>
+	<log id="TreeHeight.t:47" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:47"/>
+	<log id="BranchLength.t:47" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:47"/>
+	
 
         <log idref="treeLikelihood.47"/>
         <log idref="treeLikelihood.26"/>
@@ -538,14 +539,15 @@ name="alignment">
 	<log idref="branchRatesStdev.Species"/>
 	<log idref="geneKernelIndicator"/>
 	<log idref="geneKernelSize" />
+	<log idref="speciescoalescent"/>
     </logger>
 
 
 
 
-	<!--
+	
 
-    <logger id="speciesTreeLogger" fileName="starbeast3_UCLN.species.trees" logEvery="1" mode="tree">
+    <logger id="speciesTreeLogger" fileName="starbeast3_UCLN.species.trees" logEvery="10000" mode="tree">
         <log id="SpeciesTreeLoggerX" spec="starbeast3.SpeciesTreeLogger" metadata="@quantileRates.Species" popSize="@popSize" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
             <treetop id="treeTopFinder" spec="beast.evolution.speciation.TreeTopFinder">
                 <tree idref="Tree.t:47"/>
@@ -554,24 +556,24 @@ name="alignment">
             </treetop>
         </log>
     </logger>
+	
 
 
 
-
-	<logger id="treelog.t:26" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="1" mode="tree">
+	<logger id="treelog.t:26" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="10000" mode="tree">
 		<log id="TreeWithMetaDataLogger.t:26" spec="starbeast3.GeneTreeLogger" clockModel="@SpeciesTreeRelaxedClock.c:26" tree="@Tree.t:26"/>
 	</logger>
 
-	<logger id="treelog.t:29" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="1" mode="tree">
+	<logger id="treelog.t:29" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="10000" mode="tree">
 		<log id="TreeWithMetaDataLogger.t:29" spec="starbeast3.GeneTreeLogger" clockModel="@SpeciesTreeRelaxedClock.c:29" tree="@Tree.t:29"/>
 	</logger>
 
-	<logger id="treelog.t:47" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="1" mode="tree">
+	<logger id="treelog.t:47" fileName="starbeast3_UCLN.gene$(tree).trees" logEvery="10000" mode="tree">
 		<log id="TreeWithMetaDataLogger.t:47" spec="starbeast3.GeneTreeLogger" clockModel="@SpeciesTreeRelaxedClock.c:47" tree="@Tree.t:47"/>
 	</logger>
 
 
-	-->
+	
 
 
 

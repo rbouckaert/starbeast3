@@ -16,6 +16,7 @@ import beast.core.parameter.Parameter;
 import beast.evolution.speciation.TreeTopFinder;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
+import genekernel.GeneTreeKernel;
 
 
 

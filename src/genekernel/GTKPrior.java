@@ -58,6 +58,11 @@ public class GTKPrior extends Distribution {
     
     final public Input<TaxonSet> taxonSetInput = 
     		new Input<>("taxonset", "set of taxa mapping lineages to species");
+    
+    
+    final public Input<Boolean> pointerPriorInput = 
+    		new Input<>("pointerPrior", "If true, only tree pointers have prior density (except for illegal kernal trees which are rejected). If false,"
+    				+ "only kernel trees have prior density. ", true);
 	
     
 	List<GeneTreeForSpeciesTreeDistribution> geneDistributions;
@@ -69,6 +74,7 @@ public class GTKPrior extends Distribution {
 	IntegerParameter geneKernelSize;
 	IntegerParameter indicator;
 	boolean needsUpdating;
+	boolean pointerPrior;
 	
 	
 	
@@ -83,6 +89,7 @@ public class GTKPrior extends Distribution {
 		this.pointers = genesInput.get();
 		if (this.pointers.size() == 0) throw new IllegalArgumentException("Please ensure that there is at least 1 gene tree.");
 		this.kernel = kernelInput.get();
+		this.pointerPrior = pointerPriorInput.get();
 		
 		this.geneDistributions_stored = new ArrayList<GeneTreeForSpeciesTreeDistribution>();
 		
@@ -224,8 +231,6 @@ public class GTKPrior extends Distribution {
 		update();
 		logP = 0;
 		
-		
-		
 		// If the kernel size is not equal to the size it should be, return -Inf
 		if (this.getKernel().getDimension() != this.geneKernelSize.getValue() || this.getKernel().getDimension() != this.getGeneTreeDistributions().size()) {
 			Log.warning("WError: GTKPrior the size of the kernel should be equal to 'geneKernelSize' and the number of gene prior distributions. " + this.getKernel().getDimension() + " != " + this.geneKernelSize.getValue() + " != " + this.getGeneTreeDistributions().size());
@@ -233,24 +238,47 @@ public class GTKPrior extends Distribution {
 			return logP;
 		}
 		
-		
-		int nKernelTrees = this.geneKernelSize.getValue();
-		
-		
-		
 		// Gene tree distribution prior
-		//System.out.println();
-		for (GeneTreeForSpeciesTreeDistribution prior : this.geneDistributions) {
+		int nKernelTrees = this.geneKernelSize.getValue();
+		boolean anIllegalTree = false;
+		for (int kernelIndex = 0; kernelIndex < this.geneDistributions.size(); kernelIndex ++) {
+			
+			GeneTreeForSpeciesTreeDistribution prior = this.geneDistributions.get(kernelIndex);
 			double priorLogP = prior.calculateLogP();
-			logP += priorLogP;
 			
-			if (Double.isNaN(priorLogP)) throw new ArrayIndexOutOfBoundsException("prior: " + priorLogP + ":" + prior.treeInput.get().getRoot().toNewick());
-			//System.out.println(i + " has a prior " + priorLogP + ":" + prior.treeInput.get().getRoot().toNewick());
 			
-			if (logP == Double.NEGATIVE_INFINITY) return logP;
+			// Always reject an illegal gene trees even if no-one points to it
+			if (priorLogP == Double.NEGATIVE_INFINITY) anIllegalTree = true;
+			
+			
+			// Weight each count gene tree prior by how many trees are pointing to it
+			if (this.pointerPrior) {
+				
+				int numPointingTo = 0;
+				for (int pointerIndex = 0; pointerIndex < this.indicator.getDimension(); pointerIndex ++) {
+					if (this.indicator.getValue(pointerIndex) == kernelIndex) numPointingTo ++;
+				}
+				
+				logP += numPointingTo * priorLogP;
+				
+			}
+			
+			// Count all gene tree priors even if they are not being pointed to
+			else {
+				logP += priorLogP;
+			}
+			
+			
+			//if (priorLogP > 0) System.out.println("prior: " + priorLogP + ":" + prior.treeInput.get().getRoot().toNewick());
+			//if (Double.isNaN(priorLogP)) throw new ArrayIndexOutOfBoundsException("prior: " + priorLogP + ":" + prior.treeInput.get().getRoot().toNewick());
 			
 		}
 		
+		
+		if (anIllegalTree) {
+			logP = Double.NEGATIVE_INFINITY;
+			return logP;
+		}
 		
 		// A uniform prior over the number of trees in the kernel
 		// If there are p observed genes and q kernel genes, then the prior is (1/q)^p
@@ -407,7 +435,6 @@ public class GTKPrior extends Distribution {
 	}
 
 	
-	
 	@Override
 	public void sample(State state, Random random) {
 		// TODO Auto-generated method stub
@@ -417,8 +444,6 @@ public class GTKPrior extends Distribution {
 	public GeneTreeKernel getKernel() {
 		return this.kernel;
 	}
-
-
 
 	
 	

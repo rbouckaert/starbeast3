@@ -44,7 +44,6 @@ public abstract class GTKOperator extends Operator {
 		kernelDistribution = kernelDistributionInput.get();
 		
 		if ((geneTreesInput.get().size() == 0 && geneTreeKernelPrior == null) ||
-			(geneTreesInput.get().size() > 0 && geneTreeKernelPrior != null) ||
 			(geneTreesInput.get().size() > 0 && geneTreeKernelPrior != null) ) {
 					throw new IllegalArgumentException("Must specify either 'gene' or 'kernel' (but not both)");
 		}

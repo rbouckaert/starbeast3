@@ -32,19 +32,19 @@ public class GTKExpander extends GTKOperator {
 	final public Input<IntegerParameter> geneKernelSizeInput = 
 			new Input<>("geneKernelSize", "A parameter which controls the size of the gene kernel", Input.Validate.REQUIRED);
 	
-	final public Input<List<GTKPointerTree>> genesInput = 
-			new Input<>("pointer", "Gene trees which point to the kernel trees", new ArrayList<>());
-	
-	final public Input<Double> poissonScaleInput = 
-			new Input<>("poisson", "The number of trees pointers to change is Poisson distributed, with a mean of 'poisson' * 'num pointers' / 'kernel size' ", 1.0);
+	final public Input<Double> pInput = 
+			new Input<>("p", "The number of trees pointers to change is Binomial distributed, where n = 'num pointers' and p = min('numpointers / kernelsize * p', 'max')", 1.0);
+
+	final public Input<Double> maxInput = 
+			new Input<>("max", "The number of trees pointers to change is Binomial distributed, where n = 'num pointers' and p = min('numpointers / kernelsize * p', 'max')", 0.95);
 
 	
 	
-	final boolean DEBUG = false;
-	List<GTKPointerTree> pointers;
+	boolean DEBUG = false;
 	IntegerParameter indicator;
 	IntegerParameter geneKernelSize;
-	double poissonScale;
+	double p;
+	double max;
 	
 	public GTKExpander() {
 		geneTreesInput.setRule(Input.Validate.FORBIDDEN);
@@ -52,20 +52,20 @@ public class GTKExpander extends GTKOperator {
 	
 	@Override
 	public void initAndValidate() {
-		this.indicator = indicatorInput.get();
-		this.pointers = genesInput.get();
-		this.geneKernelSize = geneKernelSizeInput.get();
-		this.poissonScale = poissonScaleInput.get();
 		super.initAndValidate();
+		
+		this.indicator = indicatorInput.get();
+		this.geneKernelSize = geneKernelSizeInput.get();
+		this.p = pInput.get();
+		this.max = maxInput.get();
+		
 	}
 	
 	
 	@Override
 	public double proposal() {
 		
-		
-		
-		geneTreeDistributions = this.getTreeDistributions(this);
+		//geneTreeDistributions = this.getTreeDistributions(this);
 		
 		double log_q_expand = 0;
 		double log_q_contract = 0;
@@ -79,35 +79,31 @@ public class GTKExpander extends GTKOperator {
 		
 		// Expanding or contracting? 
 		boolean expanding = Randomizer.nextBoolean();
-		if (originalKernelSize == this.geneKernelSize.getLower()) expanding = true;
-		else if (originalKernelSize == this.geneKernelSize.getUpper()) expanding = false;
+		if (originalKernelSize == this.geneKernelSize.getLower() && !expanding) return Double.NEGATIVE_INFINITY;
+		else if (originalKernelSize == this.geneKernelSize.getUpper() & expanding) return Double.NEGATIVE_INFINITY;
 		
-		//expanding = true;
 		
 		// Calculations
 		int proposedKernelSize = originalKernelSize + (expanding ? 1 : -1);
-		double poissonRate = this.poissonScale * this.pointers.size() / (expanding ? originalKernelSize : proposedKernelSize);
+		double binomialP = Math.min(this.max, this.p * this.indicator.getDimension() / (expanding ? originalKernelSize : proposedKernelSize));
 		int numPointersReassigned = 0;
 		
+		//System.out.println(this.indicator.getDimension()  + " / " + (expanding ? originalKernelSize : proposedKernelSize) + " = " + binomialP);
+		
 
-		if (DEBUG) System.out.println((expanding ? "Expanding" : "Contracting ") + " the gene tree kernel from " + originalKernelSize + " to " + proposedKernelSize);
+		if (DEBUG) System.out.println((expanding ? "Expanding" : "Contracting") + " the gene tree kernel from " + originalKernelSize + " to " + proposedKernelSize);
 		
 		
 		// Add a tree
 		if (expanding) {
 			
-			//if (true) return Double.NEGATIVE_INFINITY;
+			if (true) return Double.NEGATIVE_INFINITY;
 
 			int proposedTreeIndex = proposedKernelSize - 1;
 			
 			// Sample a tree to copy to the new one
 			int kernelTreeToCopyIndex = Randomizer.nextInt(originalKernelSize);
-			Tree treeToCopy = this.geneTreeKernelPrior.getKernel().getTree(kernelTreeToCopyIndex);
-			if (treeToCopy.getRoot().getNodeCount() != 51) {
-				int x = 5;
-				int y = x;
-				
-			}
+
 			GTKGeneTree proposedKernelTree = new GTKGeneTree(this.geneTreeKernelPrior.getKernel().getTree(kernelTreeToCopyIndex).getRoot().copy());
 					
 			
@@ -123,33 +119,29 @@ public class GTKExpander extends GTKOperator {
 			
 			// Sample pointers and allocate them to the new tree. 
 			// The number of pointers sampled follows a Poisson(poissonRate) distribution
-			for (GTKPointerTree pointer : this.pointers) {
+			for (int treeIndex = 0; treeIndex < this.indicator.getDimension(); treeIndex ++) {
 				
-				if (Randomizer.nextExponential(poissonRate) < 1) {
+				if (Randomizer.nextFloat() < binomialP) {
 					
-					if (DEBUG) Log.warning("Changing pointer from " + this.indicator.getValue(pointer.getTreeIndex()) + " to " + proposedTreeIndex);
+					if (DEBUG) Log.warning("Changing pointer from " + this.indicator.getValue(treeIndex) + " to " + proposedTreeIndex);
 					
-					this.indicator.setValue(pointer.getTreeIndex(), proposedTreeIndex);
+					this.indicator.setValue(treeIndex, proposedTreeIndex);
 					numPointersReassigned ++;
-					
-					
-					
 					
 				}
 				
 			}
 			
 			
-			
-			
-			
-			// Probability of selecting a given tree to add / delete
+			// Probability of selecting a given kernel tree to add/delete
 			log_q_expand += -Math.log(originalKernelSize);
 			log_q_contract += -Math.log(proposedKernelSize);
 			
 			
+			
 			// Probability of reallocating pointers due to their tree being deleted (= 'prob assign pointer to gene' ^ 'num pointers reassigned')
 			log_q_contract += -numPointersReassigned*Math.log(originalKernelSize);
+			
 			
 		}
 
@@ -164,9 +156,9 @@ public class GTKExpander extends GTKOperator {
 			if (DEBUG) Log.warning("Deleting tree " + kernelIndexToDelete);
 			
 			// Find all genes which are pointing to this
-			for (GTKPointerTree pointer : this.pointers) {
+			for (int treeIndex = 0; treeIndex < this.indicator.getDimension(); treeIndex ++) {
 
-				int pointerIndicator = pointer.getIndicatorValue();
+				int pointerIndicator = this.indicator.getValue(treeIndex);
 				if (pointerIndicator >= kernelIndexToDelete) {
 					
 					int proposedGTKIndex;
@@ -185,7 +177,7 @@ public class GTKExpander extends GTKOperator {
 						proposedGTKIndex = pointerIndicator - 1;
 					}
 					
-					this.indicator.setValue(pointer.getTreeIndex(), proposedGTKIndex);
+					this.indicator.setValue(treeIndex, proposedGTKIndex);
 					
 					
 					if (DEBUG) Log.warning("Changing pointer from " + pointerIndicator + " to " + proposedGTKIndex);
@@ -194,8 +186,6 @@ public class GTKExpander extends GTKOperator {
 
 				
 			}
-			
-			
 
 			// Delete the tree from the kernel
 			this.geneTreeKernelPrior.removeGeneTreeDistribution(kernelIndexToDelete);
@@ -203,42 +193,36 @@ public class GTKExpander extends GTKOperator {
 			
 			// Update the range of the indicator
 			this.indicator.setUpper(proposedKernelSize - 1);
-			
-			
 
-			// Probability of selecting a given tree to add / delete
+			// Probability of selecting a given kernel tree to add/delete
 			log_q_expand += -Math.log(proposedKernelSize);
 			log_q_contract += -Math.log(originalKernelSize);
 			
 			
-			// Probability of reallocating pointers due to their tree being deleted (= 'prob assign pointer to gene' ^ 'num pointers reassigned')
+			// Probability of reallocating pointers due to their tree being deleted (= 'prob assign pointer to kernel gene' ^ 'num pointers reassigned')
+			 // (= 1 / num genes in shrunk kernel) ^ num pointers reassigned
 			log_q_contract += -numPointersReassigned*Math.log(proposedKernelSize);
 			
 			
-			
-			
-			
-			
 		}
-		
-
 		
 		
 		// Update gene kernel size parameter
 		this.geneKernelSize.setValue(proposedKernelSize);
 		
 		
-		// Probability of sampling this many trees to add, under the Poisson(poissonRate) distribution
-		log_q_expand += numPointersReassigned*Math.log(poissonRate) - poissonRate - MathUtils.factorialLog(numPointersReassigned);
+		// Probability of selecting this set of pointers to reassign (upon expansion) as Bernoulli trials
+		log_q_expand += numPointersReassigned*Math.log(binomialP) + (this.indicator.getDimension() - numPointersReassigned)*Math.log(1 - binomialP);
 		
 		
 		
 		double logHR = expanding ? log_q_contract-log_q_expand : log_q_expand-log_q_contract;
-		//if (DEBUG) System.out.println(this.getClass() + " Hastings ratio: " + logHR);
+		if (DEBUG) Log.warning(this.getClass() + " Hastings ratio: " + logHR);
 		
 		
 		// Return hastings ratio
-		return logHR;
+		return -100000000; // Double.NEGATIVE_INFINITY;
+		//return logHR;
 		
 	}
 	
