@@ -4,7 +4,9 @@ package starbeast3.operators;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,21 +34,21 @@ import beast.util.Transform;
 public class ParallelMCMCTreeOperator extends Operator implements MultiStepOperator {
     final public Input<Boolean> useBactrianOperatorsInput = new Input<>("bactrian", "flag to indicate that bactrian operators should be used where possible", true);
 	
-	@Description("Distribution n a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
+	@Description("Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
 	public class TreeDistribution {
 		Tree tree;
-		GenericTreeLikelihood treelikelihood;
+		Distribution treelikelihood;
 		GeneTreeForSpeciesTreeDistribution geneprior;
 		
 		public Tree getTree() {return tree;}
 		public void setTree(Tree tree) {this.tree = tree;}
-		public GenericTreeLikelihood getTreelikelihood() {return treelikelihood;}
-		public void setTreelikelihood(GenericTreeLikelihood treelikelihood) {this.treelikelihood = treelikelihood;}
+		public Distribution getTreelikelihood() {return treelikelihood;}
+		public void setTreelikelihood(Distribution treelikelihood) {this.treelikelihood = treelikelihood;}
 		public GeneTreeForSpeciesTreeDistribution getGeneprior() {return geneprior;}
 		public void setGeneprior(GeneTreeForSpeciesTreeDistribution geneprior) {this.geneprior = geneprior;}
 
 		public TreeDistribution(@Param(name="tree", description="tree for which") Tree tree,
-				@Param(name="treelikelihood", description="treelikelihood part of the distribution") GenericTreeLikelihood treelikelihood,
+				@Param(name="treelikelihood", description="treelikelihood part of the distribution") Distribution treelikelihood,
 				@Param(name="geneprior", description="prior on the gene tree") GeneTreeForSpeciesTreeDistribution geneprior) {
 			this.tree = tree;
 			this.treelikelihood = treelikelihood;
@@ -54,7 +56,8 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 		}
 	}
 	
-    final public Input<Long> chainLengthInput =
+	
+	final public Input<Long> chainLengthInput =
             new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples",
                     Input.Validate.REQUIRED);
 
@@ -160,7 +163,7 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 			WilsonBalding.initByName("tree", d.tree, "weight", 3.0);
 			operators.add(WilsonBalding);
 			if (includeRealParametersInput.get()) {
-				List<StateNode> stateNodeList = new ArrayList<>();
+				Set<StateNode> stateNodeList = new HashSet<>();
 				ParallelMCMCRealParameterOperator.getRealParameterStateNodes(d.treelikelihood, otherState.stateNodeInput.get(), stateNodeList);
 				stateNodes.addAll(stateNodeList);
 				

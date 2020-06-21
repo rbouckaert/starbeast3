@@ -3,7 +3,9 @@ package starbeast3.operators;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,44 +87,46 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 		for (Distribution d : distributions) {
 			distrs.add(d);
 			
-			List<StateNode> stateNodeList = new ArrayList<>();
-			getRealParameterStateNodes(d, otherState.stateNodeInput.get(), stateNodeList);
-			stateNodes.addAll(stateNodeList);
-			
-			List<Distribution> priorsList = new ArrayList<>();
-			getRealParameterPriors(stateNodeList, priorsList);
-			distrs.addAll(priorsList);			
-			
-			int dim = 0;
-			for (StateNode s : stateNodeList) {
-				dim += s.getDimension();
-			}
-			
-			List<Transform> transformations = new ArrayList<>();
-			for (StateNode s : stateNodeList) {
-				Transform f;
-				// TODO: check priors instead of ID to determine whether it is a
-				// scale parameter
-				// location parameter
-				// simplex parameter
-				if (s.getID().startsWith("freq")) {
-					f = new Transform.LogConstrainedSumTransform(s, 1.0);
-				} else {
-					f = new Transform.LogTransform(s);
+			Set<StateNode> stateNodeSet = new HashSet<>();
+			getRealParameterStateNodes(d, otherState.stateNodeInput.get(), stateNodeSet);
+			if (stateNodeSet.size() > 0) {
+				stateNodes.addAll(stateNodeSet);
+				
+				List<Distribution> priorsList = new ArrayList<>();
+				getRealParameterPriors(stateNodeSet, priorsList);
+				distrs.addAll(priorsList);			
+				
+				int dim = 0;
+				for (StateNode s : stateNodeSet) {
+					dim += s.getDimension();
 				}
-				transformations.add(f);
+				
+				List<Transform> transformations = new ArrayList<>();
+				for (StateNode s : stateNodeSet) {
+					Transform f;
+					// TODO: check priors instead of ID to determine whether it is a
+					// scale parameter
+					// location parameter
+					// simplex parameter
+					if (s.getID().startsWith("freq")) {
+						f = new Transform.LogConstrainedSumTransform(s, 1.0);
+					} else {
+						f = new Transform.LogTransform(s);
+					}
+					transformations.add(f);
+				}
+				
+				AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
+				AVMNOperator.initByName("weight", 1.0, 
+						"coefficient", 1.0, 
+						"scaleFactor", 1.0, 
+						"beta", 0.05, 
+						"every", 1,
+						"initial", 200 * dim, 
+						"burnin", 100 * dim, 
+						"transformations", transformations);
+				operators.add(AVMNOperator);
 			}
-			
-			AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
-			AVMNOperator.initByName("weight", 1.0, 
-					"coefficient", 1.0, 
-					"scaleFactor", 1.0, 
-					"beta", 0.05, 
-					"every", 1,
-					"initial", 200 * dim, 
-					"burnin", 100 * dim, 
-					"transformations", transformations);
-			operators.add(AVMNOperator);
 		}
 		
 		CompoundDistribution sampleDistr = new CompoundDistribution();
@@ -136,7 +140,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 		return mcmc;
 	}
 
-	private void getRealParameterPriors(List<StateNode> stateNodeList, List<Distribution> priorsList) {
+	private void getRealParameterPriors(Set<StateNode> stateNodeList, List<Distribution> priorsList) {
 		for (StateNode sn : stateNodeList) {
 			for (BEASTInterface o : sn.getOutputs()) {
 				if (o instanceof Distribution) {
@@ -150,7 +154,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 		}		
 	}
 
-	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, List<StateNode> stateNodes) {
+	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, Set<StateNode> stateNodes) {
 		for (Object o : d.listActiveBEASTObjects()) {
 			if (o instanceof StateNode && otherStateNodes.contains(o) && o instanceof RealParameter) {
 				stateNodes.add((StateNode) o);
