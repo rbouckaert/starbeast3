@@ -3,6 +3,7 @@ package genekernel;
 import java.util.ArrayList;
 import java.util.List;
 
+import beast.app.beauti.Beauti;
 import beast.core.BEASTInterface;
 import beast.core.Input;
 import beast.core.Operator;
@@ -42,6 +43,10 @@ public abstract class GTKOperator extends Operator {
 		
 		geneTreeKernelPrior = geneTreeKernelPriorInput.get();
 		kernelDistribution = kernelDistributionInput.get();
+		
+		if (Beauti.isInBeauti()) {
+			return;
+		}
 		
 		if ((geneTreesInput.get().size() == 0 && geneTreeKernelPrior == null) ||
 			(geneTreesInput.get().size() > 0 && geneTreeKernelPrior != null) ) {

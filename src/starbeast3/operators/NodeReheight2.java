@@ -1,5 +1,6 @@
 package starbeast3.operators;
 
+import beast.app.beauti.Beauti;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
@@ -62,6 +63,9 @@ public class NodeReheight2 extends GTKOperator {
         window = windowInput.get();
         originSpecified = originInput.get() != null;
 
+        if (Beauti.isInBeauti()) {
+        	return;
+        }
         
         // Get the gene tree distributions
         // If a gene tree kernel is being used, then initialise the gene trees here to those in the kernel

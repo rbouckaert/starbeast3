@@ -205,11 +205,9 @@
 			<fileset dir="${diststarbeast3}" includes="starbeast3.src.jar" />
 		</copy>
 		
-		<!--
 		<copy todir="${Add_on_dir}/templates">
-			<fileset file="templates/FossilCalibration.xml" />
+			<fileset file="templates/StarBeast3.xml" />
 		</copy>
-		-->
 		
 		<jar jarfile="${diststarbeast3}/starbeast3.addon.v${versionstarbeast3}.zip">
 			<fileset dir="${Add_on_dir}">
