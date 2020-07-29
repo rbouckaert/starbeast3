@@ -34,34 +34,11 @@ import beast.util.Transform;
 public class ParallelMCMCTreeOperator extends Operator implements MultiStepOperator {
     final public Input<Boolean> useBactrianOperatorsInput = new Input<>("bactrian", "flag to indicate that bactrian operators should be used where possible", true);
 	
-	@Description("Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
-	public class TreeDistribution {
-		Tree tree;
-		Distribution treelikelihood;
-		GeneTreeForSpeciesTreeDistribution geneprior;
-		
-		public Tree getTree() {return tree;}
-		public void setTree(Tree tree) {this.tree = tree;}
-		public Distribution getTreelikelihood() {return treelikelihood;}
-		public void setTreelikelihood(Distribution treelikelihood) {this.treelikelihood = treelikelihood;}
-		public GeneTreeForSpeciesTreeDistribution getGeneprior() {return geneprior;}
-		public void setGeneprior(GeneTreeForSpeciesTreeDistribution geneprior) {this.geneprior = geneprior;}
-
-		public TreeDistribution(@Param(name="tree", description="tree for which") Tree tree,
-				@Param(name="treelikelihood", description="treelikelihood part of the distribution") Distribution treelikelihood,
-				@Param(name="geneprior", description="prior on the gene tree") GeneTreeForSpeciesTreeDistribution geneprior) {
-			this.tree = tree;
-			this.treelikelihood = treelikelihood;
-			this.geneprior = geneprior;
-		}
-	}
-	
-	
 	final public Input<Long> chainLengthInput =
             new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples",
                     Input.Validate.REQUIRED);
 
-	final public Input<List<TreeDistribution>> distributionInput = new Input<>("distribution", 
+	final public Input<List<ParallelMCMCTreeOperatorTreeDistribution>> distributionInput = new Input<>("distribution", 
 			"Distribution on a tree conditinionally independent from all other distributions given the state of the rest"
 			+ "of parameter space. ",
 			new ArrayList<>());
@@ -79,7 +56,7 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
     
 	@Override
 	public void initAndValidate() {
-		List<TreeDistribution> distributions = distributionInput.get();
+		List<ParallelMCMCTreeOperatorTreeDistribution> distributions = distributionInput.get();
 	    otherState = otherStateInput.get();
 		 
 		int nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
@@ -105,11 +82,11 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 		return mcmcs.size();
 	}
 
-	private ParallelMCMC createParallelMCMC(List<TreeDistribution> distributions, long chainLength) {
+	private ParallelMCMC createParallelMCMC(List<ParallelMCMCTreeOperatorTreeDistribution> distributions, long chainLength) {
 		List<Distribution> distrs = new ArrayList<>();
 		List<StateNode> stateNodes = new ArrayList<>();
 		List<Operator> operators = new ArrayList<>();
-		for (TreeDistribution d : distributions) {
+		for (ParallelMCMCTreeOperatorTreeDistribution d : distributions) {
 			distrs.add(d.geneprior);
 			distrs.add(d.treelikelihood);
 			

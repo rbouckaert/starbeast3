@@ -32,6 +32,7 @@ import beast.math.distributions.MRCAPrior;
 import beast.util.ClusterTree;
 import genekernel.GTKPrior;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
+import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
 
 /**
 * @author Joseph Heled
@@ -99,6 +100,18 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         super.initAndValidate();
         hasCalibrations = calibratedYule.get() != null;
         genes = genesInput.get();
+
+        if (speciesTreeRatesInput.get() != null) {
+        	BranchRateModelSB3 s = speciesTreeRatesInput.get();
+        	if (s instanceof UCRelaxedClockModelSB3) {
+        		UCRelaxedClockModelSB3 s2 = (UCRelaxedClockModelSB3) s;
+        		RealParameter p = s2.realRatesInput.get();
+        		if (p != null) {
+        			rates = p;
+        			lowerRate = 0.1; // p .getLower();
+        		}
+        	}
+        }
     }
 
     @Override
@@ -157,7 +170,13 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             }
         }
 
+        if (rates != null) {
+        	// rates.setLower(lowerRate);
+        }
     }
+    
+    RealParameter rates;
+    double lowerRate;
 
     private double[] firstMeetings(final Tree gtree, final Map<String, Integer> tipName2Species, final int speciesCount) {
         final Node[] nodes = gtree.listNodesPostOrder(null, null);

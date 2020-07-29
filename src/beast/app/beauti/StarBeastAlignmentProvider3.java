@@ -13,8 +13,8 @@ public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 		final List<BEASTInterface> newAlignments = super.getAlignments(doc, files);
 		final int alignmentCount = newAlignments.size();
 
-		doc.autoSetClockRate = false;
-		doc.beauti.autoSetClockRate.setSelected(false);
+		doc.autoSetClockRate = true;
+		doc.beauti.autoSetClockRate.setSelected(true);
 
 		System.out.println(String.format("N_ALIGNMENTS = %d", doc.alignments.size()));
 		// initialize delta exchange operator in order to increase weight to something more sensible
