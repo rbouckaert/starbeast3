@@ -249,6 +249,12 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 					double q_x_ = piecewise.cumulativeProbability(r_x_);
 					double q_L_ = piecewise.cumulativeProbability(r_L_);
 					double q_R_ = piecewise.cumulativeProbability(r_R_);
+					
+					
+                    if (q_x_ <= 0 || q_x_ >= 1) return Double.NEGATIVE_INFINITY;
+                    if (q_L_ <= 0 || q_L_ >= 1) return Double.NEGATIVE_INFINITY;
+                    if (q_R_ <= 0 || q_R_ >= 1) return Double.NEGATIVE_INFINITY;
+					
 					   
 					// Jacobian contribution from the icdf derivative
 					double q_x = quantiles.getValues()[nodeNr];

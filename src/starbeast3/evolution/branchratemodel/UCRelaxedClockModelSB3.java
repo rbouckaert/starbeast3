@@ -24,7 +24,7 @@ import beast.util.Randomizer;
 import beast.evolution.branchratemodel.BranchRateModel;
 
 public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements BranchRateModelSB3 {
-    final public Input<TreeInterface> treeInput = new Input<>("tree", "(Species) tree to apply per-branch rates to.", Input.Validate.REQUIRED);
+    
     final public Input<Boolean> estimateRootInput = new Input<>("estimateRoot", "Estimate rate of the root branch.", false);
     final public Input<Boolean> noCacheInput = new Input<>("noCache", "Always recalculate branch rates.", false);
     final public Input<RealParameter> stdevInput = new Input<>("stdev", "Standard deviation of the log-normal distribution for branch rates. If not supplied uses exponential.");

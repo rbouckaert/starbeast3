@@ -44,6 +44,8 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
 //            popSizeFunction = TreePopSizeFunction.constant;
 //        }
     }
+    
+
 
     @Override
     public void init(final PrintStream out) {
