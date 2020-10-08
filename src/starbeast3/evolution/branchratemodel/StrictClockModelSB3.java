@@ -1,11 +1,15 @@
 package starbeast3.evolution.branchratemodel;
 
+import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.tree.Node;
+import beast.evolution.tree.TreeInterface;
 
 public class StrictClockModelSB3 extends BranchRateModel.Base implements BranchRateModelSB3 {
 
+	
+	final public Input<TreeInterface> treeInput = new Input<>("tree", "(Species) tree to apply per-branch rates to.", Input.Validate.REQUIRED);
 	
 	RealParameter muParameter;
 	private double mu = 1.0;
@@ -32,19 +36,20 @@ public class StrictClockModelSB3 extends BranchRateModel.Base implements BranchR
 
     @Override
     public boolean requiresRecalculation() {
-        mu = muParameter.getValue();
-        return true;
+    	if (muParameter == null) return false;
+    	mu = muParameter.getValue();
+    	return muParameter.isDirtyCalculation();
     }
     
     @Override
     protected void restore() {
-        mu = muParameter.getValue();
+    	if (muParameter != null) mu = muParameter.getValue();
         super.restore();
     }
 
     @Override
     protected void store() {
-        mu = muParameter.getValue();
+    	if (muParameter != null)  mu = muParameter.getValue();
         super.store();
     }
 
