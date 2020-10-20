@@ -795,6 +795,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 
         	if (tipNumberMap.get(geneTreeLeafName) == node.getNr()) {
         		geneTreeNodesInLineage.add(geneTreeLeafNode);
+        		geneTreeLeafNode.setHeight(node.getHeight());
         	}
         	    
         } 
