@@ -206,7 +206,7 @@
 		</copy>
 		
 		<copy todir="${Add_on_dir}/templates">
-			<fileset file="templates/StarBeast3.xml" />
+			<fileset file="templates/*.xml" />
 		</copy>
 		
 		<jar jarfile="${diststarbeast3}/starbeast3.addon.v${versionstarbeast3}.zip">
