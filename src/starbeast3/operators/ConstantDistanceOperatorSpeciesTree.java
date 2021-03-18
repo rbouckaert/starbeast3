@@ -30,7 +30,7 @@ import org.apache.commons.math.MathException;
 @Description("For internal nodes: propose a new node time")
 public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 	final public Input<Double> twindowSizeInput = new Input<>("twindowSize", "the size of the window when proposing new node time", Input.Validate.REQUIRED);
- final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
+	final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
     final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", "Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
     final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree brancg rates.", Input.Validate.REQUIRED);
 	

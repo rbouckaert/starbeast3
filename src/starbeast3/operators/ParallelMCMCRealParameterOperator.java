@@ -92,6 +92,8 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 			if (stateNodeSet.size() > 0) {
 				stateNodes.addAll(stateNodeSet);
 				
+				
+				
 				List<Distribution> priorsList = new ArrayList<>();
 				getRealParameterPriors(stateNodeSet, priorsList);
 				distrs.addAll(priorsList);			
@@ -103,6 +105,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 				
 				List<Transform> transformations = new ArrayList<>();
 				for (StateNode s : stateNodeSet) {
+					Log.warning("Adding " + s.getID());
 					Transform f;
 					// TODO: check priors instead of ID to determine whether it is a
 					// scale parameter
@@ -194,6 +197,8 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 
     private void proposeUsingThreads() {
         try {
+        	
+        	System.out.println("there are " + mcmcs.size() + " threads");
 
             countDown = new CountDownLatch(mcmcs.size());
             // kick off the threads
