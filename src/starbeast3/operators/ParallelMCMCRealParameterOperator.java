@@ -201,8 +201,6 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
     private void proposeUsingThreads() {
         try {
         	
-        	System.out.println("there are " + mcmcs.size() + " threads");
-
             countDown = new CountDownLatch(mcmcs.size());
             // kick off the threads
             for (MCMC mcmc : mcmcs) {
