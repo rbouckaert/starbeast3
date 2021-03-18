@@ -170,6 +170,9 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 	@Override
 	public double proposal() {
 		proposeUsingThreads();
+        for (int i = 0; i < otherState.stateNodeInput.get().size(); i++) {
+        	otherState.getStateNode(i).index = i;
+        }
 		otherState.setEverythingDirty(true);
 		return Double.POSITIVE_INFINITY;
 	}
