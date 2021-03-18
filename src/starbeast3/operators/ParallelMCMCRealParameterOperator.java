@@ -25,7 +25,10 @@ import beast.core.StateNode;
 import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
+import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.operators.AdaptableVarianceMultivariateNormalOperator;
+import beast.evolution.sitemodel.SiteModelInterface;
+import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.util.Transform;
 
 @Description("Run MCMC on different treelikelihood parts of the model in parallel before combining them in a single Gibbs move")
@@ -160,7 +163,15 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, Set<StateNode> stateNodes) {
 		for (Object o : d.listActiveBEASTObjects()) {
 			if (o instanceof StateNode && otherStateNodes.contains(o) && o instanceof RealParameter) {
-				stateNodes.add((StateNode) o);
+				// must have subst, or site model in its outputs, or be mean clock rate
+				for (BEASTInterface o2 : ((BEASTInterface)o).getOutputs()) {
+					if (o2 instanceof SubstitutionModel ||
+						o2 instanceof SiteModelInterface ||
+						(o2 instanceof BranchRateModel && o2.getInput("clock.rate").get() == o)) {
+						stateNodes.add((StateNode) o);
+						break;
+					}
+				}
 			} else if (o instanceof BEASTInterface) {
 				getRealParameterStateNodes((BEASTInterface) o, otherStateNodes, stateNodes);				
 			}			
