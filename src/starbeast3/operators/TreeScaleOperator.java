@@ -104,7 +104,7 @@ public class TreeScaleOperator extends GTKTreeOperator {
                 // scale the beast.tree
                 final double scale = getScaler();
                 final int internalNodes = tree.scale(scale);
-                return Math.log(scale) * internalNodes;
+                return Math.log(scale) * (internalNodes-2);
             }
             
 
