@@ -60,13 +60,44 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 		int nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
 				BeastMCMC.m_nThreads;
+		if (nrOfThreads > distributions.size()) {
+			nrOfThreads = distributions.size();
+		}
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
 	    mcmcs = new ArrayList<>();
 	    
+
+	    // determine statenode tabu list: all stateNodes that are shared among threads
+	    // 1. determine potential state nodes per thread first
+	    Set<StateNode>[] stateNodes = new Set[nrOfThreads];
 	    int start = 0;
 	    for (int i = 0; i < nrOfThreads; i++) {
 	    	int end = (i + 1) * distributions.size() / nrOfThreads;
-	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), chainLengthInput.get()/nrOfThreads));
+	    	stateNodes[i] = new HashSet<>();
+			for (Distribution d : distributions.subList(start, end)) {
+				getRealParameterStateNodes(d, otherState.stateNodeInput.get(), stateNodes[i]);
+			}
+	    	start = end;
+	    }
+	    
+	    // 2. determine overlaps in potential state nodes per thread	    
+	    Set<StateNode> tabu = new HashSet<>();
+	    for (int i = 0; i < nrOfThreads; i++) {
+	    	for (int j = i + 1; j < nrOfThreads; j++) {
+	    		for (StateNode s : stateNodes[i]) {
+	    			if (stateNodes[j].contains(s)) {
+	    				tabu.add(s);
+	    			}
+	    		}
+	    	}
+	    }
+
+	    
+	    
+	    start = 0;
+	    for (int i = 0; i < nrOfThreads; i++) {
+	    	int end = (i + 1) * distributions.size() / nrOfThreads;
+	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), chainLengthInput.get()/nrOfThreads, tabu));
 	    	start = end;
 	    }
 	    
@@ -81,7 +112,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 	}
 
 	
-	private ParallelMCMC createParallelMCMC(List<Distribution> distributions, long chainLength) {
+	private ParallelMCMC createParallelMCMC(List<Distribution> distributions, long chainLength, Set<StateNode> tabu) {
 		List<Distribution> distrs = new ArrayList<>();
 		List<StateNode> stateNodes = new ArrayList<>();
 		List<Operator> operators = new ArrayList<>();
@@ -92,6 +123,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 			
 			Set<StateNode> stateNodeSet = new HashSet<>();
 			getRealParameterStateNodes(d, otherState.stateNodeInput.get(), stateNodeSet);
+			stateNodeSet.removeAll(tabu);
 			if (stateNodeSet.size() > 0) {
 				stateNodes.addAll(stateNodeSet);
 				
