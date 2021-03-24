@@ -19,15 +19,12 @@ import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
 import beast.core.ParallelMCMC;
-import beast.core.Param;
 import beast.core.State;
 import beast.core.StateNode;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
-import beast.evolution.likelihood.GenericTreeLikelihood;
+import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.operators.*;
-import beast.evolution.tree.Tree;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import beast.util.Transform;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
@@ -57,20 +54,51 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 	@Override
 	public void initAndValidate() {
 		List<ParallelMCMCTreeOperatorTreeDistribution> distributions = distributionInput.get();
+		
+		if (distributions.isEmpty()) {
+			throw new IllegalArgumentException("Please provide at least one 'distribution'");
+		}
+		
 	    otherState = otherStateInput.get();
 		 
 		int nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
 				BeastMCMC.m_nThreads;
+		nrOfThreads = Math.max(nrOfThreads, distributions.size());
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
 	    mcmcs = new ArrayList<>();
 	    
+	    
+	    
+	    
+	    
+	    // Load balancing. Ensure a roughly equal distribution of site patterns across all threads
+	    Collections.sort(distributions);
+	    List<List<ParallelMCMCTreeOperatorTreeDistribution>> balancedDistributions = new ArrayList<>();
+	    for (int i = 0; i < nrOfThreads; i++) balancedDistributions.add(new ArrayList<>());
+	    int threadNum = 0;
+	    for (int i = 0; i < distributions.size(); i ++) {
+	    	ParallelMCMCTreeOperatorTreeDistribution d = distributions.get(i);
+	    	//System.out.println("patterns " + d.getNumberPatterns());
+	    	balancedDistributions.get(threadNum).add(d);
+	    	threadNum++;
+	    	if (threadNum > nrOfThreads) threadNum = 0;
+	    }
+	    
+	    // Create parallel MCMCs
+	    for (int i = 0; i < nrOfThreads; i++) {
+	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), chainLengthInput.get()/nrOfThreads));
+	    }
+	    
+	    
+	    /*
 	    int start = 0;
 	    for (int i = 0; i < nrOfThreads; i++) {
 	    	int end = (i + 1) * distributions.size() / nrOfThreads;
 	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), chainLengthInput.get()/nrOfThreads));
 	    	start = end;
 	    }
+	    */
 	    
 	    for (ParallelMCMC pMCMC : mcmcs) {
 	    	pMCMC.setOtherState(otherState);
