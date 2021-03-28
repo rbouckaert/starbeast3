@@ -31,6 +31,7 @@ import beast.evolution.sitemodel.SiteModelInterface;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.util.Transform;
+import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 
 @Description("Run MCMC on different treelikelihood parts of the model in parallel before combining them in a single Gibbs move")
 public class ParallelMCMCRealParameterOperator extends Operator implements MultiStepOperator {
@@ -201,7 +202,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 					if (o2 instanceof SubstitutionModel ||
 						o2 instanceof SiteModelInterface ||
 						o2 instanceof Frequencies ||
-						(o2 instanceof BranchRateModel && o2.getInput("clock.rate").get() == o)) {
+						(o2 instanceof BranchRateModel && !(o2 instanceof BranchRateModelSB3) && o2.getInput("clock.rate").get() == o)) {
 						stateNodes.add((StateNode) o);
 						break;
 					}
