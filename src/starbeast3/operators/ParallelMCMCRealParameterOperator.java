@@ -28,6 +28,7 @@ import beast.core.util.Log;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.operators.AdaptableVarianceMultivariateNormalOperator;
 import beast.evolution.sitemodel.SiteModelInterface;
+import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.util.Transform;
 
@@ -199,6 +200,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 				for (BEASTInterface o2 : ((BEASTInterface)o).getOutputs()) {
 					if (o2 instanceof SubstitutionModel ||
 						o2 instanceof SiteModelInterface ||
+						o2 instanceof Frequencies ||
 						(o2 instanceof BranchRateModel && o2.getInput("clock.rate").get() == o)) {
 						stateNodes.add((StateNode) o);
 						break;
