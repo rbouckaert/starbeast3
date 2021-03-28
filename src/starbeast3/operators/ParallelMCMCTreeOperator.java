@@ -31,9 +31,12 @@ import beast.util.Transform;
 public class ParallelMCMCTreeOperator extends Operator implements MultiStepOperator {
     final public Input<Boolean> useBactrianOperatorsInput = new Input<>("bactrian", "flag to indicate that bactrian operators should be used where possible", true);
 	
-	final public Input<Long> chainLengthInput =
-            new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples",
-                    Input.Validate.REQUIRED);
+    final public Input<Long> chainLengthInput =
+            new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples");
+    
+    final public Input<Double> coverageInput =
+            new Input<>("chainCoverage", "The MCMC chain length is the coverage times the number of parameters",
+                    Input.Validate.XOR, chainLengthInput);
 
 	final public Input<List<ParallelMCMCTreeOperatorTreeDistribution>> distributionInput = new Input<>("distribution", 
 			"Distribution on a tree conditinionally independent from all other distributions given the state of the rest"
@@ -50,6 +53,8 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
     private CountDownLatch countDown;
     private List<ParallelMCMC> mcmcs;
     private State otherState;
+    private long chainLength;
+    private int nrOfThreads;
     
 	@Override
 	public void initAndValidate() {
@@ -61,7 +66,7 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 		
 	    otherState = otherStateInput.get();
 		 
-		int nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
+		 nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
 				BeastMCMC.m_nThreads;
 		nrOfThreads = Math.max(nrOfThreads, distributions.size());
@@ -73,21 +78,37 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 	    
 	    
 	    // Load balancing. Ensure a roughly equal distribution of site patterns across all threads
+	    int totalDim = 0;
 	    Collections.sort(distributions);
 	    List<List<ParallelMCMCTreeOperatorTreeDistribution>> balancedDistributions = new ArrayList<>();
 	    for (int i = 0; i < nrOfThreads; i++) balancedDistributions.add(new ArrayList<>());
 	    int threadNum = 0;
 	    for (int i = 0; i < distributions.size(); i ++) {
 	    	ParallelMCMCTreeOperatorTreeDistribution d = distributions.get(i);
+	    	totalDim += d.getTree().getTaxaNames().length;
 	    	//System.out.println("patterns " + d.getNumberPatterns());
 	    	balancedDistributions.get(threadNum).add(d);
 	    	threadNum++;
 	    	if (threadNum > nrOfThreads) threadNum = 0;
 	    }
 	    
+	    
+	    
+	    // Determine chain length
+	    if (chainLengthInput.get() != null) {
+	    	chainLength = chainLengthInput.get();
+	    }else if(coverageInput.get() != null) {
+	    	chainLength = (long) (coverageInput.get() * totalDim);
+	    	Log.warning(this.getID() + ": dimensional chain length: " + chainLength);
+	    }else {
+	    	throw new IllegalArgumentException("Please provide either 'chainLength' or 'coverageInput' but not both");
+	    }
+	    chainLength = chainLength / this.nrOfThreads;
+	    
+	    
 	    // Create parallel MCMCs
 	    for (int i = 0; i < nrOfThreads; i++) {
-	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), chainLengthInput.get()/nrOfThreads));
+	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), chainLength));
 	    }
 	    
 	    

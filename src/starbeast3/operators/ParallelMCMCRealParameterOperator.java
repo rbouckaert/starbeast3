@@ -37,8 +37,11 @@ import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 public class ParallelMCMCRealParameterOperator extends Operator implements MultiStepOperator {
 	
     final public Input<Long> chainLengthInput =
-            new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples",
-                    Input.Validate.REQUIRED);
+            new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples");
+    
+    final public Input<Double> coverageInput =
+            new Input<>("chainCoverage", "The MCMC chain length is the coverage times the number of parameters",
+                    Input.Validate.XOR, chainLengthInput);
 
 	final public Input<CompoundDistribution> distributionInput = new Input<>("distribution", 
 			"compound distribution of all likelihoods",
@@ -53,13 +56,15 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
     private CountDownLatch countDown;
     private List<ParallelMCMC> mcmcs;
     private State otherState;
+    private long chainLength;
+    private int nrOfThreads;
     
 	@Override
 	public void initAndValidate() {
 	    otherState = otherStateInput.get();
 		List<Distribution> distributions = distributionInput.get().pDistributions.get();
 		 
-		int nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
+		nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
 				BeastMCMC.m_nThreads;
 		if (nrOfThreads > distributions.size()) {
@@ -68,6 +73,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
 	    mcmcs = new ArrayList<>();
 	    
+
 
 	    // determine statenode tabu list: all stateNodes that are shared among threads
 	    // 1. determine potential state nodes per thread first
@@ -82,13 +88,16 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 	    	start = end;
 	    }
 	    
-	    // 2. determine overlaps in potential state nodes per thread	    
+	    // 2. determine overlaps in potential state nodes per thread
+	    int totalDim = 0;
 	    Set<StateNode> tabu = new HashSet<>();
 	    for (int i = 0; i < nrOfThreads; i++) {
 	    	for (int j = i + 1; j < nrOfThreads; j++) {
 	    		for (StateNode s : stateNodes[i]) {
 	    			if (stateNodes[j].contains(s)) {
 	    				tabu.add(s);
+	    			}else {
+	    				totalDim += s.getDimension();
 	    			}
 	    		}
 	    	}
@@ -96,10 +105,23 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 
 	    
 	    
+	    // 3. Determine chain length
+	    if (chainLengthInput.get() != null) {
+	    	chainLength = chainLengthInput.get();
+	    }else if(coverageInput.get() != null) {
+	    	chainLength = (long) (coverageInput.get() * totalDim);
+	    	Log.warning(this.getID() + ": dimensional chain length: " + chainLength);
+	    }else {
+	    	throw new IllegalArgumentException("Please provide either 'chainLength' or 'coverageInput' but not both");
+	    }
+	    chainLength = chainLength / this.nrOfThreads;
+	    
+	    
+	    // Create mcmc objects
 	    start = 0;
 	    for (int i = 0; i < nrOfThreads; i++) {
 	    	int end = (i + 1) * distributions.size() / nrOfThreads;
-	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), chainLengthInput.get()/nrOfThreads, tabu));
+	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), chainLength, tabu));
 	    	start = end;
 	    }
 	    
@@ -168,6 +190,11 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 				operators.add(AVMNOperator);
 			}
 		}
+		
+		
+		
+
+	    
 		
 		CompoundDistribution sampleDistr = new CompoundDistribution();
 		sampleDistr.initByName("distribution", distrs);
