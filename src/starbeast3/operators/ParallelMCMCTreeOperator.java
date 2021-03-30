@@ -7,60 +7,42 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
 
 import beast.app.BeastMCMC;
 import beast.core.Description;
 import beast.core.Distribution;
 import beast.core.Input;
-import beast.core.MCMC;
 import beast.core.Operator;
 import beast.core.ParallelMCMC;
 import beast.core.State;
 import beast.core.StateNode;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
-import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.operators.*;
 import beast.util.Transform;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
-public class ParallelMCMCTreeOperator extends Operator implements MultiStepOperator {
+public class ParallelMCMCTreeOperator extends MultiStepOperator {
+	
     final public Input<Boolean> useBactrianOperatorsInput = new Input<>("bactrian", "flag to indicate that bactrian operators should be used where possible", true);
 	
-    final public Input<Long> chainLengthInput =
-            new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples");
-    
-    final public Input<Double> coverageInput =
-            new Input<>("chainCoverage", "The MCMC chain length is the coverage times the number of parameters",
-                    Input.Validate.XOR, chainLengthInput);
-
 	final public Input<List<ParallelMCMCTreeOperatorTreeDistribution>> distributionInput = new Input<>("distribution", 
 			"Distribution on a tree conditinionally independent from all other distributions given the state of the rest"
 			+ "of parameter space. ",
 			new ArrayList<>());
+    
 	
-    final public Input<Integer> maxNrOfThreadsInput = new Input<>("threads","maximum number of threads to use, if "
-    		+ "less than 1 the number of threads in BeastMCMC is used (default -1)", -1);
-
-    final public Input<State> otherStateInput = new Input<>("otherState", "main state containing all statenodes for this analysis");
-    final public Input<Boolean> includeRealParametersInput = new Input<>("includeRealParameters", "flag to include Real Parameters for each of the partitions in the analysis", true);
+	final public Input<Boolean> unthreadInput = new Input<>("unthread", "flag to convert ThreadedTreeLikelihood back into TreeLikelihood when this is called", false);
+	  
 
     
-    final public Input<Boolean> unthreadInput = new Input<>("unthread", "flag to convert ThreadedTreeLikelihood back into TreeLikelihood when this is called", false);
-    //final public Input<CompoundDistribution> likelihoodInput = new Input<>("likelihood", "the likelihood", Input.Validate.REQUIRED);
+    List<ParallelMCMCTreeOperatorTreeDistribution> distributions;
+    
 
     
-    private ExecutorService exec;
-    private CountDownLatch countDown;
-    private List<ParallelMCMC> mcmcs;
-    private List<ParallelMCMCTreeOperatorTreeDistribution> distributions;
-    private State otherState;
-    private long chainLength;
-    private int nrOfThreads;
+
+    
     
 	@Override
 	public void initAndValidate() {
@@ -80,8 +62,6 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 		//System.exit(1);
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
 	    mcmcs = new ArrayList<>();
-	    
-	    
 	    
 	    
 	    
@@ -111,27 +91,33 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 	    }else {
 	    	throw new IllegalArgumentException("Please provide either 'chainLength' or 'coverageInput' but not both");
 	    }
-	    chainLength = chainLength / this.nrOfThreads;
 	    
 	    
 	    // Create parallel MCMCs
 	    for (int i = 0; i < nrOfThreads; i++) {
-	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), chainLength));
+	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), chainLength / this.nrOfThreads));
 	    }
 	    
-	    
-	    /*
-	    int start = 0;
-	    for (int i = 0; i < nrOfThreads; i++) {
-	    	int end = (i + 1) * distributions.size() / nrOfThreads;
-	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), chainLengthInput.get()/nrOfThreads));
-	    	start = end;
-	    }
-	    */
+
 	    
 	    for (ParallelMCMC pMCMC : mcmcs) {
 	    	pMCMC.setOtherState(otherState);
 	    }
+	    
+	    
+	    // 1 thread and 1 chain mode
+	    if (learningInput.get() || (this.mcmcs.size() == 1 && chainLength == 1)) {
+	    	ParallelMCMC mcmc;
+	    	if (this.mcmcs.size() == 1 && chainLength == 1) mcmc = this.mcmcs.get(0);
+	    	else mcmc = createParallelMCMC(distributions, chainLength);
+	    	this.singleStepOperators = mcmc.operatorsInput.get();
+	    }
+	    
+	  
+	    super.initAndValidate();
+	  
+	    
+	    
 	}
 
 	@Override
@@ -257,7 +243,6 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 	@Override
 	public double proposal() {
 		
-		
 		// Stop threading the tree likelihood
 		//boolean wasThreading = this.likelihoodInput.get().useThreads();
 		if (unthreadInput.get()) {
@@ -269,19 +254,7 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 			}
 		}
 		
-		
-		// Do not waste time creating threads if there is only 1 thread
-		if (this.mcmcs.size() == 1) {
-			try {
-				this.mcmcs.get(0).run();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}else {
-			proposeUsingThreads();
-		}
-		otherState.setEverythingDirty(true);
+		double logHR = super.proposal();
 		
 		// Start threading the tree likelihood again
 		if (unthreadInput.get()) {
@@ -292,52 +265,13 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 			}
 		}
 		
+		return logHR;
 		
-		return Double.POSITIVE_INFINITY;
 	}
 
-    class CoreRunnable implements Runnable {
-        MCMC mcmc;
 
-        CoreRunnable(MCMC core) {
-        	mcmc = core;
-        }
 
-        @Override
-		public void run() {
-            try {
-            	mcmc.run();
-            } catch (Exception e) {
-                Log.err.println("Something went wrong in a calculation of " + mcmc.getID());
-                e.printStackTrace();
-                System.exit(1);
-            }
-            countDown.countDown();
-        }
-
-    } // CoreRunnable
-
-    private void proposeUsingThreads() {
-        try {
-
-            countDown = new CountDownLatch(mcmcs.size());
-            // kick off the threads
-            for (MCMC mcmc : mcmcs) {
-                CoreRunnable coreRunnable = new CoreRunnable(mcmc);
-                exec.execute(coreRunnable);
-            }
-            countDown.await();
-        } catch (RejectedExecutionException | InterruptedException e) {
-            Log.err.println("Stop using threads: " + e.getMessage());
-        }
-    }
     
-    @Override
-    public List<StateNode> listStateNodes() {
-    	List<StateNode> stateNodes = new ArrayList<>();
-    	for (ParallelMCMC mcmc : mcmcs) {
-    		stateNodes.addAll(mcmc.startStateInput.get().stateNodeInput.get());
-    	}
-    	return stateNodes;
-    }
+    
+
 }

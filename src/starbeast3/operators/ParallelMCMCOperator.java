@@ -18,7 +18,13 @@ import beast.core.StateNode;
 import beast.core.util.Log;
 
 @Description("Run MCMC on different parts of the model in parallel before combining them in a single Gibbs move")
-public class ParallelMCMCOperator extends Operator implements MultiStepOperator {
+public class ParallelMCMCOperator {
+	
+}
+
+
+/*
+extends Operator implements MultiStepOperator {
 	final public Input<List<ParallelMCMC>> mcmcInput = new Input<>("mcmc", "mcmc specification on a small subset of parameters. "
 			+ "Each mcmc has to be on an independent part of parameter space, for instance, mutation rate moves "
 			+ "for individual partitions.", new ArrayList<>());
@@ -102,3 +108,4 @@ public class ParallelMCMCOperator extends Operator implements MultiStepOperator 
     	return stateNodes;
     }
 }
+*/
