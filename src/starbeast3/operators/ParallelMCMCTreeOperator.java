@@ -49,16 +49,22 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
     final public Input<State> otherStateInput = new Input<>("otherState", "main state containing all statenodes for this analysis");
     final public Input<Boolean> includeRealParametersInput = new Input<>("includeRealParameters", "flag to include Real Parameters for each of the partitions in the analysis", true);
 
+    
+    final public Input<Boolean> unthreadInput = new Input<>("unthread", "flag to convert ThreadedTreeLikelihood back into TreeLikelihood when this is called", false);
+    //final public Input<CompoundDistribution> likelihoodInput = new Input<>("likelihood", "the likelihood", Input.Validate.REQUIRED);
+
+    
     private ExecutorService exec;
     private CountDownLatch countDown;
     private List<ParallelMCMC> mcmcs;
+    private List<ParallelMCMCTreeOperatorTreeDistribution> distributions;
     private State otherState;
     private long chainLength;
     private int nrOfThreads;
     
 	@Override
 	public void initAndValidate() {
-		List<ParallelMCMCTreeOperatorTreeDistribution> distributions = distributionInput.get();
+		this.distributions = distributionInput.get();
 		
 		if (distributions.isEmpty()) {
 			throw new IllegalArgumentException("Please provide at least one 'distribution'");
@@ -69,7 +75,9 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 		 nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
 				BeastMCMC.m_nThreads;
-		nrOfThreads = Math.max(nrOfThreads, distributions.size());
+		nrOfThreads = Math.min(nrOfThreads, distributions.size());
+		Log.warning("Running " + this.getID() + " with " + this.nrOfThreads + " threads");
+		//System.exit(1);
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
 	    mcmcs = new ArrayList<>();
 	    
@@ -89,7 +97,7 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 	    	//System.out.println("patterns " + d.getNumberPatterns());
 	    	balancedDistributions.get(threadNum).add(d);
 	    	threadNum++;
-	    	if (threadNum > nrOfThreads) threadNum = 0;
+	    	if (threadNum >= nrOfThreads) threadNum = 0;
 	    }
 	    
 	    
@@ -242,14 +250,49 @@ public class ParallelMCMCTreeOperator extends Operator implements MultiStepOpera
 		state.initByName("stateNode", stateNodes);
 
 		ParallelMCMC mcmc = new ParallelMCMC();
-		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength);
+		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false);
 		return mcmc;
 	}
 
 	@Override
 	public double proposal() {
-		proposeUsingThreads();
+		
+		
+		// Stop threading the tree likelihood
+		//boolean wasThreading = this.likelihoodInput.get().useThreads();
+		if (unthreadInput.get()) {
+			//this.likelihoodInput.get().useThreads(false);
+			for (ParallelMCMCTreeOperatorTreeDistribution distr : this.distributions) {
+				//Log.warning("Threading off");
+				//distr.stopThreading();
+				
+			}
+		}
+		
+		
+		// Do not waste time creating threads if there is only 1 thread
+		if (this.mcmcs.size() == 1) {
+			try {
+				this.mcmcs.get(0).run();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else {
+			proposeUsingThreads();
+		}
 		otherState.setEverythingDirty(true);
+		
+		// Start threading the tree likelihood again
+		if (unthreadInput.get()) {
+			//this.likelihoodInput.get().useThreads(wasThreading);
+			for (ParallelMCMCTreeOperatorTreeDistribution distr : this.distributions) {
+				//Log.warning("Threading on");
+				//distr.startThreading();
+			}
+		}
+		
+		
 		return Double.POSITIVE_INFINITY;
 	}
 

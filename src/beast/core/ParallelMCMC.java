@@ -23,7 +23,12 @@ import beast.util.Randomizer;
 @Description("Implements MCMC without logging, or resume and suppresses all screen output. Used for ParallelMCMCOperator.")
 public class ParallelMCMC extends MCMC {
 	
+	
+	final public Input<Boolean> robustInput = new Input<>("robust", "whether to periodically robustly recalculate posterior", true);
+	
     private long sampleCount = 0;
+    private boolean robust;
+    
 
 	public void setOtherState(State otherState) {
 		this.otherState = otherState;
@@ -33,6 +38,11 @@ public class ParallelMCMC extends MCMC {
 		loggersInput.setRule(Validate.OPTIONAL);
 		startStateInput.setRule(Validate.REQUIRED);
 	}
+	
+	public void setLogPosterior(double logP) {
+		this.oldLogLikelihood = logP;
+	}
+	
 
     private static boolean printDebugInfo = false;
 
@@ -41,6 +51,7 @@ public class ParallelMCMC extends MCMC {
     
     @Override
     public void initAndValidate() {
+    	this.robust = robustInput.get();
     	state = startStateInput.get();
     	otherStateNr = new int[state.stateNodeInput.get().size()];
     	
@@ -185,7 +196,7 @@ public class ParallelMCMC extends MCMC {
         for (long sampleNr = sampleCount; sampleNr <= chainLength + sampleCount; sampleNr++) {
             final Operator operator = propagateState(sampleNr);
 
-            if (debugFlag && sampleNr % 3 == 0 || sampleNr % 10000 == 0) {
+            if (this.robust && (debugFlag && sampleNr % 3 == 0 || sampleNr % 10000 == 0)) {
                 // check that the posterior is correctly calculated at every third
                 // sample, as long as we are in debug mode
             	final double originalLogP = isStochastic ? posterior.getNonStochasticLogP() : oldLogLikelihood;

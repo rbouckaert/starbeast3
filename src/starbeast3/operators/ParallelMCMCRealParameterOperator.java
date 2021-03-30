@@ -2,6 +2,7 @@ package starbeast3.operators;
 
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import beast.app.BeastMCMC;
 import beast.core.BEASTInterface;
@@ -46,6 +51,9 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 	final public Input<CompoundDistribution> distributionInput = new Input<>("distribution", 
 			"compound distribution of all likelihoods",
 			Validate.REQUIRED);
+	
+	
+	//final public Input<CompoundDistribution> posteriorInput = new Input<>("posterior", "the posterior distribution", Validate.REQUIRED);
 	
     final public Input<Integer> maxNrOfThreadsInput = new Input<>("threads","maximum number of threads to use, if "
     		+ "less than 1 the number of threads in BeastMCMC is used (default -1)", -1);
@@ -203,7 +211,7 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 		state.initByName("stateNode", stateNodes);
 		
 		ParallelMCMC mcmc = new ParallelMCMC();
-		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength);
+		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false);
 		return mcmc;
 	}
 
@@ -242,7 +250,27 @@ public class ParallelMCMCRealParameterOperator extends Operator implements Multi
 
 	@Override
 	public double proposal() {
-		proposeUsingThreads();
+		
+		// Set the current posterior so the mcmcs dont have to recalcuate it
+		//double logP = this.posteriorInput.get().calculateLogP();
+		///for (ParallelMCMC mcmc : this.mcmcs) {
+			//mcmc.setLogPosterior(logP);
+		//}
+		
+		// Do not waste time creating threads if there is only 1 thread
+		if (this.mcmcs.size() == 1) {
+			try {
+				this.mcmcs.get(0).run();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else {
+			proposeUsingThreads();
+		}
+		
+		
+		
         for (int i = 0; i < otherState.stateNodeInput.get().size(); i++) {
         	otherState.getStateNode(i).index = i;
         }
