@@ -1,6 +1,7 @@
 package starbeast3.operators;
 
 import beast.core.Description;
+import beast.core.OperatorScheduleRecalculator;
 import beast.core.util.Log;
 import beast.util.Randomizer;
 
@@ -13,6 +14,7 @@ public class ParallelMCMCThreadLearner {
 	boolean burnedin;
 	
 	MultiStepOperator operator;
+	OperatorScheduleRecalculator schedule;
 	
 	long numStatesWhenThreading;
 	double meanRuntimeWhenThreading;
@@ -35,8 +37,9 @@ public class ParallelMCMCThreadLearner {
 	 * @param maxNrThreads
 	 * @param chainLength
 	 */
-	public ParallelMCMCThreadLearner(MultiStepOperator operator, long chainLength, int burnin) {
+	public ParallelMCMCThreadLearner(MultiStepOperator operator, long chainLength, int burnin, OperatorScheduleRecalculator schedule) {
 		this.operator = operator;
+		this.schedule = schedule;
 		this.numCalls = 0;
 		this.burnin = burnin;
 		this.burnedin = false;
@@ -94,14 +97,21 @@ public class ParallelMCMCThreadLearner {
 		if (this.nSamplesThreading >= this.burnin/2.0 && this.nSamplesNotThreading >= this.burnin/2.0) {
 			
 			// Make a decision on what to use now
-			double threading = this.numStatesWhenThreading / this.meanRuntimeWhenThreading * 1000 * 3600;
-			double notThreading = this.numStatesWhenNotThreading / this.meanRuntimeWhenNotThreading * 1000 * 3600;
+			double threading = this.numStatesWhenThreading / this.meanRuntimeWhenThreading * 3.6;
+			double notThreading = this.numStatesWhenNotThreading / this.meanRuntimeWhenNotThreading * 3.6;
 			if (threading > notThreading) {
-				Log.warning(operator.getID() + " will use threading (" + threading + "states/hr  >  " + notThreading + "states/hr.");
+				Log.warning(operator.getID() + " will use threading (" + threading + " mstates/hr  >  " + notThreading + " mstates/hr.");
 				this.sampledThreads = true;
 			}else {
-				Log.warning(operator.getID() + " will NOT use threading (" + notThreading + " states/hr  >  " + threading + " states/hr.");
+				double newWeight = operator.m_pWeight.get() * this.numStatesWhenThreading;
+				Log.warning(operator.getID() + " will NOT use threading (" + notThreading + " mstates/hr  >  " + threading + " mstates/hr. Reweighting operator to " + newWeight);
 				this.sampledThreads = false;
+				
+				// Increase this operator's weight
+				operator.m_pWeight.set(newWeight);
+				schedule.reweight();
+				
+				
 			}
 			
 			this.operator.useMCMC(this.sampledThreads);

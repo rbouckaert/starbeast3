@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.xml.sax.SAXException;
 
 import beast.core.Description;
@@ -25,10 +26,20 @@ public class ParallelMCMC extends MCMC {
 	
 	
 	final public Input<Boolean> robustInput = new Input<>("robust", "whether to periodically robustly recalculate posterior", true);
+	final public Input<Integer> nregressionInput = new Input<>("nregression", "number of chainLength/runtime samples to make, or 0 for no learning", 0);
 	
     private long sampleCount = 0;
     private boolean robust;
     
+    // Regression
+    private SimpleRegression regression = null;
+    private long initChainLength;
+    private int regressionNr;
+    private boolean doRegression;
+    private boolean finishedRegression;
+    private boolean appliedRegression;
+    private long[] chainLengths;
+    private double[] runtimes;
 
 	public void setOtherState(State otherState) {
 		this.otherState = otherState;
@@ -51,6 +62,19 @@ public class ParallelMCMC extends MCMC {
     
     @Override
     public void initAndValidate() {
+    	
+    	
+    	// Regression for learning chain length
+    	this.doRegression = nregressionInput.get() >= 5;
+    	this.finishedRegression = false;
+    	this.appliedRegression = false;
+    	if (this.doRegression) {
+    		this.initChainLength = Math.max(1, chainLengthInput.get());
+    		this.regressionNr = 0;
+    		this.chainLengths = new long[nregressionInput.get()];
+    		this.runtimes = new double[nregressionInput.get()];
+    	}
+    	
     	this.robust = robustInput.get();
     	state = startStateInput.get();
     	otherStateNr = new int[state.stateNodeInput.get().size()];
@@ -154,6 +178,16 @@ public class ParallelMCMC extends MCMC {
     
     @Override
     public void run() throws IOException, SAXException, ParserConfigurationException {
+    	
+    	// Regression
+    	long startTime = 0;
+    	if (this.doRegression && !this.finishedRegression) {
+    		startTime = System.currentTimeMillis();
+    		chainLength = Randomizer.nextInt((int)(5*this.initChainLength));
+    		this.chainLengths[this.regressionNr] = chainLength;
+    	}
+    	
+    	
         // set up state (again). Other beastObjects may have manipulated the
         // StateNodes, e.g. set up bounds or dimensions
         state.initAndValidate();
@@ -169,8 +203,23 @@ public class ParallelMCMC extends MCMC {
         debugFlag = Boolean.valueOf(System.getProperty("beast.debug"));
 
         doLoop();
+        
+        // Log the runtime
+        if (this.doRegression && !this.finishedRegression) {
+        	long runTime = System.currentTimeMillis() - startTime;
+        	this.runtimes[this.regressionNr] = runTime;
+        	this.regressionNr++;
+        	if (this.regressionNr >= this.runtimes.length) {
+        		this.finishedRegression = true;
+        		this.trainRegression();
+        	}
+        }
+        
     } // run;
 
+    
+    
+    
 
     /**
      * main MCMC loop 
@@ -349,4 +398,86 @@ public class ParallelMCMC extends MCMC {
     	return Math.abs(logLikelihood - originalLogP) > 1e-6;
 	}
 
+    
+    /**
+     * Has regression finished?
+     * @return
+     */
+    public boolean finishedRegression() {
+    	return this.finishedRegression;
+    }
+    
+    
+    /**
+     * Is regression being applied?
+     * @return
+     */
+    public boolean isDoingRegression() {
+    	return this.doRegression;
+    }
+    
+    
+    public double getRuntimeSlope() {
+    	if (regression == null) return 0;
+    	return regression.getSlope();
+    }
+    
+    
+    public double getRuntimeIntercept() {
+    	if (regression == null) return 0;
+    	return regression.getIntercept();
+    }
+    
+    
+    /**
+     * Train the runtime vs chainLength model
+     */
+    private void trainRegression() {
+    	
+    	// Train the model
+    	regression = new SimpleRegression();
+    	for (int i = 0; i < Math.min(this.regressionNr, runtimes.length); i ++) {
+    		regression.addData(this.chainLengths[i]*1.0, this.runtimes[i]);
+    	}
+    	regression.regress();
+    }
+    
+    /**
+     * Use the regression model to predict runtime from chainLength
+     * @return
+     */
+    public double predict(long chainLen) {
+    	if (regression == null) return 0;
+    	return regression.predict(1.0*chainLen);
+    }
+    
+    
+    
+    /**
+     * Apply the learned linear model between runtime and number of states
+     * By setting the chain length such that the mean runtime is 'targetRuntime'
+     */
+    public void applyRegression(double targetRuntime) {
+    	
+    	if (this.appliedRegression) return;
+    	if (!this.finishedRegression) return;
+    	if (!this.doRegression) return;
+    	
+    	if (this.regression == null) this.trainRegression();
+    	
+    	// Print it
+    	double slope = regression.getSlope();
+    	double intercept = regression.getIntercept();
+    	double r2 = regression.getR();
+    	Log.warning("Trained model: runtime(ms) = " + intercept + " + " + slope + "*chainLength\t\t(R2=" + r2 + ")");
+    	
+    	// Apply it
+    	long targetChainlength = (long)((targetRuntime - intercept) / slope);
+    	this.chainLength = targetChainlength;
+    	Log.warning("Setting chain length to " + this.chainLength);
+    	
+    	this.appliedRegression = true;
+    	
+    }
+    
 }

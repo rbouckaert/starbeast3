@@ -97,11 +97,12 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	    }
 	    
 	    
+	    
 	    // Create mcmc objects
 	    start = 0;
 	    for (int i = 0; i < nrOfThreads; i++) {
 	    	int end = (i + 1) * distributions.size() / nrOfThreads;
-	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), chainLength / this.nrOfThreads, tabu));
+	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), (int)(1.0*chainLength / this.nrOfThreads), tabu));
 	    	start = end;
 	    }
 	    
@@ -110,6 +111,8 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	    }
 	    
 	    
+	  
+	    
 	    // 1 thread and 1 chain mode
 	    if (learningInput.get() || (this.mcmcs.size() == 1 && chainLength == 1)) {
 	    	ParallelMCMC mcmc;
@@ -117,6 +120,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	    	else mcmc = createParallelMCMC(distributions, chainLength, new HashSet<>());
 	    	this.singleStepOperators = mcmc.operatorsInput.get();
 	    }
+	    
 	    
 	    super.initAndValidate();
 	}
@@ -183,19 +187,21 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		}
 		
 		
-		
-
-	    
-		
 		CompoundDistribution sampleDistr = new CompoundDistribution();
 		sampleDistr.initByName("distribution", distrs);
 		
 		State state = new State();
 		state.initByName("stateNode", stateNodes);
 		
+		
+		// Learn the chain length
+		int nregression = this.nrOfThreads > 1 ? nregressionInput.get() : 0;
+
+		
 		ParallelMCMC mcmc = new ParallelMCMC();
-		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false);
+		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false, "nregression", nregression);
 		return mcmc;
+		
 	}
 
 	private void getRealParameterPriors(Set<StateNode> stateNodeList, List<Distribution> priorsList) {
@@ -203,7 +209,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 			for (BEASTInterface o : sn.getOutputs()) {
 				if (o instanceof Distribution) {
 					for (BEASTInterface o2 : o.getOutputs()) {
-						if (o2.getID().equals("prior")) {
+						if (o2.getID() != null && o2.getID().equals("prior")) {
 							priorsList.add((Distribution) o);
 						}
 					}

@@ -10,6 +10,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
+import beast.core.OperatorScheduleRecalculator;
 import beast.core.ParallelMCMC;
 import beast.core.State;
 import beast.core.StateNode;
@@ -38,6 +39,10 @@ public abstract class MultiStepOperator extends Operator {
     
     final public Input<Boolean> learningInput =  new Input<>("learning", "Learn whether to parallelise (n threads) or not (1 thread 1 operator)", true);
     final public Input<Integer> burninInput =  new Input<>("burnin", "How many operator calls before thread learning kicks in", 10000);
+    final public Input<OperatorScheduleRecalculator> scheduleInput =  new Input<>("schedule", "Operator schedule (if learning is applied)");
+    
+    final public Input<Integer> nregressionInput =  new Input<>("nregression", "Number of MCMC chainLengths vs runtimes to sample in order to learn chainLengths, for load"
+    		+ " balancing. Set to <5 to skip the training.", 2000);
     
       //final public Input<CompoundDistribution> likelihoodInput = new Input<>("likelihood", "the likelihood", Input.Validate.REQUIRED);
 
@@ -57,6 +62,11 @@ public abstract class MultiStepOperator extends Operator {
     protected ParallelMCMCThreadLearner learner;
     protected List<Operator> singleStepOperators;
     protected double[] operatorProbs;
+    
+    
+    // Regression
+    boolean doRegression;
+    boolean appliedRegression;
 	
 	/** number of steps to be performed by operator **/
 	public int stepCount() {
@@ -71,12 +81,26 @@ public abstract class MultiStepOperator extends Operator {
 	@Override
 	public void initAndValidate() {
 		
+		// Doing regression on chainlengths?
+		if (nregressionInput.get() >= 5 && this.mcmcs.size() > 1) {
+			this.doRegression = true;
+		}else {
+			this.doRegression = false;
+		}
+		this.appliedRegression = false;
+		
+		
 		this.useMCMC = true;
 		
 		// 1 thread and 1 chain mode
 	    if (learningInput.get()) {
 	    	
-	    	this.learner = new ParallelMCMCThreadLearner(this, chainLength, burninInput.get());
+	    	
+	    	if (scheduleInput.get() == null) {
+	    		throw new IllegalArgumentException("Please provide an operator schedule (or set learning=false)");
+	    	}
+	    	
+	    	this.learner = new ParallelMCMCThreadLearner(this, chainLength, burninInput.get(), this.scheduleInput.get());
 	    	
 			this.operatorProbs = new double[this.singleStepOperators.size()];
 	    	double weightSum = 0;
@@ -92,6 +116,61 @@ public abstract class MultiStepOperator extends Operator {
 	    }
 		  
 	}
+	
+	
+	@Override 
+	public void accept() {
+		train();
+	}
+	
+	@Override 
+	public void reject() {
+		train();
+	}
+	
+	@Override 
+	public void reject(int reasonNr) {
+		train();
+	}
+	
+	
+	/**
+	 * Update thread learning and chainLength learning
+	 */
+	private void train() {
+		
+		// The thread learner will cache what it has learned
+		if (this.learner != null) this.learner.stop();
+		
+		// Regression model
+		if (!this.appliedRegression && this.doRegression && this.mcmcs.get(0).finishedRegression()) {
+			
+			// Find the slowest thread, by runtime vs chainlength slope
+			int slowestThread = 0;
+			double slowestSlope = this.mcmcs.get(0).getRuntimeSlope();
+			for (int i = 1; i < this.mcmcs.size(); i ++) {
+				double slope = this.mcmcs.get(i).getRuntimeSlope();
+				if (slope > slowestSlope) {
+					slowestThread = i;
+					slowestSlope = slope;
+				}
+			}
+			double targetRuntime = this.mcmcs.get(slowestThread).predict(this.chainLength / this.nrOfThreads);
+			Log.warning("Want all mcmcs to have a runtime of " + targetRuntime + ". This is the average runtime of thread " + slowestThread);
+			
+			// Set the chainLength of all chains to match it
+			for (ParallelMCMC mcmc : this.mcmcs) {
+				mcmc.applyRegression(targetRuntime);
+			}
+			
+		
+			this.appliedRegression = true;
+			
+		}
+		
+	}
+	
+	
 	
 	@Override
 	public double proposal() {
@@ -133,8 +212,7 @@ public abstract class MultiStepOperator extends Operator {
 		}
 		
 		
-		// The learner will cache what it has learned
-		if (this.learner != null) this.learner.stop();
+		
 
 		return logHR;
 		

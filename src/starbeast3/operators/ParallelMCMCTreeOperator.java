@@ -95,7 +95,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    
 	    // Create parallel MCMCs
 	    for (int i = 0; i < nrOfThreads; i++) {
-	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), chainLength / this.nrOfThreads));
+	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), (int)(1.0*chainLength / this.nrOfThreads)));
 	    }
 	    
 
@@ -166,7 +166,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				UniformOperator.initByName("tree", d.tree, "weight", 30.0);
 				operators.add(UniformOperator);
 //		    	<operator id="SubtreeSlide.t:$(n)" spec="SubtreeSlide" tree="@Tree.t:$(n)" weight="15.0"/>
-				SubtreeSlide SubtreeSlide = new SubtreeSlide();
+				beast.evolution.operators.SubtreeSlide SubtreeSlide = new beast.evolution.operators.SubtreeSlide();
 				SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
 				operators.add(SubtreeSlide);
 			}
@@ -234,9 +234,13 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		
 		State state = new State();
 		state.initByName("stateNode", stateNodes);
+		
+		
+		// Learn the chain length
+		int nregression = this.nrOfThreads > 1 ? nregressionInput.get() : 0;
 
 		ParallelMCMC mcmc = new ParallelMCMC();
-		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false);
+		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false, "nregression", nregression);
 		return mcmc;
 	}
 
