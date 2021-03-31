@@ -43,6 +43,11 @@ public abstract class MultiStepOperator extends Operator {
     
     final public Input<Integer> nregressionInput =  new Input<>("nregression", "Number of MCMC chainLengths vs runtimes to sample in order to learn chainLengths, for load"
     		+ " balancing. Set to <5 to skip the training.", 2000);
+    final public Input<Double> targetCPUInput =  new Input<>("targetCPU", "Proportion of threads allocated (if > 1) that should be spent on MCMC, as opposed to overhead."
+    		+ "Larger targetCPU will mean longer chains and lower operator weight. If targetCPU=0, then the load balancing will match the slowest thread. Set nregression=0 to omit this step.", 0.8);
+    final public Input<Double> targetWeightInput =  new Input<>("targetWeight", "Target effective weight of this operator, to be learned if regression is applied."
+    		+ " The effective weight is the operator weight * chainLength sum. Set this to 0 (or nregression=0) to omit this step.", 0.0);
+    
     
       //final public Input<CompoundDistribution> likelihoodInput = new Input<>("likelihood", "the likelihood", Input.Validate.REQUIRED);
 
@@ -87,6 +92,9 @@ public abstract class MultiStepOperator extends Operator {
 		// Doing regression on chainlengths?
 		if (nregressionInput.get() >= 5 && this.mcmcs.size() > 1) {
 			this.doRegression = true;
+			if (targetCPUInput.get() >= 1) {
+				throw new IllegalArgumentException("targetCPU must be less than 1");
+			}
 		}else {
 			this.doRegression = false;
 		}
@@ -162,14 +170,62 @@ public abstract class MultiStepOperator extends Operator {
 					slowestSlope = slope;
 				}
 			}
-			double targetRuntime = this.mcmcs.get(slowestThread).predict(this.chainLength / this.nrOfThreads);
-			Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + ". This is the average runtime of thread " + (1+slowestThread));
 			
-			// Set the chainLength of all chains to match it
-			for (ParallelMCMC mcmc : this.mcmcs) {
-				mcmc.applyRegression(targetRuntime);
+			
+			double targetRuntime;
+			
+			
+			// Set the runtime of the slowest thread to match the user-specified CPU use
+			if (targetCPUInput.get() > 0) {
+				
+				// The overhead proportion must be less than this value to justify using this many threads
+				// eg. if there are 2 threads, then we must make sure that less than 50% of the thread time goes to overhead
+				double maximumOverhead = (this.nrOfThreads-1.0) / this.nrOfThreads;
+				
+				// If we are to use targetCPU of the additional threads (beyond the first one), then this should be the overhead proportion
+				// eg. if there are 3 threads, then targetCPU=0.5 would mean that overhead should be 1/3
+				double targetOverhead = maximumOverhead * (1 - targetCPUInput.get());
+				
+				
+				// Set the target runtime such that the target overhead is attained for this thread (the slowest thread)
+				double slope = this.mcmcs.get(slowestThread).getRuntimeSlope();
+				double intercept = this.mcmcs.get(slowestThread).getRuntimeIntercept();
+				int targetChainLength = (int)((intercept/targetOverhead - intercept) / slope);
+				targetChainLength = Math.max(targetChainLength, 1);
+				targetRuntime = this.mcmcs.get(slowestThread).predict(targetChainLength);
+				Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + "ms. This will give the slowest thread (thread " + (1+slowestThread) + ") "
+						+ "an overhead of " + (targetOverhead*100) + "%");
+
 			}
 			
+			// Set the runtime of the slowest thread to match the user-specified chain length
+			else {
+				targetRuntime = this.mcmcs.get(slowestThread).predict(this.chainLength / this.nrOfThreads);
+				Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + "ms. This is the average runtime of thread " + (1+slowestThread));
+			}
+			
+			
+			// Set the runtime of all chains to that of the slowest
+			for (ParallelMCMC mcmc : this.mcmcs) {
+				mcmc.setChainlengthToTargetRuntime(targetRuntime);
+			}
+			
+			
+			
+			// Adjust the weight of this operator, such that the new weight is equal to the effective weight divided by the chainLength sum
+			if (targetWeightInput.get() > 0) {
+				
+				long chainLengthSum = 0;
+				for (ParallelMCMC mcmc : this.mcmcs) {
+					chainLengthSum += mcmc.getChainLength();
+				}
+				double newWeight = targetWeightInput.get() / chainLengthSum;
+				Log.warning(this.getID() + ": setting operator weight to " + newWeight + " to attain an effective weight of " + targetWeightInput.get());
+				this.m_pWeight.set(newWeight);
+				this.scheduleInput.get().reweight();
+				
+			}
+
 		
 			this.appliedRegression = true;
 			

@@ -1,6 +1,8 @@
 package beast.core;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashSet;
 import java.util.List;
 
@@ -457,7 +459,7 @@ public class ParallelMCMC extends MCMC {
      * Apply the learned linear model between runtime and number of states
      * By setting the chain length such that the mean runtime is 'targetRuntime'
      */
-    public void applyRegression(double targetRuntime) {
+    public void setChainlengthToTargetRuntime(double targetRuntime) {
     	
     	if (this.appliedRegression) return;
     	if (!this.finishedRegression) return;
@@ -465,19 +467,51 @@ public class ParallelMCMC extends MCMC {
     	
     	if (this.regression == null) this.trainRegression();
     	
-    	// Print it
+    	
     	double slope = regression.getSlope();
     	double intercept = regression.getIntercept();
-    	double r2 = regression.getR();
-    	Log.warning("Trained model: runtime(ms) = " + intercept + " + " + slope + "*chainLength\t\t(R2=" + r2 + ")");
     	
-    	// Apply it
+    	
+    	// Apply the model
     	long targetChainlength = (long)((targetRuntime - intercept) / slope);
     	this.chainLength = Math.max(1, targetChainlength);
     	Log.warning("Setting chain length to " + this.chainLength);
     	
+    	
+    	
+    	// Print the model
+    	double r2 = regression.getR();
+    	Log.warning("Trained model: runtime(ms) = " + sf(intercept) + " + " + sf(slope) + "*chainLength\t\t(R2=" + sf(r2) + ")");
+    	
+    	
+    	
     	this.appliedRegression = true;
     	
     }
+    
+    
+    /**
+     * Round to to 3sf
+     * @param d
+     * @return
+     */
+    private double sf(double d) {
+    	BigDecimal bd = new BigDecimal(d);
+    	bd = bd.round(new MathContext(3));
+    	return bd.doubleValue();
+    }
+
+    
+    /**
+     * Get the chain length
+     * @return
+     */
+	public long getChainLength() {
+		return this.chainLength;
+	}
+    
+    
+    
+    
     
 }
