@@ -54,7 +54,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		
 	    otherState = otherStateInput.get();
 		 
-		 nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
+		nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
 				BeastMCMC.m_nThreads;
 		nrOfThreads = Math.min(nrOfThreads, distributions.size());

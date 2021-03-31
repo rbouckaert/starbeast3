@@ -38,7 +38,7 @@ public abstract class MultiStepOperator extends Operator {
 
     
     final public Input<Boolean> learningInput =  new Input<>("learning", "Learn whether to parallelise (n threads) or not (1 thread 1 operator)", true);
-    final public Input<Integer> burninInput =  new Input<>("burnin", "How many operator calls before thread learning kicks in", 10000);
+    final public Input<Integer> burninInput =  new Input<>("burnin", "How many operator calls before thread learning kicks in. Learning will begin after chainLength regression.", 10000);
     final public Input<OperatorScheduleRecalculator> scheduleInput =  new Input<>("schedule", "Operator schedule (if learning is applied)");
     
     final public Input<Integer> nregressionInput =  new Input<>("nregression", "Number of MCMC chainLengths vs runtimes to sample in order to learn chainLengths, for load"
@@ -63,6 +63,9 @@ public abstract class MultiStepOperator extends Operator {
     protected List<Operator> singleStepOperators;
     protected double[] operatorProbs;
     
+    
+    // Thread learning
+    boolean learnThreads;
     
     // Regression
     boolean doRegression;
@@ -95,6 +98,9 @@ public abstract class MultiStepOperator extends Operator {
 		// 1 thread and 1 chain mode
 	    if (learningInput.get()) {
 	    	
+	    	// Learn after regression
+	    	this.learnThreads = !this.doRegression;
+	    	
 	    	
 	    	if (scheduleInput.get() == null) {
 	    		throw new IllegalArgumentException("Please provide an operator schedule (or set learning=false)");
@@ -112,6 +118,7 @@ public abstract class MultiStepOperator extends Operator {
 	    		this.operatorProbs[i] = cumSum;
 	    	}
 	    }else {
+	    	this.learnThreads = false;
 	    	this.learner = null;
 	    }
 		  
@@ -140,7 +147,7 @@ public abstract class MultiStepOperator extends Operator {
 	private void train() {
 		
 		// The thread learner will cache what it has learned
-		if (this.learner != null) this.learner.stop();
+		if (this.learnThreads) this.learner.stop();
 		
 		// Regression model
 		if (!this.appliedRegression && this.doRegression && this.mcmcs.get(0).finishedRegression()) {
@@ -156,7 +163,7 @@ public abstract class MultiStepOperator extends Operator {
 				}
 			}
 			double targetRuntime = this.mcmcs.get(slowestThread).predict(this.chainLength / this.nrOfThreads);
-			Log.warning("Want all mcmcs to have a runtime of " + targetRuntime + ". This is the average runtime of thread " + slowestThread);
+			Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + ". This is the average runtime of thread " + (1+slowestThread));
 			
 			// Set the chainLength of all chains to match it
 			for (ParallelMCMC mcmc : this.mcmcs) {
@@ -165,6 +172,10 @@ public abstract class MultiStepOperator extends Operator {
 			
 		
 			this.appliedRegression = true;
+			
+			
+			// Can start learning threads now that the chain lengths have optimised
+			if (this.learner != null) this.learnThreads = true;
 			
 		}
 		
@@ -178,7 +189,7 @@ public abstract class MultiStepOperator extends Operator {
 		double logHR;
 	
 		// The learner will sample whether MCMC is run or not
-		if (this.learner != null) this.learner.start();
+		if (this.learnThreads) this.learner.start();
 		
 		// Do not waste time creating a whole mcmc chain if it has only 1 step
 		if (!this.useMCMC) {

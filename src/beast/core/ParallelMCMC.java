@@ -473,7 +473,7 @@ public class ParallelMCMC extends MCMC {
     	
     	// Apply it
     	long targetChainlength = (long)((targetRuntime - intercept) / slope);
-    	this.chainLength = targetChainlength;
+    	this.chainLength = Math.max(1, targetChainlength);
     	Log.warning("Setting chain length to " + this.chainLength);
     	
     	this.appliedRegression = true;
