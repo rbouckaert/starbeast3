@@ -26,7 +26,8 @@ import beast.util.Transform;
 public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	
     final public Input<Boolean> useBactrianOperatorsInput = new Input<>("bactrian", "flag to indicate that bactrian operators should be used where possible", true);
-	
+    final public Input<Boolean> includeRealParametersInput = new Input<>("includeRealParameters", "flag to include Real Parameters for each of the partitions in the analysis", true);
+
 	final public Input<List<ParallelMCMCTreeOperatorTreeDistribution>> distributionInput = new Input<>("distribution", 
 			"Distribution on a tree conditinionally independent from all other distributions given the state of the rest"
 			+ "of parameter space. ",
@@ -247,28 +248,32 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	@Override
 	public double proposal() {
 		
+		
+		/*
 		// Stop threading the tree likelihood
 		//boolean wasThreading = this.likelihoodInput.get().useThreads();
-		if (unthreadInput.get()) {
+		if ((this.appliedRegression || !this.doRegression) && unthreadInput.get()) {
 			//this.likelihoodInput.get().useThreads(false);
 			for (ParallelMCMCTreeOperatorTreeDistribution distr : this.distributions) {
 				//Log.warning("Threading off");
-				//distr.stopThreading();
+				distr.stopThreading();
 				
 			}
 		}
-		
+		*/
 		double logHR = super.proposal();
 		
+		
+		/*
 		// Start threading the tree likelihood again
-		if (unthreadInput.get()) {
+		if ((this.appliedRegression || !this.doRegression) && unthreadInput.get()) {
 			//this.likelihoodInput.get().useThreads(wasThreading);
 			for (ParallelMCMCTreeOperatorTreeDistribution distr : this.distributions) {
 				//Log.warning("Threading on");
-				//distr.startThreading();
+				distr.startThreading();
 			}
 		}
-		
+		*/
 		return logHR;
 		
 	}

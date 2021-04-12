@@ -31,6 +31,7 @@ public class MetaTreeLikelihood extends TreeLikelihood {
 				 						"branchRateModel", this.branchRateModelInput.get());
 		 */
 		 this.usingThreads = false;
+		 
 		 if (BeastMCMC.m_nThreads == 1) this.usingThreads = false;
 		 
 	}
@@ -48,7 +49,6 @@ public class MetaTreeLikelihood extends TreeLikelihood {
 		if (this.usingThreads) return;
 		this.usingThreads = true;
 		
-		//this.threadedLikelihood.has
 		super.store();
 		
 	}
@@ -61,8 +61,6 @@ public class MetaTreeLikelihood extends TreeLikelihood {
 		if (!this.usingThreads) return;
 		this.usingThreads = false;
 		
-		//this.hasDirt = 1;
-		//this.calculateLogP();
 		
 		this.threadedLikelihood.store();
 		

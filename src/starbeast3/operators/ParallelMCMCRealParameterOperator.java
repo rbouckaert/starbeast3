@@ -69,19 +69,25 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	    	start = end;
 	    }
 	    
-	    // 2. determine overlaps in potential state nodes per thread
-	    int totalDim = 0;
+	    // 2. determine overlaps in potential state nodes per thread, and count dimensions
 	    Set<StateNode> tabu = new HashSet<>();
-	    for (int i = 0; i < nrOfThreads; i++) {
-	    	for (int j = i + 1; j < nrOfThreads; j++) {
-	    		for (StateNode s : stateNodes[i]) {
-	    			if (stateNodes[j].contains(s)) {
-	    				tabu.add(s);
-	    			}else {
-	    				totalDim += s.getDimension();
-	    			}
-	    		}
+	    int totalDim = 0;
+	    if (nrOfThreads == 1) {
+	    	for (StateNode s : stateNodes[0]) {
+	    		totalDim += s.getDimension();
 	    	}
+	    }else {
+		    for (int i = 0; i < nrOfThreads; i++) {
+		    	for (int j = i + 1; j < nrOfThreads; j++) {
+		    		for (StateNode s : stateNodes[i]) {
+		    			if (stateNodes[j].contains(s)) {
+		    				tabu.add(s);
+		    			}else {
+		    				totalDim += s.getDimension();
+		    			}
+		    		}
+		    	}
+		    }
 	    }
 
 	    

@@ -34,7 +34,6 @@ public abstract class MultiStepOperator extends Operator {
     		+ "less than 1 the number of threads in BeastMCMC is used (default -1)", -1);
 
     final public Input<State> otherStateInput = new Input<>("otherState", "main state containing all statenodes for this analysis");
-    final public Input<Boolean> includeRealParametersInput = new Input<>("includeRealParameters", "flag to include Real Parameters for each of the partitions in the analysis", true);
 
     
     final public Input<Boolean> learningInput =  new Input<>("learning", "Learn whether to parallelise (n threads) or not (1 thread 1 operator)", true);
@@ -248,7 +247,7 @@ public abstract class MultiStepOperator extends Operator {
 		if (this.learnThreads) this.learner.start();
 		
 		// Do not waste time creating a whole mcmc chain if it has only 1 step
-		if (!this.useMCMC) {
+		if (!this.useMCMC || (this.mcmcs.size() == 1 && chainLength == 1)) {
 			
 			// Sample operator
 			int opIndex = Randomizer.randomChoice(this.operatorProbs);
