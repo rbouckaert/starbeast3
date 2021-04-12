@@ -15,7 +15,6 @@ import beast.core.Description;
 import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.MCMC;
 import beast.core.Operator;
 import beast.core.ParallelMCMC;
 import beast.core.State;
@@ -153,10 +152,9 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 				stateNodes.addAll(stateNodeSet);
 				
 				
-				
-				List<Distribution> priorsList = new ArrayList<>();
-				getRealParameterPriors(stateNodeSet, priorsList);
-				distrs.addAll(priorsList);			
+				Set<Distribution> priorsSet = new HashSet<>();
+				getRealParameterPriors(stateNodeSet, priorsSet);
+				distrs.addAll(priorsSet);			
 				
 				int dim = 0;
 				for (StateNode s : stateNodeSet) {
@@ -210,18 +208,24 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		
 	}
 
-	private void getRealParameterPriors(Set<StateNode> stateNodeList, List<Distribution> priorsList) {
+	private void getRealParameterPriors(Set<StateNode> stateNodeList, Set<Distribution> priorsList) {
 		for (StateNode sn : stateNodeList) {
 			for (BEASTInterface o : sn.getOutputs()) {
 				if (o instanceof Distribution) {
-					for (BEASTInterface o2 : o.getOutputs()) {
-						if (o2.getID() != null && o2.getID().equals("prior")) {
-							priorsList.add((Distribution) o);
-						}
-					}
-				}				
+					getRealParameterPriors(o, (Distribution) o, priorsList);
+				}
 			}
 		}		
+	}
+
+	private void getRealParameterPriors(BEASTInterface o, Distribution distr, Set<Distribution> priorsList) {
+		for (BEASTInterface o2 : o.getOutputs()) {
+			if (o2.getID() != null && o2.getID().equals("prior")) {
+				priorsList.add(distr);
+				break;
+			}
+			getRealParameterPriors(o2, distr, priorsList);
+		}
 	}
 
 	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, Set<StateNode> stateNodes) {
