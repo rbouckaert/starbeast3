@@ -194,11 +194,16 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				}
 				
 				List<Transform> transformations = new ArrayList<>();
+				
+				// Add the tree
+				Transform f = new Transform.LogTransform(d.tree);
+				transformations.add(f);
+				Log.warning("Adding " + d.getID());
+				
 				for (StateNode s : stateNodeList) {
 					
 					Log.warning("Adding " + s.getID());
 					
-					Transform f;
 					// TODO: check priors instead of ID to determine whether it is a
 					// scale parameter
 					// location parameter

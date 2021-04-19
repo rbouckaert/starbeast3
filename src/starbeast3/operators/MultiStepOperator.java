@@ -113,7 +113,7 @@ public abstract class MultiStepOperator extends Operator {
 	    		throw new IllegalArgumentException("Please provide an operator schedule (or set learning=false)");
 	    	}
 	    	
-	    	this.learner = new ParallelMCMCThreadLearner(this, chainLength, burninInput.get(), this.scheduleInput.get());
+	    	this.learner = new ParallelMCMCThreadLearner(this, chainLength, burninInput.get(), this.scheduleInput.get(), this.targetWeightInput.get());
 	    	
 			this.operatorProbs = new double[this.singleStepOperators.size()];
 	    	double weightSum = 0;
@@ -218,6 +218,7 @@ public abstract class MultiStepOperator extends Operator {
 				for (ParallelMCMC mcmc : this.mcmcs) {
 					chainLengthSum += mcmc.getChainLength();
 				}
+				if (this.learnThreads) this.learner.setChainLength(chainLengthSum);
 				double newWeight = targetWeightInput.get() / chainLengthSum;
 				Log.warning(this.getID() + ": setting operator weight to " + newWeight + " to attain an effective weight of " + targetWeightInput.get());
 				this.m_pWeight.set(newWeight);

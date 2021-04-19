@@ -26,6 +26,9 @@ public class ParallelMCMCThreadLearner {
 	long nSamplesNotThreading;
 	
 	
+	
+	double targetWeight; // 0 if no target
+	
 	long startTime;
 	boolean sampledThreads;
 	
@@ -37,7 +40,7 @@ public class ParallelMCMCThreadLearner {
 	 * @param maxNrThreads
 	 * @param chainLength
 	 */
-	public ParallelMCMCThreadLearner(MultiStepOperator operator, long chainLength, int burnin, OperatorScheduleRecalculator schedule) {
+	public ParallelMCMCThreadLearner(MultiStepOperator operator, long chainLength, int burnin, OperatorScheduleRecalculator schedule, double targetWeight) {
 		this.operator = operator;
 		this.schedule = schedule;
 		this.numCalls = 0;
@@ -50,6 +53,12 @@ public class ParallelMCMCThreadLearner {
 		this.nSamplesThreading = 0;
 		this.nSamplesNotThreading = 0;
 		this.sampledThreads = false;
+		this.targetWeight = targetWeight;
+	}
+	
+	
+	public void setChainLength(long chainLength) {
+		this.numStatesWhenThreading = chainLength;
 	}
 	
 	
@@ -104,6 +113,7 @@ public class ParallelMCMCThreadLearner {
 				this.sampledThreads = true;
 			}else {
 				double newWeight = operator.m_pWeight.get() * this.numStatesWhenThreading;
+				if (this.targetWeight > 0) newWeight = this.targetWeight;
 				Log.warning(operator.getID() + " will NOT use threading (" + notThreading + " mstates/hr  >  " + threading + " mstates/hr. Reweighting operator to " + newWeight);
 				this.sampledThreads = false;
 				
