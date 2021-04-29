@@ -109,12 +109,12 @@ public class ParallelMCMCThreadLearner {
 			double threading = this.numStatesWhenThreading / this.meanRuntimeWhenThreading * 3.6;
 			double notThreading = this.numStatesWhenNotThreading / this.meanRuntimeWhenNotThreading * 3.6;
 			if (threading > notThreading) {
-				Log.warning(operator.getID() + " will use threading (" + threading + " mstates/hr  >  " + notThreading + " mstates/hr.");
+				Log.warning(operator.getID() + " will use threading (" + threading + " mstates/hr  >  " + notThreading + " mstates/hr).");
 				this.sampledThreads = true;
 			}else {
 				double newWeight = operator.m_pWeight.get() * this.numStatesWhenThreading;
 				if (this.targetWeight > 0) newWeight = this.targetWeight;
-				Log.warning(operator.getID() + " will NOT use threading (" + notThreading + " mstates/hr  >  " + threading + " mstates/hr. Reweighting operator to " + newWeight);
+				Log.warning(operator.getID() + " will NOT use threading (" + notThreading + " mstates/hr  >  " + threading + " mstates/hr). Reweighting operator to " + newWeight);
 				this.sampledThreads = false;
 				
 				// Increase this operator's weight

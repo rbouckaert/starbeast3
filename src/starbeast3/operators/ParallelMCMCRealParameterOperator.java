@@ -13,6 +13,7 @@ import beast.app.BeastMCMC;
 import beast.core.BEASTInterface;
 import beast.core.Description;
 import beast.core.Distribution;
+import beast.core.Function;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.Operator;
@@ -24,6 +25,8 @@ import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.operators.AdaptableVarianceMultivariateNormalOperator;
+import beast.evolution.operators.DeltaExchangeOperator;
+import beast.evolution.operators.ScaleOperator;
 import beast.evolution.sitemodel.SiteModelInterface;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -169,27 +172,53 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 					// scale parameter
 					// location parameter
 					// simplex parameter
+					
+					//if (s.getID().endsWith("nuclear_genome")) {
+						//continue;
+					//}
+					
 					if (s.getID().startsWith("freq")) {
+						
+						DeltaExchangeOperator op = new DeltaExchangeOperator();
+						op.initByName("parameter", s, "delta", 0.2, "weight", 2.0);
+						operators.add(op);
+						
 						f = new Transform.LogConstrainedSumTransform(s, 1.0);
+						
 					} else {
+						
+	
+						ScaleOperator op = new ScaleOperator();
+						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 1.0);
+						operators.add(op);
+						
 						f = new Transform.LogTransform(s);
 					}
+					
 					transformations.add(f);
+					
 				}
 				
-				AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
-				AVMNOperator.initByName("weight", 1.0, 
-						"coefficient", 1.0, 
-						"scaleFactor", 1.0, 
-						"beta", 0.05, 
-						"every", 1,
-						"initial", 200 * dim, 
-						"burnin", 100 * dim, 
-						"transformations", transformations);
-				operators.add(AVMNOperator);
+				
+				
+				
+				if (!transformations.isEmpty()) {
+					AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
+					AVMNOperator.initByName(
+							"weight", 2.0, 
+							"coefficient", 1.0, 
+							"scaleFactor", 1.0, 
+							"beta", 0.05, 
+							"every", 1,
+							"initial", 200 * dim, 
+							"burnin", 100 * dim, 
+							"transformations", transformations);
+					operators.add(AVMNOperator);
+				}
 			}
 		}
 		
+
 		
 		CompoundDistribution sampleDistr = new CompoundDistribution();
 		sampleDistr.initByName("distribution", distrs);
