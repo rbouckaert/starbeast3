@@ -42,6 +42,10 @@ public class ParallelMCMC extends MCMC {
     private boolean appliedRegression;
     private long[] chainLengths;
     private double[] runtimes;
+    
+    private long targetRuntime = -1;
+    private long numStepsInChain;
+    private long startTime;
 
 	public void setOtherState(State otherState) {
 		this.otherState = otherState;
@@ -178,15 +182,37 @@ public class ParallelMCMC extends MCMC {
     } // init
     
     
+    
+    /**
+     * Run the next chain for this long (or -1 for auto)
+     * @param runtime
+     */
+    public void setRuntime(long runtime) {
+    	this.targetRuntime = runtime;
+    }
+    
+    
     @Override
     public void run() throws IOException, SAXException, ParserConfigurationException {
     	
+    	
     	// Regression
-    	long startTime = 0;
+    	startTime = 0;
     	if (this.doRegression && !this.finishedRegression) {
+    		
     		startTime = System.currentTimeMillis();
-    		chainLength = Randomizer.nextInt((int)(5*this.initChainLength));
-    		this.chainLengths[this.regressionNr] = chainLength;
+    		
+    		// Sample chain length, measure runtime
+    		if (targetRuntime <= 0) {
+	    		chainLength = Randomizer.nextInt((int)(5*this.initChainLength));
+	    		this.chainLengths[this.regressionNr] = chainLength;
+    		}
+    		
+
+    		else {
+    			chainLength = (long) 1e10;
+    		}
+    		
     	}
     	
     	
@@ -208,8 +234,19 @@ public class ParallelMCMC extends MCMC {
         
         // Log the runtime
         if (this.doRegression && !this.finishedRegression) {
+        	
+
         	long runTime = System.currentTimeMillis() - startTime;
         	this.runtimes[this.regressionNr] = runTime;
+        	
+        	
+    		// Sample runtime, measure chain length
+    		if (targetRuntime > 0) {
+    			this.chainLengths[this.regressionNr] = numStepsInChain;
+    			//Log.warning("Observed: " + runTime + "," + numStepsInChain + "(" + this.targetRuntime + ")");
+    		}
+        	
+    		
         	this.regressionNr++;
         	if (this.regressionNr >= this.runtimes.length) {
         		this.finishedRegression = true;
@@ -238,13 +275,25 @@ public class ParallelMCMC extends MCMC {
     		otherStateNr[index] = stateNode.index;
         	stateNode.index = index++;
     	}
-        oldLogLikelihood = robustlyCalcPosterior(posterior);
+        oldLogLikelihood =  posterior.calculateLogP();
+        //oldLogLikelihood = robustlyCalcPosterior(posterior);
         
         if (burnIn > 0) {
         	throw new IllegalArgumentException("Burnin should be 0");
         	///Log.warning.println("Please wait while BEAST takes " + burnIn + " pre-burnin samples");
         }
+        
+        numStepsInChain = 0;
         for (long sampleNr = sampleCount; sampleNr <= chainLength + sampleCount; sampleNr++) {
+        	
+        	
+        	// Time over?
+        	if (this.doRegression && !this.finishedRegression && this.targetRuntime > 0) {
+        		long runTime = System.currentTimeMillis() - startTime;
+        		if (runTime > this.targetRuntime) break;
+        	}
+        	
+        	
             final Operator operator = propagateState(sampleNr);
 
             if (this.robust && (debugFlag && sampleNr % 3 == 0 || sampleNr % 10000 == 0)) {
@@ -290,6 +339,10 @@ public class ParallelMCMC extends MCMC {
             if (posterior.getCurrentLogP() == Double.POSITIVE_INFINITY) {
             	throw new RuntimeException("Encountered a positive infinite posterior. This is a sign there may be numeric instability in the model.");
             }
+            
+            
+            numStepsInChain++;
+            
         }
         if (corrections > 0) {
         	Log.err.println("\n\nNB: " + corrections + " posterior calculation corrections were required. This analysis may not be valid!\n\n");
@@ -436,10 +489,15 @@ public class ParallelMCMC extends MCMC {
      */
     private void trainRegression() {
     	
-    	// Train the model
+    	// Train the model (log space)
     	regression = new SimpleRegression();
     	for (int i = 0; i < Math.min(this.regressionNr, runtimes.length); i ++) {
-    		regression.addData(this.chainLengths[i]*1.0, this.runtimes[i]);
+    		double len = this.chainLengths[i];
+    		double time = this.runtimes[i];
+    		//if (len <= 0 || time <= 0) continue;
+    		regression.addData(len, time);
+    		regression.addData(Math.log(len), Math.log(time));
+    		//Log.warning(this.chainLengths[i] + "," + this.runtimes[i]);
     	}
     	regression.regress();
     }
@@ -450,6 +508,7 @@ public class ParallelMCMC extends MCMC {
      */
     public double predict(long chainLen) {
     	if (regression == null) return 0;
+    	//return Math.exp(regression.predict(1.0*chainLen));
     	return regression.predict(1.0*chainLen);
     }
     
@@ -460,6 +519,8 @@ public class ParallelMCMC extends MCMC {
      * By setting the chain length such that the mean runtime is 'targetRuntime'
      */
     public void setChainlengthToTargetRuntime(double targetRuntime) {
+    	
+    	double targetRunTime_log = targetRuntime; // Math.log(targetRuntime);
     	
     	if (this.appliedRegression) return;
     	if (!this.finishedRegression) return;
@@ -473,8 +534,9 @@ public class ParallelMCMC extends MCMC {
     	
     	
     	// Apply the model
-    	long targetChainlength = (long)((targetRuntime - intercept) / slope);
-    	this.chainLength = Math.max(1, targetChainlength);
+    	long targetChainlength_log = (long)((targetRunTime_log - intercept) / slope);
+    	//this.chainLength = (long) Math.max(1, Math.exp(targetChainlength_log));
+    	this.chainLength = (long) Math.max(1, targetChainlength_log);
     	Log.warning("Setting chain length to " + this.chainLength);
     	
     	

@@ -41,11 +41,13 @@ public abstract class MultiStepOperator extends Operator {
     final public Input<OperatorScheduleRecalculator> scheduleInput =  new Input<>("schedule", "Operator schedule (if learning is applied)");
     
     final public Input<Integer> nregressionInput =  new Input<>("nregression", "Number of MCMC chainLengths vs runtimes to sample in order to learn chainLengths, for load"
-    		+ " balancing. Set to <5 to skip the training.", 2000);
+    		+ " balancing. Set to <5 to skip the training.", 200);
     final public Input<Double> targetCPUInput =  new Input<>("targetCPU", "Proportion of threads allocated (if > 1) that should be spent on MCMC, as opposed to overhead."
     		+ "Larger targetCPU will mean longer chains and lower operator weight. If targetCPU=0, then the load balancing will match the slowest thread. Set nregression=0 to omit this step.", 0.8);
     final public Input<Double> targetWeightInput =  new Input<>("targetWeight", "Target effective weight of this operator, to be learned if regression is applied."
     		+ " The effective weight is the operator weight * chainLength sum. Set this to 0 (or nregression=0) to omit this step.", 0.0);
+    final public Input<Double> runtimeInput =  new Input<>("runtime", "Max runtime of MCMC chains during training (only applicable if load balancing is being trained). If this is"
+    		+ "set to -1, then chain lengths are sampled insteaf of runtimes.", -1.0);
     
     
       //final public Input<CompoundDistribution> likelihoodInput = new Input<>("likelihood", "the likelihood", Input.Validate.REQUIRED);
@@ -59,6 +61,7 @@ public abstract class MultiStepOperator extends Operator {
 	protected ExecutorService exec;
     protected CountDownLatch countDown;
     protected List<ParallelMCMC> mcmcs;
+    protected List<CoreRunnable> runnables;
     
     
     
@@ -128,6 +131,13 @@ public abstract class MultiStepOperator extends Operator {
 	    	this.learnThreads = false;
 	    	this.learner = null;
 	    }
+	    
+	    
+	    this.runnables = new ArrayList<>();
+	    for (MCMC mcmc : this.mcmcs) {
+	    	CoreRunnable runnable = new CoreRunnable(mcmc);
+	    	this.runnables.add(runnable);
+	    }
 		  
 	}
 	
@@ -173,6 +183,13 @@ public abstract class MultiStepOperator extends Operator {
 			
 			double targetRuntime;
 			
+			double meanIntercept = 0;
+			double meanSlope = 0;
+			for (ParallelMCMC mcmc : this.mcmcs) {
+				meanIntercept += mcmc.getRuntimeIntercept() / this.mcmcs.size();
+				meanSlope += mcmc.getRuntimeSlope() / this.mcmcs.size();
+			}
+			
 			
 			// Set the runtime of the slowest thread to match the user-specified CPU use
 			if (targetCPUInput.get() > 0) {
@@ -193,14 +210,20 @@ public abstract class MultiStepOperator extends Operator {
 				targetChainLength = Math.max(targetChainLength, 1);
 				targetRuntime = this.mcmcs.get(slowestThread).predict(targetChainLength);
 				Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + "ms. This will give the slowest thread (thread " + (1+slowestThread) + ") "
-						+ "an overhead of " + (targetOverhead*100) + "%");
+						+ "an overhead of " + (targetOverhead*100) + "%. On average, runtime(ms) = " + meanIntercept + " + " + meanSlope + "*chainLength.");
 
 			}
 			
 			// Set the runtime of the slowest thread to match the user-specified chain length
 			else {
 				targetRuntime = this.mcmcs.get(slowestThread).predict(this.chainLength / this.nrOfThreads);
-				Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + "ms. This is the average runtime of thread " + (1+slowestThread));
+				
+				
+				
+				Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + "ms. This is the average runtime of thread " + (1+slowestThread) + ". "
+						+ "On average, runtime(ms) = " + meanIntercept + " + " + meanSlope + "*chainLength.");
+			
+			
 			}
 			
 			
@@ -208,6 +231,9 @@ public abstract class MultiStepOperator extends Operator {
 			for (ParallelMCMC mcmc : this.mcmcs) {
 				mcmc.setChainlengthToTargetRuntime(targetRuntime);
 			}
+			
+			
+			
 			
 			
 			
@@ -223,6 +249,8 @@ public abstract class MultiStepOperator extends Operator {
 				Log.warning(this.getID() + ": setting operator weight to " + newWeight + " to attain an effective weight of " + targetWeightInput.get());
 				this.m_pWeight.set(newWeight);
 				this.scheduleInput.get().reweight();
+				
+				
 				
 			}
 
@@ -289,11 +317,24 @@ public abstract class MultiStepOperator extends Operator {
         try {
         	
             countDown = new CountDownLatch(mcmcs.size());
-            // kick off the threads
-            for (MCMC mcmc : mcmcs) {
-                CoreRunnable coreRunnable = new CoreRunnable(mcmc);
-                exec.execute(coreRunnable);
+            
+            // Sample runtime
+            if (!this.appliedRegression && this.doRegression && runtimeInput.get() > 0) {
+            	double runtime = Randomizer.nextDouble() * runtimeInput.get();
+            	//Log.warning("Runtime " + runtime);
+	            for (ParallelMCMC mcmc : mcmcs) {
+	            	if (runtimeInput.get() > 0) {
+	            		mcmc.setRuntime((long)runtime);
+	            	}
+	            }
             }
+            
+            // Kick off the threads
+            for (CoreRunnable runnable : this.runnables) {
+                exec.execute(runnable);
+            }
+            
+            
             countDown.await();
         } catch (RejectedExecutionException | InterruptedException e) {
             Log.err.println("Stop using threads: " + e.getMessage());

@@ -105,12 +105,15 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	    }
 	    
 	    
+		 // Learn the chain length
+		int nregression = this.nrOfThreads > 1 ? nregressionInput.get() : 0;
+	    
 	    
 	    // Create mcmc objects
 	    start = 0;
 	    for (int i = 0; i < nrOfThreads; i++) {
 	    	int end = (i + 1) * distributions.size() / nrOfThreads;
-	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), (int)(1.0*chainLength / this.nrOfThreads), tabu));
+	    	mcmcs.add(createParallelMCMC(distributions.subList(start, end), (int)(1.0*chainLength / this.nrOfThreads), tabu, otherState, nregression));
 	    	start = end;
 	    }
 	    
@@ -125,7 +128,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	    if (learningInput.get() || (this.mcmcs.size() == 1 && chainLength == 1)) {
 	    	ParallelMCMC mcmc;
 	    	if (this.mcmcs.size() == 1 && chainLength == 1) mcmc = this.mcmcs.get(0);
-	    	else mcmc = createParallelMCMC(distributions, chainLength, new HashSet<>());
+	    	else mcmc = createParallelMCMC(distributions, chainLength, new HashSet<>(), otherState, nregression);
 	    	this.singleStepOperators = mcmc.operatorsInput.get();
 	    }
 	    
@@ -139,7 +142,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	}
 
 	
-	private ParallelMCMC createParallelMCMC(List<Distribution> distributions, long chainLength, Set<StateNode> tabu) {
+	public static ParallelMCMC createParallelMCMC(List<Distribution> distributions, long chainLength, Set<StateNode> tabu, State otherState, int nregression) {
 		List<Distribution> distrs = new ArrayList<>();
 		List<StateNode> stateNodes = new ArrayList<>();
 		List<Operator> operators = new ArrayList<>();
@@ -182,7 +185,6 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 						DeltaExchangeOperator op = new DeltaExchangeOperator();
 						op.initByName("parameter", s, "delta", 0.2, "weight", 2.0);
 						operators.add(op);
-						
 						f = new Transform.LogConstrainedSumTransform(s, 1.0);
 						
 					} else {
@@ -191,7 +193,6 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 						ScaleOperator op = new ScaleOperator();
 						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 1.0);
 						operators.add(op);
-						
 						f = new Transform.LogTransform(s);
 					}
 					
@@ -227,8 +228,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		state.initByName("stateNode", stateNodes);
 		
 		
-		// Learn the chain length
-		int nregression = this.nrOfThreads > 1 ? nregressionInput.get() : 0;
+		
 
 		
 		ParallelMCMC mcmc = new ParallelMCMC();
@@ -237,7 +237,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		
 	}
 
-	private void getRealParameterPriors(Set<StateNode> stateNodeList, Set<Distribution> priorsList) {
+	private static void getRealParameterPriors(Set<StateNode> stateNodeList, Set<Distribution> priorsList) {
 		for (StateNode sn : stateNodeList) {
 			for (BEASTInterface o : sn.getOutputs()) {
 				if (o instanceof Distribution) {
@@ -247,7 +247,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		}		
 	}
 
-	private void getRealParameterPriors(BEASTInterface o, Distribution distr, Set<Distribution> priorsList) {
+	private static void getRealParameterPriors(BEASTInterface o, Distribution distr, Set<Distribution> priorsList) {
 		for (BEASTInterface o2 : o.getOutputs()) {
 			if (o2.getID() != null && o2.getID().equals("prior")) {
 				priorsList.add(distr);
