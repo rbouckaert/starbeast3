@@ -8,6 +8,8 @@ import beast.core.util.CompoundDistribution;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.UCRelaxedClockModel;
 import beast.evolution.operators.KernelDistribution;
+import beast.evolution.operators.KernelDistribution.Bactrian;
+import beast.evolution.operators.KernelDistribution.Bactrian.mode;
 import beast.evolution.operators.TreeOperator;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
@@ -435,7 +437,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
         double delta = calcDelta(logAlpha);
 
         delta += Math.log(twindowSize);
-       // twindowSize = Math.exp(delta);
+        twindowSize = Math.exp(delta);
     }
 
     @Override
@@ -456,6 +458,24 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
         } else if (prob > 0.40) {
             return "Try setting window size to about " + formatter.format(newWindowSize);
         } else return "";
+    }
+    
+    
+    @Override
+    public double getTargetAcceptanceProbability() {
+    	if (this.kernelDistribution != null && this.kernelDistribution instanceof Bactrian) {
+    		Bactrian bactrian = (Bactrian) kernelDistribution;
+    		if (	bactrian.kernelmode == mode.bactrian_normal ||
+    				bactrian.kernelmode == mode.bactrian_laplace ||
+    				bactrian.kernelmode == mode.bactrian_triangle ||
+    				bactrian.kernelmode == mode.bactrian_uniform ||
+    				bactrian.kernelmode == mode.bactrian_t4 ||
+    				bactrian.kernelmode == mode.bactrian_cauchy ||
+    				bactrian.kernelmode == mode.bactrian_box ||
+    				bactrian.kernelmode == mode.bactrian_airplane ||
+    				bactrian.kernelmode == mode.bactrian_strawhat		) return 0.3;
+    	}
+    	return super.getTargetAcceptanceProbability();
     }
 
 

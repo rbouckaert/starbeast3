@@ -93,6 +93,8 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    	throw new IllegalArgumentException("Please provide either 'chainLength' or 'coverageInput' but not both");
 	    }
 	    
+	    if (this.runtimeInput.get() > 0 && this.nrOfThreads == 1) chainLength = 1;
+	    
 	    
 	    // Create parallel MCMCs
 	    for (int i = 0; i < nrOfThreads; i++) {
