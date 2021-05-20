@@ -140,8 +140,8 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			
 			if (useBactrianOperatorsInput.get()) {
 //			    <operator id="treeScaler.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
-				beast.evolution.operators.BactrianScaleOperator treeScaler = new beast.evolution.operators.BactrianScaleOperator();
-				treeScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 30.0);
+				beast.evolution.operators.BactrianUpDownOperator treeScaler = new beast.evolution.operators.BactrianUpDownOperator();
+				treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 30.0);
 				operators.add(treeScaler);
 //		    	<operator id="treeRootScaler.t:$(n)" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
 				beast.evolution.operators.BactrianScaleOperator treeRootScaler = new beast.evolution.operators.BactrianScaleOperator();
