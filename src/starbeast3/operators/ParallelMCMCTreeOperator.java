@@ -20,6 +20,7 @@ import beast.core.StateNode;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
 import beast.evolution.operators.*;
+import beast.evolution.tree.Tree;
 import beast.util.Transform;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
@@ -138,24 +139,57 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			
 			stateNodes.add(d.tree);
 			
+			// Uniform operator
+			beast.evolution.operators.Uniform UniformOperator = new beast.evolution.operators.Uniform();
+			UniformOperator.initByName("tree", d.tree, "weight", 30.0);
+			operators.add(UniformOperator);
+			
 			if (useBactrianOperatorsInput.get()) {
-//			    <operator id="treeScaler.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
-				beast.evolution.operators.BactrianUpDownOperator treeScaler = new beast.evolution.operators.BactrianUpDownOperator();
-				treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 30.0);
-				operators.add(treeScaler);
-//		    	<operator id="treeRootScaler.t:$(n)" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
+				
+				
+				// Root scaler
 				beast.evolution.operators.BactrianScaleOperator treeRootScaler = new beast.evolution.operators.BactrianScaleOperator();
-				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 30.0, "rootOnly", true);
+				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 10.0, "rootOnly", true);
 				operators.add(treeRootScaler);
 				
+				// Bactrian interval
 				beast.evolution.operators.BactrianNodeOperator intervalOperator = new beast.evolution.operators.BactrianNodeOperator();
-				intervalOperator.initByName("tree", d.tree, "weight", 5.0);
+				intervalOperator.initByName("tree", d.tree, "weight", 10.0);
 				operators.add(intervalOperator);
 				
-//		    	<operator id="SubtreeSlide.t:$(n)" spec="SubtreeSlide" tree="@Tree.t:$(n)" weight="15.0"/>
+				// Subtree slide
 				beast.evolution.operators.BactrianSubtreeSlide SubtreeSlide = new beast.evolution.operators.BactrianSubtreeSlide();
-				SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
+				SubtreeSlide.initByName("tree", d.tree, "weight", 10.0);
 				operators.add(SubtreeSlide);
+				
+				
+				// Adaptable operators for tree scaling
+				orc.operators.AdaptableOperatorSampler adaptable = new orc.operators.AdaptableOperatorSampler();
+				List<Operator> adaptOperators = new ArrayList<>();
+				
+				// Tree scaler
+				beast.evolution.operators.BactrianUpDownOperator treeScaler = new beast.evolution.operators.BactrianUpDownOperator();
+				treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 1.0);
+				adaptOperators.add(treeScaler);
+				
+				// Epoch scaler
+				EpochOperator epochOperator = new EpochOperator();
+				List<Tree> trees = new ArrayList<>();
+				trees.add(d.tree);
+				epochOperator.initByName("scaleFactor", 0.5, "tree", trees, "weight", 1.0);
+				adaptOperators.add(epochOperator);
+				
+				// Subtree slide
+				adaptOperators.add(SubtreeSlide);
+				
+				// Uniform
+				adaptOperators.add(UniformOperator);
+				
+				adaptable.initByName("tree", d.tree, "weight", 100.0, "operator", adaptOperators);
+				operators.add(adaptable);
+				
+				
+				
 			} else {
 //		        <operator id="treeScaler.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
 				ScaleOperator treeScaler = new ScaleOperator();
@@ -173,11 +207,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			}
 			
 			
-//		    <operator id="UniformOperator.t:$(n)" spec="Uniform" tree="@Tree.t:$(n)" weight="30.0"/>
-			beast.evolution.operators.Uniform UniformOperator = new beast.evolution.operators.Uniform();
-			UniformOperator.initByName("tree", d.tree, "weight", 40.0);
-			operators.add(UniformOperator);
-			
+
 //		    <operator id="narrow.t:$(n)" spec="Exchange" tree="@Tree.t:$(n)" weight="15.0"/>
 			beast.evolution.operators.Exchange narrow = new beast.evolution.operators.Exchange();
 			narrow.initByName("tree", d.tree, "weight", 15.0);
