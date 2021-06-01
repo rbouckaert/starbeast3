@@ -77,6 +77,8 @@ public abstract class MultiStepOperator extends Operator {
     // Regression
     boolean doRegression;
     boolean appliedRegression;
+    
+    long nproposals;
 	
 	/** number of steps to be performed by operator **/
 	public int stepCount() {
@@ -90,6 +92,9 @@ public abstract class MultiStepOperator extends Operator {
 	
 	@Override
 	public void initAndValidate() {
+		
+		
+		this.nproposals = 0;
 		
 		// Doing regression on chainlengths?
 		if (nregressionInput.get() >= 5 && this.mcmcs.size() > 1) {
@@ -118,7 +123,15 @@ public abstract class MultiStepOperator extends Operator {
 	    	
 	    	this.learner = new ParallelMCMCThreadLearner(this, chainLength, burninInput.get(), this.scheduleInput.get(), this.targetWeightInput.get());
 	    	
-			this.operatorProbs = new double[this.singleStepOperators.size()];
+			
+	    	this.learnThreads = false;
+	    	this.learner = null;
+	    }
+	    
+	    
+	    // Single operator sampling
+	    if (learningInput.get() || !this.useMCMC || (this.mcmcs.size() == 1 && chainLength == 1)) {
+	    	this.operatorProbs = new double[this.singleStepOperators.size()];
 	    	double weightSum = 0;
 	    	double cumSum = 0;
 	    	for (Operator op : this.singleStepOperators) weightSum += op.getWeight();
@@ -128,8 +141,6 @@ public abstract class MultiStepOperator extends Operator {
 	    		this.operatorProbs[i] = cumSum;
 	    	}
 	    }else {
-	    	this.learnThreads = false;
-	    	this.learner = null;
 	    }
 	    
 	    
@@ -284,6 +295,9 @@ public abstract class MultiStepOperator extends Operator {
 			logHR = this.singleStepOperators.get(opIndex).proposal();
 			
 			
+			nproposals++;
+			
+			
 		// Run 1 or more MCMCs
 		} else {
 		
@@ -293,6 +307,7 @@ public abstract class MultiStepOperator extends Operator {
 				try {
 					ParallelMCMC mcmc = this.mcmcs.get(0);
 					mcmc.run();
+					nproposals += mcmc.getChainLength();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -336,6 +351,13 @@ public abstract class MultiStepOperator extends Operator {
             
             
             countDown.await();
+            
+            
+            for (ParallelMCMC mcmc : mcmcs) {
+            	//Log.warning("there were " + mcmc.getChainLength() + " proposals");
+            	nproposals += mcmc.getChainLength();
+            }
+            
         } catch (RejectedExecutionException | InterruptedException e) {
             Log.err.println("Stop using threads: " + e.getMessage());
         }
@@ -365,6 +387,10 @@ public abstract class MultiStepOperator extends Operator {
     
     
     
+    
+    public long getNrProposals() {
+    	return nproposals;
+    }
 
 
     

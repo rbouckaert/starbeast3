@@ -243,6 +243,7 @@ public class ParallelMCMC extends MCMC {
     		// Sample runtime, measure chain length
     		if (targetRuntime > 0) {
     			this.chainLengths[this.regressionNr] = numStepsInChain;
+    			chainLength = numStepsInChain;
     			//Log.warning("Observed: " + runTime + "," + numStepsInChain + "(" + this.targetRuntime + ")");
     		}
         	
@@ -571,6 +572,9 @@ public class ParallelMCMC extends MCMC {
 	public long getChainLength() {
 		return this.chainLength;
 	}
+
+
+
     
     
     
