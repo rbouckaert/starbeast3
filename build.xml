@@ -34,6 +34,7 @@
 		<fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
         <pathelement path="${beast2classpath}"/>
         <pathelement path="../BEASTLabs/build"/>
+        <pathelement path="../ORC/build"/>
 	<pathelement path="../ConstantDistanceOperator/build"/>
 	</path>
 
