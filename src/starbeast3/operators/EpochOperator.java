@@ -71,7 +71,7 @@ public class EpochOperator extends Operator {
 	
     	// Lower bound of scaling
 		double l = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
-		double pfromFwd = -Math.log(upperFwd - lowerFwd);
+		double pfromFwd = -2*Math.log(upperFwd - lowerFwd);
 		
 		
 		// Upper bound of scaling
@@ -169,7 +169,7 @@ public class EpochOperator extends Operator {
 			upperBck = Math.max(upperBck, upper_t);
 			lowerBck = Math.max(lowerBck, lower_t);
     	}
-    	double pfromBck = -Math.log(upperBck - lowerBck);
+    	double pfromBck = -2*Math.log(upperBck - lowerBck);
     	
 
 		
