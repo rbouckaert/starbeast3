@@ -53,7 +53,7 @@ public class EpochOperator extends Operator {
     	List<RealParameter> downs = downInput.get();
 
     	// Get upper and lower
-    	double upperFwd = 0;
+    	double upperFwd = Double.POSITIVE_INFINITY;
     	double lowerFwd = Double.NEGATIVE_INFINITY;
     	for (Tree tree : trees) {
 	    	double upper_t = tree.getRoot().getHeight();
@@ -63,7 +63,7 @@ public class EpochOperator extends Operator {
 				lower_t = Math.max(nodes[i].getHeight(), lower_t);
 			}
 			
-			upperFwd = Math.max(upperFwd, upper_t);
+			upperFwd = Math.min(upperFwd, upper_t);
 			lowerFwd = Math.max(lowerFwd, lower_t);
     	}
 
@@ -167,7 +167,7 @@ public class EpochOperator extends Operator {
 		
 		
 		// Hastings ratio for reverse
-    	double upperBck = 0;
+    	double upperBck = Double.POSITIVE_INFINITY;
     	double lowerBck = Double.NEGATIVE_INFINITY;
     	for (Tree tree : trees) {
 	    	double upper_t = tree.getRoot().getHeight();
@@ -177,7 +177,7 @@ public class EpochOperator extends Operator {
 				lower_t = Math.max(nodes[i].getHeight(), lower_t);
 			}
 			
-			upperBck = Math.max(upperBck, upper_t);
+			upperBck = Math.min(upperBck, upper_t);
 			lowerBck = Math.max(lowerBck, lower_t);
     	}
     	double midBck = (upperBck - lowerBck) / 2;
