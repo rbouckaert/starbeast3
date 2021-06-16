@@ -28,7 +28,9 @@ public class ConstantPopulations extends CalculationNode implements PopulationMo
     private boolean needsUpdate;
     private boolean[] speciesBranchStatus;
     private int speciesNodeCount;
-
+    
+    
+    
     @Override
     public boolean requiresRecalculation() {
         needsUpdate = true;
@@ -56,6 +58,7 @@ public class ConstantPopulations extends CalculationNode implements PopulationMo
         final double popSize = popSize2 * ploidy;
         logPBranch += -k * Math.log(popSize);
         for (int i = 0; i <= k; i++) {
+        	if (lineagesBottom - k <= 1 && i == k) break;
         	logPBranch += -((lineagesBottom - i) * (lineagesBottom - i - 1.0) / 2.0) * (times[i + 1] - times[i]) / popSize;
         }
         return logPBranch;

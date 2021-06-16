@@ -177,7 +177,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				List<Tree> trees = new ArrayList<>();
 				trees.add(d.tree);
 				epochOperator.initByName("scaleFactor", 0.5, "tree", trees, "weight", 1.0);
-				adaptOperators.add(epochOperator);
+				//adaptOperators.add(epochOperator);
 				
 				// Subtree slide
 				adaptOperators.add(SubtreeSlide);

@@ -336,6 +336,8 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     public double calculateLogP() {
 
     	
+    	
+    	
         assert SanityChecks.checkTreeSanity(speciesTree.getRoot());
         
         update();
