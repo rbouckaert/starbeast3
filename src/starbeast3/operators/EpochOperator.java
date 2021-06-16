@@ -70,24 +70,23 @@ public class EpochOperator extends Operator {
 		
     	
     	// Mid point
-    	double midFwd = (upperFwd - lowerFwd) / 2;
+    	//double midFwd = (upperFwd - lowerFwd) / 2;
     	
 	
     	// Lower bound of scaling
-		//double l = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
-		//double pfromFwd = -2*Math.log(upperFwd - lowerFwd);
-    	//double pfromFwd = -2*Math.log(upperFwd - lowerFwd);
+		double l = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
+		double pfromFwd = -2*Math.log(upperFwd - lowerFwd);
 		
 		
-		double l = lowerFwd + Randomizer.nextDouble() * midFwd;
-		double pfromFwd = -2*Math.log(midFwd);
-		
+		//double l = lowerFwd + Randomizer.nextDouble() * midFwd;
+		//double pfromFwd = -2*Math.log(midFwd);
+		//double u = lowerFwd + midFwd + Randomizer.nextDouble() * midFwd;
 		
 		
 		
 		// Upper bound of scaling
-		//double u = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
-		double u = lowerFwd + midFwd + Randomizer.nextDouble() * midFwd;
+		double u = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
+		
 		
 		
 		// Sample a scale factor
@@ -180,10 +179,10 @@ public class EpochOperator extends Operator {
 			upperBck = Math.min(upperBck, upper_t);
 			lowerBck = Math.max(lowerBck, lower_t);
     	}
-    	double midBck = (upperBck - lowerBck) / 2;
-    	double pfromBck = -2*Math.log(midBck);
+    	//double midBck = (upperBck - lowerBck) / 2;
+    	//double pfromBck = -2*Math.log(midBck);
     	
-    	//double pfromBck = -2*Math.log(upperBck - lowerBck);
+    	double pfromBck = -2*Math.log(upperBck - lowerBck);
     	
 
 		
