@@ -235,11 +235,11 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				// Add the tree
 				Transform f = new Transform.LogTransform(d.tree);
 				transformations.add(f);
-				Log.warning("Adding " + d.getID());
+				Log.warning("Adding " + d.tree.getID());
 				
 				for (StateNode s : stateNodeList) {
 					
-					Log.warning("Adding " + s.getID());
+					
 					
 					// TODO: check priors instead of ID to determine whether it is a
 					// scale parameter
@@ -252,6 +252,9 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						operators.add(op);
 						f = new Transform.LogConstrainedSumTransform(s, 1.0);
 						
+						
+						Log.warning("Adding logsum " + s.getID());
+						
 					} else {
 						
 	
@@ -259,16 +262,27 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 0.1);
 						operators.add(op);
 						f = new Transform.LogTransform(s);
+						
+						Log.warning("Adding scale " + s.getID());
 					}
 					
 					transformations.add(f);
 					
 				}
 				
-				AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
-				AVMNOperator.initByName("weight", 0.25, "coefficient", 1.0, "scaleFactor", 1.0, "beta", 0.05, "every", 1,
-						"initial", 200 * dim, "burnin", 100 * dim, "transformations", transformations);
-				operators.add(AVMNOperator);
+				if (!transformations.isEmpty()) {
+					AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
+					AVMNOperator.initByName(
+							"weight", 2.0, 
+							"coefficient", 1.0, 
+							"scaleFactor", 1.0, 
+							"beta", 0.05, 
+							"every", 1,
+							"initial", 200 * dim, 
+							"burnin", 100 * dim, 
+							"transformations", transformations);
+					operators.add(AVMNOperator);
+				}
 
 			}
 		}

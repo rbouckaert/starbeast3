@@ -33,8 +33,9 @@ import org.apache.commons.math.MathException;
 public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 	final public Input<Double> twindowSizeInput = new Input<>("twindowSize", "the size of the window when proposing new node time", Input.Validate.REQUIRED);
 	final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
-    final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", "Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
-    final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree brancg rates.", Input.Validate.REQUIRED);
+    final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", 
+    				"Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
+    final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree branch rates.", Input.Validate.REQUIRED);
 	
     
     UCRelaxedClockModelSB3 clockModel;
@@ -61,11 +62,10 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 
     @Override
     public void initAndValidate() {
+    	
         twindowSize = twindowSizeInput.get();
         clockModel = clockModelInput.get();
        
-        
-        
         // Ensure that either rates or quantiles are used and not categories
         if (clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.rates && clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.quantiles) {
         	throw new IllegalArgumentException("Clock model must parameterise rates as real numbers or quantiles! This operator does not work with categories.");
@@ -96,7 +96,6 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     	
         final Tree tree = treeInput.get(this);
         int nodeCount = tree.getNodeCount(); //return the number of nodes in the tree
-        int branchCount = nodeCount - 1; //the number of branches of the tree
 
         //the chosen node to work on
         Node node;
@@ -117,25 +116,19 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
        node = tree.getNode(nodeNr);
        
        
+       
        //Step 2: Access to the child nodes of this node
        // Left child
        Node leftNode = node.getChild(0);//get the left child of this node
        t_L = leftNode.getHeight();//node time of son
 
        int leftNr = leftNode.getNr();// node number of son
-       if (leftNr == branchCount) {
-           leftNr = leftNode.getTree().getRoot().getNr();
-        }
        
        
        // Right child
        Node rightNode = node.getChild(1);//get the right child of this node
        t_R = rightNode.getHeight();//node time of right child
-
        int rightNr = rightNode.getNr(); // node time of right child
-       if (rightNr == branchCount) {
-            rightNr = rightNode.getTree().getRoot().getNr();
-       }
        
       
        // Original node times
@@ -219,6 +212,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
        double r_x_ = r_x * (upper - t_x) / (upper - t_x_);
        double r_L_ = r_L * (t_x - t_L) / (t_x_ - t_L);
        double r_R_ = r_R * (t_x - t_R) / (t_x_ - t_R);
+       
 
        // Set the proposed new rates (and calculate the Jacobian contribution from quantiles if applicable)
        double logJD_quantiles = 0;
@@ -347,30 +341,39 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     	   // Propose new time for each gene tree node which mapped to branch above x
     	   for (int j = 0; j < geneNodeMap_x.length; j ++) {
     		   geneTreeNode = geneNodeMap_x[j];
+    		   if (geneTreeNode.isLeaf()) continue;
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = upper - (r_x / r_x_) * (upper - t_g);
-    		   geneTreeNode.setHeight(t_g_);
-    		   if(t_g != t_g_) numNodesMappedX ++;
+    		   if(t_g != t_g_) {
+    			   geneTreeNode.setHeight(t_g_);
+    			   numNodesMappedX ++;
+    		   }
     	   }
     	   
     	   
     	   //  Propose new time for each gene tree node which mapped to branch above L
     	   for (int j = 0; j < geneNodeMap_L.length; j ++) {
     		   geneTreeNode = geneNodeMap_L[j];
+    		   if (geneTreeNode.isLeaf()) continue;
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = t_L + (r_L / r_L_) * (t_g - t_L);
-    		   geneTreeNode.setHeight(t_g_);
-    		   if(t_g != t_g_) numNodesMappedL ++;
+    		   if(t_g != t_g_) {
+    			   geneTreeNode.setHeight(t_g_);
+    			   numNodesMappedL ++;
+    		   }
     	   }
     	   
     	   
     	   //  Propose new time for each gene tree node which mapped to branch above R
     	   for (int j = 0; j < geneNodeMap_R.length; j ++) {
     		   geneTreeNode = geneNodeMap_R[j];
+    		   if (geneTreeNode.isLeaf()) continue;
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = t_R + (r_R / r_R_) * (t_g - t_R);
-    		   geneTreeNode.setHeight(t_g_);
-    		   if(t_g != t_g_) numNodesMappedR ++;
+    		   if(t_g != t_g_) {
+    			   geneTreeNode.setHeight(t_g_);
+    			   numNodesMappedR ++;
+    		   }
     	   }
     	   
     	   
