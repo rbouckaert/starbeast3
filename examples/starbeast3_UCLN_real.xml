@@ -411,7 +411,7 @@ name="alignment">
                 
         </operator>
 
-	<operator id="YuleBirthRateScaler.t:Species" spec="ScaleOperator" parameter="@birthRate.t:Species" scaleFactor="0.75" weight="1.3273128598848374"/>
+	    <operator id="YuleBirthRateScaler.t:Species" spec="ScaleOperator" parameter="@birthRate.t:Species" scaleFactor="0.75" weight="1.3273128598848374"/>
             
         <operator id="SubtreeSlide.t:Species" spec="SubtreeSlide" size="0.002" tree="@Tree.t:Species" weight="15.0"/>
             

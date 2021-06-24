@@ -237,25 +237,8 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		
 	}
 
-	private static void getRealParameterPriors(Set<StateNode> stateNodeList, Set<Distribution> priorsList) {
-		for (StateNode sn : stateNodeList) {
-			for (BEASTInterface o : sn.getOutputs()) {
-				if (o instanceof Distribution) {
-					getRealParameterPriors(o, (Distribution) o, priorsList);
-				}
-			}
-		}		
-	}
 
-	private static void getRealParameterPriors(BEASTInterface o, Distribution distr, Set<Distribution> priorsList) {
-		for (BEASTInterface o2 : o.getOutputs()) {
-			if (o2.getID() != null && o2.getID().equals("prior")) {
-				priorsList.add(distr);
-				break;
-			}
-			getRealParameterPriors(o2, distr, priorsList);
-		}
-	}
+
 
 	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, Set<StateNode> stateNodes) {
 		for (Object o : d.listActiveBEASTObjects()) {

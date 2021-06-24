@@ -1,0 +1,1160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+
+    <!-- This xml uses a yule tree to simulate the sequences  -->
+    <!-- The yule tree is the summary tree of the MCMC samples using real data set under a yule model-->
+    <!-- And run MCMC to sample the simulated sequences -->
+
+
+
+    
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree1" sequencelength="1000">
+
+		<tree id="simulatedGeneTree1" spec='beast.util.TreeParser' newick="((((A1:0.003849493631840728,A3:0.003849493631840728):0.0690270945875282,A2:0.07287658821936904):0.21177769348842024,((B1:0.008170521921529783,B3:0.008170521921529783):0.023371956452530096,B2:0.03154247837405999):0.2531118033337293):0.22593193694832647,(((C1:0.009486443656742005,C2:0.009486443656742005):0.011094005179514255,C3:0.02058044883625626):0.46215368765589904,((D1:0.01320195202110197,D3:0.01320195202110197):0.02233331945763567,D2:0.03553527147873764):0.44719886501341766):0.027852082163960457):0.0" IsLabelledNewick="true"/>
+
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='0.07796490088841374' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.16792981991901923 0.3748984836504835 0.18993549715460806	0.2672361992758892'/>
+			</substModel>
+		</siteModel>
+
+		<branchRateModel id="StrictClock.1" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:1" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>
+	
+	</data>
+
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree2" sequencelength="1000" outputFileName="priorSamples_S4.gene2.SIM.xml">
+
+		<tree id="simulatedGeneTree2" spec='beast.util.TreeParser' newick="((((A1:0.009487132933160503,A3:0.009487132933160503):0.021564484231686554,A2:0.031051617164847056):0.27388901476103816,((B1:0.013047595501695874,B3:0.013047595501695874):0.050866434061453525,B2:0.0639140295631494):0.24102660236273582):0.21155720562271935,(((C1:0.0036148932021242697,C3:0.0036148932021242697):0.01679362808134849,C2:0.020408521283472758):0.4602273908390285,((D1:5.306348879527967E-4,D3:5.306348879527967E-4):0.01547257846099126,D2:0.016003213348944056):0.46463269877355723):0.03586192542610328):0.0" IsLabelledNewick="true"/>
+
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='5.818677989393809' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.16617262012726697 0.31675585621777386 0.17601261027970821 0.34105891337525096'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.2" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:2" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>
+	
+	</data>
+
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree3" sequencelength="1000" outputFileName="priorSamples_S4.gene3.SIM.xml">
+
+		<tree id="simulatedGeneTree3" spec='beast.util.TreeParser' newick="((((A1:0.024391728233384424,A2:0.024391728233384424):0.03830710266761461,A3:0.06269883090099904):0.2252677892017656,(B1:0.0906639292271571,(B2:0.022511392827270327,B3:0.022511392827270327):0.06815253639988678):0.19730269087560753):0.2792356290635898,(((C1:0.001755156133640301,C2:0.001755156133640301):0.0019243921770006889,C3:0.00367954831064099):0.48909005801940986,((D1:0.0019149650228657,D3:0.0019149650228657):0.061803968893435646,D2:0.06371893391630123):0.4290506724137497):0.07443264283630346):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='2.4998561102309766' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.22795912383363945 0.2079703814970241 0.22658162545249297 0.3374888692168434'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.3" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:3" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>
+
+	</data>
+
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree4" sequencelength="1000" outputFileName="priorSamples_S4.gene4.SIM.xml">
+
+		<tree id="simulatedGeneTree4" spec='beast.util.TreeParser' newick="((((A1:0.03399592962480097,A3:0.03399592962480097):0.013188261202473739,A2:0.04718419082727471):0.3682031540922786,(B1:0.07130952087076003,(B2:0.024467339267304045,B3:0.024467339267304045):0.04684218160345599):0.3440778240487933):0.09958781601494471,((C1:0.017279512656885432,(C2:5.356799795315226E-4,C3:5.356799795315226E-4):0.01674383267735391):0.47583520560356174,((D1:0.015665065667281486,D2:0.015665065667281486):0.002022819647278462,D3:0.017687885314559948):0.4754268329458872):0.02186044267405085):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='2.3822995486278526' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.3634060102255027 0.19450293927757112 0.19960294222558783 0.24248810827133835'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.4" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:4" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+
+	</data>
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree5" sequencelength="1000" outputFileName="priorSamples_S4.gene5.SIM.xml">
+
+		<tree id="simulatedGeneTree5" spec='beast.util.TreeParser' newick="(((A1:0.0860986505608245,(A2:0.019202034703421966,A3:0.019202034703421966):0.06689661585740253):0.2167472155537868,(B1:0.05991904091134914,(B2:0.024838880709002975,B3:0.024838880709002975):0.03508016020234617):0.24292682520326214):0.2228633692539137,(((C1:0.0016231375198061393,C2:0.0016231375198061393):0.009895500962909809,C3:0.011518638482715948):0.4872558844227699,((D1:0.0024739702404869,D3:0.0024739702404869):0.04961110062979729,D2:0.05208507087028419):0.44668945203520166):0.026934712463039134):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='4.069004160159365' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.2925458291547116 0.21147897565049445 0.13162991382711065 0.36434528136768335'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.5" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:5" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>
+  
+  </data>
+  		
+  	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree6" sequencelength="1000" outputFileName="priorSamples_S4.gene6.SIM.xml">
+
+		<tree id="simulatedGeneTree6" spec='beast.util.TreeParser' newick="(((A1:0.03675703795774632,(A2:0.01735543781633364,A3:0.01735543781633364):0.019401600141412678):0.25093185826831566,((B1:0.050687519768313705,B2:0.050687519768313705):0.027596459000510554,B3:0.07828397876882426):0.20940491745723772):0.22240849017366082,(((C1:0.002283497990817618,C2:0.002283497990817618):0.003041170913680724,C3:0.005324668904498342):0.47134861631668484,((D1:0.003521902646216768,D3:0.003521902646216768):0.01817347881971848,D2:0.02169538146593536):0.4549779037552478):0.03342410117853961):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='1.2443869224183253' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.32224269016481466 0.18335856938113862 0.25818246439400894 0.23621627606003778'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.6" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:6" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree7" sequencelength="1000" outputFileName="priorSamples_S4.gene7.SIM.xml">
+
+		<tree id="simulatedGeneTree7" spec='beast.util.TreeParser' newick="(((A1:0.10856586688681424,(A2:0.01624725027983087,A3:0.01624725027983087):0.09231861660698337):0.17438052156588146,((B1:0.006206698213178874,B3:0.006206698213178874):0.04503335744611192,B2:0.051240055659290795):0.2317063327934049):0.23381499567789632,(((C1:0.004380781116478327,C3:0.004380781116478327):0.002681679666688086,C2:0.007062460783166524):0.47447448599671915,(D1:0.03844018088102791,(D2:0.02039759609085512,D3:0.02039759609085512):0.01804258479017279):0.44309676589885766):0.03522443735070646):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='10.18077303170906' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.222377834773298 0.22714173493662707 0.29531927244036466 0.2551611578497101'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.7" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:7" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree8" sequencelength="1000" outputFileName="priorSamples_S4.gene8.SIM.xml">
+
+		<tree id="simulatedGeneTree8" spec='beast.util.TreeParser' newick="((((A1:0.0012335217689154465,A3:0.0012335217689154465):0.02293844078080215,A2:0.024171962549717596):0.2626402891441294,((B1:0.0024398437445707355,B3:0.0024398437445707355):0.010960412094308536,B2:0.013400255838879271):0.2734119958549677):0.22600151305053323,(((C1:0.0014041554351419405,C2:0.0014041554351419405):0.005376079644313081,C3:0.0067802350794550215):0.4707498705811248,(D1:0.004977658243019767,(D2:0.002436878972139511,D3:0.002436878972139511):0.0025407792708802557):0.47255244741756003):0.035283659083800434):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='0.7204335407176347' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.17274252918462027 0.2727402429580578 0.21493129430583996 0.339585933551482'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.8" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:8" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree9" sequencelength="1000" outputFileName="priorSamples_S4.gene9.SIM.xml">
+
+		<tree id="simulatedGeneTree9" spec='beast.util.TreeParser' newick="(((A1:0.11940511211597932,(A2:0.013126944293730791,A3:0.013126944293730791):0.10627816782224853):0.1607122326915661,((B1:1.6015684164993882E-4,B3:1.6015684164993882E-4):0.022182451146202098,B2:0.022342607987852037):0.2577747368196934):0.22934812732006665,(((C1:0.0027495095437293227,C2:0.0027495095437293227):0.0066955234425141175,C3:0.009445032986243551):0.46800109924694255,((D1:0.002828098421441494,D3:0.002828098421441494):0.10634646323081043,D2:0.10917456165225192):0.3682715705809342):0.03201933989442596):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='0.5562393055554089' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.14126125939024473 0.38121554912417854 0.1784083026956098 0.29911488878996684'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.9" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:9" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree10" sequencelength="1000" outputFileName="priorSamples_S4.gene10.SIM.xml">
+
+		<tree id="simulatedGeneTree10" spec='beast.util.TreeParser' newick="((((A1:0.024512508752183804,A2:0.024512508752183804):0.09695989449713605,A3:0.12147240324931985):0.1824205311447567,((B1:0.03222788831305712,B3:0.03222788831305712):0.004122757997480853,B2:0.03635064631053797):0.2675422880835386):0.22310240844098134,(((C1:0.010186418739549619,C3:0.010186418739549619):0.0046986614319394215,C2:0.01488508017148904):0.4665525967980813,(D1:0.04610421027672046,(D2:0.010486737091606857,D3:0.010486737091606857):0.03561747318511371):0.43533346669285):0.04555766586548743):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='2.9793462779631286' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.20101753861950056 0.2999656044675994 0.348281419612072 0.15073543730082814'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.10" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:10" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree11" sequencelength="1000" outputFileName="priorSamples_S4.gene11.SIM.xml">
+
+		<tree id="simulatedGeneTree11" spec='beast.util.TreeParser' newick="(((A1:0.02490928243893692,(A2:0.020150571312584797,A3:0.020150571312584797):0.004758711126352122):0.2547604339160879,((B1:0.007626826079531024,B2:0.007626826079531024):0.009318539697120098,B3:0.016945365776651122):0.2627243505783737):0.23202528563202618,(((C1:0.00208061498641543,C2:0.00208061498641543):0.0037544094929403693,C3:0.005835024479355799):0.4835256066602926,((D1:0.005828917616654272,D2:0.005828917616654272):0.12450463756786884,D3:0.130333555184523):0.3590270759551255):0.022334370847402474):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='7.809107789550013' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.29498096288167985 0.15223616138022558 0.20264667266386574 0.3501362030742288'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.11" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:11" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree12" sequencelength="1000" outputFileName="priorSamples_S4.gene12.SIM.xml">
+
+		<tree id="simulatedGeneTree12" spec='beast.util.TreeParser' newick="((((A1:0.020253881958613495,A2:0.020253881958613495):0.0076530689967378995,A3:0.027906950955351395):0.2678957807406376,(B1:0.04236923129915149,(B2:0.005267111412270986,B3:0.005267111412270986):0.0371021198868805):0.2534335003968375):0.22336928919433768,(((C1:0.0034616281676470573,C2:0.0034616281676470573):0.015472353234486702,C3:0.01893398140213376):0.4579851565161107,(D1:0.0047015155891376725,(D2:0.004566020014455385,D3:0.004566020014455385):1.3549557468228723E-4):0.4722176223291068):0.042252882972082184):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='3.828068084133338' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.2853182896147524 0.24745350577731115 0.2473172683454595 0.21991093626247685'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.12" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:12" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>    
+	
+	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree13" sequencelength="1000" outputFileName="priorSamples_S4.gene13.SIM.xml">
+
+		<tree id="simulatedGeneTree13" spec='beast.util.TreeParser' newick="((((A1:0.0019557699040839704,A3:0.0019557699040839704):0.01023588670097686,A2:0.01219165660506083):0.2698913484087295,((B1:0.0037619465658591533,B2:0.0037619465658591533):0.10295714001123735,B3:0.1067190865770965):0.17536391843669386):0.233871007890058,(((C1:0.009997867038172847,C2:0.009997867038172847):0.00384032216805541,C3:0.013838189206228257):0.4661349232684632,((D1:0.0192495222076276,D2:0.0192495222076276):0.04717642087864665,D3:0.06642594308627425):0.41354716938841707):0.035980900429157026):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='9.8835538901253' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.31987819207490814 0.28881137160818054 0.15294795394415076 0.2383624823727607'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.13" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:13" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>
+ 
+ 	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree14" sequencelength="1000" outputFileName="priorSamples_S4.gene14.SIM.xml">
+
+		<tree id="simulatedGeneTree14" spec='beast.util.TreeParser' newick="(((((A1:0.002313232968852441,A2:0.002313232968852441):0.008864767296291154,A3:0.011178000265143484):0.3095878484864581,(B1:0.03787601248312095,(B2:0.02242593073306942,B3:0.02242593073306942):0.015450081750051636):0.28288983626848063):0.19290766748247606,((C1:0.0018731676552634635,C3:0.0018731676552634635):0.0016845773806208886,C2:0.003557745035884352):0.5101157711981933):0.01085069737205413,((D1:0.002536550066233767,D2:0.002536550066233767):0.038695369550327874,D3:0.04123191961656164):0.48329229398957013):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='0.22864655902779712' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.16407891412930029 0.24660263576798266 0.26932302377017225 0.31999542633254474'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.14" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:14" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>
+  	</data>
+  			
+  	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree15" sequencelength="1000" outputFileName="priorSamples_S4.gene15.SIM.xml">
+
+		<tree id="simulatedGeneTree15" spec='beast.util.TreeParser' newick="((((A1:0.004434116376721975,A2:0.004434116376721975):0.008673445788011103,A3:0.013107562164733078):0.276931088490417,((B1:0.009343305760568854,B3:0.009343305760568854):0.00378640276080644,B2:0.013129708521375294):0.27690894213377465):0.22362250961821012,((C1:0.0069005555943632,(C2:5.9930758765425196E-5,C3:5.9930758765425196E-5):0.006840624835597775):0.4729819986680446,((D1:0.015067535062778303,D3:0.015067535062778303):0.02426788423315762,D2:0.039335419295935925):0.44054713496647185):0.03377860601095228):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='2.0424171249053145' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.21894786441973105 0.2655498543068693 0.2586115103061085 0.25689077096729107'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.15" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:15" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>	
+	
+  	<data spec='beast.app.seqgen.SimulatedAlignment' id="simulatedDataGeneTree16" sequencelength="1000" outputFileName="priorSamples_S4.gene16.SIM.xml">
+
+		<tree id="simulatedGeneTree16" spec='beast.util.TreeParser' newick="((((A1:0.015505753529854172,A2:0.015505753529854172):0.01762233084439002,A3:0.03312808437424419):0.2873579865914291,((B1:0.016614309594428445,B2:0.016614309594428445):0.020597922579166372,B3:0.037212232173594706):0.28327383879207857):0.22325384927437342,((C1:0.003325095456578553,(C2:6.263683835197043E-4,C3:6.263683835197043E-4):0.0026987270730588486):0.49421643846549884,(D1:0.15831095542526213,(D2:0.006106068355514527,D3:0.006106068355514527):0.1522048870697476):0.33923057849681526):0.0461983863179693):0.0" IsLabelledNewick="true"/>
+
+		
+		<data spec="Alignment" dataType="nucleotide">
+			<sequence taxon="A1">?</sequence>
+			<sequence taxon="A2">?</sequence>
+			<sequence taxon="A3">?</sequence>
+			<sequence taxon="B1">?</sequence>
+			<sequence taxon="B2">?</sequence>
+			<sequence taxon="B3">?</sequence>
+			<sequence taxon="C1">?</sequence>
+			<sequence taxon="C2">?</sequence>
+			<sequence taxon="C3">?</sequence>
+			<sequence taxon="D1">?</sequence>
+			<sequence taxon="D2">?</sequence>
+			<sequence taxon="D3">?</sequence>
+		</data>
+
+		<siteModel spec='SiteModel' gammaCategoryCount='1'>
+			<substModel spec='HKY'>
+				<parameter name='kappa' value='0.5861792297134578' lower="0.0"/>
+				<frequencies spec='Frequencies' frequencies='0.33884469638452325 0.2489382668474862 0.15381214169095767 0.2584048950770329'/>
+			</substModel>
+		</siteModel>
+
+	<branchRateModel id="StrictClock.16" spec="beast.evolution.branchratemodel.StrictClockModel">
+        <parameter dimension="1" estimate="false" id="smolecularClockRate.c:16" minordimension="1" name="clock.rate" value="1.0"/>
+  		</branchRateModel>	
+  		
+	</data>	
+		
+ 
+ 
+    <map name="Uniform" >beast.math.distributions.Uniform</map>
+    <map name="Exponential" >beast.math.distributions.Exponential</map>
+    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+    <map name="Normal" >beast.math.distributions.Normal</map>
+    <map name="Beta" >beast.math.distributions.Beta</map>
+    <map name="Gamma" >beast.math.distributions.Gamma</map>
+    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+    <map name="prior" >beast.math.distributions.Prior</map>
+    <map name="InverseGamma" >starbeast3.math.distributions.InverseGamma</map>
+    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
+    <map name="Dirichlet" >beast.math.distributions.Dirichlet</map>
+
+    <run id="mcmc" spec="MCMC" chainLength="20000000">
+
+	<!-- Simulated species tree
+	<init id="sampledSpeciesTreeX" initial="@sampledSpeciesTree" spec='beast.util.TreeParser' newick="(A:0.3415929871146074,(B:0.024272670809412422,(C:0.016567708105396206,D:0.016567708105396206):0.007704962704016216):0.31732031630519497):0.0" IsLabelledNewick="true"/>
+          -->
+
+
+	<!-- Simulated data -->
+	<init id="SBI" spec="starbeast3.StarBeastStartState" birthRate="@birthRate.t:Species" estimate="false" popMean="@popMean" speciesTree="@Tree.t:Species">
+  	    <plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+	        <gene idref="Tree.t:$(n)"/>
+	    </plate>    
+        <speciesTreePrior idref="SpeciesTreePopSize.Species"/>
+        <speciesTreeRates id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" realRates="@branchRates.Species" tree="@Tree.t:Species" stdev="@branchRatesStdev.Species" />
+    </init>
+
+
+	<!-- MCMC -->
+		
+	
+        <state id="state" storeEvery="5000">
+			
+	 	<tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
+		   <taxonset id="taxonsuperset" spec="TaxonSet">
+                <taxon id="A" spec="TaxonSet">
+		           	<taxon id="A1" spec="Taxon"/>
+			        <taxon id="A2" spec="Taxon"/>
+			        <taxon id="A3" spec="Taxon"/>
+				</taxon>
+               <taxon id="B" spec="TaxonSet">
+		           	<taxon id="B1" spec="Taxon"/>
+			        <taxon id="B2" spec="Taxon"/>
+			        <taxon id="B3" spec="Taxon"/>
+                </taxon>
+               <taxon id="C" spec="TaxonSet">
+		           	<taxon id="C1" spec="Taxon"/>
+			        <taxon id="C2" spec="Taxon"/>
+			        <taxon id="C3" spec="Taxon"/>
+                </taxon>
+               <taxon id="D" spec="TaxonSet">
+		           	<taxon id="D1" spec="Taxon"/>
+			        <taxon id="D2" spec="Taxon"/>
+			        <taxon id="D3" spec="Taxon"/>
+                </taxon>
+              </taxonset>
+		</tree>
+
+		<parameter id="popSize" name="stateNode" lower="0.0" value="1.0" />
+		<parameter id="birthRate.t:Species" lower="0.0" name="stateNode">1.0</parameter>
+		<parameter id="popMean" name="stateNode">1.0</parameter>
+
+		<stateNode id="branchRates.Species" spec="parameter.RealParameter" lower="0">1</stateNode>
+		<parameter id="branchRatesStdev.Species" estimate="true" upper="2" name="stateNode">0.3</parameter>
+
+		<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+			<tree id="Tree.t:$(n)" name="stateNode">
+			    <taxonset id="TaxonSet.$(n)" spec="TaxonSet">
+			        <alignment idref="simulatedDataGeneTree$(n)"/>
+			    </taxonset>
+			</tree>
+			
+			<parameter id="kappa.s:$(n)" lower="0.0" name="stateNode">2.0</parameter>
+
+			<parameter id="molecularClockRate.c:$(n)" lower="0.0" name="stateNode">1.0</parameter>
+		</plate>
+        </state>
+
+	<!--
+        <init id="RandomTree.t:dna" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:alignment" taxa='@alignment’>
+            <populationModel id="ConstantPopulation0.t:alignment" spec="ConstantPopulation">
+                <parameter id="randomPopSize.t:alignment" name="popSize">1.0</parameter>
+            </populationModel>
+        </init>
+	-->
+
+
+    <distribution id="posterior" spec="util.CompoundDistribution">
+        <distribution id="speciescoalescent" spec="util.CompoundDistribution">
+            <distribution bottomPopSize="@popSize" gammaParameter="@popMean" id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" taxonset="@taxonsuperset" tree="@Tree.t:Species">
+            <parameter id="popSizeTop" name="topPopSize" value="1"/> 
+            <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
+        	</distribution>
+        	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">     
+            <distribution id="treePrior.t:$(n)" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" populationModel="@speciesTreePopulationModel" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:$(n)"/>
+        	</plate>
+        </distribution>
+	
+        <distribution id="prior" spec="util.CompoundDistribution">
+            <distribution id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:Species" tree="@Tree.t:Species"/>
+            <prior id="YuleBirthRatePrior.t:Species" name="distribution" x="@birthRate.t:Species">
+				<LogNormal id="birthRate.lognormal" name="distr" meanInRealSpace="false">
+					    <parameter id="RealParameter.0" estimate="false" name="M">0.7</parameter>
+					    <parameter id="RealParameter.01" estimate="false" lower="0.0" name="S" upper="5.0">0.2</parameter>
+				</LogNormal>
+		
+            </prior>
+
+
+		
+		    <prior id="branchRates.Species.Distribution" name="distribution" x="@branchRates.Species">
+				<LogNormal id="branchRates.lognormal" S="@branchRatesStdev.Species" M="1.0" meanInRealSpace="true" name="distr"/>
+		    </prior>
+		
+
+
+		
+	  		<prior id="branchRatesStdevPrior.Species" name="distribution" x="@branchRatesStdev.Species">
+			    <Gamma id="branchRatesStdev.gamma" name="distr">
+					<parameter id="branchRatesStdevPriorAlpha.Species" estimate="false" name="alpha">0.5396</parameter>
+					<parameter id="branchRatesStdevPriorBeta.Species" estimate="false" name="beta">0.3819</parameter>
+			    </Gamma>
+	        </prior>
+		
+			
+			<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+			 <prior id="KappaPrior.s:$(n)" name="distribution" x="@kappa.s:$(n)">
+                <LogNormal id="LogNormalDistributionModel.01$(n)" name="distr">
+                    <parameter id="RealParameter.02$(n)" estimate="false" name="M">1.0</parameter>
+                    <parameter id="RealParameter.03$(n)" estimate="false" name="S">1.25</parameter>
+             </LogNormal>
+             </prior>
+           	</plate>
+
+            <prior id="popMean.prior" name="distribution" x="@popMean">
+                <LogNormal id="popMeanLogNormal" name="distr">
+                    <parameter id="RealParameter.010" estimate="false" name="M">-5.0</parameter>
+                    <parameter id="RealParameter.011" estimate="false" lower="0.0" name="S" upper="5.0">1.25</parameter>
+                </LogNormal>
+            </prior>
+
+             <prior id="constPopSizesPrior.Species" name="distribution" x="@popSize">
+					<distr id="popPriorDistr" spec="starbeast3.math.distributions.InverseGamma" alpha="2.0" beta="@popMean"/>
+             </prior>
+
+        </distribution>
+        <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
+
+            <plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+	            <distribution id="treeLikelihood.$(n)" spec="TreeLikelihood" data="@simulatedDataGeneTree$(n)" tree="@Tree.t:$(n)">
+	                <siteModel id="SiteModel.s:$(n)" spec="SiteModel">
+	                    <parameter id="mutationRate.s:$(n)" estimate="false" name="mutationRate">1.0</parameter>
+	                    <parameter id="gammaShape.s:$(n)" estimate="false" name="shape">1.0</parameter>
+	                    <parameter id="proportionInvariant.s:$(n)" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+	                    <substModel id="hky.s:$(n)" spec="HKY" kappa="@kappa.s:$(n)">
+	                        <frequencies id="empiricalFreqs.s:$(n)" spec="Frequencies" data="@simulatedDataGeneTree$(n)"/>
+	                    </substModel>
+	                </siteModel>
+	               <branchRateModel id="SpeciesTreeRelaxedClock.c:$(n)" spec="starbeast3.StarBeast3Clock" clock.rate="@molecularClockRate.c:$(n)" geneTree="@treePrior.t:$(n)" speciesTreeRates="@branchRatesModel.Species"/>
+	               <!--  <branchRateModel id="SpeciesStrictClock.c:$(n)" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@molecularClockRate.c:$(n)"/>-->
+	            </distribution>
+            </plate>
+        </distribution>
+    </distribution>
+
+
+
+
+	<!-- Gene tree topology -->
+    <operator id="AdaptableOperatorSampler.geneTopology" spec="orc.operators.AdaptableOperatorSampler" weight="1.0" dimensional="true">
+
+		<!-- Metric: gene tree toplogies -->
+		<metric spec="beast.evolution.tree.RobinsonsFouldMetric" taxonset="@taxonsuperset" recursive="true"/>
+    	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+	    	<tree idref="Tree.t:$(n)"/>
+	    </plate>
+
+
+
+	    <!-- Parallel gene tree operator -->	
+		<operator idref="ParallelMCMCTreeOperator" />
+
+
+		<!-- Adaptable -->
+    	<operator id="AdaptableOperatorSampler.geneTopology.inner" spec="orc.operators.AdaptableOperatorSampler" weight="1.0">
+
+    		<metric spec="beast.evolution.tree.RobinsonsFouldMetric" taxonset="@taxonsuperset"/>
+	    	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+	       		<tree idref="Tree.t:$(n)"/>
+	         </plate>    
+
+
+         	<!-- Subtree slide -->
+	    	<operator idref="SubtreeSlide.t:geneTrees" />
+	    	
+
+    		<!-- Wilson balding operator -->
+			<operator id="WilsonBalding.t:geneTrees" spec="starbeast3.operators.WilsonBalding" weight="1.0">
+				<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+	       			<gene idref="treePrior.t:$(n)"/>
+	        	 </plate>   
+			</operator>
+			
+	            
+	        <!-- Wide exchange -->
+	        <operator id="Wide.t:geneTrees" spec="starbeast3.operators.Exchange" isNarrow="false" weight="1.0">
+	        	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+	       			<gene idref="treePrior.t:$(n)"/>
+	        	 </plate>    
+	        </operator>
+	            
+	        <!-- Narrow exchange -->
+	        <operator id="Narrow.t:geneTrees" spec="starbeast3.operators.Exchange" isNarrow="true" weight="1.0">
+	        	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+	       			<gene idref="treePrior.t:$(n)"/>
+	        	</plate>    
+	        </operator>
+
+
+	        <!-- Node reheight -->
+	        <operator idref="Reheight.t:Species" />
+
+	    	<!-- NER -->
+	    	<operator idref="NEROperator_dAE_dBE_dCE" />
+
+	    	<!-- Coordinate narrow exchange -->
+			<operator idref="CoordinatedExchange" />
+
+	    	<!-- Coordinate narrow exchange rates -->
+			<operator idref="CoordinatedExchangeRates" />
+
+
+	  	</operator>
+
+
+
+    </operator>
+
+
+	<!-- Gene tree node heights -->
+    <operator id="AdaptableOperatorSampler.geneHeights" spec="orc.operators.AdaptableOperatorSampler" weight="1.0" dimensional="true">
+
+
+    	<!-- Metric: gene tree node heights -->
+    	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+	    	<tree idref="Tree.t:$(n)"/>
+	    </plate>
+
+
+
+		<!-- Parallel gene tree operator -->	
+		<operator id="ParallelMCMCTreeOperator" includeRealParameters="false" spec="starbeast3.operators.ParallelMCMCTreeOperator" weight="1" otherState="@state" chainLength="250">
+	 		<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+		    	<distribution spec="starbeast3.operators.ParallelMCMCTreeOperatorTreeDistribution" tree="@Tree.t:$(n)" geneprior="@treePrior.t:$(n)" treelikelihood="@treeLikelihood.$(n)"/>
+	 		</plate>    
+		</operator>
+
+
+
+
+    	<!-- Adaptable -->
+    	<operator id="AdaptableOperatorSampler.geneHeights.inner" spec="orc.operators.AdaptableOperatorSampler" weight="1.0">
+
+	    	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+	       		<tree idref="Tree.t:$(n)"/>
+	         </plate>    
+
+
+	        <!-- Constant distance 
+	        <operator idref="ConstantDistanceOperatorSpeciesTree" />
+	        -->
+
+
+	         <!-- Root scale -->
+	        <operator id="TreeRootScaler.t:$(n)" spec="starbeast3.operators.TreeScaleOperator" rootOnly="true" scaleFactor="0.7" weight="1.0">
+	        	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+       				<gene idref="treePrior.t:$(n)"/>
+        	 	</plate>    
+	        </operator>
+
+	         <!-- Tree scale -->
+	        <operator id="TreeScaler.t:$(n)" spec="starbeast3.operators.TreeScaleOperator" scaleFactor="0.95" weight="1.0">
+	        	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+       				<gene idref="treePrior.t:$(n)"/>
+        	 	</plate>    
+	        </operator>
+	        
+
+
+			<!-- Uniform -->
+	    	<operator id="UniformOperator.t:$(n)" spec="starbeast3.operators.Uniform" weight="1.0">
+				<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+       				<gene idref="treePrior.t:$(n)"/>
+        	 	</plate>    
+	    	</operator>
+
+	    	<!-- Subtree slide -->
+	    	<operator id="SubtreeSlide.t:geneTrees" spec="starbeast3.operators.SubtreeSlide" size="0.002" weight="1.0">
+				<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">   
+       				<gene idref="treePrior.t:$(n)"/>
+        	 	</plate>    
+	    	</operator>
+			
+
+			<!-- UpDown 
+			<operator idref="updownAll:Species" />
+			-->
+
+	        <!-- Node reheight -->
+	        <operator idref="Reheight.t:Species" />
+
+	        <!-- Coordinated uniform -->
+			<operator idref="coordinatedExponential.t:Species" />
+
+	         <!-- Coordinated exponential -->
+	  		<operator idref="coordinatedUniform.t:Species" />
+
+
+	  	</operator>
+
+
+
+    </operator>
+
+
+    <!-- Species tree topology -->
+	<operator id="AdaptableOperatorSampler.speciesTopology" spec="orc.operators.AdaptableOperatorSampler" weight="500.0" tree="@Tree.t:Species" dimensional="false">
+
+		<!-- Robinson foulds metric -->
+		<metric spec="beast.evolution.tree.RobinsonsFouldMetric" taxonset="@taxonsuperset"/>
+
+		<!-- Wilson balding operator -->
+		<operator id="WilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="1.0"/>
+            
+        <!-- Wide exchange -->
+        <operator id="Wide.t:Species" spec="Exchange" isNarrow="false" tree="@Tree.t:Species" weight="1.0"/>
+            
+        <!-- Narrow exchange -->
+        <operator id="Narrow.t:Species" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
+
+        <!-- Subtree slide -->
+    	<operator idref="SubtreeSlide.t:Species" />
+
+
+        <!-- Node reheight -->
+        <operator idref="Reheight.t:Species" />
+
+    	<!-- NER -->
+    	<operator id="NEROperator_dAE_dBE_dCE" spec="orc.ner.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" rates="@branchRates.Species" weight="1"/>
+
+    	<!-- Coordinate narrow exchange -->
+		<operator id="CoordinatedExchange" spec="starbeast3.operators.CoordinatedExchangeRates" tree="@Tree.t:Species"  rates="@branchRates.Species" weight="1">
+			<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+           		<gene idref="treePrior.t:$(n)"/>
+            </plate>    
+		</operator>
+
+    	<!-- Coordinate narrow exchange rates -->
+		<operator id="CoordinatedExchangeRates" spec="starbeast3.operators.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" rates="@branchRates.Species" weight="1">
+			<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+           		<gene idref="treePrior.t:$(n)"/>
+            </plate>    
+		</operator>
+
+	</operator>
+
+
+	<!-- Species tree node heights -->
+    <operator id="AdaptableOperatorSampler.speciesHeights" spec="orc.operators.AdaptableOperatorSampler" weight="500.0" tree="@Tree.t:Species" dimensional="false">
+
+   
+        <!-- Scale -->
+        <operator id="TreeRootScaler.t:Species" spec="ScaleOperator" rootOnly="true" scaleFactor="0.7" tree="@Tree.t:Species" weight="1.0"/>
+        <operator id="TreeScaler.t:Species" spec="ScaleOperator" scaleFactor="0.95" tree="@Tree.t:Species" weight="1.0"/>
+
+		<!-- UpDown -->
+		<operator idref="updownAll:Species" />
+
+		<!-- Uniform -->
+    	<operator id="UniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="1.0"/>
+
+    	<!-- Subtree slide -->
+    	<operator id="SubtreeSlide.t:Species" spec="SubtreeSlide" size="0.002" tree="@Tree.t:Species" weight="1.0"/>
+
+        <!-- Constant distance -->
+        <operator idref="ConstantDistanceOperatorSpeciesTree" />
+
+        <!-- Node reheight -->
+        <operator id="Reheight.t:Species" spec="starbeast3.operators.NodeReheight2" taxonset="@taxonsuperset" tree="@Tree.t:Species" weight="1.0">
+            <plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+           		<gene idref="treePrior.t:$(n)"/>
+            </plate>
+        </operator>
+
+
+        <!-- Coordinated uniform -->
+		<operator id="coordinatedExponential.t:Species" spec="starbeast3.operators.CoordinatedExponential" speciesTree="@Tree.t:Species" weight="1.0">
+           	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+           		<gene idref="treePrior.t:$(n)"/>
+            </plate>    
+        </operator>
+
+
+         <!-- Coordinated exponential -->
+  		<operator id="coordinatedUniform.t:Species" spec="starbeast3.operators.CoordinatedUniform" speciesTree="@Tree.t:Species" weight="1.0">
+            <plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+            	<gene idref="treePrior.t:$(n)"/>
+            </plate>    
+        </operator>
+
+
+
+    </operator>
+
+
+ 	<!-- Species tree prior -->
+    <operator id="AdaptableOperatorSampler.speciesModel" spec="orc.operators.AdaptableOperatorSampler" weight="1.0" parameter="@birthRate.t:Species" dimensional="true">
+
+		<!-- Scale -->
+		<operator id="Scale.speciesModel" spec="ScaleOperator" parameter="@birthRate.t:Species" scaleFactor="0.75" weight="1.0"/>
+
+		<!-- UpDown -->
+		<operator idref="updownAll:Species" />
+
+		 <!-- SampleFromPrior -->
+		<operator id="SampleFromPriorOperator.speciesModel" spec="orc.operators.SampleFromPriorOperator" parameter="@birthRate.t:Species" np="1" prior="@birthRate.lognormal" weight="1"/>
+		
+
+    </operator>
+
+
+	<!-- Branch rates -->
+	<operator id="AdaptableOperatorSampler.branchRates" spec="orc.operators.AdaptableOperatorSampler" weight="10.0" parameter="@branchRates.Species" dimensional="true">
+
+		<!-- Scale -->
+		<operator id="Scale.branchRates" spec="ScaleOperator" parameter="@branchRates.Species" scaleFactor="0.75" weight="1.0"/>
+
+		<!-- Constant dsistance -->
+		<operator id="ConstantDistanceOperatorSpeciesTree" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" twindowSize="0.01" tree="@Tree.t:Species" clock="@branchRatesModel.Species" popsizes="@popSize" proportionalToBranchLength="true" weight="2.0">
+			<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+				<gene idref="treePrior.t:$(n)"/>
+			</plate>
+		</operator>
+
+ 		<!-- SampleFromPrior -->
+		<operator id="SampleFromPriorOperator.branchRates" spec="orc.operators.SampleFromPriorOperator" parameter="@branchRates.Species" np="1" prior="@branchRates.lognormal" weight="1"/>
+		
+
+	</operator>
+
+
+
+
+	<!-- Relaxed clock sd -->
+	<operator id="AdaptableOperatorSampler.Stdev" spec="orc.operators.AdaptableOperatorSampler" weight="10.0" parameter="@branchRatesStdev.Species" dimensional="false">
+
+		<!-- Scale -->
+		<operator id="Scale.Stdev" spec="ScaleOperator" parameter="@branchRatesStdev.Species" scaleFactor="0.75" weight="1.0"/>
+
+
+		 <!-- SampleFromPrior -->
+		<operator id="SampleFromPriorOperator.Stdev" spec="orc.operators.SampleFromPriorOperator" parameter="@branchRatesStdev.Species" np="1" prior="@branchRatesStdev.gamma" weight="1"/>
+		
+
+
+	</operator>
+
+
+	<!-- Population sizes -->
+	<operator id="AdaptableOperatorSampler.popSize" spec="orc.operators.AdaptableOperatorSampler" weight="1.0" parameter="@popSize" dimensional="true">
+
+
+		<!-- Scale -->
+		<operator id="Scale.popSize" spec="ScaleOperator" parameter="@popSize" scaleFactor="0.75" weight="1.0"/>
+
+
+		<!-- Gibbs operator -->
+		<operator id="PopSizeGibbsSampler" spec='starbeast3.operators.PopSizeGibbsSampler' weight="1.0" popSizes="@popSize">
+			<gammaprior id="gammaPrior" spec="beast.math.distributions.Gamma" alpha="2.0" beta="@popMean"/>
+			<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+				<gene idref="treePrior.t:$(n)"/>
+			</plate>
+		</operator>
+
+
+		<!-- UpDown -->
+		<operator idref="updownAll:Species" />
+
+
+ 		 <!-- SampleFromPrior  Removing operator because Gamma cdf is using 99% of time on profiler
+		<operator id="SampleFromPriorOperator.popSize" spec="orc.operators.SampleFromPriorOperator" parameter="@popSize" np="1" prior="@popPriorDistr" weight="1"/>
+		-->
+
+	</operator>
+
+
+
+	<!-- Population size mean -->
+	<operator id="AdaptableOperatorSampler.popmean" spec="orc.operators.AdaptableOperatorSampler" weight="1.0" parameter="@popMean" dimensional="true">
+
+
+		<!-- Scale -->
+		<operator id="Scale.popmean" spec="ScaleOperator" parameter="@popMean" scaleFactor="0.75" weight="1.0"/>
+
+
+		<!-- UpDown -->
+        <operator id="updownAll:Species" spec="UpDownOperator" scaleFactor="0.75" weight="1.0">
+	                    
+            <plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+	    		<up idref="molecularClockRate.c:$(n)"/>
+				<down idref="Tree.t:$(n)"/>
+	    	</plate>
+
+			<up idref="birthRate.t:Species"/>		
+			<down idref="Tree.t:Species"/>
+			<down idref="popSize"/>
+			<down idref="popMean"/>
+                
+        </operator>
+
+        <!-- SampleFromPrior -->
+		<operator id="SampleFromPriorOperator.popmean" spec="orc.operators.SampleFromPriorOperator" parameter="@popMean" np="1" prior="@popMeanLogNormal" weight="1"/>
+
+
+	</operator>
+
+
+    <!-- Site model -->
+    <operator id="AdaptableOperatorSampler.siteModel" spec="orc.operators.AdaptableOperatorSampler" weight="1.0" dimensional="true">
+
+
+    	<!-- The parameters we want to change -->
+    	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+    		<parameter idref="kappa.s:$(n)" />
+    		<parameter idref="molecularClockRate.c:$(n)" />
+    	</plate>
+    	
+    	<!-- ParallelAVMN -->
+		<operator id="ParallelMCMCRealParameterOperator" spec="starbeast3.operators.ParallelMCMCRealParameterOperator" otherState="@state" chainLength="78" weight="1" >
+	    	<distribution idref="likelihood"/>
+		</operator>
+    	
+
+		<!-- One AVMN trained on everything -->
+		<operator id="AVMNSiteModel" spec="beast.evolution.operators.AdaptableVarianceMultivariateNormalOperator" 
+                weight="1"
+                coefficient="1"
+                scaleFactor="1"
+                beta="0.05"
+                initial="1000"
+                burnin="500"
+                every="1">
+			<transformations spec="beast.util.Transform$LogTransform">
+				<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">        
+		    		<f idref="kappa.s:$(n)" />
+		    		<f idref="molecularClockRate.c:$(n)" />
+		    	</plate>
+			</transformations>
+		</operator>
+
+
+	</operator>
+
+
+
+
+
+
+
+	<!-- <operatorschedule id="operatorschedule" spec="starbeast3.operators.MultiStepOperatorSchedule" logger="@tracelog"/> -->
+           
+     	<logger id="tracelog" fileName="calibrated_S4_G2.log" logEvery="5000" model="@posterior" sort="smart">
+		<log idref="posterior"/>
+		<log idref="likelihood"/>
+		<log idref="prior"/>
+		<log idref="speciescoalescent"/>
+		<log idref="birthRate.t:Species"/>
+		<log idref="YuleModel.t:Species"/>
+		<log id="TreeHeight.Species" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:Species"/>
+		<log id="BranchLength.Species" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:Species"/>
+		<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+			<log idref="treeLikelihood.$(n)"/>
+			<log idref="treePrior.t:$(n)"/>
+			<log id="TreeHeight.t:$(n)" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:$(n)"/>
+			<log id="BranchLength.t:$(n)" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:$(n)"/>
+			<log idref="kappa.s:$(n)"/>
+			<log idref="molecularClockRate.c:$(n)"/>
+		</plate>
+		<log idref="popSize"/>
+		<log idref="popMean"/>
+		<log idref="branchRatesStdev.Species"/>
+		<log idref="branchRates.Species"/>
+		</logger>
+
+	<logger id="speciesTreeLogger" fileName="calibrated_S4_G4_SIM.species.trees" logEvery="5000" mode="tree">
+		<log id="SpeciesTreeLoggerX" spec="starbeast3.SpeciesTreeLogger" popSize="@popSize" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">     																																								
+            <treetop id="treeTopFinder" spec="beast.evolution.speciation.TreeTopFinder">
+				<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+				<tree idref="Tree.t:$(n)"/>
+				</plate>
+			</treetop>
+		</log>
+	</logger>
+
+	<logger id="screenlog" logEvery="1000" >
+		<log idref="posterior"/>
+		<log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+		<log idref="likelihood"/>
+		<log idref="prior"/>
+	</logger>
+
+
+	<plate var="n" range="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16">
+	<logger id="treelog.t:$(n)" fileName="S4_G2_SIM.gene$(n).trees" logEvery="5000" mode="tree">
+		<log id="TreeWithMetaDataLogger.t:$(n)" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:$(n)"/>
+	</logger>
+	</plate>
+	
+
+    </run>
+
+</beast>

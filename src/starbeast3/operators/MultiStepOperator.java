@@ -2,11 +2,14 @@ package starbeast3.operators;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
+import beast.core.BEASTInterface;
 import beast.core.Description;
+import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.MCMC;
 import beast.core.Operator;
@@ -402,6 +405,30 @@ public abstract class MultiStepOperator extends Operator {
     	}
     	return stateNodes;
     }
+    
+    
+	protected static void getRealParameterPriors(Set<StateNode> stateNodeList, Set<Distribution> priorsList) {
+		for (StateNode sn : stateNodeList) {
+			for (BEASTInterface o : sn.getOutputs()) {
+				if (o instanceof Distribution) {
+					getRealParameterPriors(o, (Distribution) o, priorsList);
+				}
+			}
+		}		
+	}
+	
+	
+	
+
+	protected static void getRealParameterPriors(BEASTInterface o, Distribution distr, Set<Distribution> priorsList) {
+		for (BEASTInterface o2 : o.getOutputs()) {
+			if (o2.getID() != null && o2.getID().equals("prior")) {
+				priorsList.add(distr);
+				break;
+			}
+			getRealParameterPriors(o2, distr, priorsList);
+		}
+	}
     
 	
 	
