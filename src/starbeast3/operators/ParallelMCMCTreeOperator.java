@@ -252,7 +252,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				
 				// Add the tree
 				Transform f = new Transform.LogTransform(d.tree);
-				transformations.add(f);
+				//transformations.add(f);
 				Log.warning("Adding " + d.tree.getID());
 				
 				for (StateNode s : stateNodeList) {
@@ -266,7 +266,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					if (s.getID().startsWith("freq")) {
 						
 						DeltaExchangeOperator op = new DeltaExchangeOperator();
-						op.initByName("parameter", s, "delta", 0.2, "weight", 0.1);
+						op.initByName("parameter", s, "delta", 0.2, "weight", 0.5);
 						operators.add(op);
 						f = new Transform.LogConstrainedSumTransform(s, 1.0);
 						
@@ -277,7 +277,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						
 	
 						ScaleOperator op = new ScaleOperator();
-						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 0.1);
+						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 0.5);
 						operators.add(op);
 						f = new Transform.LogTransform(s);
 						
@@ -291,7 +291,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				if (!transformations.isEmpty()) {
 					AdaptableVarianceMultivariateNormalOperator AVMNOperator = new AdaptableVarianceMultivariateNormalOperator();
 					AVMNOperator.initByName(
-							"weight", 2.0, 
+							"weight", 5.0, 
 							"coefficient", 1.0, 
 							"scaleFactor", 1.0, 
 							"beta", 0.05, 
