@@ -7,32 +7,57 @@ import java.util.List;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Operator;
+import beast.core.StateNode;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.operators.KernelDistribution;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
+import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
 @Description("Scale operator that scales random epoch in a tree")
 public class EpochOperator extends Operator {
-    final public Input<List<Tree>> treeInput = new Input<>("tree", "beast.tree on which this operation is performed", new ArrayList<>());
+    final public Input<List<GeneTreeForSpeciesTreeDistribution>> genesInput = new Input<>("gene", "list of gene trees", new ArrayList<>());
+    final public Input<Boolean> moveSpeciesTreeInput = new Input<>("moveSpeciesTree", "whether to move the species tree or not", false);
+    
     final public Input<List<RealParameter>> upInput = new Input<>("up", "list of parameters to increase when tree increases (optional)", new ArrayList<>());
     final public Input<List<RealParameter>> downInput = new Input<>("down", "list of parameters to decrease when tree increases (optional)", new ArrayList<>());
-    final public Input<KernelDistribution> kernelDistributionInput = new Input<>("kernelDistribution", "provides sample distribution for proposals", 
-    		KernelDistribution.newDefaultKernelDistribution());
+    //final public Input<KernelDistribution> kernelDistributionInput = new Input<>("kernelDistribution", "provides sample distribution for proposals", 
+    		//KernelDistribution.newDefaultKernelDistribution());
+    
+    
     final public Input<Boolean> optimiseInput = new Input<>("optimise", "flag to indicate that the scale factor is automatically changed in order to achieve a good acceptance rate (default true)", true);
     final public Input<Double> scaleFactorInput = new Input<>("scaleFactor", "scaling factor -- positive number that determines size of the jump: higher means bigger jumps.", 0.1);
 
+    
+    Tree speciesTree;
     KernelDistribution kernelDistribution;
     double scaleFactor;
     final double updownFactor = 1.0/3.0;
     
     @Override
 	public void initAndValidate() {
-    	kernelDistribution = kernelDistributionInput.get();
+    	//kernelDistribution = kernelDistributionInput.get();
+    	kernelDistribution = new KernelDistribution.Bactrian(KernelDistribution.Bactrian.mode.uniform); // Uniform only
     	scaleFactor = scaleFactorInput.get();
-    	if (treeInput.get().isEmpty()) throw new IllegalArgumentException("Please provide at least 1 'tree'");
+    	
+    	if (genesInput.get().isEmpty()) throw new IllegalArgumentException("Please provide at least 1 gene tree distribution");
+    	
+    	// Get species tree
+    	speciesTree = null;
+    	for (GeneTreeForSpeciesTreeDistribution gene : genesInput.get()) {
+    		
+    		Tree sp = gene.speciesTreeInput.get();
+    		if (speciesTree == null) {
+    			speciesTree = sp;
+    		}else {
+    			if (speciesTree != sp) throw new IllegalArgumentException("Please ensure that all genes share the same species tree");
+    		}
+    				
+    		
+    	}
+    	
     	
 	}	
 	
@@ -48,10 +73,18 @@ public class EpochOperator extends Operator {
     @Override
     public double proposal() {
     	
-    	List<Tree> trees = treeInput.get();
+    	// All trees
+    	List<Tree> trees = new ArrayList<>();
+    	if (moveSpeciesTreeInput.get()) trees.add(speciesTree);
+    	for (GeneTreeForSpeciesTreeDistribution gene : genesInput.get()) {
+    		trees.add((Tree) gene.getGeneTree());
+    	}
+    	
     	List<RealParameter> ups = upInput.get();
     	List<RealParameter> downs = downInput.get();
 
+    	
+    	
     	// Get upper and lower
     	double upperFwd = Double.POSITIVE_INFINITY;
     	double lowerFwd = Double.NEGATIVE_INFINITY;
@@ -66,31 +99,48 @@ public class EpochOperator extends Operator {
 			upperFwd = Math.min(upperFwd, upper_t);
 			lowerFwd = Math.max(lowerFwd, lower_t);
     	}
-
-		
+    	
+    	
+    	
+    	// Get lower and upper ranks
+    	int lowerRank = Randomizer.nextInt(speciesTree.getNodeCount()); // From leaves to root
+    	int upperRank = speciesTree.getLeafNodeCount() + Randomizer.nextInt(speciesTree.getInternalNodeCount()); // From internal nodes to above root
+    	if (upperRank < lowerRank) {
+    		int tmp = lowerRank;
+    		lowerRank = upperRank;
+    		upperRank = tmp;
+    	}
+    	if (upperRank == lowerRank) return Double.NEGATIVE_INFINITY;
+    	
+    	double l = speciesTree.getNode(lowerRank).getHeight();
+    	double u = upperRank == speciesTree.getNodeCount() ? upperFwd : speciesTree.getNode(upperRank).getHeight();
+    	
     	
     	// Mid point
     	//double midFwd = (upperFwd - lowerFwd) / 2;
-    	
 	
     	// Lower bound of scaling
-		double l = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
-		double pfromFwd = -2*Math.log(upperFwd - lowerFwd);
-		
-		
-		//double l = lowerFwd + Randomizer.nextDouble() * midFwd;
-		//double pfromFwd = -2*Math.log(midFwd);
-		//double u = lowerFwd + midFwd + Randomizer.nextDouble() * midFwd;
+		//double l = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
+		//double pfromFwd = -2*Math.log(upperFwd - lowerFwd);
 		
 		
 		
 		// Upper bound of scaling
-		double u = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
+		//double u = lowerFwd + Randomizer.nextDouble() * (upperFwd - lowerFwd);
 		
 		
 		
-		// Sample a scale factor
+		// Sample a scale factor. Ensure that the window (log space) does not force genes below their species, and is symmetric
+		double lower_s_fwd = this.getLowerScaleLimit(l, u);
+		double upper_s_fwd;
+		if (lower_s_fwd == 0) upper_s_fwd = Double.POSITIVE_INFINITY;
+		else upper_s_fwd = 1.0 / lower_s_fwd;
+		
+		
 		double scale = kernelDistribution.getScaler(1, scaleFactor);
+		if (scale <= lower_s_fwd || scale >= upper_s_fwd) {
+			return Double.NEGATIVE_INFINITY;
+		}
 		
 		
 		// Ensure 'l' is lower than 'u'
@@ -117,19 +167,19 @@ public class EpochOperator extends Operator {
 			Node [] nodes = tree.getNodesAsArray();
 
 			for (int i = tree.getLeafNodeCount(); i < nodes.length; i++) {
+			
 				
 				oldLength += 2*nodes[i].getHeight() - nodes[i].getChild(0).getHeight() - nodes[i].getChild(1).getHeight();
 				
 				Node node = nodes[i];
+				//if (node.isRoot()) continue; //tmp
 				double h = node.getHeight();
 				totalNodes ++;
 				
 				// If above u, then sum by constant amount
 				if (h > u) {
-					
 					h = h + delta;
 					node.setHeight(h);
-					
 				}
 				
 				
@@ -213,7 +263,61 @@ public class EpochOperator extends Operator {
 		}
 		
 		
-		return pfromBck-pfromFwd + (scaled)*Math.log(scale) + (goingUp-goingDown)*Math.log(scale2);
+		// Reverse scale sampling
+		double lower_s_bck = this.getLowerScaleLimit(l, u);
+		if (lower_s_bck != 0) {
+			double upper_s_bck = 1.0/lower_s_bck;
+			
+			
+			//Log.warning("forward " + lower_s_fwd + " / reverse " + lower_s_bck);
+			
+		}
+		
+		//Log.warning("upperFwd " + upperFwd + " lowerFwd " + lowerFwd);
+		//Log.warning("upperBck " + upperBck + " lowerBck " + lowerBck);
+		
+		//return pfromBck-pfromFwd + (scaled)*Math.log(scale) + (goingUp-goingDown)*Math.log(scale2);
+		return (scaled)*Math.log(scale) + (goingUp-goingDown)*Math.log(scale2);
+		
+		
+		
+    }
+    
+    
+    /**
+     * Get lower scale limit 
+     * @param l
+     * @param u
+     * @return
+     */
+    private double getLowerScaleLimit(double l, double u) {
+    	
+    	double lower_s = 0;
+    	if (!moveSpeciesTreeInput.get()) {
+			for (Node speciesNode : speciesTree.getNodesAsArray()) {
+				
+				
+				// If the species node is outside of the window then there are no issues
+				if (speciesNode.getHeight() <= l || speciesNode.getHeight() >= u) continue;
+				
+				// Find the maximum amount each node can be scaled down by without breaking the species tree
+				for (GeneTreeForSpeciesTreeDistribution gene : genesInput.get()) {
+					for (Node geneNode : gene.mapSpeciesNodeToGeneTreeNodes(speciesNode)) {
+						if (geneNode.getHeight() > l && geneNode.getHeight() < u) {
+							
+							// This is the maximum amount the gene can be scaled (down) by without breaking the species tree
+							double diff = (speciesNode.getHeight()-l) / (geneNode.getHeight()-l);
+							lower_s = Math.max(diff, lower_s);
+							
+						}
+					}
+				}
+				
+			}
+		}
+    	
+    	return lower_s;
+    	
     }
 
     
@@ -263,6 +367,21 @@ public class EpochOperator extends Operator {
             return "Try setting scale factor to about " + formatter.format(newWindowSize);
         } else return "";
     }
+    
+    
+    
+    @Override
+    public List<StateNode> listStateNodes() {
+    	List<StateNode> nodes = super.listStateNodes();
+    	if (moveSpeciesTreeInput.get()) nodes.add(speciesTree);
+    	for (GeneTreeForSpeciesTreeDistribution gene : genesInput.get()) {
+    		nodes.add((StateNode)gene.getGeneTree());
+    	}
+    	return nodes;
+    	
+    }
+    
+    
 }
 
 

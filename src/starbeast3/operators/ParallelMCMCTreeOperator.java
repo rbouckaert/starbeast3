@@ -22,6 +22,7 @@ import beast.core.util.Log;
 import beast.evolution.operators.*;
 import beast.evolution.tree.Tree;
 import beast.util.Transform;
+import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
 public class ParallelMCMCTreeOperator extends MultiStepOperator {
@@ -180,10 +181,14 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				
 				// Epoch scaler
 				EpochOperator epochOperator = new EpochOperator();
-				List<Tree> trees = new ArrayList<>();
-				trees.add(d.tree);
-				epochOperator.initByName("scaleFactor", 0.5, "tree", trees, "weight", 1.0);
+				List<GeneTreeForSpeciesTreeDistribution> trees = new ArrayList<>();
+				trees.add(d.geneprior);
+				epochOperator.initByName("scaleFactor", 0.5, "gene", trees, "weight", 1.0);
 				//adaptOperators.add(epochOperator);
+				
+				//EpochFlexOperator flex = new EpochFlexOperator();
+				//flex.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 1.0);
+				//adaptOperators.add(flex);
 				
 				// Subtree slide
 				adaptOperators.add(SubtreeSlide);
@@ -252,7 +257,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				
 				// Add the tree
 				Transform f = new Transform.LogTransform(d.tree);
-				//transformations.add(f);
+				transformations.add(f);
 				Log.warning("Adding " + d.tree.getID());
 				
 				for (StateNode s : stateNodeList) {
