@@ -20,7 +20,6 @@ import beast.core.StateNode;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
 import beast.evolution.operators.*;
-import beast.evolution.tree.Tree;
 import beast.util.Transform;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
@@ -184,11 +183,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				List<GeneTreeForSpeciesTreeDistribution> trees = new ArrayList<>();
 				trees.add(d.geneprior);
 				epochOperator.initByName("scaleFactor", 0.5, "gene", trees, "weight", 1.0);
-				//adaptOperators.add(epochOperator);
-				
-				//EpochFlexOperator flex = new EpochFlexOperator();
-				//flex.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 1.0);
-				//adaptOperators.add(flex);
+				adaptOperators.add(epochOperator);
 				
 				// Subtree slide
 				adaptOperators.add(SubtreeSlide);

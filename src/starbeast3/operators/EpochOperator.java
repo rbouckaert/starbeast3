@@ -23,8 +23,8 @@ public class EpochOperator extends Operator {
     
     final public Input<List<RealParameter>> upInput = new Input<>("up", "list of parameters to increase when tree increases (optional)", new ArrayList<>());
     final public Input<List<RealParameter>> downInput = new Input<>("down", "list of parameters to decrease when tree increases (optional)", new ArrayList<>());
-    //final public Input<KernelDistribution> kernelDistributionInput = new Input<>("kernelDistribution", "provides sample distribution for proposals", 
-    		//KernelDistribution.newDefaultKernelDistribution());
+    final public Input<KernelDistribution> kernelDistributionInput = new Input<>("kernelDistribution", "provides sample distribution for proposals", 
+    		KernelDistribution.newDefaultKernelDistribution());
     
     
     final public Input<Boolean> optimiseInput = new Input<>("optimise", "flag to indicate that the scale factor is automatically changed in order to achieve a good acceptance rate (default true)", true);
@@ -38,8 +38,8 @@ public class EpochOperator extends Operator {
     
     @Override
 	public void initAndValidate() {
-    	//kernelDistribution = kernelDistributionInput.get();
-    	kernelDistribution = new KernelDistribution.Bactrian(KernelDistribution.Bactrian.mode.uniform); // Uniform only
+    	kernelDistribution = kernelDistributionInput.get();
+    	//kernelDistribution = new KernelDistribution.Bactrian(KernelDistribution.Bactrian.mode.uniform); // Uniform only
     	scaleFactor = scaleFactorInput.get();
     	
     	if (genesInput.get().isEmpty()) throw new IllegalArgumentException("Please provide at least 1 gene tree distribution");
@@ -116,6 +116,8 @@ public class EpochOperator extends Operator {
     	double u = upperRank == speciesTree.getNodeCount() ? upperFwd : speciesTree.getNode(upperRank).getHeight();
     	
     	
+    	
+    	
     	// Mid point
     	//double midFwd = (upperFwd - lowerFwd) / 2;
 	
@@ -141,6 +143,10 @@ public class EpochOperator extends Operator {
 		if (scale <= lower_s_fwd || scale >= upper_s_fwd) {
 			return Double.NEGATIVE_INFINITY;
 		}
+		
+		//double pScaleFwd = 
+		
+		//double pScaleFwd
 		
 		
 		// Ensure 'l' is lower than 'u'
@@ -232,7 +238,7 @@ public class EpochOperator extends Operator {
     	//double midBck = (upperBck - lowerBck) / 2;
     	//double pfromBck = -2*Math.log(midBck);
     	
-    	double pfromBck = -2*Math.log(upperBck - lowerBck);
+    	//double pfromBck = -2*Math.log(upperBck - lowerBck);
     	
 
 		
@@ -266,10 +272,10 @@ public class EpochOperator extends Operator {
 		// Reverse scale sampling
 		double lower_s_bck = this.getLowerScaleLimit(l, u);
 		if (lower_s_bck != 0) {
-			double upper_s_bck = 1.0/lower_s_bck;
+			//double upper_s_bck = 1.0/lower_s_bck;
 			
 			
-			//Log.warning("forward " + lower_s_fwd + " / reverse " + lower_s_bck);
+			// Log.warning("forward " + lower_s_fwd + " / reverse " + lower_s_bck);
 			
 		}
 		
@@ -293,7 +299,8 @@ public class EpochOperator extends Operator {
     private double getLowerScaleLimit(double l, double u) {
     	
     	double lower_s = 0;
-    	if (!moveSpeciesTreeInput.get()) {
+    	
+    	if (false && !moveSpeciesTreeInput.get()) {
 			for (Node speciesNode : speciesTree.getNodesAsArray()) {
 				
 				
