@@ -137,9 +137,6 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			distrs.add(d.geneprior);
 			distrs.add(d.treelikelihood); 
 			
-
-			
-	
 			
 			System.out.println("Adding: " + d.geneprior.getID() + " / " + d.treelikelihood.getID());
 			

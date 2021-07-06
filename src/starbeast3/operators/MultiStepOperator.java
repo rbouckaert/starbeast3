@@ -50,7 +50,7 @@ public abstract class MultiStepOperator extends Operator {
     final public Input<Double> targetWeightInput =  new Input<>("targetWeight", "Target effective weight of this operator, to be learned if regression is applied."
     		+ " The effective weight is the operator weight * chainLength sum. Set this to 0 (or nregression=0) to omit this step.", 0.0);
     final public Input<Double> runtimeInput =  new Input<>("runtime", "Max runtime of MCMC chains during training (only applicable if load balancing is being trained). If this is"
-    		+ "set to -1, then chain lengths are sampled insteaf of runtimes.", -1.0);
+    		+ "set to -1, then chain lengths are sampled instead of runtimes.", -1.0);
     
     
       //final public Input<CompoundDistribution> likelihoodInput = new Input<>("likelihood", "the likelihood", Input.Validate.REQUIRED);
