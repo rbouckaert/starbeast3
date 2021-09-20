@@ -521,6 +521,9 @@ public class ParallelMCMC extends MCMC {
      */
     public void setChainlengthToTargetRuntime(double targetRuntime) {
     	
+		// Avoid numerical errors
+		final double minSlope = 1e-6;
+		
     	double targetRunTime_log = targetRuntime; // Math.log(targetRuntime);
     	
     	if (this.appliedRegression) return;
@@ -531,8 +534,9 @@ public class ParallelMCMC extends MCMC {
     	
     	
     	double slope = regression.getSlope();
+		if (slope <= minSlope || slope == Double.NaN) slope = minSlope;
     	double intercept = regression.getIntercept();
-    	
+    	if (intercept == Double.NaN) intercept = 0;
     	
     	// Apply the model
     	long targetChainlength_log = (long)((targetRunTime_log - intercept) / slope);
