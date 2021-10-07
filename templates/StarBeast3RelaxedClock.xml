@@ -377,9 +377,7 @@
 <run chainLength="10000000" id="mcmc" spec="MCMC" storeEvery="50000">
     <state id="state" storeEvery="5000">
 	
-		<parameter id="SpeciesTreeClockRate" name="stateNode" estimate="false" lower="0.0">1</parameter>
-		<parameter id="stdev.c" lower="0.0" upper="1.0" estimate="true" name="stateNode" spec="parameter.RealParameter">0.1</parameter>		
-		<stateNode id="rates.clock" estimate="true" spec="parameter.RealParameter">1</stateNode>	
+
  		
 		
         <parameter id="popSize" name="stateNode" value="1"/>

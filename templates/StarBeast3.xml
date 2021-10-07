@@ -129,8 +129,11 @@
 		<panel spec="BeautiPanelConfig" panelname="Clock Model" tiptext="Clock model" path="branchRateModel" hasPartitions="ClockModel" icon="4.pngx" forceExpansion="TRUE"  isVisible="true"/>
 		<mergepoint id="aux-clockmodel-panels"/>
 		-->
+		<panel spec="BeautiPanelConfig" panelname="Clock Model" icon='4.png.x' tiptext="Clock model" path="init/sharedRateModel" forceExpansion="TRUE"/>
+		<mergepoint id='aux-clockmodel-panels'/>
+		
 
-		<panel spec="BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="true"/>
+		<panel spec="BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
 		<mergepoint id="aux-initilisation-panels"/>
 
 		<panel spec="BeautiPanelConfig" panelname="Priors" tiptext="Other priors" path="distribution/distribution[id='prior']/distribution" hasPartitions="none" icon="7.pngx" forceExpansion="TRUE_START_COLLAPSED" type="beast.core.Distribution" buttonStatus="ADD_ONLY"/>
@@ -142,10 +145,11 @@
 		<panel spec="BeautiPanelConfig" panelname="MCMC" tiptext="MCMC parameters" path="" hasPartitions="none" icon="9.pngx" forceExpansion="TRUE"/>
 		<mergepoint id="aux-panels"/>
 		
-		<!--
-		<mergepoint id="sb3ClockModelTemplates"/>
-		-->
 		
+		
+		
+		
+	
 		<alignmentProvider id="Import Alignment" spec="StarBeastAlignmentProvider3" template="@StarBEASTPartitionTemplate3"/>
 
 
@@ -207,7 +211,7 @@
 						</substModel>
 					</siteModel>
 								
-					<branchRateModel id="StrictClock.c:$(n)" spec="starbeast3.StarBeast3Clock" clock.rate="@clockRate.c:$(n)" speciesTreeRates="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)"/>
+					<branchRateModel id="StrictClock.c:$(n)" spec="starbeast3.StarBeast3Clock" clock.rate="@clockRate.c:$(n)" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)"/>
 						
 			
 					
@@ -224,24 +228,13 @@
 				<operator id="mutationRateScaler.s:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="1.0" parameter="@mutationRate.s:$(n)"/>
 				<operator id="gammaShapeScaler.s:$(n)" scaleFactor="0.75" spec="ScaleOperator" weight="1.0" parameter="@gammaShape.s:$(n)"/>
 				
-				
-				
-				<operator id="strictClockRateScaler.c:Species" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeClockRate" weight="3.0"/>
-				<prior id="SB3StrictClockPrior" name="distribution" x="@SpeciesTreeClockRate">
-					<OneOnX id="SB3StrictClockPrior.OneOnX" name="distr"/>
-				</prior>
+
 				
 				
 
 			]]>
 
-			<!-- Estimate clock rate? -->
-			<connect srcID="SB3StrictClockPrior" targetID="prior" inputName="distribution" if="inposterior(SpeciesTreeClockRate) and SpeciesTreeClockRate/estimate=true"/> 
-			<connect srcID="strictClockRateScaler.c:Species" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeClockRate) and SpeciesTreeClockRate.c/estimate=true"/> 
-			<connect srcID="SpeciesTreeClockRate" targetID="updown.all" inputName="up" if="inposterior(SpeciesTreeClockRate) and SpeciesTreeClockRate/estimate=true"/>
-			<connect srcID="SpeciesTreeClockRate" targetID="tracelog" inputName="log" if="inlikelihood(SpeciesTreeClockRate) and SpeciesTreeClockRate/estimate=true"/>
 
-				
 			<connect srcID="treeLikelihood.$(n)" targetID="likelihood" inputName="distribution" if="isInitializing"/>
 			<connect srcID="ParallelMCMCTreeOperator" targetID="mcmc" inputName="operator" if="isInitializing"/>
 			
@@ -293,7 +286,6 @@
 
 			<connect srcID="treePrior.t:$(n)" targetID="PopSizeGibbsSampler.Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
-			<connect srcID="branchRatesModel.Species" targetID="SBI" inputName="speciesTreeRates"/>
 
 			<!--
 			Since "Species" is treated as a separate partition, we need the following
@@ -315,7 +307,7 @@
 		</partitiontemplate>
 
 		<mergepoint id="substModelTemplates"/>
-		
+		<mergepoint id="sb3ClockModelTemplates"/>
 		<!--<mergepoint id="sb3TreePriorTemplates"/>-->
 		<mergepoint id="parametricDistributions"/>
 	</beauticonfig>
@@ -324,10 +316,11 @@
 	
 
 
+
+
 <run chainLength="10000000" id="mcmc" spec="MCMC" storeEvery="50000">
     <state id="state" storeEvery="5000">
 	
-		<parameter id="SpeciesTreeClockRate" name="stateNode" estimate="false" lower="0.0">1</parameter>
 	
         <parameter id="popSize" name="stateNode" value="1"/>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
@@ -532,7 +525,7 @@
 
     <logger id="screenlog" logEvery="10000" spec="Logger">
         <log idref="posterior"/>
-        <log arg="@posterior" id="ESS.0" spec="util.ESS"/>
+        <log arg="@posterior" spec="util.ESS"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
     </logger>
@@ -545,7 +538,19 @@
 		speciesTree="@Tree.t:Species"
 		speciesTreePrior="@SpeciesTreePopSize.Species">
 		
-			<speciesTreeRates id="branchRatesModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3" clock.rate="@SpeciesTreeClockRate" />
+		
+			<!--
+			<sharedRateModel idref="branchRatesModel.Species"/>
+			-->
+			
+			<sharedRateModel id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel">
+		<!--
+				<branchRateModel id="relaxedClockModel.Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" clock.rate="@SpeciesTreeClockRate" estimateRoot="true" realRates="@rates.clock" stdev="@stdev.c" tree="@Tree.t:Species"/>
+				
+		-->
+		</sharedRateModel>
+				
+			
 
     </init>
 	
