@@ -113,8 +113,9 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
        final int firstNonLeafNr = tree.getLeafNodeCount();
        final int lastNodeNr = geneTreeDistributions.size() == 0 ? nodeCount - 1 : nodeCount;
        final int nodeNr = firstNonLeafNr + Randomizer.nextInt(lastNodeNr - firstNonLeafNr);
+       if (nodeNr < 0 || nodeNr >= tree.getNodeCount()) return Double.NEGATIVE_INFINITY;
        node = tree.getNode(nodeNr);
-       
+       if (node.getChildCount() != 2) return Double.NEGATIVE_INFINITY;
        
        
        //Step 2: Access to the child nodes of this node
@@ -141,6 +142,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
        switch(clockModel.getRateMode()) {
        
 	       case rates: {
+	    	   if (nodeNr >= rates.getDimension()) return Double.NEGATIVE_INFINITY;
 	    	   r_x = rates.getValues()[nodeNr];
 	    	   r_L = rates.getValues()[leftNr]; // Rate of branch above left child
 	    	   r_R = rates.getValues()[rightNr]; // Rate of branch above right child
@@ -148,6 +150,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 	       }
 	       
 	       case quantiles: {
+	    	   if (nodeNr >= quantiles.getDimension()) return Double.NEGATIVE_INFINITY;
 	    	   piecewise = clockModel.getPiecewiseQuantileApproximation();
 	    	   try {
 					r_x = piecewise.inverseCumulativeProbability(quantiles.getValues()[nodeNr]);

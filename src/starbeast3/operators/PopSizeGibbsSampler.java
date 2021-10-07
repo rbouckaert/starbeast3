@@ -10,6 +10,7 @@ import beast.core.Input;
 import beast.core.Operator;
 import beast.core.Input.Validate;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.tree.TreeInterface;
 import beast.evolution.tree.coalescent.TreeIntervals;
 import beast.math.distributions.Gamma;
@@ -82,14 +83,20 @@ public class PopSizeGibbsSampler extends GTKOperator {
 			return;
 		}
 		
+		
 		super.initAndValidate();
+		if (geneTreeDistributions != null && geneTreeDistributions.size() > 0) {
 		
-		TreeInterface speciesTree = geneTreeDistributions.get(0).speciesTreeInput.get();
-		if (speciesTree.getNodeCount() != popSizes.getDimension()) {
-			throw new IllegalArgumentException("The dimension of the population size parameter (" + popSizes.getDimension()+ ") "
-					+ "should be equal to the number of branches in the species tree ( " + speciesTree.getNodeCount() + ")");
+			TreeInterface speciesTree = geneTreeDistributions.get(0).speciesTreeInput.get();
+			if (speciesTree.getNodeCount() != popSizes.getDimension()) {
+				throw new IllegalArgumentException("The dimension of the population size parameter (" + popSizes.getDimension()+ ") "
+						+ "should be equal to the number of branches in the species tree ( " + speciesTree.getNodeCount() + ")");
+			}
+			
+		}else {
+			
+			Log.warning("PopSizeGibbsSampler: Please provide at least one gene tree");
 		}
-		
 		
 	}
 	

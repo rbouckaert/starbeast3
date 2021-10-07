@@ -56,7 +56,8 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
     // Clock model
     protected enum ClockMode {
         quantiles,
-        rates
+        rates,
+        strict
     }
     
     
@@ -82,6 +83,15 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
     public CoordinatedExchangeRates() {
     	twindowSizeInput.setRule(Validate.OPTIONAL);
     	clockModelInput.setRule(Validate.FORBIDDEN);
+    	
+    	
+    	// CNER operator: do not change rates
+    	if (this.getClass().equals(CoordinatedExchangeRates.class)) {
+    		rateInput.setRule(Validate.OPTIONAL);
+    		quantileInput.setRule(Validate.OPTIONAL);
+    	}
+    	
+
     }
     
     
@@ -93,13 +103,16 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 		if (rateInput.get() != null) {
 			rates = rateInput.get();
 			clockMode = ClockMode.rates;
-		}else {
+		}else if (quantileInput.get() != null) { 
 			rates = quantileInput.get();
 			clockMode = ClockMode.quantiles;
 			rateDistribution = distributionInput.get();
 			if (rateDistribution == null) {
 				throw new IllegalArgumentException("Please specify the rate distribution 'distr' when using the quantile parameterisation");
 			}
+		}else {
+			rates = null;
+			clockMode = ClockMode.strict;
 		}
 		
 		
@@ -246,6 +259,11 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 	            if (!this.validateProposalQuantiles(ta, tb, tc, td, te)) return Double.NEGATIVE_INFINITY;
 	            break;
 	        }
+	        
+	        case strict:{
+	        	
+	        	break;
+	        }
         
         }
         
@@ -380,6 +398,10 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 	        	rates.setValue(D.getNr(), this.qdp);
 	        	break;
 	        	
+	        }
+	        
+	        case strict:{
+	        	break;
 	        }
     
         }

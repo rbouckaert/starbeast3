@@ -49,9 +49,12 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	@Override
 	public void initAndValidate() {
 		this.distributions = distributionInput.get();
+		mcmcs = new ArrayList<>();
 		
 		if (distributions.isEmpty()) {
-			throw new IllegalArgumentException("Please provide at least one 'distribution'");
+			Log.warning("ParallelMCMCTreeOperator: Please provide at least one 'distribution'");
+			return;
+			
 		}
 		
 	    otherState = otherStateInput.get();
@@ -63,7 +66,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		Log.warning("Running " + this.getID() + " with " + this.nrOfThreads + " threads");
 		//System.exit(1);
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
-	    mcmcs = new ArrayList<>();
+	    
 	    
 	    
 	    

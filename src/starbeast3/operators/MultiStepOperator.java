@@ -18,12 +18,16 @@ import beast.core.ParallelMCMC;
 import beast.core.State;
 import beast.core.StateNode;
 import beast.core.util.Log;
+import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
 
 @Description("Operator that does proposals that count for one step or more steps in the MCMC")
 public abstract class MultiStepOperator extends Operator {
 	
 
+	
+	
+	
     final public Input<Long> chainLengthInput =
             new Input<>("chainLength", "Length of the MCMC chain: each individual ParallelMCMC performs chainLength/nrOfThreads samples");
     
@@ -52,6 +56,8 @@ public abstract class MultiStepOperator extends Operator {
     final public Input<Double> runtimeInput =  new Input<>("runtime", "Max runtime of MCMC chains during training (only applicable if load balancing is being trained). If this is"
     		+ "set to -1, then chain lengths are sampled instead of runtimes.", -1.0);
     
+    
+    final public Input<Tree> dummyInput = new Input<>("speciesTree", "an optional dummy input so that beauti can load the template (hack)", Input.Validate.OPTIONAL);
     
       //final public Input<CompoundDistribution> likelihoodInput = new Input<>("likelihood", "the likelihood", Input.Validate.REQUIRED);
 
@@ -403,6 +409,7 @@ public abstract class MultiStepOperator extends Operator {
     	for (ParallelMCMC mcmc : mcmcs) {
     		stateNodes.addAll(mcmc.startStateInput.get().stateNodeInput.get());
     	}
+    	if (stateNodes.isEmpty()) stateNodes.add(dummyInput.get());
     	return stateNodes;
     }
     

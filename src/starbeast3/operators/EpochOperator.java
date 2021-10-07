@@ -42,7 +42,7 @@ public class EpochOperator extends Operator {
     	//kernelDistribution = new KernelDistribution.Bactrian(KernelDistribution.Bactrian.mode.uniform); // Uniform only
     	scaleFactor = scaleFactorInput.get();
     	
-    	if (genesInput.get().isEmpty()) throw new IllegalArgumentException("Please provide at least 1 gene tree distribution");
+    	//if (genesInput.get().isEmpty()) throw new IllegalArgumentException("Please provide at least 1 gene tree distribution");
     	
     	// Get species tree
     	speciesTree = null;
@@ -73,12 +73,14 @@ public class EpochOperator extends Operator {
     @Override
     public double proposal() {
     	
+    	
     	// All trees
     	List<Tree> trees = new ArrayList<>();
-    	if (moveSpeciesTreeInput.get()) trees.add(speciesTree);
+    	if (speciesTree != null && moveSpeciesTreeInput.get()) trees.add(speciesTree);
     	for (GeneTreeForSpeciesTreeDistribution gene : genesInput.get()) {
     		trees.add((Tree) gene.getGeneTree());
     	}
+    	if (trees.isEmpty()) return Double.NEGATIVE_INFINITY;
     	
     	List<RealParameter> ups = upInput.get();
     	List<RealParameter> downs = downInput.get();

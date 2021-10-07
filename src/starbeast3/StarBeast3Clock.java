@@ -14,6 +14,7 @@ package starbeast3;
 
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.tree.Node;
 import genekernel.GTKPointerTree;
@@ -26,8 +27,8 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     
     
     final public Input<GeneTreeForSpeciesTreeDistribution> geneTreeInput = new Input<>("geneTree", "The gene tree this relaxed clock is associated with.", Input.Validate.OPTIONAL);
-	final public Input<GTKPrior> geneTreeKernelPriorInput = new Input<>("kernel", "the kernel of gene trees", Input.Validate.XOR, geneTreeInput);
-	final public Input<GTKPointerTree> geneTreePointerInput = new Input<>("pointer", "the tree which points to the kernel", Input.Validate.XOR, geneTreeInput);
+	final public Input<GTKPrior> geneTreeKernelPriorInput = new Input<>("kernel", "the kernel of gene trees", Input.Validate.OPTIONAL);
+	final public Input<GTKPointerTree> geneTreePointerInput = new Input<>("pointer", "the tree which points to the kernel", Input.Validate.OPTIONAL);
 	
 	
     
@@ -51,11 +52,13 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         // Must specify either A) a gene tree prior, or B) a gene tree kernel AND the pointer
         if (this.geneTreeInput.get() == null) {
         	if (geneTreeKernelPriorInput.get() == null || this.geneTreePointerInput.get() == null) {
-        		throw new IllegalArgumentException("Must specify either A) 'geneTree', or B) 'kernel' AND 'pointer', but not both A and B.");
+        		Log.warning("StarBeast3Clock: Must specify either A) 'geneTree', or B) 'kernel' AND 'pointer', but not both A and B.");
+        		return;
         	}
         } 
         else if (geneTreeKernelPriorInput.get() != null || this.geneTreePointerInput.get() != null) {
-        	throw new IllegalArgumentException("Must specify either A) 'geneTree', or B) 'kernel' AND 'pointer', but not both A and B.");
+        	Log.warning("StarBeast3Clock: Must specify either A) 'geneTree', or B) 'kernel' AND 'pointer', but not both A and B.");
+        	return;
         }
         
         this.kernel = geneTreeKernelPriorInput.get();
