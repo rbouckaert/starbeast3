@@ -240,6 +240,8 @@
 			<connect srcID="Tree.t:$(n)" targetID="SBI" inputName="gene" if="inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="ParallelMCMCTreeOperatorLikelihood.$(n)" targetID="ParallelMcmcTreeOperator" inputName="distribution" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
+
+			<connect srcID="treePrior.t:$(n)" targetID="speciescoalescent" inputName="distribution" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="treePrior.t:$(n)" targetID="Reheight.t:Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="treePrior.t:$(n)" targetID="CoordinatedExponential.t:Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="treePrior.t:$(n)" targetID="CoordinatedUniform.t:Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
