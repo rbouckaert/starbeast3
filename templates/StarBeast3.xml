@@ -120,6 +120,7 @@
 			starbeast3.SpeciesTreePrior.bottomPopSize,
 			starbeast3.SpeciesTreePrior.populationModel,
 			starbeast3.SpeciesTreePrior.treeIntervals,
+			starbeast3.evolution.branchratemodel.StrictClockModelSB3.tree,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.estimateRoot,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.noCache,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.discreteRates,
@@ -174,7 +175,7 @@
 
 				
 				<parameter id="kappa.s:$(n)" lower="0.0" name="stateNode" value="2.0"/>
-				
+				<parameter id="clockRate.c:$(n)" name="stateNode" value="1.0"/>
 				<prior id="KappaPrior.s:$(n)" name="distribution" x="@kappa.s:$(n)">
 					<LogNormal id="LogNormalDistributionModel.$(n)" name="distr" M="1.0" S="1.25"/>
 				</prior>
@@ -199,15 +200,15 @@
 
 				<distribution data="@$(n)" id="treeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:$(n)">
 					<siteModel gammaCategoryCount="1" id="SiteModel.s:$(n)" spec="SiteModel">
-						<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="true"/>
-						<shape id="gammaShape.s:$(n)" spec="parameter.RealParameter" value="1.0" lower="0" estimate="false"/>
+						<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
+						<shape id="gammaShape.s:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
 						<proportionInvariant id="proportionInvariant.s:$(n)" spec="parameter.RealParameter" value="0.0" lower="0" upper="1" estimate="false"/>
-						
+						<substModel id="hky.s:$(n)" kappa="@kappa.s:$(n)" spec="HKY">
+							<frequencies data="@$(n)" id="empiricalFreqs.s:$(n)" spec="Frequencies"/>
+						</substModel>
 					</siteModel>
 								
-					<branchRateModel id="StrictClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)">
-						<clock.rate id="@clockRate.c:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
-					</branchRateModel>
+					<branchRateModel id="StrictClock.c:$(n)" spec="starbeast3.StarBeast3Clock" clock.rate="@clockRate.c:$(n)" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)"/>
 	
 				</distribution>
 				
@@ -307,7 +308,7 @@
 			
 		</partitiontemplate>
 
-		<mergepoint id="sb3SubstModelTemplates"/>
+		
 		<mergepoint id="sb3ClockModelTemplates"/>
 		<mergepoint id="parametricDistributions"/>
 	</beauticonfig>
@@ -322,7 +323,8 @@
     <state id="state" storeEvery="5000">
 	
 	
-
+<!-- <notamergepoin id="sb3SubstModelTemplates"/>-->
+	
 	
 	
         <parameter id="popSize" name="stateNode" value="1" lower="0.0"/>
