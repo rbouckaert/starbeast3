@@ -27,8 +27,6 @@
             </frequencies>
         </plugin>
 
-        <plugin id='KappaScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@kappa.s:$(n)"/>
-        <plugin id='FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
 
         <prior id='KappaPrior.s:$(n)' x='@kappa.s:$(n)'>
             <distr spec="LogNormalDistributionModel" meanInRealSpace='false'>
@@ -45,14 +43,7 @@
             <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
 
-            <connect srcID='KappaScaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true'>Scale HKY transition-transversion
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='FrequenciesExchanger.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>
-                Exchange values of frequencies of partition s:$(n)
-            </connect>
+  
 
             <connect srcID='kappa.s:$(n)' targetID='tracelog' inputName='log'
                      if='inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true'/>
@@ -77,9 +68,7 @@
             </frequencies>
         </plugin>
 
-        <plugin id='kappa1Scaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@kappa1.s:$(n)"/>
-        <plugin id='kappa2Scaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@kappa2.s:$(n)"/>
-        <plugin id='FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+
 
         <prior id='kappa1Prior.s:$(n)' x='@kappa1.s:$(n)'>
             <distr spec="LogNormalDistributionModel" meanInRealSpace='false'>
@@ -104,18 +93,7 @@
             <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
 
-            <connect srcID='kappa1Scaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true'>Scale TN93 kappa1 (rateAG)
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='kappa2Scaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(kappa2.s:$(n)) and kappa2.s:$(n)/estimate=true'>Scale TN93 kappa2 (rateCT)
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='FrequenciesExchanger.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>
-                Exchange values of frequencies of partition s:$(n)
-            </connect>
+
 
             <connect srcID='kappa1.s:$(n)' targetID='tracelog' inputName='log'
                      if='inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true'/>
@@ -151,13 +129,6 @@
             </frequencies>
         </plugin>
 
-        <operator id='RateACScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateAC.s:$(n)"/>
-        <operator id='RateAGScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateAG.s:$(n)"/>
-        <operator id='RateATScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateAT.s:$(n)"/>
-        <operator id='RateCGScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateCG.s:$(n)"/>
-        <operator id='RateCTScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateCT.s:$(n)"/>
-        <operator id='RateGTScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateGT.s:$(n)"/>
-        <operator id='FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
 
         <prior id='RateACPrior.s:$(n)' x='@rateAC.s:$(n)'><distr spec="beast.math.distributions.Gamma"><parameter name="alpha" value='0.05' estimate='false'/><parameter name="beta" value='10.0' estimate='false'/></distr></prior>
         <prior id='RateAGPrior.s:$(n)' x='@rateAG.s:$(n)'><distr spec="beast.math.distributions.Gamma"><parameter name="alpha" value='0.05' estimate="false"/><parameter name="beta" value='20.0' estimate="false"/></distr></prior>
@@ -184,34 +155,7 @@
             <connect srcID='rateGT.s:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(rateGT.s:$(n)) and rateGT.s:$(n)/estimate=true'/>
 
-            <connect srcID='FrequenciesExchanger.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>Exchange values of
-                frequencies of partition s:$(n)
-            </connect>
-            <connect srcID='RateACScaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(rateAC.s:$(n)) and rateAC.s:$(n)/estimate=true'>Scale GTR A-C substitution
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='RateAGScaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(rateAG.s:$(n)) and rateAG.s:$(n)/estimate=true'>Scale GTR A-G substitution
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='RateATScaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(rateAT.s:$(n)) and rateAT.s:$(n)/estimate=true'>Scale GTR A-T substitution
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='RateCGScaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(rateCG.s:$(n)) and rateCG.s:$(n)/estimate=true'>Scale GTR C-G substitution
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='RateCTScaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(rateCT.s:$(n)) and rateCT.s:$(n)/estimate=true'>Scale GTR C-T substitution
-                parameter of partition s:$(n)
-            </connect>
-            <connect srcID='RateGTScaler.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(rateGT.s:$(n)) and rateGT.s:$(n)/estimate=true'>Scale GTR G-T substitution
-                parameter of partition s:$(n)
-            </connect>
+
 
             <connect srcID='freqParameter.s:$(n)' targetID='tracelog' inputName='log'
                      if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
@@ -304,14 +248,10 @@
                 <frequencies id='freqParameter.s:$(n)' spec='parameter.RealParameter' dimension='4' value='0.25' lower='0' upper='1'/>
             </frequencies>
 
-	        <plugin id='FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
  ]]>
             <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
                      if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
-            <connect srcID='FrequenciesExchanger.s:$(n)' targetID='mcmc' inputName='operator'
-                     if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>
-                Exchange values of frequencies of partition s:$(n)
-            </connect>
+
             <connect srcID='freqParameter.s:$(n)' targetID='tracelog' inputName='log'
                      if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
             <connect srcID='FrequenciesPrior.s:$(n)' targetID='prior' inputName='distribution'

@@ -23,7 +23,7 @@
             <![CDATA[
 
 				<plugin id="relaxedClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" >
-					<clock.rate id='SpeciesTreeRelaxedClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='true'/>
+					<clock.rate id='SpeciesTreeRelaxedClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
 					<realRates id="SpeciesTreeRelaxedClockBranchRates" spec='parameter.RealParameter' estimate="true" lower="0.0">1</realRates>
 					<stdev id="SpeciesTreeRelaxedClockSD" lower="0.0" upper="1.0" estimate="true" spec="parameter.RealParameter">0.1</stdev>		
 				</plugin>
