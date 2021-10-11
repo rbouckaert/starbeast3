@@ -32,6 +32,7 @@ import beast.math.distributions.MRCAPrior;
 import beast.util.ClusterTree;
 import genekernel.GTKPrior;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
+import starbeast3.evolution.branchratemodel.SharedSpeciesClockModel;
 import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
 
 /**
@@ -85,6 +86,9 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     final public Input<BranchRateModelSB3> speciesTreeRatesInput =
             new Input<>("speciesTreeRates", "Clock model for species tree");
     
+    final public Input<SharedSpeciesClockModel> sharedRateModelInput =
+            new Input<>("sharedRateModel", "Clock model for species tree (instead of speciesTreeRates)");
+    
     
     // A gene tree kernel
     final public Input<GTKPrior> geneKernelPriorInput =
@@ -101,17 +105,23 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         hasCalibrations = calibratedYule.get() != null;
         genes = genesInput.get();
 
+        
+        // Get clock model
+        BranchRateModelSB3 s = null;
         if (speciesTreeRatesInput.get() != null) {
-        	BranchRateModelSB3 s = speciesTreeRatesInput.get();
-        	if (s instanceof UCRelaxedClockModelSB3) {
-        		UCRelaxedClockModelSB3 s2 = (UCRelaxedClockModelSB3) s;
-        		RealParameter p = s2.realRatesInput.get();
-        		if (p != null) {
-        			rates = p;
-        			lowerRate = 0.1; // p .getLower();
-        		}
-        	}
+        	s = speciesTreeRatesInput.get();
+        }else if (sharedRateModelInput != null) {
+        	s = sharedRateModelInput.get().getClockModel();	
         }
+    	if (s != null && s instanceof UCRelaxedClockModelSB3) {
+    		UCRelaxedClockModelSB3 s2 = (UCRelaxedClockModelSB3) s;
+    		RealParameter p = s2.realRatesInput.get();
+    		if (p != null) {
+    			rates = p;
+    			lowerRate = 0.1; // p .getLower();
+    		}
+    	}
+        
     }
 
     @Override

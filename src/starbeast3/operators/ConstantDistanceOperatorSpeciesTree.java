@@ -36,7 +36,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", 
     				"Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
     final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree branch rates.", Input.Validate.REQUIRED);
-	
+
     
     UCRelaxedClockModelSB3 clockModel;
     

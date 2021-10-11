@@ -20,16 +20,18 @@ import beast.evolution.tree.Node;
 import genekernel.GTKPointerTree;
 import genekernel.GTKPrior;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
+import starbeast3.evolution.branchratemodel.SharedSpeciesClockModel;
 
 public class StarBeast3Clock extends BranchRateModel.Base {
 	
-    public Input<BranchRateModelSB3> speciesTreeRatesInput = new Input<>("speciesTreeRates", "The real branch rates of the species tree");
+    public Input<BranchRateModelSB3> speciesTreeRatesInput = new Input<>("speciesTreeRates", "The real branch rate model of the species tree");
+    public Input<SharedSpeciesClockModel> sharedRateModelInput =  new Input<>("sharedRateModel", "Clock model for species tree (instead of speciesTreeRates)");
     
     
     final public Input<GeneTreeForSpeciesTreeDistribution> geneTreeInput = new Input<>("geneTree", "The gene tree this relaxed clock is associated with.", Input.Validate.OPTIONAL);
 	final public Input<GTKPrior> geneTreeKernelPriorInput = new Input<>("kernel", "the kernel of gene trees", Input.Validate.OPTIONAL);
 	final public Input<GTKPointerTree> geneTreePointerInput = new Input<>("pointer", "the tree which points to the kernel", Input.Validate.OPTIONAL);
-	
+  
 	
     
     protected int geneNodeCount;
@@ -47,7 +49,16 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     @Override
     public void initAndValidate() {
         meanRate = meanRateInput.get();
-        speciesTreeRatesX = speciesTreeRatesInput.get();
+        
+        if (speciesTreeRatesInput.get() != null) {
+        	speciesTreeRatesX = speciesTreeRatesInput.get();
+        }else if (sharedRateModelInput != null) {
+        	speciesTreeRatesX = sharedRateModelInput.get().getClockModel();	
+        }else {
+        	speciesTreeRatesX = null;
+        }
+        
+        
         
         // Must specify either A) a gene tree prior, or B) a gene tree kernel AND the pointer
         if (this.geneTreeInput.get() == null) {
@@ -91,7 +102,14 @@ public class StarBeast3Clock extends BranchRateModel.Base {
 
     @Override
     public boolean requiresRecalculation() {
-        needsUpdate = speciesTreeRatesInput.isDirty() || meanRateInput.isDirty();
+    	
+    	
+    	if (speciesTreeRatesInput.get() != null && speciesTreeRatesInput.isDirty()) {
+    		needsUpdate = true;
+        }else if (sharedRateModelInput != null && sharedRateModelInput.isDirty()) {
+        	needsUpdate = true;
+        }
+        needsUpdate = needsUpdate || meanRateInput.isDirty();
         if (this.kernel == null) needsUpdate = needsUpdate || geneTreeInput.isDirty();
         else needsUpdate = needsUpdate || geneTreeKernelPriorInput.isDirty() || geneTreePointerInput.isDirty();
         

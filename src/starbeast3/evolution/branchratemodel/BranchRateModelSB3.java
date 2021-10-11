@@ -6,8 +6,7 @@
 
 package starbeast3.evolution.branchratemodel;
 
-import beast.core.Input;
-import beast.evolution.tree.TreeInterface;
+
 
 public interface BranchRateModelSB3 {
 	

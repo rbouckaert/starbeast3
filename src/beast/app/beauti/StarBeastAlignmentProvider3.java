@@ -17,6 +17,10 @@ public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 		doc.beauti.autoSetClockRate.setSelected(true);
 
 		System.out.println(String.format("N_ALIGNMENTS = %d", doc.alignments.size()));
+		
+		
+		
+		
 		// initialize delta exchange operator in order to increase weight to something more sensible
 		DeltaExchangeOperator operator = (DeltaExchangeOperator) doc.pluginmap.get("FixMeanMutationRatesOperator");
 		if (operator == null) {
@@ -32,6 +36,7 @@ public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 			final double updatedWeight = doc.alignments.size() + alignmentCount;
 			operator.setInputValue("weight", updatedWeight);
 		}
+		
 
 		return newAlignments;
 	}

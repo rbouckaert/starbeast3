@@ -9,36 +9,57 @@
 
 
 
+
+
+
 		
+		
+		
+
+
 		 <!-- Relaxed clock -->
-        <subtemplate id='SpeciesTreeRelaxedClock' class='starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3' mainid='relaxedClockModel.Species'
-						suppressInputs='starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.estimateRoot,
-										starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.noCache,
-										starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.discreteRates,
-										starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.realRates,
-										starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.rateQuantiles,
-										starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.tree,
-										starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.nBins,
-										starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.distr'>
+        <subtemplate id='SpeciesTreeRelaxedClock' class='starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3' mainid='relaxedClockModel.Species'>
          
             <![CDATA[
-			
-
-
-					
 
 				<plugin id="relaxedClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" >
-					<clock.rate id='SpeciesTreeRelaxedClockRate' spec='parameter.RealParameter' lower="1.0" value='1.0' estimate='false'/>
-					<realRates id="rates.clock" spec='parameter.RealParameter' estimate="true" lower="1.0">1</realRates>
-					<stdev id="stdev.c" lower="0.0" upper="1.0" estimate="true" spec="parameter.RealParameter">0.1</stdev>		
+					<clock.rate id='SpeciesTreeRelaxedClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='true'/>
+					<realRates id="SpeciesTreeRelaxedClockBranchRates" spec='parameter.RealParameter' estimate="true" lower="0.0">1</realRates>
+					<stdev id="SpeciesTreeRelaxedClockSD" lower="0.0" upper="1.0" estimate="true" spec="parameter.RealParameter">0.1</stdev>		
 				</plugin>
 
-				<operator id="relaxedClockRateScaler.c:Species" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeStrictClockRate" weight="3.0"/>
+				<operator id="relaxedClockRateScaler.c:Species" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeRelaxedClockRate" weight="3.0"/>
 				<prior id="SB3RelaxedClockPrior" name="distribution" x="@SpeciesTreeRelaxedClockRate">
 					<OneOnX id="SB3RelaxedClockPrior.OneOnX" name="distr"/>
 				</prior>
 				
+				<prior id="ucldStdevPrior.clock" name="distribution" x="@SpeciesTreeRelaxedClockSD">
+					<Gamma id="Gamma.stddev" name="distr" alpha="5" beta="0.05" />
+				</prior>
+										
+				<prior id="FastRatePriorDistributionClock" name="distribution" x="@SpeciesTreeRelaxedClockBranchRates">
+					<LogNormal M="1.0" S="@SpeciesTreeRelaxedClockSD" id="LogNormalDistributionModel.rates" meanInRealSpace="true" name="distr"/>
+				</prior>
+				
+				
+				<operator id="AdaptableOperatorSampler.ucldStdev:Species" spec="orc.operators.AdaptableOperatorSampler" weight="5.0" parameter="@SpeciesTreeRelaxedClockSD">
+					<operator id="UcldStdevScale.clock" parameter="@SpeciesTreeRelaxedClockSD" scaleFactor="0.5" spec="BactrianScaleOperator" weight="1"/>
+					<operator id="SampleFromPriorOperator.c:ucldStdev" parameter="@SpeciesTreeRelaxedClockSD" prior2="@ucldStdevPrior.clock" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
+				</operator>
+				
+				
+				<operator id="AdaptableOperatorSampler.rates:Species" parameter="@SpeciesTreeRelaxedClockBranchRates" spec="orc.operators.AdaptableOperatorSampler" weight="20">
+					<operator id="Scale.branchRates" parameter="@SpeciesTreeRelaxedClockBranchRates" scaleFactor="0.75" spec="BactrianScaleOperator" weight="1.0"/>
+					<operator clock="@relaxedClockModel.Species" id="ConstantDistanceOperatorSpeciesTree" popsizes="@popSize" proportionalToBranchLength="true" spec="starbeast3.operators.ConstantDistanceOperatorSpeciesTree" tree="@Tree.t:Species" twindowSize="0.1" weight="1.0" />
+					<operator id="SampleFromPriorOperator.branchRates" np="1" parameter="@SpeciesTreeRelaxedClockBranchRates" prior2="@FastRatePriorDistributionClock" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
+				</operator>
+				
+				
+				<log branchratemodel="@relaxedClockModel.Species" id="RateStatLogger" spec="beast.evolution.branchratemodel.RateStatistic" tree="@Tree.t:Species"/>
+
+				
 			]]>
+
 
 
 			<connect srcID="relaxedClockModel.Species" targetID="branchRatesModel.Species" inputName="branchRateModel"/>
@@ -48,31 +69,51 @@
 			<connect srcID="SpeciesTreeRelaxedClockRate" targetID="state" inputName="stateNode" if="inposterior(SpeciesTreeRelaxedClockRate) and SpeciesTreeRelaxedClockRate/estimate=true"/>
 			<connect srcID="SpeciesTreeRelaxedClockRate" targetID="tracelog" inputName="log" if="inlikelihood(SpeciesTreeRelaxedClockRate) and SpeciesTreeRelaxedClockRate/estimate=true"/>			
 			<connect srcID="SB3RelaxedClockPrior" targetID="prior" inputName="distribution" if="inposterior(SpeciesTreeRelaxedClockRate) and SpeciesTreeRelaxedClockRate/estimate=true"/> 
-			<connect srcID="relaxedClockRateScaler.c:Species" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeRelaxedClockRate) and SpeciesTreeRelaxedClockRate.c/estimate=true"/> 
+			<connect srcID="relaxedClockRateScaler.c:Species" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeRelaxedClockRate) and SpeciesTreeRelaxedClockRate/estimate=true"/> 
 			<connect srcID="SpeciesTreeRelaxedClockRate" targetID="updown.all" inputName="up" if="inposterior(SpeciesTreeRelaxedClockRate) and SpeciesTreeRelaxedClockRate/estimate=true"/>
 			
 			
 			
 			<!-- Estimate branch rates? -->
-			<connect srcID="rates.clock" targetID="state" inputName="stateNode" if="inposterior(rates.clock) and rates.clock/estimate=true"/> 
-			<connect srcID="rates.clock" targetID="tracelog" inputName="log" if="inlikelihood(rates.clock) and rates.clock/estimate=true"/>
+			<connect srcID="SpeciesTreeRelaxedClockBranchRates" targetID="state" inputName="stateNode" if="inposterior(SpeciesTreeRelaxedClockBranchRates) and SpeciesTreeRelaxedClockBranchRates/estimate=true"/> 
+			<connect srcID="RateStatLogger" targetID="tracelog" inputName="log" if="inposterior(SpeciesTreeRelaxedClockBranchRates) and SpeciesTreeRelaxedClockBranchRates/estimate=true"/>
+			<connect srcID="FastRatePriorDistributionClock" targetID="prior" inputName="distribution" if="inposterior(SpeciesTreeRelaxedClockBranchRates) and SpeciesTreeRelaxedClockBranchRates/estimate=true"/> 
+			<connect srcID="AdaptableOperatorSampler.rates:Species" targetID="mcmc" inputName="operator" if="inposterior(SpeciesTreeRelaxedClockBranchRates) and SpeciesTreeRelaxedClockBranchRates/estimate=true"/> 
+			<connect srcID="ConstantDistanceOperatorSpeciesTree" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inposterior(SpeciesTreeRelaxedClockBranchRates) and SpeciesTreeRelaxedClockBranchRates/estimate=true"/> 
+			<connect srcID="SpeciesTreeRelaxedClockBranchRates" targetID="SpeciesTreeLoggerX" inputName="metadata" if="inposterior(SpeciesTreeRelaxedClockBranchRates) and SpeciesTreeRelaxedClockBranchRates/estimate=true"/> 
 			
-			<!-- Estimate stddev? -->
-			<connect srcID="stdev.c" targetID="state" inputName="stateNode" if="inposterior(stdev.c) and stdev.c/estimate=true"/> 
-			<connect srcID="stdev.c" targetID="tracelog" inputName="log" if="inlikelihood(stdev.c) and stdev.c/estimate=true"/>
+			<connect srcID="treePrior.t:$(n)" targetID="ConstantDistanceOperatorSpeciesTree" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
+			
+			
+			
+			<!-- Estimate stddev?  -->
+			<connect srcID="SpeciesTreeRelaxedClockSD" targetID="state" inputName="stateNode" if="inposterior(SpeciesTreeRelaxedClockSD) and SpeciesTreeRelaxedClockSD/estimate=true"/> 
+			<connect srcID="SpeciesTreeRelaxedClockSD" targetID="tracelog" inputName="log" if="inposterior(SpeciesTreeRelaxedClockSD) and SpeciesTreeRelaxedClockSD/estimate=true"/>
+			<connect srcID="ucldStdevPrior.clock" targetID="prior" inputName="distribution" if="inposterior(SpeciesTreeRelaxedClockSD) and SpeciesTreeRelaxedClockSD/estimate=true"/> 
+			<connect srcID="AdaptableOperatorSampler.ucldStdev:Species" targetID="mcmc" inputName="operator" if="inposterior(SpeciesTreeRelaxedClockSD) and SpeciesTreeRelaxedClockSD/estimate=true"/> 
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
         </subtemplate>
 
-
-
+		
+		
+		
         <!-- Strict clock -->
         <subtemplate id='SpeciesTreeStrictClock' class='starbeast3.evolution.branchratemodel.StrictClockModelSB3' mainid='strictClockModel.Species'>
             <![CDATA[
 			
 
 				<plugin id="strictClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
-					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="1.0" value='1.0' estimate='false'/>
+					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
 				</plugin>
 
 				<operator id="strictClockRateScaler.c:Species" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeStrictClockRate" weight="3.0"/>
@@ -89,12 +130,14 @@
 			<!-- Estimate clock rate? -->
 			<connect srcID="SpeciesTreeStrictClockRate" targetID="state" inputName="stateNode" if="inposterior(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
 			<connect srcID="SB3StrictClockPrior" targetID="prior" inputName="distribution" if="inposterior(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
-			<connect srcID="strictClockRateScaler.c:Species" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate.c/estimate=true"/> 
+			<connect srcID="strictClockRateScaler.c:Species" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
 			<connect srcID="SpeciesTreeStrictClockRate" targetID="updown.all" inputName="up" if="inposterior(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
 			<connect srcID="SpeciesTreeStrictClockRate" targetID="tracelog" inputName="log" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
 
 			
         </subtemplate>
+		
+
 		
 		
 		
