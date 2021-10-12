@@ -10,13 +10,42 @@
 
 
 
+		
+        <!-- Strict clock -->
+        <subtemplate id='SpeciesTreeStrictClock' class='starbeast3.evolution.branchratemodel.StrictClockModelSB3' mainid='strictClockModel.$(n)'>
+            <![CDATA[
+			
 
+				<plugin id="strictClockModel.$(n)" tree="@Tree.t:$(n)" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
+					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
+				</plugin>
 
+				<operator id="strictClockRateScaler.c:$(n)" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeStrictClockRate" weight="3.0"/>
+				<prior id="SB3StrictClockPrior" name="distribution" x="@SpeciesTreeStrictClockRate">
+					<OneOnX id="SB3StrictClockPrior.OneOnX" name="distr"/>
+				</prior>
+				
+			]]>
+
+			<!--
+			<connect srcID="strictClockModel.$(n)" targetID="branchRatesModel.$(n)" inputName="branchRateModel"/>
+			-->
+
+			<!-- Estimate clock rate? -->
+			<connect srcID="SpeciesTreeStrictClockRate" targetID="state" inputName="stateNode" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
+			<connect srcID="SB3StrictClockPrior" targetID="prior" inputName="distribution" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
+			<connect srcID="strictClockRateScaler.c:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
+			<connect srcID="SpeciesTreeStrictClockRate" targetID="updown.all" inputName="up" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
+			<connect srcID="SpeciesTreeStrictClockRate" targetID="tracelog" inputName="log" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
+
+			
+        </subtemplate>
 		
 		
 		
-
-
+		
+		
+		
 		 <!-- Relaxed clock -->
         <subtemplate id='SpeciesTreeRelaxedClock' class='starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3' mainid='relaxedClockModel.$(n)'>
          
@@ -92,50 +121,12 @@
 			<connect srcID="ucldStdevPrior.clock" targetID="prior" inputName="distribution" if="inlikelihood(SpeciesTreeRelaxedClockSD) and SpeciesTreeRelaxedClockSD/estimate=true"/> 
 			<connect srcID="AdaptableOperatorSampler.ucldStdev:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeRelaxedClockSD) and SpeciesTreeRelaxedClockSD/estimate=true"/> 
 			
-			
-			
-			
-			
-			
-			
-			
+
 			
 			
 			
         </subtemplate>
 
-		
-		
-		
-        <!-- Strict clock -->
-        <subtemplate id='SpeciesTreeStrictClock' class='starbeast3.evolution.branchratemodel.StrictClockModelSB3' mainid='strictClockModel.$(n)'>
-            <![CDATA[
-			
-
-				<plugin id="strictClockModel.$(n)" tree="@Tree.t:$(n)" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
-					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
-				</plugin>
-
-				<operator id="strictClockRateScaler.c:$(n)" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeStrictClockRate" weight="3.0"/>
-				<prior id="SB3StrictClockPrior" name="distribution" x="@SpeciesTreeStrictClockRate">
-					<OneOnX id="SB3StrictClockPrior.OneOnX" name="distr"/>
-				</prior>
-				
-			]]>
-
-			<!--
-			<connect srcID="strictClockModel.$(n)" targetID="branchRatesModel.$(n)" inputName="branchRateModel"/>
-			-->
-
-			<!-- Estimate clock rate? -->
-			<connect srcID="SpeciesTreeStrictClockRate" targetID="state" inputName="stateNode" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
-			<connect srcID="SB3StrictClockPrior" targetID="prior" inputName="distribution" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
-			<connect srcID="strictClockRateScaler.c:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/> 
-			<connect srcID="SpeciesTreeStrictClockRate" targetID="updown.all" inputName="up" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
-			<connect srcID="SpeciesTreeStrictClockRate" targetID="tracelog" inputName="log" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
-
-			
-        </subtemplate>
 		
 
 		
