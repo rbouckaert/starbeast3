@@ -200,7 +200,7 @@
 
 					</siteModel>
 								
-					<branchRateModel id="StrictClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)">
+					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)">
 						<clock.rate id="@clockRate.c:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
 					</branchRateModel>
 	
@@ -227,13 +227,13 @@
 
 
 			<connect srcID="treeLikelihood.$(n)" targetID="likelihood" inputName="distribution" if="isInitializing"/>
-			<connect srcID="ParallelMcmcTreeOperator" targetID="mcmc" inputName="operator" if="isInitializing"/>
+			<connect srcID="ParallelMCMCTreeOperator" targetID="mcmc" inputName="operator" if="isInitializing"/>
 			
 			<connect srcID="treelog.t:$(n)" targetID="mcmc" inputName="logger" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
 
 			<connect srcID="Tree.t:$(n)" targetID="SBI" inputName="gene" if="inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-			<connect srcID="ParallelMCMCTreeOperatorLikelihood.$(n)" targetID="ParallelMcmcTreeOperator" inputName="distribution" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
+			<connect srcID="ParallelMCMCTreeOperatorLikelihood.$(n)" targetID="ParallelMCMCTreeOperator" inputName="distribution" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
 
 			<connect srcID="treePrior.t:$(n)" targetID="speciescoalescent" inputName="distribution" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
@@ -245,7 +245,6 @@
 
 			
 			<connect srcID="Tree.t:$(n)" targetID="updown.all" inputName="down" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-			<connect srcID="birthRate.t:Species" targetID="updown.all" inputName="up" if="inposterior(birthRate.t:Species) and birthRate.t:Species/estimate=true"/>
 
 
 			
@@ -292,6 +291,20 @@
 			<connect srcID='MutationRatePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Prior on gene tree relative mutation rate for partition s:$(n)</connect>
 
 
+			<!-- Yule -->
+			<connect srcID="speciationRate.t:$(n)" targetID="state" inputName="stateNode" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
+			<connect srcID="speciationRate.t:$(n)" targetID="updown.all" inputName="up" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
+			<connect srcID="speciationRatePrior.t:$(n)" targetID="prior" inputName="distribution" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true">
+				Prior on birth (a.k.a. speciation) rate applied to the species tree
+			</connect>
+			<connect srcID="AdaptableOperatorSampler.YuleModel.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true">
+				Adaptively operate on the the birth (a.k.a. speciation) rate of the species tree
+			</connect>
+
+
+			<connect srcID="speciationRate.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
+			<connect srcID="speciationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n))"/>
+			
 
 
 			<mergepoint id="aux-partitiontemplate"/>
@@ -302,7 +315,10 @@
 
 		<mergepoint id="sb3SubstModelTemplates"/>
 		<mergepoint id="sb3ClockModelTemplates"/>
+		<mergepoint id="sb3TreePriorTemplates"/>
 		<mergepoint id="parametricDistributions"/>
+		
+		
 	</beauticonfig>
 	
 	
@@ -318,6 +334,7 @@
 
 	
 	
+		<stateNode idref="speciationRate.t:Species" />
         <parameter id="popSize" name="stateNode" value="1" lower="0.0"/>
         <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
             <taxonset id="taxonsuperset" spec="beast.evolution.alignment.TaxonSet">
@@ -330,7 +347,6 @@
 				</taxon>
 			</taxonset>
         </tree>
-        <parameter id="birthRate.t:Species" lower="0.0" name="stateNode" upper="500.0" value="213.2021"/>
         <parameter id="popMean" name="stateNode" value="1" lower="0"/>
     </state>
 
@@ -342,10 +358,13 @@
         </distribution>
         
         <distribution id="prior" spec="util.CompoundDistribution">
-            <distribution birthDiffRate="@birthRate.t:Species" id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" tree="@Tree.t:Species"/>
-            <prior id="YuleBirthRatePrior.t:Species" name="distribution" x="@birthRate.t:Species">
-                <OneOnX id="YuleBirthRatePrior.OneOnX" name="distr"/>
-            </prior>
+            <distribution id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" tree="@Tree.t:Species">
+				<birthDiffRate spec="parameter.RealParameter" id="speciationRate.t:Species" value="1.0" lower="0.0" estimate="true"/>
+			</distribution>
+			<distribution id="speciationRatePrior.t:Species" spec="beast.math.distributions.Prior" x="@speciationRate.t:Species">
+				<distr spec="beast.math.distributions.Uniform" lower="0.0" upper="10000.0"/>
+			</distribution>
+
 
 		    <prior id="popMean.prior" name="distribution" x="@popMean">
 				<OneOnX id="popMean.OneOnX" name="distr"/>
@@ -441,8 +460,7 @@
 		
 		<!-- UpDown  -->
 		<operator id="updown.all" spec="UpDownOperator" scaleFactor="0.75" weight="1.0">
-                    
-            <up idref="birthRate.t:Species"/>                        
+		 <up idref="speciationRate.t:Species"/>               
             <down idref="Tree.t:Species"/>
                     
             <down idref="popSize"/>
@@ -456,7 +474,7 @@
 	
 	
 	
-	<operator bactrian="true" chainCoverage="2" id="ParallelMcmcTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="10" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0.8" threads="-1" weight="1">
+	<operator bactrian="true" chainCoverage="2" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="10" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0.8" threads="-1" weight="1">
    
 	</operator>
    
@@ -476,26 +494,21 @@
 
 
 		<!-- SampleFromPrior -->
-		<operator id="SampleFromPriorOperator.popmean" np="1" parameter="@popMean" prior2="@YuleBirthRatePrior.t:Species" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
+		<operator id="SampleFromPriorOperator.popmean" np="1" parameter="@popMean" prior2="@popMean.prior" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
 
 
 	</operator>
 	
 	
-	<operator id="AdaptableOperatorSampler.speciesModel:Species" parameter="@birthRate.t:Species" spec="orc.operators.AdaptableOperatorSampler" weight="5.0">
-
-		<!-- Scale -->
-		<operator id="Scale.speciesModel" parameter="@birthRate.t:Species" scaleFactor="0.75" spec="BactrianScaleOperator" weight="1.0"/>
-
-		<!-- UpDown -->
+	
+	<operator id="AdaptableOperatorSampler.YuleModel.t:Species" parameter="@speciationRate.t:Species" spec="orc.operators.AdaptableOperatorSampler" weight="5.0">
+		<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="BactrianScaleOperator" weight="1.0"/>
 		<operator idref="updown.all"/>
-
-		 <!-- SampleFromPrior -->
-		<operator id="SampleFromPriorOperator.speciesModel" np="1" parameter="@birthRate.t:Species" prior2="@YuleBirthRatePrior.t:Species" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
+		<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:Species" prior2="@speciationRatePrior.t:Species" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
 	</operator>
+	
+	
 
-
-   
 
 
     <logger fileName="starbeast3.log" id="tracelog" logEvery="10000" model="@posterior" sort="smart" spec="Logger">
@@ -505,7 +518,6 @@
         <log idref="speciescoalescent"/>
 		<log id="TreeHeight.Species" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:Species"/>
 		<log id="TreeLength.Species" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:Species"/>
-        <log idref="birthRate.t:Species"/>
         <log idref="YuleModel.t:Species"/>
         <log idref="popMean"/>
         <log idref="popSize"/>
@@ -528,7 +540,6 @@
     </logger>
 
     <init id="SBI" spec="starbeast3.StarBeastStartState" 
-    	birthRate="@birthRate.t:Species" 
     	estimate="false" 
 		method="point-estimate"
     	popMean="@popMean" 
@@ -544,7 +555,7 @@
 			
 				
 				<branchRateModel id="strictClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
-					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='true'/>
+					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
 				</branchRateModel>
 				
 				
