@@ -15,6 +15,7 @@ public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 
 		doc.autoSetClockRate = true;
 		doc.beauti.autoSetClockRate.setSelected(true);
+		doc.autoUpdateFixMeanSubstRate = false;
 
 		System.out.println(String.format("N_ALIGNMENTS = %d", doc.alignments.size()));
 		
@@ -36,6 +37,8 @@ public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 			final double updatedWeight = doc.alignments.size() + alignmentCount;
 			operator.setInputValue("weight", updatedWeight);
 		}
+		
+		
 		
 
 		return newAlignments;

@@ -20,9 +20,15 @@
 
 ]]>
 
+
+			
+
 			<connect srcID="YuleModel.t:$(n)" targetID="prior" inputName="distribution" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
 				Yule speciation prior applied to the species tree
 			</connect>
+			
+			<!--
+			
 			<connect srcID="YuleModel.t:$(n)" targetID="SpeciesTreePopSize.Species" inputName="treePrior" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="YuleModel.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			
@@ -42,7 +48,7 @@
 			<connect srcID="speciationRate.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
 			<connect srcID="speciationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n))"/>
 			
-			
+			-->
 			
 			
 		</subtemplate>
@@ -51,7 +57,8 @@
 		
 		
 		<!-- Calibrated Yule -->
-		<subtemplate id="CalibratedYuleModel" class="beast.evolution.speciation.CalibratedYuleModel" mainid="CalibratedYuleModel.t:$(n)" suppressInputs="beast.evolution.speciation.CalibratedYuleModel.logMarginal,beast.evolution.speciation.CalibratedYuleModel.tree,beast.evolution.speciation.CalibratedYuleModel.treeIntervals,beast.evolution.speciation.CalibratedYuleModel.calibrations">
+		<subtemplate id="CalibratedYuleModel" class="beast.evolution.speciation.CalibratedYuleModel" mainid="CalibratedYuleModel.t:$(n)" 
+			suppressInputs="beast.evolution.speciation.CalibratedYuleModel.logMarginal,beast.evolution.speciation.CalibratedYuleModel.tree,beast.evolution.speciation.CalibratedYuleModel.treeIntervals,beast.evolution.speciation.CalibratedYuleModel.calibrations">
 			<![CDATA[
 						<distribution id="CalibratedYuleModel.t:$(n)" spec="beast.evolution.speciation.CalibratedYuleModel" tree="@Tree.t:$(n)">
 							<birthRate spec="parameter.RealParameter" id="cySpeciationRate.t:$(n)" value="1.0" lower="0.0" upper="10000.0" estimate="true" />

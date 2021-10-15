@@ -1,10 +1,13 @@
 package starbeast3.operators;
 
+import beast.app.beauti.BeautiDoc;
+import beast.core.BEASTInterface;
 import beast.core.Description;
 import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
+import beast.core.util.Log;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.UCRelaxedClockModel;
 import beast.evolution.operators.KernelDistribution;
@@ -65,10 +68,14 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     	
         twindowSize = twindowSizeInput.get();
         clockModel = clockModelInput.get();
+        
+
        
         // Ensure that either rates or quantiles are used and not categories
         if (clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.rates && clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.quantiles) {
-        	throw new IllegalArgumentException("Clock model must parameterise rates as real numbers or quantiles! This operator does not work with categories.");
+        	Log.warning("ConstantDistanceOperatorSpeciesTree: Clock model must parameterise rates as real numbers or quantiles! This operator does not work with categories.");
+        	clockModel = null;
+        	return;
         }
         
         
@@ -482,6 +489,55 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     				bactrian.kernelmode == mode.bactrian_strawhat		) return 0.3;
     	}
     	return super.getTargetAcceptanceProbability();
+    }
+    
+    
+    
+    
+    /*
+     * Add gene trees to the input
+     */
+    public static void addGeneTrees(BeautiDoc doc) {
+    	
+
+    	
+    	for (String str : doc.pluginmap.keySet()) {
+    		
+    		
+    		// Find the constant distance operator(s)
+    		BEASTInterface obj = doc.pluginmap.get(str);
+    		Log.warning(obj.getID());
+    		if (obj instanceof ConstantDistanceOperatorSpeciesTree) {
+    			ConstantDistanceOperatorSpeciesTree op = (ConstantDistanceOperatorSpeciesTree)obj;
+    			
+    			
+    			// List
+    			List<GeneTreeForSpeciesTreeDistribution> genes = new ArrayList<>();
+    			
+    			
+    			// Add gene tree priors to the operators inputs
+    	    	for (String str2 : doc.pluginmap.keySet()) {
+
+    	    		// Find the gene tree priors
+    	    		BEASTInterface obj2 = doc.pluginmap.get(str2);
+    	    		Log.warning(obj2.getID());
+    	    		if (obj2 instanceof GeneTreeForSpeciesTreeDistribution) {
+    	    			GeneTreeForSpeciesTreeDistribution treePrior = (GeneTreeForSpeciesTreeDistribution)obj2;
+    	    			if (!genes.contains(treePrior)) genes.add(treePrior);    	    		
+    	    		}
+    	    		
+    	    	}
+    	    	
+    	    	op.geneTreesInput.get().clear();
+    	    	op.geneTreesInput.set(genes);
+    			
+    			
+    		}
+    	}
+    	
+    	
+    	
+    	
     }
 
 

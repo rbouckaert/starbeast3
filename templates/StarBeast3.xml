@@ -223,6 +223,8 @@
 
 
 
+
+
 			]]>
 
 
@@ -242,7 +244,7 @@
 			<connect srcID="treePrior.t:$(n)" targetID="CoordinatedUniform.t:Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="treePrior.t:$(n)" targetID="CoordinatedExchange" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="treePrior.t:$(n)" targetID="EpochOperator.t:Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-
+	
 			
 			<connect srcID="Tree.t:$(n)" targetID="updown.all" inputName="down" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
@@ -370,13 +372,21 @@
 				<OneOnX id="popMean.OneOnX" name="distr"/>
             </prior>
 			
+
 			
+        </distribution>
+		
+		
+		 <distribution id="vectorPrior" spec="util.CompoundDistribution">
+		 
+		 			
 			<prior id="constPopSizesPrior.Species" name="distribution" x="@popSize">
 				<distr id="popPriorDistr.InverseGamma" spec="beast.math.distributions.InverseGamma" alpha="2.0" beta="@popMean"/>
             </prior>
 			
-			
-        </distribution>
+		 
+		 
+		 </distribution>
         
         <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
 
@@ -515,6 +525,7 @@
         <log idref="posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
+		<log idref="vectorPrior"/>
         <log idref="speciescoalescent"/>
 		<log id="TreeHeight.Species" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:Species"/>
 		<log id="TreeLength.Species" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:Species"/>
