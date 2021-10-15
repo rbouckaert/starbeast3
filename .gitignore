@@ -7,3 +7,4 @@
 .settings
 .git
 .gitignore
+/bin/
