@@ -150,6 +150,7 @@ public class NodeReheight2 extends GTKOperator {
 
         superimposedAncestors = false;
         final int rootIndex = rebuildTree(0, nodeCount - 1);
+        if (rootIndex < 0) return Double.NEGATIVE_INFINITY;
         parents[rootIndex] = null;
         if (superimposedAncestors) {
             return Double.NEGATIVE_INFINITY;
@@ -293,6 +294,11 @@ public class NodeReheight2 extends GTKOperator {
 
     /* from and to are inclusive */
     private int rebuildTree(final int from, final int to) {
+    	
+    	
+    	if (to < from) return -1;
+
+    	
         double thisHeight = 0.0;
         int nodeIndex = -1;
 
@@ -317,6 +323,8 @@ public class NodeReheight2 extends GTKOperator {
         } else {
             leftNodeIndex = rebuildTree(from, nodeIndex - 1);
         }
+        if (leftNodeIndex < 0) return leftNodeIndex;
+       
 
         parents[leftNodeIndex] = canonicalOrder[nodeIndex];
         leftChildren[nodeIndex] = canonicalOrder[leftNodeIndex];
@@ -327,6 +335,7 @@ public class NodeReheight2 extends GTKOperator {
         } else {
             rightNodeIndex = rebuildTree(nodeIndex + 1, to);
         }
+        if (rightNodeIndex < 0) return leftNodeIndex;
 
         parents[rightNodeIndex] = canonicalOrder[nodeIndex];
         rightChildren[nodeIndex] = canonicalOrder[rightNodeIndex];
