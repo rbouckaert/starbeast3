@@ -29,15 +29,15 @@
 
 ![Setting the gene tree site models](tutorial/Fig2.png)
 
-6. Select a clock model using the `Clock model` tab. 
+6. Select a clock model using the `Clock Model` tab. 
 
     -   Under the `Species Tree Strict Clock`, every branch in the species tree has the same substitution rate. 
-    -   Under the `Species Tree Relaxed Clock`, each species tree branch has an independently-and-identically distribution substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in manuscript). The substitution rate of each gene tree branch are then inherited from the species tree. 
+    -   Under the `Species Tree Relaxed Clock`, each species tree branch has an independently-and-identically distribution substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in manuscript). The substitution rates of each gene tree branch are then inherited from the species tree. 
 
 The `Clock.rate` can also be estimated, but this is not recommended unless time calibration data is available. 
 ![Selecting a species tree clock model](tutorial/Fig3.png)
 
-7. Other priors, including the species tree prior, can be configued using the `Priors` tab.
+7. Other priors, including the species tree prior, can be configured using the `Priors` tab.
 
 
 8. Save the XML template using `File/Save`
@@ -46,7 +46,7 @@ The `Clock.rate` can also be estimated, but this is not recommended unless time 
         ```beast/bin/beast -threads N starbeast3.xml```
 where `N` is the number of threads allocated to the parallel gene tree operator. The gene trees are partitioned into `N` threads and operated on independently.
 
-10. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/))
+10. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
 
 
 11. The MSC model (including the species tree, gene trees, effecive population sizes, and branch rates) can be visualised using UglyTrees (see [https://uglytrees.nz/](https://uglytrees.nz/)).
