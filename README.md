@@ -31,8 +31,8 @@
 
 6. Select a clock model using the `Clock model` tab. 
 
-    -   Under the `Species tree strict clock`, every branch in the species tree has the same substitution rate. 
-    -   Under the `Species tree relaxed clock`, each species tree branch has an independently-and-identically distribution substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in manuscript). The substitution rate of each gene tree branch are then inherited from the species tree. 
+    -   Under the `Species Tree Strict Clock`, every branch in the species tree has the same substitution rate. 
+    -   Under the `Species Tree Relaxed Clock`, each species tree branch has an independently-and-identically distribution substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in manuscript). The substitution rate of each gene tree branch are then inherited from the species tree. 
 
 The `Clock.rate` can also be estimated, but this is not recommended unless time calibration data is available. 
 ![Selecting a species tree clock model](tutorial/Fig3.png)
@@ -72,25 +72,15 @@ Remco Bouckaert: [rbouckaert@auckland.ac.nz](rbouckaert@auckland.ac.nz)
 The preprint for StarBeast3 is available at [doi: https://doi.org/10.1101/2021.10.06.463424](https://doi.org/10.1101/2021.10.06.463424)
 
 
-**Also see**
+*Also see*
 
-*Optimised relaxed clock operators*
+**Optimised relaxed clock package:** Douglas, Jordan, Rong Zhang, and Remco Bouckaert. "Adaptive dating and fast proposals: Revisiting the phylogenetic relaxed clock model." PLoS computational biology 17.2 (2021): e1008322.
 
-Douglas, Jordan, Rong Zhang, and Remco Bouckaert. "Adaptive dating and fast proposals: Revisiting the phylogenetic relaxed clock model." PLoS computational biology 17.2 (2021): e1008322.
+**Tracer** Rambaut, Andrew, et al. "Posterior summarization in Bayesian phylogenetics using Tracer 1.7." Systematic biology 67.5 (2018): 901.
 
-*Visualising MCMC results using Tracer*
+**UglyTrees** Douglas, Jordan. "UglyTrees: a browser-based multispecies coalescent tree visualizer." Bioinformatics 37.2 (2021): 268-269.
 
-Rambaut, Andrew, et al. "Posterior summarization in Bayesian phylogenetics using Tracer 1.7." Systematic biology 67.5 (2018): 901.
+**BEAST 2:** Bouckaert, Remco, et al. "BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis." PLoS computational biology 15.4 (2019): e1006650.
 
-*Visualising multispecies coalescent models using UglyTrees*
-
-Douglas, Jordan. "UglyTrees: a browser-based multispecies coalescent tree visualizer." Bioinformatics 37.2 (2021): 268-269.
-
-*BEAST 2*
-
-Bouckaert, Remco, et al. "BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis." PLoS computational biology 15.4 (2019): e1006650.
-
-*StarBeast2*
-
-Ogilvie, Huw A., Remco R. Bouckaert, and Alexei J. Drummond. "StarBEAST2 brings faster species tree inference and accurate estimates of substitution rates." Molecular biology and evolution 34.8 (2017): 2101-2114.
+**StarBeast2**: Ogilvie, Huw A., Remco R. Bouckaert, and Alexei J. Drummond. "StarBEAST2 brings faster species tree inference and accurate estimates of substitution rates." Molecular biology and evolution 34.8 (2017): 2101-2114.
 
