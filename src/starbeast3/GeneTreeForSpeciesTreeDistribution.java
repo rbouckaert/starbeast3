@@ -669,7 +669,6 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
   
             final double geneTreeNodeHeight = geneTreeNode.getHeight();
             
-            Log.warning("" + geneTreeNodeHeight);
 
             // Check if the next coalescence event occurs in an ancestral branch
             while (!speciesTreeNode.isRoot() && geneTreeNodeHeight >= speciesTreeNode.getParent().getHeight()) {
