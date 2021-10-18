@@ -15,6 +15,7 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.alignment.Taxon;
 import beast.evolution.alignment.TaxonSet;
 import starbeast3.SpeciesTreePrior;
@@ -664,7 +665,11 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     // Iteratively populates speciesOccupancy, coalescentTimes, and geneNodeSpeciesAssignment
     private boolean collateCoalescenceEvents(int lastGeneTreeNodeNumber, double lastHeight, Node geneTreeNode, int geneTreeNodeNumber, Node speciesTreeNode, int speciesTreeNodeNumber) {
         while (true) {
+        	
+  
             final double geneTreeNodeHeight = geneTreeNode.getHeight();
+            
+            Log.warning("" + geneTreeNodeHeight);
 
             // Check if the next coalescence event occurs in an ancestral branch
             while (!speciesTreeNode.isRoot() && geneTreeNodeHeight >= speciesTreeNode.getParent().getHeight()) {

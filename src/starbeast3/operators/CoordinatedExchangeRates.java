@@ -7,6 +7,7 @@ import java.util.List;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.operators.KernelDistribution;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
@@ -101,10 +102,10 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 		
 		// Real rates or quantile parameterisation?
 		if (rateInput.get() != null) {
-			rates = rateInput.get();
+			rates = rateInput.get(this);
 			clockMode = ClockMode.rates;
 		}else if (quantileInput.get() != null) { 
-			rates = quantileInput.get();
+			rates = quantileInput.get(this);
 			clockMode = ClockMode.quantiles;
 			rateDistribution = distributionInput.get();
 			if (rateDistribution == null) {
@@ -261,7 +262,7 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 	        }
 	        
 	        case strict:{
-	        	
+	        	this.tdp = td;
 	        	break;
 	        }
         
@@ -379,6 +380,7 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
         
         // Set the new times + rates/quantiles
         D.setHeight(this.tdp);
+        
         switch (clockMode) {
 	        case rates: {
 	        	
@@ -517,11 +519,11 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 		
 		
 		// Null proposal: keep all rates constant. Keep tD constant unless a random walk is applied.
-		this.tdp = td;
+		this.tdp = td + r_td;
 		this.rap = ra;
 		this.rbp = rb;
 		this.rcp = rc;
-		this.rdp = rd + r_td;
+		this.rdp = rd;
 		return 0;
 		
 	}
