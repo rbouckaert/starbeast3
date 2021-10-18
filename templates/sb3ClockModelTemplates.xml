@@ -91,6 +91,10 @@
 				</operator>
 				
 				
+				
+				<operator id="NEROperator_dAE_dBE_dCE.$(n)" rates="@BranchRates.$(n)" spec="orc.ner.NEROperator_dAE_dBE_dCE" tree="@Tree.t:$(n)" weight="1"/>
+				
+				
 				<log branchratemodel="@relaxedClockModel.$(n)" id="RateStatLogger.$(n)" spec="beast.evolution.branchratemodel.RateStatistic" tree="@Tree.t:$(n)"/>
 
 				
@@ -110,6 +114,9 @@
 				Scale operator for species tree relaxed clock rate
 			</connect>
 			<connect srcID="SpeciesTreeRelaxedClockRate.Species" targetID="updown.all" inputName="up" if="inlikelihood(SpeciesTreeRelaxedClockRate.Species) and SpeciesTreeRelaxedClockRate.Species/estimate=true"/>
+			<connect srcID="NEROperator_dAE_dBE_dCE.Species" targetID="AdaptableTopologyOperator.tree.Species" inputName="operator" if="inlikelihood(SpeciesTreeRelaxedClockRate.Species) and SpeciesTreeRelaxedClockRate.Species/estimate=true"/>
+				
+			
 			
 			
 			

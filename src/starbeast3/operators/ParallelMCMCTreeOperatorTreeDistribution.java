@@ -32,6 +32,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implem
 		this.geneprior = geneprior;
 	}
 	
+
 	@Override
 	public void initAndValidate() {
 	}

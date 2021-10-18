@@ -210,8 +210,12 @@
 
 				<log id="TreeHeight.t:$(n)" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:$(n)"/>
 				<log id="TreeLength.t:$(n)" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:$(n)"/>
-				
-
+				<log id="TreeDistanceNJ.t:$(n)" metric="RNNI" spec="beast.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
+					<ref clusterType="neighborjoining" spec="beast.util.ClusterTree" taxa="@$(n)"/>
+				</log>
+				<log id="TreeDistanceUPGMA.t:$(n)" metric="RNNI" spec="beast.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
+					<ref clusterType="upgma" spec="beast.util.ClusterTree" taxa="@$(n)"/>
+				</log>
 
 
 
@@ -254,6 +258,10 @@
 			<connect srcID="treePrior.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="TreeHeight.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
 			<connect srcID="TreeLength.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
+			<connect srcID="TreeDistanceNJ.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
+			<connect srcID="TreeDistanceUPGMA.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
+
+
 
 			<connect srcID="Tree.t:$(n)" targetID="treeTopFinder" inputName="tree" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="Tree.t:$(n)" targetID="state" inputName="stateNode" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>

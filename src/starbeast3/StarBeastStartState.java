@@ -82,6 +82,9 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     final public Input<Function> muInput = new Input<>("baseRate",
             "Main clock rate used to scale trees (default 1).");
     
+    final public Input<Function> rootHeightInput = new Input<>("rootHeight",
+            "Initial root height (default at substitution length)");
+    
     
     final public Input<BranchRateModelSB3> speciesTreeRatesInput =
             new Input<>("speciesTreeRates", "Clock model for species tree");
@@ -332,6 +335,18 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             }
         };
         ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance);
+        
+        // Set height?
+        if (rootHeightInput.get() != null) {
+        	double rootHeight = rootHeightInput.get().getArrayValue();
+        	if (rootHeight > 0) {
+	        	double scale = rootHeight / ctree.getRoot().getHeight();
+	        	ctree.scale(scale);
+	        	System.out.println("Scaling species tree to get height " + rootHeight);
+        	}
+        }
+        
+        
 
         System.out.println(ctree.getRoot().toNewick());
         

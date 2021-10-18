@@ -3,4 +3,5 @@
 	<depends on='BEASTLabs' atleast='1.9.0'/>
 	<depends on='FastRelaxedClockLogNormal' atleast='0.0.5'/>
 	<depends on='ORC' atleast='1.0.2'/>
+	<depends on='STACEY' atleast='1.2.5'/>
 </package>
