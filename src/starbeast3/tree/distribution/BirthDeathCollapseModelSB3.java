@@ -1,3 +1,5 @@
+
+
 package starbeast3.tree.distribution;
 
 import java.util.ArrayList;
@@ -11,11 +13,11 @@ import beast.evolution.speciation.YuleModel;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
-import stacey.BirthDeathCollapseModel;
+//import stacey.BirthDeathCollapseModel;
 
-public class BirthDeathCollapseModelSB3 extends BirthDeathCollapseModel {
+public class BirthDeathCollapseModelSB3 { // extends BirthDeathCollapseModel {
 
-	
+	/*
 	@Override
 	public void sample(State state, Random random) {
 		
@@ -101,5 +103,5 @@ public class BirthDeathCollapseModelSB3 extends BirthDeathCollapseModel {
 		
 	}
 	
-	
+	*/
 }
