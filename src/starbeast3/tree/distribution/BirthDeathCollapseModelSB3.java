@@ -13,11 +13,24 @@ import beast.evolution.speciation.YuleModel;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
-//import stacey.BirthDeathCollapseModel;
+import stacey.BirthDeathCollapseModel;
 
-public class BirthDeathCollapseModelSB3 { // extends BirthDeathCollapseModel {
 
-	/*
+public class BirthDeathCollapseModelSB3  extends BirthDeathCollapseModel {
+
+	
+	
+	
+    @Override
+    public List<String> getConditions() {
+    	List<String> conditions = new ArrayList<>();
+    	conditions.add(treeInput.get().getID());
+    	conditions.add(collapseWeight.get().getID());
+    	conditions.add(birthDiffRate.get().getID());
+    	conditions.add(relativeDeathRate.get().getID());
+    	return conditions;
+    }
+	
 	@Override
 	public void sample(State state, Random random) {
 		
@@ -56,8 +69,9 @@ public class BirthDeathCollapseModelSB3 { // extends BirthDeathCollapseModel {
         while (activeLineages.size() > 1) {
             int k = activeLineages.size();
             
-        	double u = Randomizer.nextDouble();
-    		double t_;
+            
+        	double u = t < collapseHeight.get() ? Randomizer.nextDouble() : 1;
+    		double t_ = 0;
     		
     		
     		
@@ -67,7 +81,7 @@ public class BirthDeathCollapseModelSB3 { // extends BirthDeathCollapseModel {
     		}
     		
     		// Sample from Yule (exponential distribution)
-    		else {
+    		if (u >= w ||  t + t_ > collapseHeight.get()) {
     			double a = birthRate.getValue() * k;
     			t_ = -Math.log(random.nextDouble())/a;
     		}
@@ -103,5 +117,5 @@ public class BirthDeathCollapseModelSB3 { // extends BirthDeathCollapseModel {
 		
 	}
 	
-	*/
+	
 }

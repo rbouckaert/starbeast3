@@ -482,12 +482,16 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 
     @Override
     public List<String> getArguments() {
-        return null;
+    	 List<String> arguments = new ArrayList<>();
+         arguments.add(speciesTreeInput.get().getID());
+         arguments.add(speciesTreePriorInput.get().getID());
+         return arguments;
     }
 
     @Override
     public List<String> getConditions() {
         List<String> arguments = new ArrayList<>();
+        arguments.add(speciesTreeInput.get().getID());
         arguments.add(speciesTreePriorInput.get().getID());
         return arguments;
     }
@@ -739,6 +743,9 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
 		return branchCoalescentTimes;
 	}
 	
+	
+	
+
 	
 	
 	@Override
