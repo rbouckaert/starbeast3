@@ -483,7 +483,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     @Override
     public List<String> getArguments() {
     	 List<String> arguments = new ArrayList<>();
-         arguments.add(speciesTreeInput.get().getID());
+         //arguments.add(speciesTreeInput.get().getID());
          arguments.add(speciesTreePriorInput.get().getID());
          return arguments;
     }
@@ -491,7 +491,7 @@ public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
     @Override
     public List<String> getConditions() {
         List<String> arguments = new ArrayList<>();
-        arguments.add(speciesTreeInput.get().getID());
+        //arguments.add(speciesTreeInput.get().getID());
         arguments.add(speciesTreePriorInput.get().getID());
         return arguments;
     }

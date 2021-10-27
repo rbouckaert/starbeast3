@@ -195,6 +195,7 @@ public class ParallelMCMC extends MCMC {
     @Override
     public void run() throws IOException, SAXException, ParserConfigurationException {
     	
+
     	
     	// Regression
     	startTime = 0;

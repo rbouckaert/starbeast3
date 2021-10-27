@@ -114,7 +114,6 @@
 				Scale operator for species tree relaxed clock rate
 			</connect>
 			<connect srcID="SpeciesTreeRelaxedClockRate.Species" targetID="updown.all" inputName="up" if="inlikelihood(SpeciesTreeRelaxedClockRate.Species) and SpeciesTreeRelaxedClockRate.Species/estimate=true"/>
-			<connect srcID="NEROperator_dAE_dBE_dCE.Species" targetID="AdaptableTopologyOperator.tree.Species" inputName="operator" if="inlikelihood(SpeciesTreeRelaxedClockRate.Species) and SpeciesTreeRelaxedClockRate.Species/estimate=true"/>
 				
 			
 			
@@ -127,6 +126,7 @@
 			<connect srcID="AdaptableOperatorSampler.rates:Species" targetID="mcmc" inputName="operator" if="inlikelihood(BranchRates.Species) and BranchRates.Species/estimate=true">
 				Adaptable operator for species tree relaxed clock branch rates
 			</connect>
+			<connect srcID="NEROperator_dAE_dBE_dCE.Species" targetID="AdaptableTopologyOperator.tree.Species" inputName="operator" if="inlikelihood(BranchRates.Species) and BranchRates.Species/estimate=true"/>
 			
 			<connect srcID="ConstantDistanceOperatorSpeciesTree:Species" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inlikelihood(BranchRates.Species) and BranchRates.Species/estimate=true"/> 
 				<!--<connect srcID="treePrior.t:$(n)" targetID="ConstantDistanceOperatorSpeciesTree:Species" inputName="gene" if="inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>-->

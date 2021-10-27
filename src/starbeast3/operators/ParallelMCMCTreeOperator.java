@@ -12,11 +12,13 @@ import java.util.concurrent.Executors;
 import beast.app.BeastMCMC;
 import beast.core.Description;
 import beast.core.Distribution;
+import beast.core.Function;
 import beast.core.Input;
 import beast.core.Operator;
 import beast.core.ParallelMCMC;
 import beast.core.State;
 import beast.core.StateNode;
+import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
 import beast.evolution.operators.*;
@@ -97,7 +99,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    	throw new IllegalArgumentException("Please provide either 'chainLength' or 'coverageInput' but not both");
 	    }
 	    
-	    if (this.runtimeInput.get() > 0 && this.nrOfThreads == 1) chainLength = 1;
+	    if (this.runtimeInput.get() <= 0 && this.nrOfThreads == 1) chainLength = 1;
 	    
 	    
 	    // Create parallel MCMCs
@@ -258,6 +260,9 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				for (StateNode s : stateNodeList) {
 					
 					
+					if (!(s instanceof RealParameter)) continue;
+					RealParameter rp = (RealParameter)s;
+					
 					
 					// TODO: check priors instead of ID to determine whether it is a
 					// scale parameter
@@ -273,15 +278,57 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						
 						Log.warning("Adding logsum " + s.getID());
 						
-					} else {
+					} 
+					
+					// Logit
+					else if (rp.getLower() != Double.NEGATIVE_INFINITY && rp.getUpper() != Double.POSITIVE_INFINITY) {
+						
+						BactrianIntervalOperator op = new BactrianIntervalOperator();
+						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 0.5);
+						operators.add(op);
+						
+						List<Function> l = new ArrayList<>();
+						l.add(s);
+						f = new Transform.LogitTransform(l);
+						
+						Log.warning("Adding logit " + s.getID());
+						
+						
+						
+						
+					}
+					
+					
+					
+					
+					// Scale
+					else if (rp.getLower() >= 0)  {
 						
 	
-						ScaleOperator op = new ScaleOperator();
+						BactrianScaleOperator op = new BactrianScaleOperator();
 						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 0.5);
 						operators.add(op);
 						f = new Transform.LogTransform(s);
 						
 						Log.warning("Adding scale " + s.getID());
+					}
+					
+					
+					// No transform
+					else {
+						
+						
+						BactrianRandomWalkOperator op = new BactrianRandomWalkOperator();
+						op.initByName("parameter", s, "scaleFactor", 0.5, "weight", 0.5);
+						operators.add(op);
+						
+						
+						List<Function> l = new ArrayList<>();
+						l.add(s);
+						f = new Transform.NoTransform(l);
+						Log.warning("Adding notransform " + s.getID());
+						
+						
 					}
 					
 					transformations.add(f);

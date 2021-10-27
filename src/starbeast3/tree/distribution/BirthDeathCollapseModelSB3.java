@@ -70,14 +70,14 @@ public class BirthDeathCollapseModelSB3  extends BirthDeathCollapseModel {
             int k = activeLineages.size();
             
             
-        	double u = t < collapseHeight.get() ? Randomizer.nextDouble() : 1;
+        	double u = t < collapseHeight.get() ? random.nextDouble() : 1;
     		double t_ = 0;
     		
     		
     		
     		// Sample from spike (uniformly between 0 and collapseHeight)
     		if (u < w) {
-    			t_ = Randomizer.nextDouble() * collapseHeight.get();
+    			t_ = random.nextDouble() * collapseHeight.get();
     		}
     		
     		// Sample from Yule (exponential distribution)

@@ -492,7 +492,7 @@
 	
 	
 	
-	<operator bactrian="true" chainCoverage="2" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="10" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0.8" threads="-1" weight="1">
+	<operator bactrian="true" chainCoverage="2" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0.8" threads="-1" weight="1">
    
 	</operator>
    
