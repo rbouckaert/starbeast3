@@ -3,6 +3,7 @@
 package starbeast3.tree.distribution;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -53,6 +54,7 @@ public class BirthDeathCollapseModelSB3  extends BirthDeathCollapseModel {
         Tree tree = (Tree) treeInput.get();
         RealParameter birthRate = birthDiffRate.get();
         double w = collapseWeight.get().getValue();
+        double epsilon = collapseHeight.get();
 
         // Simulate tree conditional on new parameters
         List<Node> activeLineages = new ArrayList<>();
@@ -61,33 +63,73 @@ public class BirthDeathCollapseModelSB3  extends BirthDeathCollapseModel {
             newLeaf.setNr(oldLeaf.getNr());
             newLeaf.setHeight(0.0);
             activeLineages.add(newLeaf);
+
         }
-
+        
+        
+        
+        // How many of the internal nodes will be below epsilon? Binomial(n-1, w) distribution. Assuming binary tree
+        List<Double> collapseHeights = new ArrayList<>();
+        int n = activeLineages.size();
+        for (int i = 0; i < n-1; i ++) {
+        	if (random.nextDouble() < w) {
+        	
+        		// Sample a collapse height
+        		double h = random.nextDouble() * epsilon;
+        		collapseHeights.add(h);
+        		
+        	}
+        	
+        }
+	
+	
         int nextNr = activeLineages.size();
+	
+		// Create collapse epoch
+		Collections.sort(collapseHeights);
+		for (int i = 0; i < collapseHeights.size(); i ++) {
+			
+			
+			double t = collapseHeights.get(i);
+			int k = activeLineages.size();
+			
+			// Sample 2 nodes
+			Node node1 = activeLineages.get(random.nextInt(k));
+            Node node2;
+            do {
+                node2 = activeLineages.get(random.nextInt(k));
+            } while (node2.equals(node1));
+            
+            
+            
+            // Join them
+            Node newParent = new Node();
+            newParent.setNr(nextNr++);
+            newParent.setHeight(t);
+            newParent.addChild(node1);
+            newParent.addChild(node2);
 
-        double t = 0.0;
+            activeLineages.remove(node1);
+            activeLineages.remove(node2);
+            activeLineages.add(newParent);
+  
+			
+		}
+
+        
+
+        
+		// Sample from Yule beginning at time epsilon
+        double t = epsilon;
         while (activeLineages.size() > 1) {
             int k = activeLineages.size();
             
-            
-        	double u = t < collapseHeight.get() ? random.nextDouble() : 1;
-    		double t_ = 0;
+    
     		
-    		
-    		
-    		// Sample from spike (uniformly between 0 and collapseHeight)
-    		if (u < w) {
-    			t_ = random.nextDouble() * collapseHeight.get();
-    		}
-    		
+  
     		// Sample from Yule (exponential distribution)
-    		if (u >= w ||  t + t_ > collapseHeight.get()) {
-    			double a = birthRate.getValue() * k;
-    			t_ = -Math.log(random.nextDouble())/a;
-    		}
-            
-
-
+			double a = birthRate.getValue() * k;
+			double t_ = -Math.log(random.nextDouble())/a;
             t += t_;
 
             Node node1 = activeLineages.get(random.nextInt(k));
