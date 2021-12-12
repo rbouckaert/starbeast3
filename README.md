@@ -26,9 +26,6 @@ git clone https://github.com/rbouckaert/starbeast3
 Then navigate to into each directory and install them using ant
 
 ```
-cd BEAST2
-ant linux
-
 cd ../BEASTLabs
 ant addon
 
