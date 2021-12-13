@@ -1,6 +1,6 @@
-<package name='starbeast3' version='0.0.1'>
+<package name='starbeast3' version='0.1.0'>
 	<depends on='beast2' atleast='2.6.0'/>
-	<depends on='BEASTLabs' atleast='1.9.0'/>
+	<depends on='BEASTLabs' atleast='1.9.7'/>
 	<depends on='FastRelaxedClockLogNormal' atleast='0.0.5'/>
-	<depends on='ORC' atleast='1.0.2'/>
+	<depends on='ORC' atleast='1.0.3'/>
 </package>
