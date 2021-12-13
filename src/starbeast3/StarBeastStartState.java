@@ -124,6 +124,21 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     			lowerRate = 0.1; // p .getLower();
     		}
     	}
+    	
+    	
+    	
+    	// Check that all genes have the same number of individuals
+    	int nTaxa = -1;
+    	for (Tree gene : genes) {
+    		
+    		if (nTaxa == -1) {
+    			nTaxa = gene.getLeafNodeCount();
+    		}else if (nTaxa != gene.getLeafNodeCount()) {
+    			throw new IllegalArgumentException("Please ensure that all gene trees have the same number of taxa (" + nTaxa + " != " + gene.getLeafNodeCount() + "). "
+    					+ "		If there is any missing data, ");
+    		}
+    		
+    	}
         
     }
 
@@ -260,6 +275,9 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         //final List<Tree> geneTrees = new ArrayList<>(alignments.size());
         double maxNsites = 0;
         //for( final Alignment alignment : alignments)  {
+        
+        
+        
         for (final Tree gtree : geneTrees) {
             //final Tree gtree = new Tree();
             final Alignment alignment = gtree.m_taxonset.get().alignmentInput.get();
