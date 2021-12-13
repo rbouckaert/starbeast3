@@ -2,6 +2,61 @@
 
 [BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators.
 
+
+
+
+## Install manually 
+
+StarBeast3 is currently in pre-release, and the best way to install it is by hand. 
+This assumes you have BEAST 2 already installed on your machine https://www.beast2.org/
+
+
+To install this package manually, first clone this repository and all of its dependencies from GitHub, including BEAST 2
+
+```
+mkdir beast2
+cd beast2
+git clone https://github.com/CompEvol/BEAST2
+git clone https://github.com/BEAST2-Dev/BEASTLabs
+git clone https://github.com/Rong419/ConstantDistanceOperator
+git clone https://github.com/jordandouglas/ORC
+git clone https://github.com/rbouckaert/starbeast3
+```
+
+Then navigate to into each directory and install them using ant
+
+```
+cd ../BEASTLabs
+ant addon
+
+cd ../ConstantDistanceOperator
+ant addon
+
+cd ../ORC
+ant addon
+
+cd ../starbeast3
+ant addon
+
+cd ../
+```
+
+
+Finally, extract the contents of these addons:
+
+```
+unzip -o BEASTLabs/build/dist/BEASTlabs.addon.v*zip -d ~/.beast/2.6/BEASTLabs/.
+unzip -o ConstantDistanceOperator/build/dist/FastRelaxedClockLogNormal.addon.v*zip -d ~/.beast/2.6/FastRelaxedClockLogNormal/.
+unzip -o ORC/build/dist/ORC.addon.v*zip -d ~/.beast/2.6/ORC/.
+unzip -o starbeast3/build/dist/starbeast3.addon.v*zip -d ~/.beast/2.6/starbeast3/.
+```
+
+
+This assumes that BEAST 2 is installed in the ~/.BEAST 2/ directory. If the package directories do not exist there (eg. ~/.beast/2.6/starbeast3/) then the empty folders must be created first.
+
+If you are not using BEAST 2.6 then replace 2.6 with the appropriate version number.
+For more details see https://beast2.blogs.auckland.ac.nz/managing-packages/#Install_by_hand .
+
 ## Installation
 
 * Install BEAST 2 (available from [http://beast2.org](http://beast2.org)).
@@ -12,6 +67,11 @@
 	* Enter `https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml` in the entry, and click `OK`
 	* Click the `Done` button, and starbeast3 should appear in the package list.
 * Install starbeast3 package through the [package manager](http://www.beast2.org/managing-packages/) (this may automatically install some other package as well)
+
+
+
+
+
 
 ## Using StarBeast3
 
