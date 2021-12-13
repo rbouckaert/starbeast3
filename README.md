@@ -5,9 +5,23 @@
 
 
 
-## Install manually 
 
-StarBeast3 is currently in pre-release, and the best way to install it is by hand. 
+## Installation
+
+* Install BEAST 2 (available from [http://beast2.org](http://beast2.org)).
+* Add https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml to your package repositories
+	* Open BEAUti, select `File => Manage packages` menu. The package manager dialog pops up.
+	* Click the `Package Repositories` button. The repositories dialog pops up.
+	* Click `Add URL`
+	* Enter `https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml` in the entry, and click `OK`
+	* Click the `Done` button, and starbeast3 should appear in the package list.
+* Install starbeast3 package through the [package manager](http://www.beast2.org/managing-packages/) (this may automatically install some other package as well)
+
+
+
+## Install manually (developer version)
+
+
 This assumes you have BEAST 2 already installed on your machine https://www.beast2.org/
 
 
@@ -56,20 +70,6 @@ This assumes that BEAST 2 is installed in the ~/.BEAST 2/ directory. If the pack
 
 If you are not using BEAST 2.6 then replace 2.6 with the appropriate version number.
 For more details see https://beast2.blogs.auckland.ac.nz/managing-packages/#Install_by_hand .
-
-## Installation
-
-* Install BEAST 2 (available from [http://beast2.org](http://beast2.org)).
-* Add https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml to your package repositories
-	* Open BEAUti, select `File => Manage packages` menu. The package manager dialog pops up.
-	* Click the `Package Repositories` button. The repositories dialog pops up.
-	* Click `Add URL`
-	* Enter `https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml` in the entry, and click `OK`
-	* Click the `Done` button, and starbeast3 should appear in the package list.
-* Install starbeast3 package through the [package manager](http://www.beast2.org/managing-packages/) (this may automatically install some other package as well)
-
-
-
 
 
 
