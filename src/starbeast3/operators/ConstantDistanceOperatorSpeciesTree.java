@@ -38,7 +38,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 	final public Input<RealParameter> popSizeInput = new Input<>("popsizes", "the constant population sizes associated with nodes in the tree.");
     final public Input<Boolean> proportionalToBranchLengthInput = new Input<>("proportionalToBranchLength", 
     				"Set proposal step sizes proportional to branch length (true) or a constant (false)", false);
-    final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree branch rates.", Input.Validate.REQUIRED);
+    final public Input<UCRelaxedClockModelSB3> clockModelInput = new Input<>("clock", "the relaxed clock model associated with species tree branch rates. If not specified, then rates will not change (eg strict clock)");
 
     
     UCRelaxedClockModelSB3 clockModel;
@@ -72,18 +72,25 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
 
        
         // Ensure that either rates or quantiles are used and not categories
-        if (clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.rates && clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.quantiles) {
-        	Log.warning("ConstantDistanceOperatorSpeciesTree: Clock model must parameterise rates as real numbers or quantiles! This operator does not work with categories.");
-        	clockModel = null;
-        	return;
-        }
-        
-        
-        // Get rate parameter
-        if (clockModel.getRateMode() == UCRelaxedClockModelSB3.Mode.rates) {
-        	rates = clockModel.realRatesInput.get();
+        if (clockModel != null) {
+	        if (clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.rates && clockModel.getRateMode() != UCRelaxedClockModelSB3.Mode.quantiles) {
+	        	Log.warning("ConstantDistanceOperatorSpeciesTree: Clock model must parameterise rates as real numbers or quantiles! This operator does not work with categories.");
+	        	clockModel = null;
+	        	return;
+	        }
+	        
+	        
+	        
+	        // Get rate parameter
+	        if (clockModel.getRateMode() == UCRelaxedClockModelSB3.Mode.rates) {
+	        	rates = clockModel.realRatesInput.get();
+	        }else {
+	        	quantiles = clockModel.quantilesInput.get();
+	        }
+	        
         }else {
-        	quantiles = clockModel.quantilesInput.get();
+        	rates = null;
+        	quantiles = null;
         }
         
         
@@ -111,7 +118,15 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
         double t_x, t_L, t_R;
         
         // Original rates
-        double r_x, r_R, r_L;
+        double r_x = 1;
+        double r_R = 1;
+        double r_L = 1;
+        
+        
+        // Proposed rates
+        double r_x_ = 1;
+        double r_R_ = 1;
+        double r_L_ = 1;
 
         //the proposed node time
         double t_x_;
@@ -143,37 +158,39 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
        t_x = node.getHeight();
        
        
-       
+       if (clockModel != null) {
 
-       // Rates
-       switch(clockModel.getRateMode()) {
-       
-	       case rates: {
-	    	   if (nodeNr >= rates.getDimension()) return Double.NEGATIVE_INFINITY;
-	    	   r_x = rates.getValues()[nodeNr];
-	    	   r_L = rates.getValues()[leftNr]; // Rate of branch above left child
-	    	   r_R = rates.getValues()[rightNr]; // Rate of branch above right child
-	    	   break;
+	       // Rates
+	       switch(clockModel.getRateMode()) {
+	       
+		       case rates: {
+		    	   if (nodeNr >= rates.getDimension()) return Double.NEGATIVE_INFINITY;
+		    	   r_x = rates.getValues()[nodeNr];
+		    	   r_L = rates.getValues()[leftNr]; // Rate of branch above left child
+		    	   r_R = rates.getValues()[rightNr]; // Rate of branch above right child
+		    	   break;
+		       }
+		       
+		       case quantiles: {
+		    	   if (nodeNr >= quantiles.getDimension()) return Double.NEGATIVE_INFINITY;
+		    	   piecewise = clockModel.getPiecewiseQuantileApproximation();
+		    	   try {
+						r_x = piecewise.inverseCumulativeProbability(quantiles.getValues()[nodeNr]);
+						r_L = piecewise.inverseCumulativeProbability(quantiles.getValues()[leftNr]);
+						r_R = piecewise.inverseCumulativeProbability(quantiles.getValues()[rightNr]);
+					} catch (MathException e) {
+						e.printStackTrace();
+						return Double.NEGATIVE_INFINITY;
+					}
+		    	   break;
+		       }
+		       
+		       default: {
+		    	   return Double.NEGATIVE_INFINITY;
+		       }
+	       
 	       }
 	       
-	       case quantiles: {
-	    	   if (nodeNr >= quantiles.getDimension()) return Double.NEGATIVE_INFINITY;
-	    	   piecewise = clockModel.getPiecewiseQuantileApproximation();
-	    	   try {
-					r_x = piecewise.inverseCumulativeProbability(quantiles.getValues()[nodeNr]);
-					r_L = piecewise.inverseCumulativeProbability(quantiles.getValues()[leftNr]);
-					r_R = piecewise.inverseCumulativeProbability(quantiles.getValues()[rightNr]);
-				} catch (MathException e) {
-					e.printStackTrace();
-					return Double.NEGATIVE_INFINITY;
-				}
-	    	   break;
-	       }
-	       
-	       default: {
-	    	   return Double.NEGATIVE_INFINITY;
-	       }
-       
        }
 
 
@@ -210,93 +227,97 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
        }
        
        
+   
+       
        
        // Reject the proposal if exceeds the boundary
        if (t_x_<= lower || t_x_ >= upper) {
             return Double.NEGATIVE_INFINITY;
-        }
-       
-
-
-       // Step5: propose new rates - r_x, r_L, r_R
-       double r_x_ = r_x * (upper - t_x) / (upper - t_x_);
-       double r_L_ = r_L * (t_x - t_L) / (t_x_ - t_L);
-       double r_R_ = r_R * (t_x - t_R) / (t_x_ - t_R);
-       
-
-       // Set the proposed new rates (and calculate the Jacobian contribution from quantiles if applicable)
-       double logJD_quantiles = 0;
-       switch(clockModel.getRateMode()) {
-       
-	       case rates: {
-	           rates.setValue(nodeNr, r_x_);
-	           rates.setValue(leftNr, r_L_);
-	           rates.setValue(rightNr, r_R_);
-	           logJD_quantiles = 0;
-	    	   break;
-	       }
-	       
-	       case quantiles: {
-	    	   try {
-	    		   
-   
-					// Ensure that proposed rates are within the piecewise approximation's range
-					double rmin = piecewise.getRangeMin();
-					double rmax = piecewise.getRangeMax();
-					if (r_x_ <= rmin || r_x_ >= rmax) return Double.NEGATIVE_INFINITY;
-					if (r_L_ <= rmin || r_L_ >= rmax) return Double.NEGATIVE_INFINITY;
-					if (r_R_ <= rmin || r_R_ >= rmax) return Double.NEGATIVE_INFINITY;
-					
-					
-					//System.out.println(quantiles.getValues()[nodeNr] + "," + r_x + "," + r_x_ + "," + r_L_ + "," + r_R_);
-					
-					
-					// Calculate quantiles from rates
-					double q_x_ = piecewise.cumulativeProbability(r_x_);
-					double q_L_ = piecewise.cumulativeProbability(r_L_);
-					double q_R_ = piecewise.cumulativeProbability(r_R_);
-					
-					
-                    if (q_x_ <= 0 || q_x_ >= 1) return Double.NEGATIVE_INFINITY;
-                    if (q_L_ <= 0 || q_L_ >= 1) return Double.NEGATIVE_INFINITY;
-                    if (q_R_ <= 0 || q_R_ >= 1) return Double.NEGATIVE_INFINITY;
-					
-					   
-					// Jacobian contribution from the icdf derivative
-					double q_x = quantiles.getValues()[nodeNr];
-					double q_L = quantiles.getValues()[leftNr];
-					double q_R = quantiles.getValues()[rightNr];
-					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_x));
-					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_L));
-					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_R));
-					   
-					// Jacobian contribution from the cdf derivative
-					// double dqx = piecewise.getDerivativeAtQuantile(q_x_);
-					//double drx = piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_);
-					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_));
-					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_L_, q_L_));
-					logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_R_, q_R_));
-					   
-					// Set new quantiles
-					quantiles.setValue(nodeNr, q_x_);
-					quantiles.setValue(leftNr, q_L_);
-					quantiles.setValue(rightNr, q_R_);
-		    	   
-				} catch (MathException e) {
-					e.printStackTrace();
-					return Double.NEGATIVE_INFINITY;
-				}
-	    	   break;
-	    	   
-	       }
-	       
-	       default: {
-	    	   
-	       }
-	   
        }
-
        
+       
+       double logJD_quantiles = 0;
+       if (clockModel != null) {
+	
+	       // Step5: propose new rates - r_x, r_L, r_R
+	       r_x_ = r_x * (upper - t_x) / (upper - t_x_);
+	       r_L_ = r_L * (t_x - t_L) / (t_x_ - t_L);
+	       r_R_ = r_R * (t_x - t_R) / (t_x_ - t_R);
+	       
+	
+	       // Set the proposed new rates (and calculate the Jacobian contribution from quantiles if applicable)
+	       
+	       switch(clockModel.getRateMode()) {
+	       
+		       case rates: {
+		           rates.setValue(nodeNr, r_x_);
+		           rates.setValue(leftNr, r_L_);
+		           rates.setValue(rightNr, r_R_);
+		           logJD_quantiles = 0;
+		    	   break;
+		       }
+		       
+		       case quantiles: {
+		    	   try {
+		    		   
+	   
+						// Ensure that proposed rates are within the piecewise approximation's range
+						double rmin = piecewise.getRangeMin();
+						double rmax = piecewise.getRangeMax();
+						if (r_x_ <= rmin || r_x_ >= rmax) return Double.NEGATIVE_INFINITY;
+						if (r_L_ <= rmin || r_L_ >= rmax) return Double.NEGATIVE_INFINITY;
+						if (r_R_ <= rmin || r_R_ >= rmax) return Double.NEGATIVE_INFINITY;
+						
+						
+						//System.out.println(quantiles.getValues()[nodeNr] + "," + r_x + "," + r_x_ + "," + r_L_ + "," + r_R_);
+						
+						
+						// Calculate quantiles from rates
+						double q_x_ = piecewise.cumulativeProbability(r_x_);
+						double q_L_ = piecewise.cumulativeProbability(r_L_);
+						double q_R_ = piecewise.cumulativeProbability(r_R_);
+						
+						
+	                    if (q_x_ <= 0 || q_x_ >= 1) return Double.NEGATIVE_INFINITY;
+	                    if (q_L_ <= 0 || q_L_ >= 1) return Double.NEGATIVE_INFINITY;
+	                    if (q_R_ <= 0 || q_R_ >= 1) return Double.NEGATIVE_INFINITY;
+						
+						   
+						// Jacobian contribution from the icdf derivative
+						double q_x = quantiles.getValues()[nodeNr];
+						double q_L = quantiles.getValues()[leftNr];
+						double q_R = quantiles.getValues()[rightNr];
+						logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_x));
+						logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_L));
+						logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantile(q_R));
+						   
+						// Jacobian contribution from the cdf derivative
+						// double dqx = piecewise.getDerivativeAtQuantile(q_x_);
+						//double drx = piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_);
+						logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_x_, q_x_));
+						logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_L_, q_L_));
+						logJD_quantiles += Math.log(piecewise.getDerivativeAtQuantileInverse(r_R_, q_R_));
+						   
+						// Set new quantiles
+						quantiles.setValue(nodeNr, q_x_);
+						quantiles.setValue(leftNr, q_L_);
+						quantiles.setValue(rightNr, q_R_);
+			    	   
+					} catch (MathException e) {
+						e.printStackTrace();
+						return Double.NEGATIVE_INFINITY;
+					}
+		    	   break;
+		    	   
+		       }
+		       
+		       default: {
+		    	   
+		       }
+		   
+	       }
+
+       }
 
        
        
