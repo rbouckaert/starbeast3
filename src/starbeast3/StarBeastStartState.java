@@ -126,19 +126,6 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     	}
     	
     	
-    	
-    	// Check that all genes have the same number of individuals
-    	int nTaxa = -1;
-    	for (Tree gene : genes) {
-    		
-    		if (nTaxa == -1) {
-    			nTaxa = gene.getLeafNodeCount();
-    		}else if (nTaxa != gene.getLeafNodeCount()) {
-    			throw new IllegalArgumentException("Please ensure that all gene trees have the same number of taxa (" + nTaxa + " != " + gene.getLeafNodeCount() + "). "
-    					+ "		If there is any missing data, ");
-    		}
-    		
-    	}
         
     }
 

@@ -497,8 +497,12 @@ public class ParallelMCMC extends MCMC {
     		double len = this.chainLengths[i];
     		double time = this.runtimes[i];
     		//if (len <= 0 || time <= 0) continue;
+    		
+    		//Log.warning("Training regression " + len + ", " + time);
+    		
+    		
     		regression.addData(len, time);
-    		regression.addData(Math.log(len), Math.log(time));
+    		//regression.addData(Math.log(len), Math.log(time));
     		//Log.warning(this.chainLengths[i] + "," + this.runtimes[i]);
     	}
     	regression.regress();
@@ -511,7 +515,13 @@ public class ParallelMCMC extends MCMC {
     public double predict(long chainLen) {
     	if (regression == null) return 0;
     	//return Math.exp(regression.predict(1.0*chainLen));
-    	return regression.predict(1.0*chainLen);
+    	double result = regression.predict(1.0*chainLen);
+    	if (Double.isNaN(result)) {
+    		
+    		Log.warning("Warning: regression predicted NaN for chain length " + chainLen + " (slope = " + regression.getSlope() + ", intercept = " + regression.getIntercept() + ")");
+    		result = 1000;
+    	}
+    	return result;
     }
     
     
