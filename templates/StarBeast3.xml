@@ -138,8 +138,7 @@
 		<panel spec="BeautiPanelConfig" panelname="Taxon sets" tiptext="Specify taxon sets that make up species" path="operator[id='Reheight.t:Species']/taxonset" hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
 
 
-		<panel spec="BeautiPanelConfig" panelname="Gene Ploidy" tiptext="The ploidy for each gene (locus)" path="distribution/distribution[id='speciescoalescent']/distribution" hasPartitions="none" icon="2.pngx" forceExpansion="TRUE"/>
-
+		
 		<panel spec="BeautiPanelConfig" panelname="Site Model" tiptext="Site model and substitution model specifications" path="siteModel" hasPartitions="SiteModel" icon="3.pngx" forceExpansion="TRUE"/>
 		<mergepoint id="aux-sitemodel-panels"/>
 
@@ -370,6 +369,9 @@
             <distribution id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" tree="@Tree.t:Species">
 				<birthDiffRate spec="parameter.RealParameter" id="speciationRate.t:Species" value="1.0" lower="0.0" estimate="true"/>
 			</distribution>
+			
+	
+			
 			<distribution id="speciationRatePrior.t:Species" spec="beast.math.distributions.Prior" x="@speciationRate.t:Species">
 				<distr spec="beast.math.distributions.Uniform" lower="0.0" upper="10000.0"/>
 			</distribution>
@@ -488,7 +490,7 @@
 	
 	
 	
-	<operator bactrian="true" chainCoverage="2" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0.8" threads="-1" weight="1">
+	<operator bactrian="true" chainCoverage="1" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0" threads="-1" weight="1">
    
 	</operator>
    

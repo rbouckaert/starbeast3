@@ -27,7 +27,7 @@
 				Yule speciation prior applied to the species tree
 			</connect>
 			
-			<!--
+			
 			
 			<connect srcID="YuleModel.t:$(n)" targetID="SpeciesTreePopSize.Species" inputName="treePrior" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="YuleModel.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
@@ -48,10 +48,11 @@
 			<connect srcID="speciationRate.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
 			<connect srcID="speciationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n))"/>
 			
-			-->
+			
 			
 			
 		</subtemplate>
+		
 		
 		
 		
@@ -91,7 +92,6 @@
 
 			<connect srcID="cySpeciationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(cySpeciationRate.t:$(n))"/>
 		</subtemplate>
-		
 		
 		
 		
@@ -149,7 +149,16 @@
 
 			<connect srcID="netDiversificationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(netDiversificationRate.t:$(n))"/>
 		</subtemplate>
+		
+		
+		
 
 
 	</mergewith>
+	
+	
+	
+	
+	
+	
 </beast>
