@@ -32,7 +32,7 @@
 		<fileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar"/>
 		<fileset dir="${libBeast2}" includes="fest.jar"/>
 		<fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
-		<fileset dir="${libstarbeast3}" includes="stacey.jar"/>
+		
         <pathelement path="${beast2classpath}"/>
         <pathelement path="../BEASTLabs/build"/>
         <pathelement path="../ORC/build"/>
