@@ -40,6 +40,7 @@ import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
  */
 
 @Description("Set a starting point for a *BEAST analysis from gene alignment data.")
+@Citation(value="Douglas, Jordan, Cinthy L. Jimenez-Silva, and Remco Bouckaert. StarBeast3: Adaptive Parallelised Bayesian Inference under the Multispecies Coalescent. Systematic Biology (2022).", DOI="10.1093/sysbio/syac010")
 public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
     static enum Method {
