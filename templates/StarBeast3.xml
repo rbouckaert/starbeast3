@@ -362,17 +362,30 @@
     </state>
 
     <distribution id="posterior" spec="util.CompoundDistribution">
-        <distribution id="speciescoalescent" spec="util.CompoundDistribution">
-            <distribution bottomPopSize="@popSize" gammaParameter="@popMean" id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species" treePrior="@YuleModel.t:Species">
-	 		    <populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
-            </distribution>
-        </distribution>
+
+
+			
+		<distribution id="speciescoalescent" spec="util.CompoundDistribution">
+		
+			
+		
+		</distribution>
+		
+					
+		<distribution bottomPopSize="@popSize" gammaParameter="@popMean" id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species" treePrior="@YuleModel.t:Species">
+				<populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
+		</distribution>
+
+
         
         <distribution id="prior" spec="util.CompoundDistribution">
             <distribution id="YuleModel.t:Species" spec="beast.evolution.speciation.YuleModel" tree="@Tree.t:Species">
 				<birthDiffRate spec="parameter.RealParameter" id="speciationRate.t:Species" value="1.0" lower="0.0" estimate="true"/>
 			</distribution>
 			
+
+			
+	
 	
 			
 			<distribution id="speciationRatePrior.t:Species" spec="beast.math.distributions.Prior" x="@speciationRate.t:Species">
