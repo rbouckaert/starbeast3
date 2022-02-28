@@ -222,7 +222,7 @@
 
 
 				<prior id='MutationRatePrior.s:$(n)' x='@mutationRate.s:$(n)'>
-					<LogNormal id="MutationRatePrior.LogNormal.$(n)" meanInRealSpace="true" name="distr" M="1" S="0.6" />
+					<LogNormal meanInRealSpace="true" name="distr" M="1" S="0.6" />
 				</prior>
 				<prior id='GammaShapePrior.s:$(n)' x='@gammaShape.s:$(n)'><distr spec="beast.math.distributions.Exponential" mean='1'/></prior>
 				<prior id='PropInvariantPrior.s:$(n)' x='@proportionInvariant.s:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/></prior>
@@ -394,7 +394,7 @@
 
 
 		    <prior id="popMean.prior" name="distribution" x="@popMean">
-				<OneOnX id="popMean.OneOnX" name="distr"/>
+				<OneOnX name="distr"/>
             </prior>
 			
 
