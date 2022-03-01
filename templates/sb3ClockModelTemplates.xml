@@ -22,7 +22,7 @@
 
 				<operator id="strictClockRateScaler.c:$(n)" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeStrictClockRate" weight="3.0"/>
 				<prior id="SB3StrictClockPrior" name="distribution" x="@SpeciesTreeStrictClockRate">
-					<OneOnX id="SB3StrictClockPrior.OneOnX" name="distr"/>
+					<OneOnX name="distr"/>
 				</prior>
 				
 			]]>
@@ -68,7 +68,7 @@
 				</prior>
 				
 				<prior id="ucldStdevPrior.clock.$(n)" name="distribution" x="@SpeciesTreeRelaxedClockSD.$(n)">
-					<Gamma id="Gamma.stddev" name="distr" alpha="5" beta="0.05" />
+					<Gamma name="distr" alpha="5" beta="0.05" />
 				</prior>
 							
 
