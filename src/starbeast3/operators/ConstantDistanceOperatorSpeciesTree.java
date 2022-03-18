@@ -529,8 +529,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     		BEASTInterface obj = doc.pluginmap.get(str);
     		if (obj instanceof ConstantDistanceOperatorSpeciesTree) {
     			ConstantDistanceOperatorSpeciesTree op = (ConstantDistanceOperatorSpeciesTree)obj;
-    			
-    			
+
     			// List
     			List<GeneTreeForSpeciesTreeDistribution> genes = new ArrayList<>();
     			

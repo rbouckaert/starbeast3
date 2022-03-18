@@ -1,5 +1,8 @@
 package starbeast3.operators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Distribution;
@@ -11,7 +14,7 @@ import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.evolution.likelihood.MetaTreeLikelihood;
 
 @Description("Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
-public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implements Comparable<ParallelMCMCTreeOperatorTreeDistribution> {
+public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	Tree tree;
 	//Distribution treelikelihood;
 	GenericTreeLikelihood treelikelihood;
@@ -42,7 +45,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implem
 	 * More site patterns = greater
 	 */
 	@Override
-	public int compareTo(ParallelMCMCTreeOperatorTreeDistribution other) {
+	public int compareTo(ParallelDistSet other) {
 		int patterns1 = this.getNumberPatterns();
 		int patterns2 = other.getNumberPatterns();
 		if (patterns1 < patterns2) return -1;
@@ -50,10 +53,33 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implem
 		return 0;
 	}
 	
+	
+	/**
+	 * Return the actual distribution as a list
+	 * @return
+	 */
+	@Override
+	public List<ParallelMCMCTreeOperatorTreeDistribution> getDists(){
+		List<ParallelMCMCTreeOperatorTreeDistribution> dists = new ArrayList<>();
+		dists.add(this);
+		return dists;
+	}
+	
+	
+	/**
+	 * Number of taxa
+	 * @return
+	 */
+	@Override
+	public int getTaxonCount() {
+		return this.tree.getTaxaNames().length;
+	}
+	
 	/**
 	 * Number of site patterns
 	 * @return
 	 */
+	@Override
 	public int getNumberPatterns() {
 		return this.getTreelikelihood().dataInput.get().getPatternCount();
 	}
