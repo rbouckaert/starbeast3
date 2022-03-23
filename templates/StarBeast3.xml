@@ -202,7 +202,7 @@
 
 					</siteModel>
 								
-					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)">
+					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.c:Species" geneTree="@treePrior.t:$(n)">
 						<clock.rate id="@clockRate.c:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
 					</branchRateModel>
 	
@@ -339,6 +339,26 @@
 
 
 <run chainLength="10000000" id="mcmc" spec="MCMC" storeEvery="50000">
+
+
+    <init id="SBI" spec="starbeast3.StarBeastStartState" 
+    	estimate="false" 
+		method="point-estimate"
+    	popMean="@popMean" 
+		speciesTree="@Tree.t:Species"
+		speciesTreePrior="@SpeciesTreePopSize.Species">
+		
+			<sharedRateModel id="branchRatesModel.c:Species" spec="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel">
+				<branchRateModel id="strictClockModel.c:Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
+					 <clock.rate id='SpeciesTreeStrictClockRate.c:$(n)' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
+				</branchRateModel>
+			</sharedRateModel>
+
+    </init>
+	
+	
+
+
     <state id="state" storeEvery="5000">
 	
 	
@@ -572,41 +592,6 @@
         <log idref="prior"/>
     </logger>
 
-    <init id="SBI" spec="starbeast3.StarBeastStartState" 
-    	estimate="false" 
-		method="point-estimate"
-    	popMean="@popMean" 
-		speciesTree="@Tree.t:Species"
-		speciesTreePrior="@SpeciesTreePopSize.Species">
-		
-		
-			<!--
-			<sharedRateModel idref="branchRatesModel.Species"/>
-			-->
-			
-			<sharedRateModel id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel">
-			
-				
-				<branchRateModel id="strictClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
-					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
-				</branchRateModel>
-				
-				
-				<!--
-				<branchRateModel id="relaxedClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" estimateRoot="true" >
-					<clock.rate id='SpeciesTreeRelaxedClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
-					<realRates id="SpeciesTreeRelaxedClockBranchRates" spec='parameter.RealParameter' estimate="true" lower="0.0">1</realRates>
-					<stdev id="SpeciesTreeRelaxedClockSD" lower="0.0" estimate="true" spec="parameter.RealParameter">0.1</stdev>		
-				</branchRateModel>
-				-->
-	
-		</sharedRateModel>
-				
-			
-
-    </init>
-	
-	
 
 	
 
