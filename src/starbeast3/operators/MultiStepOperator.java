@@ -293,6 +293,7 @@ public abstract class MultiStepOperator extends Operator {
 	
 	@Override
 	public double proposal() {
+
 		
 		double logHR;
 	

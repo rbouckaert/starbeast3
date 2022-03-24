@@ -10,6 +10,7 @@ import beast.core.Param;
 import beast.evolution.likelihood.GenericTreeLikelihood;
 import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeInterface;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.evolution.likelihood.MetaTreeLikelihood;
 
@@ -66,6 +67,22 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	}
 	
 	
+	
+	/**
+	 * Get the tree, as well as the tree of the likelihood and prior
+	 */
+	@Override
+	public List<Tree> getTrees() {
+		List<Tree> trees = new ArrayList<>();
+		trees.add(this.tree);
+		TreeInterface priorTree = this.getGeneprior().treeInput.get();
+		TreeInterface likelihoodTree = this.treelikelihood.treeInput.get();
+		if (!trees.contains(priorTree) && priorTree instanceof Tree) trees.add((Tree)priorTree);
+		if (!trees.contains(likelihoodTree) && likelihoodTree instanceof Tree) trees.add((Tree)likelihoodTree);
+		return trees;
+	}
+	
+	
 	/**
 	 * Number of taxa
 	 * @return
@@ -103,6 +120,6 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 			((MetaTreeLikelihood)this.getTreelikelihood()).stopThreading();
 		}
 	}
-	
+
 	
 }

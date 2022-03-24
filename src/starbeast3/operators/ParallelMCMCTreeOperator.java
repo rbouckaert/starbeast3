@@ -22,6 +22,7 @@ import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
 import beast.evolution.operators.*;
+import beast.evolution.tree.Tree;
 import beast.util.Transform;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
@@ -45,13 +46,17 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
     
 
     
-
-    
-    
 	@Override
 	public void initAndValidate() {
 		this.distributions = distributionInput.get();
 		mcmcs = new ArrayList<>();
+		
+		
+		
+		// Tidy the distributions
+		tidyDistributions(this.distributions);
+		
+		
 		
 		if (distributions.isEmpty()) {
 			Log.warning("ParallelMCMCTreeOperator: Please provide at least one 'distribution'");
@@ -60,6 +65,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		}
 		
 	    otherState = otherStateInput.get();
+	    otherState.initialise();
 		 
 		nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
@@ -102,10 +108,14 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    if (this.runtimeInput.get() <= 0 && this.nrOfThreads == 1) chainLength = 1;
 	    
 	    
-	    // Ensure that there are no duplicated state nodes across the threads
-	    List<StateNode> doNotInclude = getDuplicateStateNodes(balancedDistributions);
+	    // Ensure that there are no fixed or duplicated state nodes across the threads
+	    List<StateNode> doNotInclude = getTabooStateNodes(balancedDistributions, otherState);
 	    if (!doNotInclude.isEmpty()) {
-	    	Log.warning("The following stateNodes will NOT be operated on by " + this.getClass().getSimpleName() + " because they appear in more than one thread: " + doNotInclude);
+	    	String tabooStr = "";
+	    	for (StateNode state : doNotInclude) {
+	    		tabooStr += "'" + state.getID() + "' ";
+	    	}
+	    	Log.warning("The following stateNodes will NOT be operated on by " + this.getClass().getSimpleName() + " because they aew not part of the state, or they appear in more than one thread: " + tabooStr);
 	    }
 	    
 	    
@@ -137,6 +147,51 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    
 	}
 	
+
+
+	/*
+	 * If there is one tree which appears in more than 1 likelihood, then merge the threads together
+	 */
+	private void tidyDistributions(List<ParallelDistSet> distributions) {
+		
+		
+		// Dist 1
+		for (int i = 0; i < distributions.size(); i++) {
+			ParallelDistSet dist1 = distributions.get(i);
+			List<Tree> treeSet1 = dist1.getTrees();
+			
+			// Dist 2
+			for (int j = i+1; j < distributions.size(); j++) {
+				ParallelDistSet dist2 = distributions.get(j);
+				List<Tree> treeSet2 = dist2.getTrees();
+				
+				
+				// If any of the trees are the same, then join dist1 with dist2
+				for (Tree tree1 : treeSet1) {
+					if (treeSet2.contains(tree1)) {
+						
+						
+						// Update list and repeat
+						ParallelDistSet dist3 = new ParallelDistSet(dist1, dist2);
+						distributions.remove(j);
+						distributions.remove(i);
+						distributions.add(dist3);
+						Log.warning("Merging " + dist1.getID() + " with " + dist2.getID() + " because they have the same tree");
+						tidyDistributions(distributions);
+						return;
+						
+					}
+				}
+				
+				
+				
+			}
+			
+			
+		}
+		
+	}
+
 
 
 	@Override
@@ -284,11 +339,14 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				}
 				
 				List<Transform> transformations = new ArrayList<>();
+				Transform f;
 				
-				// Add the tree
-				Transform f = new Transform.LogTransform(d.tree);
-				transformations.add(f);
-				Log.warning("Adding " + d.tree.getID());
+				// Add the tree?
+				if (!doNotInclude.contains(d.tree)) {
+					f = new Transform.LogTransform(d.tree);
+					transformations.add(f);
+					Log.warning("Adding " + d.tree.getID());
+				}
 				
 				for (StateNode s : stateNodeList) {
 					
@@ -418,13 +476,20 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	
 	
 	/**
-	 * Get list of state nodes which appear in more than 1 family
+	 * Get list of state nodes which appear in more than 1 family, or are not part of the state
+	 * These should not be operated on
 	 * @param dists
 	 * @return
 	 */
-	public List<StateNode> getDuplicateStateNodes(List<List<ParallelMCMCTreeOperatorTreeDistribution>> dists){
+	public List<StateNode> getTabooStateNodes(List<List<ParallelMCMCTreeOperatorTreeDistribution>> dists, State mainState){
 		
-		List<StateNode> duplicates = new ArrayList<>();
+		List<StateNode> taboo = new ArrayList<>();
+		List<String> stateNodeIds = new ArrayList<>();
+		Log.warning(" States : " + mainState.toString());
+		for (int i = 0; i < mainState.getNrOfStateNodes(); i ++) {
+			StateNode state = mainState.getStateNode(i);
+			stateNodeIds.add(state.getID());
+		}
 		
 		
 		for (int i = 0; i < dists.size(); i ++) {
@@ -439,6 +504,19 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			}
 			
 			
+			// Check if they are part of the state
+			for (StateNode state : dist1StateNodes) {
+				if (!stateNodeIds.contains(state.getID())){
+					if (!taboo.contains(state)) {
+						taboo.add(state);
+					}
+				}
+				
+			}
+			
+			
+			
+			
 			for (int j = i+1; j < dists.size(); j ++) {
 				List<ParallelMCMCTreeOperatorTreeDistribution> dist2 = dists.get(j);
 				
@@ -448,7 +526,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					
 					// Same tree appears in multiple threads? Do not operate on it
 					if (dist1StateNodes.contains(d.tree)) {
-						if (!duplicates.contains(d.tree)) duplicates.add(d.tree);
+						if (!taboo.contains(d.tree)) taboo.add(d.tree);
 					}
 					
 					Set<StateNode> dist2StateNodes = new HashSet<>();
@@ -457,7 +535,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					
 						// Same parameter appears in multiple threads? Do not operate on it
 						if (dist1StateNodes.contains(s)) {
-							if (!duplicates.contains(s)) duplicates.add(s);
+							if (!taboo.contains(s)) taboo.add(s);
 						}
 						
 					}
@@ -474,7 +552,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		
 		
 		
-		return duplicates;
+		return taboo;
 		
 	}
 	

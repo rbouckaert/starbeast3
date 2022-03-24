@@ -6,16 +6,28 @@ import java.util.List;
 import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
+import beast.evolution.tree.Tree;
 
 @Description("A set of parallel tree distributions, which will all be added to the same thread in a ParallelMCMCOperator")
 public class ParallelDistSet extends BEASTObject implements Comparable<ParallelDistSet> {
 	
 	
 	final public Input<List<ParallelMCMCTreeOperatorTreeDistribution>> distributionInput = new Input<>("distribution", 
-			"Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space. ",
+			"Distribution on a tree conditionally independent from all other distributions given the state of the rest of parameter space. ",
 			new ArrayList<>());
 
 	
+	public ParallelDistSet() {
+		
+	}
+	
+	public ParallelDistSet(ParallelDistSet dist1, ParallelDistSet dist2) {
+		List<ParallelMCMCTreeOperatorTreeDistribution> dists = new ArrayList<>();
+		dists.addAll(dist1.getDists());
+		dists.addAll(dist2.getDists());
+		distributionInput.setValue(dists, this);
+	}
+
 	@Override
 	public void initAndValidate() {
 		
@@ -64,6 +76,18 @@ public class ParallelDistSet extends BEASTObject implements Comparable<ParallelD
 			nPatterns += dist.getNumberPatterns();
 		}
 		return nPatterns;
+	}
+
+	
+	/**
+	 * Get the trees
+	 */
+	public List<Tree> getTrees() {
+		List<Tree> trees = new ArrayList<>();
+		for (ParallelMCMCTreeOperatorTreeDistribution dist : distributionInput.get()) {
+			trees.addAll(dist.getTrees());
+		}
+		return trees;
 	}
 	
 	
