@@ -133,7 +133,7 @@
 
 
 		<panel spec="BeautiPanelConfig" panelname="Partitions" tiptext="Data Partitions" path="distribution/distribution[id='likelihood']/distribution/data" hasPartitions="none" icon="2220.pngx" forceExpansion="FALSE" type="beast.evolution.alignment.Alignment"/>
-		<mergepoint id="aux-partitions-panels"/>
+		<mergepoint id="aux-sb3-partitions-panels"/>
 
 		<panel spec="BeautiPanelConfig" panelname="Taxon sets" tiptext="Specify taxon sets that make up species" path="operator[id='Reheight.t:Species']/taxonset" hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
 
@@ -143,23 +143,23 @@
 
 		
 		<panel spec="BeautiPanelConfig" panelname="Site Model" tiptext="Site model and substitution model specifications" path="siteModel" hasPartitions="SiteModel" icon="3.pngx" forceExpansion="TRUE"/>
-		<mergepoint id="aux-sitemodel-panels"/>
+		<mergepoint id="aux-sb3-sitemodel-panels"/>
 
 		<panel spec="BeautiPanelConfig" panelname="Clock Model" icon='4.png.x' tiptext="Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
-		<mergepoint id='aux-clockmodel-panels'/>
+		<mergepoint id='aux-sb3-clockmodel-panels'/>
 		
 
 		<panel spec="BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
-		<mergepoint id="aux-initilisation-panels"/>
+		<mergepoint id="aux-sb3-initilisation-panels"/>
 
 		<panel spec="BeautiPanelConfig" panelname="Priors" tiptext="Other priors" path="distribution/distribution[id='prior']/distribution" hasPartitions="none" icon="7.pngx" forceExpansion="TRUE_START_COLLAPSED" type="beast.core.Distribution" buttonStatus="ADD_ONLY"/>
-		<mergepoint id="aux-priors-panels"/>
+		<mergepoint id="aux-sb3-priors-panels"/>
 
 		<panel spec="BeautiPanelConfig" panelname="Operators" tiptext="MCMC Operator details" path="operator" hasPartitions="none" icon="8.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
-		<mergepoint id="aux-operators-panels"/>
+		<mergepoint id="aux-sb3-operators-panels"/>
 
 		<panel spec="BeautiPanelConfig" panelname="MCMC" tiptext="MCMC parameters" path="" hasPartitions="none" icon="9.pngx" forceExpansion="TRUE"/>
-		<mergepoint id="aux-panels"/>
+		<mergepoint id="aux-sb3-panels"/>
 		
 		
 
@@ -210,8 +210,7 @@
 				
 
 
-				<log id="TreeHeight.t:$(n)" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:$(n)"/>
-				<log id="TreeLength.t:$(n)" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:$(n)"/>
+				<log id="TreeStat.t:$(n)" spec="beast.evolution.tree.TreeStatLogger" tree="@Tree.t:$(n)"/>
 				<log id="TreeDistanceNJ.t:$(n)" metric="RNNI" spec="beast.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
 					<ref clusterType="neighborjoining" spec="beast.util.ClusterTree" taxa="@$(n)"/>
 				</log>
@@ -257,10 +256,9 @@
 			
 			<connect srcID="treeLikelihood.$(n)" targetID="tracelog" inputName="log" if="inposterior(treeLikelihood.$(n))"/>
 			<connect srcID="treePrior.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-			<connect srcID="TreeHeight.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
-			<connect srcID="TreeLength.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
-			<connect srcID="TreeDistanceNJ.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
-			<connect srcID="TreeDistanceUPGMA.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(TreeHeight.t:$(n)) and TreeHeight.t:$(n)/estimate=true"/>
+			<connect srcID="TreeStat.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
+			<connect srcID="TreeDistanceNJ.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
+			<connect srcID="TreeDistanceUPGMA.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
 
 
@@ -569,8 +567,7 @@
         <log idref="prior"/>
 		<log idref="vectorPrior"/>
         <log idref="speciescoalescent"/>
-		<log id="TreeHeight.Species" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:Species"/>
-		<log id="TreeLength.Species" spec="starbeast3.evolution.tree.BranchLengthLogger" tree="@Tree.t:Species"/>
+		<log id="TreeStat.Species" spec="beast.evolution.tree.TreeStatLogger" tree="@Tree.t:Species"/>
         <log idref="YuleModel.t:Species"/>
         <log idref="popMean"/>
         <log idref="popSize"/>

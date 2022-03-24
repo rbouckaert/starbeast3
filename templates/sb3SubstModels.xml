@@ -22,7 +22,7 @@
             <![CDATA[
         <plugin spec='HKY' id='hky.s:$(n)'>
             <parameter id="kappa.s:$(n)" name='kappa' value="2.0" lower="0.0" estimate='true'/>
-            <frequencies id='estimatedFreqs.s:$(n)' spec='Frequencies'>
+            <frequencies id='estimatedFreqs.s:$(n)' estimate='true' spec='Frequencies'>
                 <frequencies id='freqParameter.s:$(n)' spec='parameter.RealParameter' dimension='4' value='0.25' lower='0' upper='1'/>
             </frequencies>
         </plugin>
