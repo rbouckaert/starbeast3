@@ -115,7 +115,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    	for (StateNode state : doNotInclude) {
 	    		tabooStr += "'" + state.getID() + "' ";
 	    	}
-	    	Log.warning("The following stateNodes will NOT be operated on by " + this.getClass().getSimpleName() + " because they aew not part of the state, or they appear in more than one thread: " + tabooStr);
+	    	Log.warning("The following stateNodes will NOT be operated on by " + this.getClass().getSimpleName() + " because they are not part of the state, or they appear in more than one thread: " + tabooStr);
 	    }
 	    
 	    
@@ -150,7 +150,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 
 
 	/*
-	 * If there is one tree which appears in more than 1 likelihood, then merge the threads together
+	 * If there is one tree which appears in more than 1 likelihood or prior, then merge the threads together
 	 */
 	private void tidyDistributions(List<ParallelDistSet> distributions) {
 		

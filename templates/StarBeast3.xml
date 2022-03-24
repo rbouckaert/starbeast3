@@ -47,6 +47,8 @@
 			beast.evolution.speciation.SABirthDeathModel.samplingRate,
 			beast.evolution.speciation.SABirthDeathModel.conditioningOnRoot,
 			beast.evolution.speciation.SABirthDeathModel.tree,
+			beast.evolution.speciation.SABirthDeathModel.expectedN,
+			beast.evolution.speciation.SABirthDeathModel.treeWOffset,
 			beast.evolution.tree.Tree,
 			beast.evolution.tree.Tree.trait,
 			beast.evolution.tree.Tree.taxa,
@@ -192,21 +194,24 @@
 					tree="@Tree.t:$(n)" 
 					geneprior="@treePrior.t:$(n)" 
 					treelikelihood="@treeLikelihood.$(n)"/>
-
-
-				<distribution data="@$(n)" id="treeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:$(n)">
-					<siteModel gammaCategoryCount="1" id="SiteModel.s:$(n)" spec="SiteModel">
+					
+					
+				<!-- site model -->
+				<plugin gammaCategoryCount="0" id="SiteModel.s:$(n)" spec="SiteModel">
 						<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="true"/>
 						<shape id="gammaShape.s:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
 						<proportionInvariant id="proportionInvariant.s:$(n)" spec="parameter.RealParameter" value="0.0" lower="0" upper="1" estimate="false"/>
+				</plugin>
 
-					</siteModel>
-								
-					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.c:Species" geneTree="@treePrior.t:$(n)">
+
+				<plugin data="@$(n)" id="treeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:$(n)">
+					
+					<siteModel idref="SiteModel.s:$(n)"/>
+					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)">
 						<clock.rate id="@clockRate.c:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
 					</branchRateModel>
 	
-				</distribution>
+				</plugin>
 				
 
 
@@ -227,6 +232,11 @@
 				<prior id='PropInvariantPrior.s:$(n)' x='@proportionInvariant.s:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/></prior>
 
 
+
+
+				<operator id="proportionInvariantScaler.s:$(n)" spec="BactrianIntervalOperator" scaleFactor="0.75" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
+				<operator id="mutationRateScaler.s:$(n)" spec="BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@mutationRate.s:$(n)"/>
+				<operator id="gammaShapeScaler.s:$(n)" spec="BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@gammaShape.s:$(n)"/>
 
 
 
@@ -278,7 +288,7 @@
 			<!-- end hacks -->
 			
 
-
+			<connect method="beast.app.beauti.SiteModelInputEditor.customConnector"/>
 
 			<!-- Substitution model -->
             <connect srcID='proportionInvariant.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
@@ -300,6 +310,16 @@
 			<connect srcID='MutationRatePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Prior on gene tree relative mutation rate for partition s:$(n)</connect>
 
 
+			<connect srcID="proportionInvariantScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true">
+				Scales proportion of invariant sites parameter of partition $(n)
+			</connect>
+			<connect srcID="mutationRateScaler.s:$(n)" targetID="mcmc" inputName="operator" if="nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true">
+				Scales mutation rate of partition s:$(n)
+			</connect>
+			<connect srcID="gammaShapeScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true">
+				Scales gamma shape parameter of partition s:$(n)
+			</connect>
+
 			<!-- Yule -->
 			<connect srcID="speciationRate.t:$(n)" targetID="state" inputName="stateNode" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
 			<connect srcID="speciationRate.t:$(n)" targetID="updown.all" inputName="up" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
@@ -316,7 +336,7 @@
 			
 
 
-			<mergepoint id="aux-partitiontemplate"/>
+			<mergepoint id="aux-sb3-partitiontemplate"/>
 			
 			
 			
@@ -337,26 +357,6 @@
 
 
 <run chainLength="10000000" id="mcmc" spec="MCMC" storeEvery="50000">
-
-
-    <init id="SBI" spec="starbeast3.StarBeastStartState" 
-    	estimate="false" 
-		method="point-estimate"
-    	popMean="@popMean" 
-		speciesTree="@Tree.t:Species"
-		speciesTreePrior="@SpeciesTreePopSize.Species">
-		
-			<sharedRateModel id="branchRatesModel.c:Species" spec="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel">
-				<branchRateModel id="strictClockModel.c:Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
-					 <clock.rate id='SpeciesTreeStrictClockRate.c:$(n)' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
-				</branchRateModel>
-			</sharedRateModel>
-
-    </init>
-	
-	
-
-
     <state id="state" storeEvery="5000">
 	
 	
@@ -589,6 +589,34 @@
         <log idref="prior"/>
     </logger>
 
+    <init id="SBI" spec="starbeast3.StarBeastStartState" 
+    	estimate="false" 
+		method="point-estimate"
+    	popMean="@popMean" 
+		speciesTree="@Tree.t:Species"
+		speciesTreePrior="@SpeciesTreePopSize.Species">
+		
+		
+			<!--
+			<sharedRateModel idref="branchRatesModel.Species"/>
+			-->
+			
+			<sharedRateModel id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel">
+			
+				
+				<branchRateModel id="strictClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
+					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
+				</branchRateModel>
+				
+
+	
+		</sharedRateModel>
+				
+			
+
+    </init>
+	
+	
 
 	
 
