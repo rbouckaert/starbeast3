@@ -9,9 +9,7 @@
 
 
 
-
-		
-        <!-- Strict clock -->
+		<!-- Strict clock -->
         <subtemplate id='SpeciesTreeStrictClock' class='starbeast3.evolution.branchratemodel.StrictClockModelSB3' mainid='strictClockModel.$(n)'>
             <![CDATA[
 			
@@ -20,9 +18,9 @@
 					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
 				</plugin>
 
-				<operator id="strictClockRateScaler.c:$(n)" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeStrictClockRate" weight="3.0"/>
+				<operator id="strictClockRateScaler" rootOnly="true" scaleFactor="0.7" spec="BactrianScaleOperator" parameter="@SpeciesTreeStrictClockRate" weight="3.0"/>
 				<prior id="SB3StrictClockPrior" name="distribution" x="@SpeciesTreeStrictClockRate">
-					<OneOnX id="SB3StrictClockPrior.OneOnX" name="distr"/>
+					<OneOnX name="distr"/>
 				</prior>
 				
 			]]>
@@ -36,7 +34,7 @@
 			<connect srcID="SB3StrictClockPrior" targetID="prior" inputName="distribution" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true">
 				Prior on species tree strict clock rate
 			</connect>
-			<connect srcID="strictClockRateScaler.c:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true">
+			<connect srcID="strictClockRateScaler" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true">
 				Scale operator for species tree strict clock rate
 			</connect>
 			<connect srcID="SpeciesTreeStrictClockRate" targetID="updown.all" inputName="up" if="inlikelihood(SpeciesTreeStrictClockRate) and SpeciesTreeStrictClockRate/estimate=true"/>
@@ -44,8 +42,6 @@
 
 			
         </subtemplate>
-		
-		
 		
 		
 		
@@ -68,7 +64,7 @@
 				</prior>
 				
 				<prior id="ucldStdevPrior.clock.$(n)" name="distribution" x="@SpeciesTreeRelaxedClockSD.$(n)">
-					<Gamma id="Gamma.stddev" name="distr" alpha="5" beta="0.05" />
+					<Gamma name="distr" alpha="5" beta="0.05" />
 				</prior>
 							
 
@@ -160,5 +156,4 @@
     </mergewith>
 
 </beast>
-
 

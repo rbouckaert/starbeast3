@@ -1,5 +1,8 @@
 package starbeast3.operators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Distribution;
@@ -7,11 +10,12 @@ import beast.core.Param;
 import beast.evolution.likelihood.GenericTreeLikelihood;
 import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.tree.Tree;
+import beast.evolution.tree.TreeInterface;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.evolution.likelihood.MetaTreeLikelihood;
 
 @Description("Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
-public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implements Comparable<ParallelMCMCTreeOperatorTreeDistribution> {
+public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	Tree tree;
 	//Distribution treelikelihood;
 	GenericTreeLikelihood treelikelihood;
@@ -42,7 +46,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implem
 	 * More site patterns = greater
 	 */
 	@Override
-	public int compareTo(ParallelMCMCTreeOperatorTreeDistribution other) {
+	public int compareTo(ParallelDistSet other) {
 		int patterns1 = this.getNumberPatterns();
 		int patterns2 = other.getNumberPatterns();
 		if (patterns1 < patterns2) return -1;
@@ -50,10 +54,49 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implem
 		return 0;
 	}
 	
+	
+	/**
+	 * Return the actual distribution as a list
+	 * @return
+	 */
+	@Override
+	public List<ParallelMCMCTreeOperatorTreeDistribution> getDists(){
+		List<ParallelMCMCTreeOperatorTreeDistribution> dists = new ArrayList<>();
+		dists.add(this);
+		return dists;
+	}
+	
+	
+	
+	/**
+	 * Get the tree, as well as the tree of the likelihood and prior
+	 */
+	@Override
+	public List<Tree> getTrees() {
+		List<Tree> trees = new ArrayList<>();
+		trees.add(this.tree);
+		TreeInterface priorTree = this.getGeneprior().treeInput.get();
+		TreeInterface likelihoodTree = this.treelikelihood.treeInput.get();
+		if (!trees.contains(priorTree) && priorTree instanceof Tree) trees.add((Tree)priorTree);
+		if (!trees.contains(likelihoodTree) && likelihoodTree instanceof Tree) trees.add((Tree)likelihoodTree);
+		return trees;
+	}
+	
+	
+	/**
+	 * Number of taxa
+	 * @return
+	 */
+	@Override
+	public int getTaxonCount() {
+		return this.tree.getTaxaNames().length;
+	}
+	
 	/**
 	 * Number of site patterns
 	 * @return
 	 */
+	@Override
 	public int getNumberPatterns() {
 		return this.getTreelikelihood().dataInput.get().getPatternCount();
 	}
@@ -77,6 +120,6 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends BEASTObject implem
 			((MetaTreeLikelihood)this.getTreelikelihood()).stopThreading();
 		}
 	}
-	
+
 	
 }

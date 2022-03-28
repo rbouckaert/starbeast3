@@ -9,14 +9,9 @@
 ## Installation
 
 * Install BEAST 2 (available from [http://beast2.org](http://beast2.org)).
-* Add https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml to your package repositories
-	* Open BEAUti, select `File => Manage packages` menu. The package manager dialog pops up.
-	* Click the `Package Repositories` button. The repositories dialog pops up.
-	* Click `Add URL`
-	* Enter `https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml` in the entry, and click `OK`
-	* Click the `Done` button, and starbeast3 should appear in the package list.
+* Open BEAUti
+* Select `File => Manage packages`
 * Install starbeast3 package through the [package manager](http://www.beast2.org/managing-packages/) (this may automatically install some other package as well)
-
 
 
 ## Install manually (developer version)
@@ -129,10 +124,7 @@ Remco Bouckaert: [rbouckaert@auckland.ac.nz](rbouckaert@auckland.ac.nz)
 
 ## References
 
-The preprint for StarBeast3 is available at [doi: https://doi.org/10.1101/2021.10.06.463424](https://doi.org/10.1101/2021.10.06.463424)
-
-
-*Also see*
+**StarBeast3:** Douglas, Jordan, Cinthy L. Jiménez-Silva, and Remco Bouckaert. "StarBeast3: Adaptive Parallelised Bayesian Inference under the Multispecies Coalescent." Systematic Biology (2022).
 
 **Optimised relaxed clock package:** Douglas, Jordan, Rong Zhang, and Remco Bouckaert. "Adaptive dating and fast proposals: Revisiting the phylogenetic relaxed clock model." PLoS computational biology 17.2 (2021): e1008322.
 

@@ -11,6 +11,7 @@ import java.util.Random;
 
 import beast.app.beauti.Beauti;
 import beast.core.Description;
+import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
@@ -23,14 +24,20 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeDistribution;
 import beast.evolution.tree.TreeInterface;
+import beast.evolution.tree.coalescent.TreeIntervals;
 import starbeast3.evolution.speciation.PopulationModel;
 
 
 
 @Description("Calculates probability of gene tree conditioned on a species tree (multi-species coalescent)")
-public class GeneTreeForSpeciesTreeDistribution extends TreeDistribution {
+public class GeneTreeForSpeciesTreeDistribution extends Distribution {
 
 	//TreeInterfaceSB3
+	
+	final public Input<TreeInterface> treeInput = new Input<>("tree", "tree over which to calculate a prior or likelihood");
+	
+	final public Input<TreeIntervals> treeIntervalsInput = new Input<>("treeIntervals", "Intervals for a phylogenetic beast tree", Validate.XOR, treeInput);
+	
     final public Input<SpeciesTree> speciesTreeInput =
             new Input<>("speciesTree", "species tree containing the associated gene tree", Validate.REQUIRED);
 

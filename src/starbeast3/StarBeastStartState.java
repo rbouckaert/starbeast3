@@ -40,6 +40,7 @@ import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
  */
 
 @Description("Set a starting point for a *BEAST analysis from gene alignment data.")
+@Citation(value="Douglas, Jordan, Cinthy L. Jimenez-Silva, and Remco Bouckaert. StarBeast3: Adaptive Parallelised Bayesian Inference under the Multispecies Coalescent. Systematic Biology (2022).", DOI="10.1093/sysbio/syac010")
 public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
     static enum Method {
@@ -124,6 +125,8 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     			lowerRate = 0.1; // p .getLower();
     		}
     	}
+    	
+    	
         
     }
 
@@ -260,6 +263,9 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         //final List<Tree> geneTrees = new ArrayList<>(alignments.size());
         double maxNsites = 0;
         //for( final Alignment alignment : alignments)  {
+        
+        
+        
         for (final Tree gtree : geneTrees) {
             //final Tree gtree = new Tree();
             final Alignment alignment = gtree.m_taxonset.get().alignmentInput.get();

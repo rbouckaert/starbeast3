@@ -159,7 +159,6 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         if (needsUpdate) {
             update();
         }
-        //if (node.getNr() < 20) System.out.println(meanRate.getValue() + "Rate " + node.getNr() + ": " + branchRates[node.getNr()]);
         return branchRates[node.getNr()];
     }
     

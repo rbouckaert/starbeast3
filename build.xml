@@ -7,7 +7,7 @@
 	</description>
 
 	<!-- set global properties for this build -->
-	<property name="versionstarbeast3" value="0.1.0" />
+	<property name="versionstarbeast3" value="1.0.3" />
 	<property name="srcstarbeast3" location="src" />
 	<property name="docstarbeast3" location="doc" />
 	<property name="buildstarbeast3" location="build" />
@@ -32,7 +32,7 @@
 		<fileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar"/>
 		<fileset dir="${libBeast2}" includes="fest.jar"/>
 		<fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
-		<fileset dir="${libstarbeast3}" includes="stacey.jar"/>
+		
         <pathelement path="${beast2classpath}"/>
         <pathelement path="../BEASTLabs/build"/>
         <pathelement path="../ORC/build"/>

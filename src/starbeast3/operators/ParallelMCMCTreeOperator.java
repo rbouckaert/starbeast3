@@ -22,6 +22,7 @@ import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
 import beast.evolution.operators.*;
+import beast.evolution.tree.Tree;
 import beast.util.Transform;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
@@ -31,7 +32,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
     final public Input<Boolean> useBactrianOperatorsInput = new Input<>("bactrian", "flag to indicate that bactrian operators should be used where possible", true);
     final public Input<Boolean> includeRealParametersInput = new Input<>("includeRealParameters", "flag to include Real Parameters for each of the partitions in the analysis", true);
 
-	final public Input<List<ParallelMCMCTreeOperatorTreeDistribution>> distributionInput = new Input<>("distribution", 
+	final public Input<List<ParallelDistSet>> distributionInput = new Input<>("distribution", 
 			"Distribution on a tree conditinionally independent from all other distributions given the state of the rest"
 			+ "of parameter space. ",
 			new ArrayList<>());
@@ -41,17 +42,21 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	  
 
     
-    List<ParallelMCMCTreeOperatorTreeDistribution> distributions;
+    List<ParallelDistSet> distributions;
     
 
-    
-
-    
     
 	@Override
 	public void initAndValidate() {
 		this.distributions = distributionInput.get();
 		mcmcs = new ArrayList<>();
+		
+		
+		
+		// Tidy the distributions
+		tidyDistributions(this.distributions);
+		
+		
 		
 		if (distributions.isEmpty()) {
 			Log.warning("ParallelMCMCTreeOperator: Please provide at least one 'distribution'");
@@ -60,6 +65,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		}
 		
 	    otherState = otherStateInput.get();
+	    otherState.initialise();
 		 
 		nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
 				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
@@ -79,10 +85,10 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    for (int i = 0; i < nrOfThreads; i++) balancedDistributions.add(new ArrayList<>());
 	    int threadNum = 0;
 	    for (int i = 0; i < distributions.size(); i ++) {
-	    	ParallelMCMCTreeOperatorTreeDistribution d = distributions.get(i);
-	    	totalDim += d.getTree().getTaxaNames().length;
+	    	ParallelDistSet d = distributions.get(i);
+	    	totalDim += d.getTaxonCount();
 	    	//System.out.println("patterns " + d.getNumberPatterns());
-	    	balancedDistributions.get(threadNum).add(d);
+	    	balancedDistributions.get(threadNum).addAll(d.getDists());
 	    	threadNum++;
 	    	if (threadNum >= nrOfThreads) threadNum = 0;
 	    }
@@ -102,9 +108,21 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    if (this.runtimeInput.get() <= 0 && this.nrOfThreads == 1) chainLength = 1;
 	    
 	    
+	    // Ensure that there are no fixed or duplicated state nodes across the threads
+	    List<StateNode> doNotInclude = getTabooStateNodes(balancedDistributions, otherState);
+	    if (!doNotInclude.isEmpty()) {
+	    	String tabooStr = "";
+	    	for (StateNode state : doNotInclude) {
+	    		tabooStr += "'" + state.getID() + "' ";
+	    	}
+	    	Log.warning("The following stateNodes will NOT be operated on by " + this.getClass().getSimpleName() + " because they are not part of the state, or they appear in more than one thread: " + tabooStr);
+	    }
+	    
+	    
+	    
 	    // Create parallel MCMCs
 	    for (int i = 0; i < nrOfThreads; i++) {
-	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), (int)(1.0*chainLength / this.nrOfThreads)));
+	    	mcmcs.add(createParallelMCMC(balancedDistributions.get(i), (int)(1.0*chainLength / this.nrOfThreads), doNotInclude));
 	    }
 	    Log.warning(this.getClass().getCanonicalName() + ": total chain length is " + chainLength);
 
@@ -118,7 +136,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    if (learningInput.get() || (this.mcmcs.size() == 1 && chainLength == 1)) {
 	    	ParallelMCMC mcmc;
 	    	if (this.mcmcs.size() == 1 && chainLength == 1) mcmc = this.mcmcs.get(0);
-	    	else mcmc = createParallelMCMC(distributions, chainLength);
+	    	else mcmc = createParallelMCMC(balancedDistributions.get(0), chainLength, doNotInclude);
 	    	this.singleStepOperators = mcmc.operatorsInput.get();
 	    }
 	    
@@ -128,13 +146,60 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    
 	    
 	}
+	
+
+
+	/*
+	 * If there is one tree which appears in more than 1 likelihood or prior, then merge the threads together
+	 */
+	private void tidyDistributions(List<ParallelDistSet> distributions) {
+		
+		
+		// Dist 1
+		for (int i = 0; i < distributions.size(); i++) {
+			ParallelDistSet dist1 = distributions.get(i);
+			List<Tree> treeSet1 = dist1.getTrees();
+			
+			// Dist 2
+			for (int j = i+1; j < distributions.size(); j++) {
+				ParallelDistSet dist2 = distributions.get(j);
+				List<Tree> treeSet2 = dist2.getTrees();
+				
+				
+				// If any of the trees are the same, then join dist1 with dist2
+				for (Tree tree1 : treeSet1) {
+					if (treeSet2.contains(tree1)) {
+						
+						
+						// Update list and repeat
+						ParallelDistSet dist3 = new ParallelDistSet(dist1, dist2);
+						distributions.remove(j);
+						distributions.remove(i);
+						distributions.add(dist3);
+						Log.warning("Merging " + dist1.getID() + " with " + dist2.getID() + " because they have the same tree");
+						tidyDistributions(distributions);
+						return;
+						
+					}
+				}
+				
+				
+				
+			}
+			
+			
+		}
+		
+	}
+
+
 
 	@Override
 	public int stepCount() {
 		return mcmcs.size();
 	}
 
-	private ParallelMCMC createParallelMCMC(List<ParallelMCMCTreeOperatorTreeDistribution> distributions, long chainLength) {
+	private ParallelMCMC createParallelMCMC(List<ParallelMCMCTreeOperatorTreeDistribution> distributions, long chainLength,  List<StateNode> doNotInclude) {
 		List<Distribution> distrs = new ArrayList<>();
 		List<StateNode> stateNodes = new ArrayList<>();
 		List<Operator> operators = new ArrayList<>();
@@ -145,93 +210,116 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			
 			System.out.println("Adding: " + d.geneprior.getID() + " / " + d.treelikelihood.getID());
 			
-			stateNodes.add(d.tree);
 			
-			// Uniform operator
-			beast.evolution.operators.Uniform UniformOperator = new beast.evolution.operators.Uniform();
-			UniformOperator.initByName("tree", d.tree, "weight", 30.0);
-			operators.add(UniformOperator);
-			
-			if (useBactrianOperatorsInput.get()) {
+			// Include the tree?
+			if (!doNotInclude.contains(d.tree)) {
+				
+				if (!stateNodes.contains(d.tree)) stateNodes.add(d.tree);
 				
 				
-				// Root scaler
-				beast.evolution.operators.BactrianScaleOperator treeRootScaler = new beast.evolution.operators.BactrianScaleOperator();
-				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 10.0, "rootOnly", true);
-				operators.add(treeRootScaler);
+				// Uniform operator
+				beast.evolution.operators.Uniform UniformOperator = new beast.evolution.operators.Uniform();
+				UniformOperator.initByName("tree", d.tree, "weight", 30.0);
+				operators.add(UniformOperator);
 				
-				// Bactrian interval
-				beast.evolution.operators.BactrianNodeOperator intervalOperator = new beast.evolution.operators.BactrianNodeOperator();
-				intervalOperator.initByName("tree", d.tree, "weight", 10.0);
-				operators.add(intervalOperator);
+				if (useBactrianOperatorsInput.get()) {
+					
+					
+					// Root scaler
+					beast.evolution.operators.BactrianScaleOperator treeRootScaler = new beast.evolution.operators.BactrianScaleOperator();
+					treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 10.0, "rootOnly", true);
+					operators.add(treeRootScaler);
+					
+					// Bactrian interval
+					beast.evolution.operators.BactrianNodeOperator intervalOperator = new beast.evolution.operators.BactrianNodeOperator();
+					intervalOperator.initByName("tree", d.tree, "weight", 10.0);
+					operators.add(intervalOperator);
+					
+					// Subtree slide
+					beast.evolution.operators.BactrianSubtreeSlide SubtreeSlide = new beast.evolution.operators.BactrianSubtreeSlide();
+					SubtreeSlide.initByName("tree", d.tree, "weight", 10.0);
+					operators.add(SubtreeSlide);
+					
+					
+					// Adaptable operators for tree scaling
+					orc.operators.AdaptableOperatorSampler adaptable = new orc.operators.AdaptableOperatorSampler();
+					List<Operator> adaptOperators = new ArrayList<>();
+					
+					// Tree scaler
+					beast.evolution.operators.BactrianUpDownOperator treeScaler = new beast.evolution.operators.BactrianUpDownOperator();
+					treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 1.0);
+					adaptOperators.add(treeScaler);
+					
+					// Epoch scaler
+					EpochOperator epochOperator = new EpochOperator();
+					List<GeneTreeForSpeciesTreeDistribution> trees = new ArrayList<>();
+					trees.add(d.geneprior);
+					epochOperator.initByName("scaleFactor", 0.5, "gene", trees, "weight", 1.0);
+					adaptOperators.add(epochOperator);
+					
+					// Subtree slide
+					adaptOperators.add(SubtreeSlide);
+					
+					// Uniform
+					adaptOperators.add(UniformOperator);
+					
+					adaptable.initByName("tree", d.tree, "weight", 100.0, "operator", adaptOperators);
+					operators.add(adaptable);
+					
+					
+					
+				} else {
+	//		        <operator id="treeScaler.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
+					ScaleOperator treeScaler = new ScaleOperator();
+					treeScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0);
+					operators.add(treeScaler);
+	//		    	<operator id="treeRootScaler.t:$(n)" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
+					ScaleOperator treeRootScaler = new ScaleOperator();
+					treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0, "rootOnly", true);
+					operators.add(treeRootScaler);
+	
+	//		    	<operator id="SubtreeSlide.t:$(n)" spec="SubtreeSlide" tree="@Tree.t:$(n)" weight="15.0"/>
+					beast.evolution.operators.SubtreeSlide SubtreeSlide = new beast.evolution.operators.SubtreeSlide();
+					SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
+					operators.add(SubtreeSlide);
+				}
 				
-				// Subtree slide
-				beast.evolution.operators.BactrianSubtreeSlide SubtreeSlide = new beast.evolution.operators.BactrianSubtreeSlide();
-				SubtreeSlide.initByName("tree", d.tree, "weight", 10.0);
-				operators.add(SubtreeSlide);
 				
-				
-				// Adaptable operators for tree scaling
-				orc.operators.AdaptableOperatorSampler adaptable = new orc.operators.AdaptableOperatorSampler();
-				List<Operator> adaptOperators = new ArrayList<>();
-				
-				// Tree scaler
-				beast.evolution.operators.BactrianUpDownOperator treeScaler = new beast.evolution.operators.BactrianUpDownOperator();
-				treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 1.0);
-				adaptOperators.add(treeScaler);
-				
-				// Epoch scaler
-				EpochOperator epochOperator = new EpochOperator();
-				List<GeneTreeForSpeciesTreeDistribution> trees = new ArrayList<>();
-				trees.add(d.geneprior);
-				epochOperator.initByName("scaleFactor", 0.5, "gene", trees, "weight", 1.0);
-				adaptOperators.add(epochOperator);
-				
-				// Subtree slide
-				adaptOperators.add(SubtreeSlide);
-				
-				// Uniform
-				adaptOperators.add(UniformOperator);
-				
-				adaptable.initByName("tree", d.tree, "weight", 100.0, "operator", adaptOperators);
-				operators.add(adaptable);
-				
-				
-				
-			} else {
-//		        <operator id="treeScaler.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
-				ScaleOperator treeScaler = new ScaleOperator();
-				treeScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0);
-				operators.add(treeScaler);
-//		    	<operator id="treeRootScaler.t:$(n)" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
-				ScaleOperator treeRootScaler = new ScaleOperator();
-				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0, "rootOnly", true);
-				operators.add(treeRootScaler);
-
-//		    	<operator id="SubtreeSlide.t:$(n)" spec="SubtreeSlide" tree="@Tree.t:$(n)" weight="15.0"/>
-				beast.evolution.operators.SubtreeSlide SubtreeSlide = new beast.evolution.operators.SubtreeSlide();
-				SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
-				operators.add(SubtreeSlide);
+	
+	//		    <operator id="narrow.t:$(n)" spec="Exchange" tree="@Tree.t:$(n)" weight="15.0"/>
+				beast.evolution.operators.Exchange narrow = new beast.evolution.operators.Exchange();
+				narrow.initByName("tree", d.tree, "weight", 15.0);
+				operators.add(narrow);
+	//	    	<operator id="wide.t:$(n)" spec="Exchange" isNarrow="false" tree="@Tree.t:$(n)" weight="3.0"/>
+				beast.evolution.operators.Exchange wide = new beast.evolution.operators.Exchange();
+				wide.initByName("tree", d.tree, "isNarrow", false, "weight", 15.0);
+				operators.add(wide);
+	//		    <operator id="WilsonBalding.t:$(n)" spec="WilsonBalding" tree="@Tree.t:$(n)" weight="3.0"/>
+				beast.evolution.operators.WilsonBalding WilsonBalding = new beast.evolution.operators.WilsonBalding();
+				WilsonBalding.initByName("tree", d.tree, "weight", 15.0);
+				operators.add(WilsonBalding);
 			}
-			
-			
-
-//		    <operator id="narrow.t:$(n)" spec="Exchange" tree="@Tree.t:$(n)" weight="15.0"/>
-			beast.evolution.operators.Exchange narrow = new beast.evolution.operators.Exchange();
-			narrow.initByName("tree", d.tree, "weight", 15.0);
-			operators.add(narrow);
-//	    	<operator id="wide.t:$(n)" spec="Exchange" isNarrow="false" tree="@Tree.t:$(n)" weight="3.0"/>
-			beast.evolution.operators.Exchange wide = new beast.evolution.operators.Exchange();
-			wide.initByName("tree", d.tree, "isNarrow", false, "weight", 15.0);
-			operators.add(wide);
-//		    <operator id="WilsonBalding.t:$(n)" spec="WilsonBalding" tree="@Tree.t:$(n)" weight="3.0"/>
-			beast.evolution.operators.WilsonBalding WilsonBalding = new beast.evolution.operators.WilsonBalding();
-			WilsonBalding.initByName("tree", d.tree, "weight", 15.0);
-			operators.add(WilsonBalding);
+				
+				
 			if (includeRealParametersInput.get()) {
 				Set<StateNode> stateNodeList = new HashSet<>();
 				ParallelMCMCRealParameterOperator.getRealParameterStateNodes(d.treelikelihood, otherState.stateNodeInput.get(), stateNodeList);
-				stateNodes.addAll(stateNodeList);
+				
+				
+				
+				// Remove forbidden statenodes
+				Set<StateNode> stateNodeList2 = new HashSet<>();
+				for (StateNode s : stateNodeList) {
+					if (!doNotInclude.contains(s)) {
+						stateNodeList2.add(s);
+					}
+				}
+				stateNodeList = stateNodeList2;
+				
+				// Add non-duplicates
+				for (StateNode s : stateNodeList) {
+					if (!stateNodes.contains(s)) stateNodes.add(s);
+				}
 				
 				
 				/**
@@ -251,11 +339,14 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				}
 				
 				List<Transform> transformations = new ArrayList<>();
+				Transform f;
 				
-				// Add the tree
-				Transform f = new Transform.LogTransform(d.tree);
-				transformations.add(f);
-				Log.warning("Adding " + d.tree.getID());
+				// Add the tree?
+				if (!doNotInclude.contains(d.tree)) {
+					f = new Transform.LogTransform(d.tree);
+					transformations.add(f);
+					Log.warning("Adding " + d.tree.getID());
+				}
 				
 				for (StateNode s : stateNodeList) {
 					
@@ -361,7 +452,9 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			if (stateNodeIDs.contains(stateNode.getID())) {
 				Log.warning("Duplicate statenode : " + stateNode.getID());
 			}
+			
 			stateNodeIDs.add(stateNode.getID());
+			
 		}
 		Collections.sort(stateNodeIDs);
 		Log.info("ParallelMCMC State: " + stateNodeIDs);
@@ -377,6 +470,93 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false, "nregression", nregression);
 		return mcmc;
 	}
+	
+	
+	
+	
+	
+	/**
+	 * Get list of state nodes which appear in more than 1 family, or are not part of the state
+	 * These should not be operated on
+	 * @param dists
+	 * @return
+	 */
+	public List<StateNode> getTabooStateNodes(List<List<ParallelMCMCTreeOperatorTreeDistribution>> dists, State mainState){
+		
+		List<StateNode> taboo = new ArrayList<>();
+		List<String> stateNodeIds = new ArrayList<>();
+		Log.warning(" States : " + mainState.toString());
+		for (int i = 0; i < mainState.getNrOfStateNodes(); i ++) {
+			StateNode state = mainState.getStateNode(i);
+			stateNodeIds.add(state.getID());
+		}
+		
+		
+		for (int i = 0; i < dists.size(); i ++) {
+			List<ParallelMCMCTreeOperatorTreeDistribution> dist1 = dists.get(i);
+		
+			
+			// Get list of state nodes in dist1
+			Set<StateNode> dist1StateNodes = new HashSet<>();
+			for (ParallelMCMCTreeOperatorTreeDistribution d : dist1) {
+				dist1StateNodes.add(d.tree);
+				ParallelMCMCRealParameterOperator.getRealParameterStateNodes(d.treelikelihood, otherState.stateNodeInput.get(), dist1StateNodes);
+			}
+			
+			
+			// Check if they are part of the state
+			for (StateNode state : dist1StateNodes) {
+				if (!stateNodeIds.contains(state.getID())){
+					if (!taboo.contains(state)) {
+						taboo.add(state);
+					}
+				}
+				
+			}
+			
+			
+			
+			
+			for (int j = i+1; j < dists.size(); j ++) {
+				List<ParallelMCMCTreeOperatorTreeDistribution> dist2 = dists.get(j);
+				
+				
+				// Get list of state nodes in dist2
+				for (ParallelMCMCTreeOperatorTreeDistribution d : dist2) {
+					
+					// Same tree appears in multiple threads? Do not operate on it
+					if (dist1StateNodes.contains(d.tree)) {
+						if (!taboo.contains(d.tree)) taboo.add(d.tree);
+					}
+					
+					Set<StateNode> dist2StateNodes = new HashSet<>();
+					ParallelMCMCRealParameterOperator.getRealParameterStateNodes(d.treelikelihood, otherState.stateNodeInput.get(), dist2StateNodes);
+					for (StateNode s : dist2StateNodes) {
+					
+						// Same parameter appears in multiple threads? Do not operate on it
+						if (dist1StateNodes.contains(s)) {
+							if (!taboo.contains(s)) taboo.add(s);
+						}
+						
+					}
+				
+					
+				}
+				
+				
+			}
+			
+			
+		}
+		
+		
+		
+		
+		return taboo;
+		
+	}
+	
+	
 
 	@Override
 	public double proposal() {

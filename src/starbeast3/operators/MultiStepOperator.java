@@ -233,17 +233,8 @@ public abstract class MultiStepOperator extends Operator {
 				Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + "ms. This will give the average thread "
 						+ "an overhead of " + (targetOverhead*100) + "%. On average, runtime(ms) = " + meanIntercept + " + " + meanSlope + "*chainLength.");
 				
-				/*
-				// Set the target runtime such that the target overhead is attained for this thread (the slowest thread)
-				double slope = this.mcmcs.get(slowestThread).getRuntimeSlope();
-				double intercept = this.mcmcs.get(slowestThread).getRuntimeIntercept();
-				int targetChainLength = (int)((intercept/targetOverhead - intercept) / slope);
-				targetChainLength = Math.max(targetChainLength, 1);
-				targetRuntime = this.mcmcs.get(slowestThread).predict(targetChainLength);
-				Log.warning(this.getID() + ": want all mcmcs to have a runtime of " + targetRuntime + "ms. This will give the slowest thread (thread " + (1+slowestThread) + ") "
-						+ "an overhead of " + (targetOverhead*100) + "%. On average, runtime(ms) = " + meanIntercept + " + " + meanSlope + "*chainLength.");
-				*/
 
+				
 			}
 			
 			// Set the runtime of the slowest thread to match the user-specified chain length
@@ -261,7 +252,8 @@ public abstract class MultiStepOperator extends Operator {
 			
 			// Set the runtime of all chains to that of the slowest
 			for (ParallelMCMC mcmc : this.mcmcs) {
-				mcmc.setChainlengthToTargetRuntime(targetRuntime);
+				if (targetRuntime > 0) mcmc.setChainlengthToTargetRuntime(targetRuntime);
+				else mcmc.setChainlengthToTargetRuntime(chainLength*1.0 / this.nrOfThreads);
 			}
 			
 			
@@ -301,6 +293,7 @@ public abstract class MultiStepOperator extends Operator {
 	
 	@Override
 	public double proposal() {
+
 		
 		double logHR;
 	
