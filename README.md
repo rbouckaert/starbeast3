@@ -70,6 +70,10 @@ For more details see https://beast2.blogs.auckland.ac.nz/managing-packages/#Inst
 
 ## Using StarBeast3
 
+
+This tutorial is based on the Gopher example data by [Belfiore et al. 2008](https://doi.org/10.1080/10635150802044011).
+
+
 1. Open BEAUti, and select the StarBeast3 template  (menu `File/Templates/StarBeast3`).
 
 2. Import one or more alignments using `File/Import Alignment` (example session: import `26.nex` and `29.nex`, which are located in the `beast/examples/nexus/` directory). Each alignment will serve as the data for 1 gene tree.
