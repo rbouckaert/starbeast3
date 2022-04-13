@@ -122,7 +122,7 @@ BEAST user list: [https://groups.google.com/forum/#!forum/beast-users](https://g
 
 Jordan Douglas: [jordan.douglas@auckland.ac.nz](jordan.douglas@auckland.ac.nz)
 
-Remco Bouckaert: [rbouckaert@auckland.ac.nz](rbouckaert@auckland.ac.nz)
+Remco Bouckaert: [r.bouckaert@auckland.ac.nz](r.bouckaert@auckland.ac.nz)
 
 
 
