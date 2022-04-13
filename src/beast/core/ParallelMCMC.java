@@ -30,6 +30,8 @@ public class ParallelMCMC extends MCMC {
 	final public Input<Boolean> robustInput = new Input<>("robust", "whether to periodically robustly recalculate posterior", true);
 	final public Input<Integer> nregressionInput = new Input<>("nregression", "number of chainLength/runtime samples to make, or 0 for no learning", 0);
 	
+	
+	private final int MIN_CHAIN_LENGTH = 50;
     private long sampleCount = 0;
     private boolean robust;
     
@@ -552,7 +554,7 @@ public class ParallelMCMC extends MCMC {
     	// Apply the model
     	long targetChainlength_log = (long)((targetRunTime_log - intercept) / slope);
     	//this.chainLength = (long) Math.max(1, Math.exp(targetChainlength_log));
-    	this.chainLength = (long) Math.max(1, targetChainlength_log);
+    	this.chainLength = (long) Math.max(MIN_CHAIN_LENGTH, targetChainlength_log);
     	Log.warning("Setting chain length to " + this.chainLength);
     	
     	

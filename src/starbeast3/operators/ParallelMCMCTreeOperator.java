@@ -204,8 +204,14 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		List<StateNode> stateNodes = new ArrayList<>();
 		List<Operator> operators = new ArrayList<>();
 		for (ParallelMCMCTreeOperatorTreeDistribution d : distributions) {
-			distrs.add(d.geneprior);
-			distrs.add(d.treelikelihood); 
+			if (!distrs.contains(d.geneprior)) {
+				Log.warning("Adding dist " + d.getID());
+				distrs.add(d.geneprior);
+			}
+			if (!distrs.contains(d.treelikelihood)) {
+				Log.warning("Adding dist " + d.getID());
+				distrs.add(d.treelikelihood); 
+			}
 			
 			
 			System.out.println("Adding: " + d.geneprior.getID() + " / " + d.treelikelihood.getID());
@@ -327,11 +333,14 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				 */
 				Set<Distribution> priorsSet = new HashSet<>();
 				getRealParameterPriors(stateNodeList, priorsSet);
-				distrs.addAll(priorsSet);	
-				for (Distribution d2 : priorsSet) {
-					Log.warning("Adding dist " + d2.getID());
+				for (Distribution dist : priorsSet) {
+					if (!distrs.contains(dist)) {
+						Log.warning("Adding dist " + dist.getID());
+						distrs.add(dist);	
+					}
 				}
 				
+	
 				
 				int dim = 0;
 				for (StateNode s : stateNodeList) {
