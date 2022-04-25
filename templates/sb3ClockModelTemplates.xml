@@ -12,7 +12,6 @@
 		<!-- Strict clock -->
         <subtemplate id='SpeciesTreeStrictClock' class='starbeast3.evolution.branchratemodel.StrictClockModelSB3' mainid='strictClockModel.$(n)'>
             <![CDATA[
-			
 
 				<plugin id="strictClockModel.$(n)" tree="@Tree.t:$(n)" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
 					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>

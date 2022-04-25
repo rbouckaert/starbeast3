@@ -14,7 +14,6 @@
 			
 			<operator id="AdaptableOperatorSampler.YuleModel.t:$(n)" parameter="@speciationRate.t:$(n)" spec="orc.operators.AdaptableOperatorSampler" weight="5.0">
 				<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="BactrianScaleOperator" weight="1.0"/>
-				<operator idref="updown.all"/>
 				<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:$(n)" prior2="@speciationRatePrior.t:$(n)" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
 			</operator>
 

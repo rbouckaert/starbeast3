@@ -198,7 +198,7 @@
 					
 				<!-- site model -->
 				<plugin gammaCategoryCount="0" id="SiteModel.s:$(n)" spec="SiteModel">
-						<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="true"/>
+						<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
 						<shape id="gammaShape.s:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
 						<proportionInvariant id="proportionInvariant.s:$(n)" spec="parameter.RealParameter" value="0.0" lower="0" upper="1" estimate="false"/>
 				</plugin>
@@ -208,7 +208,7 @@
 					
 					<siteModel idref="SiteModel.s:$(n)"/>
 					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)">
-						<clock.rate id="@clockRate.c:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
+						<clock.rate idref="clockRate.c:$(n)" />
 					</branchRateModel>
 	
 				</plugin>
@@ -232,11 +232,18 @@
 				<prior id='PropInvariantPrior.s:$(n)' x='@proportionInvariant.s:$(n)'><distr spec="beast.math.distributions.Uniform" lower='0' upper='1'/></prior>
 
 
+				<prior id='ClockRatePrior.c:$(n)' x='@clockRate.c:$(n)'>
+					<LogNormal meanInRealSpace="true" name="distr" M="1" S="0.6" />
+				</prior>
 
+
+				<clock.rate id="clockRate.c:$(n)" spec="parameter.RealParameter" value="1.0" estimate="true" lower="0"/>
 
 				<operator id="proportionInvariantScaler.s:$(n)" spec="BactrianIntervalOperator" scaleFactor="0.75" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
 				<operator id="mutationRateScaler.s:$(n)" spec="BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@mutationRate.s:$(n)"/>
 				<operator id="gammaShapeScaler.s:$(n)" spec="BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@gammaShape.s:$(n)"/>
+
+				<operator id="clockRateScaler.c:$(n)" spec="BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@clockRate.c:$(n)"/>
 
 
 
@@ -261,7 +268,7 @@
 	
 			
 			<connect srcID="Tree.t:$(n)" targetID="updown.all" inputName="down" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-
+			<connect srcID="clockRate.c:$(n)" targetID="updown.all" inputName="down" if="inposterior(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
 
 			
 			<connect srcID="treeLikelihood.$(n)" targetID="tracelog" inputName="log" if="inposterior(treeLikelihood.$(n))"/>
@@ -294,20 +301,29 @@
             <connect srcID='proportionInvariant.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
             <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
-			<connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
 
 
+
+            <connect srcID='clockRate.c:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
+            <connect srcID='clockRate.c:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
+
+
+
+            <!--
 			<connect srcID="mutationRate.s:$(n)" targetID="updown.all" inputName="up" if="inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
-
+			-->
 
             <connect srcID='proportionInvariant.s:$(n)'       targetID='tracelog' inputName='log' if='inposterior(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
             <connect srcID='gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
-			<connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
 
             <connect srcID='GammaShapePrior.s:$(n)'          targetID='prior' inputName='distribution' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Prior on gamma shape for partition s:$(n)</connect>
             <connect srcID='PropInvariantPrior.s:$(n)'       targetID='prior' inputName='distribution' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'>Prior on proportion invariant for partition s:$(n)</connect>
 			<connect srcID='MutationRatePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Prior on gene tree relative mutation rate for partition s:$(n)</connect>
+
+
+			<connect srcID='ClockRatePrior.c:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'>Prior on gene tree relative clock rate for partition s:$(n)</connect>
+
 
 
 			<connect srcID="proportionInvariantScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true">
@@ -319,6 +335,14 @@
 			<connect srcID="gammaShapeScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true">
 				Scales gamma shape parameter of partition s:$(n)
 			</connect>
+
+
+
+			<connect srcID="clockRateScaler.c:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true">
+				Scales clock rate of partition s:$(n)
+			</connect>
+
+
 
 			<!-- Yule -->
 			<connect srcID="speciationRate.t:$(n)" targetID="state" inputName="stateNode" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
@@ -337,6 +361,9 @@
 
 
 			<mergepoint id="aux-sb3-partitiontemplate"/>
+
+
+			<connect method="starbeast3.StarBeast3Clock.estimateGeneClockRates" />
 			
 			
 			
@@ -439,7 +466,7 @@
 	
 	
 	<operatorschedule id="operatorSchedule" spec="beast.core.OperatorScheduleRecalculator">
-		<subschedule id="operatorSubschedule" operatorPattern="^.*Species$" spec="OperatorSchedule" weight="99" weightIsPercentage="true"/>
+		<subschedule id="operatorSubschedule" operatorPattern="^ParallelMCMCTreeOperator$" spec="OperatorSchedule" weight="1" weightIsPercentage="true"/>
 	</operatorschedule>
 	
 
@@ -510,7 +537,7 @@
 		
 		<!-- UpDown  -->
 		<operator id="updown.all" spec="UpDownOperator" scaleFactor="0.75" weight="1.0">
-		 <up idref="speciationRate.t:Species"/>               
+		 	<up idref="speciationRate.t:Species"/>               
             <down idref="Tree.t:Species"/>
                     
             <down idref="popSize"/>

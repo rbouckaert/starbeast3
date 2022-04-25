@@ -12,6 +12,11 @@
 package starbeast3;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import beast.app.beauti.BeautiDoc;
+import beast.core.BEASTInterface;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
@@ -160,6 +165,38 @@ public class StarBeast3Clock extends BranchRateModel.Base {
             update();
         }
         return branchRates[node.getNr()];
+    }
+    
+    
+    /*
+     * Set clock rate estimate=true for all but the largest one
+     */
+    public static void estimateGeneClockRates(BeautiDoc doc) {
+    	
+    	
+    	boolean first = true;
+    	for (String str : doc.pluginmap.keySet()) {
+    		
+    		// Find the StarBeast3Clocks
+    		BEASTInterface obj = doc.pluginmap.get(str);
+    		if (obj instanceof StarBeast3Clock) {
+    			
+    			// Get the clock rate
+    			StarBeast3Clock clock = (StarBeast3Clock)obj;
+    			//if (first) {
+    				//first=false;
+    				//clock.meanRateInput.get().isEstimatedInput.set(false);
+    			//}else {
+    				clock.meanRateInput.get().isEstimatedInput.set(true);
+    			//}
+    			
+    			
+    		}
+    		
+    	}
+    
+    	
+    	
     }
     
     

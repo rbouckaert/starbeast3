@@ -20,6 +20,7 @@ import beast.core.Operator;
 import beast.core.ParallelMCMC;
 import beast.core.State;
 import beast.core.StateNode;
+import beast.core.parameter.CompoundRealParameter;
 import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
 import beast.core.util.Log;
@@ -240,24 +241,54 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 
 
 
+	/**
+	 * Get real parameter state nodes, if they are part of the likelihood
+	 * @param d
+	 * @param otherStateNodes
+	 * @param stateNodes
+	 */
 	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, Set<StateNode> stateNodes) {
 		for (Object o : d.listActiveBEASTObjects()) {
 			if (o instanceof StateNode && otherStateNodes.contains(o) && o instanceof RealParameter) {
-				// must have subst, or site model in its outputs, or be mean clock rate
-				for (BEASTInterface o2 : ((BEASTInterface)o).getOutputs()) {
-					if (o2 instanceof SubstitutionModel ||
-						o2 instanceof SiteModelInterface ||
-						o2 instanceof Frequencies ||
-						(o2 instanceof BranchRateModel && !(o2 instanceof BranchRateModelSB3) && o2.getInput("clock.rate").get() == o)) {
-						stateNodes.add((StateNode) o);
-						break;
-					}
+				
+				if (parameterIsPartOfLikelihood((RealParameter)o)) {
+					stateNodes.add((StateNode) o);
 				}
+				
 			} else if (o instanceof BEASTInterface) {
 				getRealParameterStateNodes((BEASTInterface) o, otherStateNodes, stateNodes);				
 			}			
  		}
 	}
+	
+	
+	
+	public static boolean parameterIsPartOfLikelihood(RealParameter o) {
+		
+		// Part of likelihood?
+		for (BEASTInterface o2 : ((BEASTInterface)o).getOutputs()) {
+			if (o2 instanceof SubstitutionModel ||
+				o2 instanceof SiteModelInterface ||
+				o2 instanceof Frequencies ||
+				(o2 instanceof BranchRateModel && !(o2 instanceof BranchRateModelSB3) && o2.getInput("clock.rate").get() == o)) {
+				
+				return true;
+			}
+		}
+		
+		
+		// Is it part of a compound parameter that is part of the likelihood?
+		for (BEASTInterface o2 : ((BEASTInterface)o).getOutputs()) {
+			if (o2 instanceof CompoundRealParameter) {
+				if (parameterIsPartOfLikelihood((RealParameter)o2)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 
 	@Override
 	public double proposal() {
