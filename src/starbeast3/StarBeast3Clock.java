@@ -42,12 +42,12 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     protected int geneNodeCount;
     protected double[] branchRates;
     protected double[] storedBranchRates;
-    private boolean needsUpdate;
+    protected boolean needsUpdate;
 
     GTKPrior kernel;
     GTKPointerTree pointer;
     
-    RealParameter meanRate;
+    protected RealParameter meanRate;
     BranchRateModelSB3 speciesTreeRatesX;
     GeneTreeForSpeciesTreeDistribution geneTree;
     
@@ -85,6 +85,8 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         branchRates = new double[geneNodeCount];
         storedBranchRates = new double[geneNodeCount];
         needsUpdate = true;
+        
+        
     }
     
     
@@ -135,7 +137,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         super.restore();
     }
 
-    private void update() {
+    protected void update() {
     	geneTree = this.getGeneTreePrior();
         final double geneTreeRate = meanRate.getValue();
         final double[] speciesTreeRates = speciesTreeRatesX.getRatesArray();

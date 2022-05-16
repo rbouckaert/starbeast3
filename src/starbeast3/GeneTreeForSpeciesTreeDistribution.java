@@ -334,9 +334,29 @@ public class GeneTreeForSpeciesTreeDistribution extends Distribution {
     	}
 
     	return mappedNodes;
+ 
+    }
+    
+    
+    
+    /**
+     * Map this gene tree node to one or more species
+     * @return
+     */
+    public List<Node> mapGeneNodeToSpeciesNodes(int geneNodeNr) {
     	
-
-        
+    	List<Node> speciesNodes = new ArrayList<>();
+    	
+    	if (!clockuptodate) update();
+    	for (int j = 0; j < speciesNodeCount; j++) {
+    		if (speciesOccupancy[geneNodeNr * speciesNodeCount + j] > 0) {
+    			speciesNodes.add(speciesTree.getNode(j));
+    		}
+    	}
+    	
+    	return speciesNodes;
+    	
+    	
     }
     
 

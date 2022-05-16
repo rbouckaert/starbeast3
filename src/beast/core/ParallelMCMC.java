@@ -341,6 +341,16 @@ public class ParallelMCMC extends MCMC {
             callUserFunction(sampleNr);
 
             if (posterior.getCurrentLogP() == Double.POSITIVE_INFINITY) {
+            	Log.warning("StateNodes: " + this.state);
+            	CompoundDistribution post = (CompoundDistribution)posterior;
+            	for (Distribution d : post.pDistributions.get()) {
+            		double p = d.calculateLogP();
+            		Log.warning("P(" + d.getID() + ")  = " + p);
+            		if (p == Double.POSITIVE_INFINITY) {
+            			Log.warning(d.getID() + " is infinity " + d);
+            		}
+            	}
+            	
             	throw new RuntimeException("Encountered a positive infinite posterior. This is a sign there may be numeric instability in the model.");
             }
             

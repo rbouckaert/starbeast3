@@ -100,44 +100,9 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
             buf.append(node.getNr()+Tree.taxaTranslationOffset);
         }
         buf.append("[&");
-//        switch (popSizeFunction) {
-//            case constant: {
-                final double popStart = metadata.getArrayValue(node.getNr());
-                //final double rateBranch = branchrateMetadata.getArrayValue(node.getNr());
-                buf.append(pop_label + "=").append(popStart);
-                //buf.append(",");
-                //buf.append(rate_label + "=").append(rateBranch);
-//                break;
-//            }
-//            case linear:
-//            case linear_with_constant_root:
-//                buf.append(dmt + "=");
-//                final double b;
-//                if (node.isRoot()) {
-//                    b = treeTopFinderInput.get().getHighestTreeHeight() - node.getHeight();
-//                } else {
-//                    b = node.getLength();
-//                }
-//                buf.append(b).append("," + dmv + "={");
-//
-//                final double popStart;
-//                if (node.isLeaf()) {
-//                    popStart = metadata.getArrayValue(node.getNr());
-//                } else {
-//                    popStart = (getMetaDataTopValue(node.getLeft(), metadataTop) +
-//                            getMetaDataTopValue(node.getRight(), metadataTop));
-//                }
-//                buf.append(popStart);
-//
-//                final double popEnd;
-//                if (node.isRoot() && popSizeFunction == TreePopSizeFunction.linear_with_constant_root) {
-//                    popEnd = popStart;
-//                } else {
-//                  popEnd = getMetaDataTopValue(node, metadataTop);
-//                }
-//                buf.append(",").append(popEnd).append("}");
-//                break;
-//        }
+        final double popStart = metadata.getArrayValue(node.getNr());
+        buf.append(pop_label + "=").append(popStart);
+
         if (metadataList.size() > 0) {
         	for (Function metadata2 : metadataList) {
 	            if (metadataList.indexOf(metadata2) > 0 || buf.length() > 1) {
