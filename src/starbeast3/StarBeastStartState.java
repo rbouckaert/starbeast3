@@ -73,6 +73,13 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
     final public Input<RealParameter> popMean = new Input<>("popMean",
             "Population mean hyper prior to initialse");
+    
+    
+    final public Input<List<RealParameter>> originInput = new Input<>("origin",
+            "Species tree origin height", new ArrayList<>());
+    
+    final public Input<List<RealParameter>> originBranchInput = new Input<>("originLength",
+            "Species tree origin branch length", new ArrayList<>());
 
     final public Input<RealParameter> birthRate = new Input<>("birthRate",
             "Tree prior birth rate to initialize");
@@ -101,6 +108,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     
     List<Tree> genes;
     private boolean hasCalibrations;
+
 
     @Override
     public void initAndValidate() {
@@ -189,6 +197,27 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         if (rates != null) {
         	// rates.setLower(lowerRate);
         }
+        
+        
+        // Set origin branch length to slightly above tallest tree
+        if (!originInput.get().isEmpty() || !originBranchInput.get().isEmpty()) {
+        	
+        	double maxGeneTreeHeight = 0;
+        	for (Tree gene : genes) {
+        		maxGeneTreeHeight = Math.max(gene.getRoot().getHeight(), maxGeneTreeHeight);
+        	}
+        	double speciesHeight = speciesTreeInput.get().getRoot().getHeight();
+        	
+        	for (RealParameter originParam : originInput.get()) {
+        		originParam.setValue(2 * (maxGeneTreeHeight - speciesHeight) + speciesHeight);
+        	}
+        	
+        	for (RealParameter originLengthParam : originBranchInput.get()) {
+        		originLengthParam.setValue(2 * (maxGeneTreeHeight - speciesHeight));
+        	}
+        	
+        }
+        
     }
     
     RealParameter rates;

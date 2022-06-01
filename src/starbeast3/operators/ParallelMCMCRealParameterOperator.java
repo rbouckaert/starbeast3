@@ -251,8 +251,9 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		for (Object o : d.listActiveBEASTObjects()) {
 			if (o instanceof StateNode && otherStateNodes.contains(o) && o instanceof RealParameter) {
 				
-				if (parameterIsPartOfLikelihood((RealParameter)o)) {
-					stateNodes.add((StateNode) o);
+				StateNode state = (StateNode)o;
+				if (!stateNodes.contains(state) && parameterIsPartOfLikelihood((RealParameter)o)) {
+					stateNodes.add(state);
 				}
 				
 			} else if (o instanceof BEASTInterface) {

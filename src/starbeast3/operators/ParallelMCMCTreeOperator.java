@@ -31,7 +31,10 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	
     final public Input<Boolean> useBactrianOperatorsInput = new Input<>("bactrian", "flag to indicate that bactrian operators should be used where possible", true);
     final public Input<Boolean> includeRealParametersInput = new Input<>("includeRealParameters", "flag to include Real Parameters for each of the partitions in the analysis", true);
-
+    final public Input<List<StateNode>> excludeInput = new Input<>("exclude", "parameters to ensure are not operated on", new ArrayList<>());
+    final public Input<List<StateNode>> includeInput = new Input<>("include", "parameters to add to the state, in case they are not automatically detected", new ArrayList<>());
+    
+    
 	final public Input<List<ParallelDistSet>> distributionInput = new Input<>("distribution", 
 			"Distribution on a tree conditinionally independent from all other distributions given the state of the rest"
 			+ "of parameter space. ",
@@ -117,6 +120,17 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    	}
 	    	Log.warning("The following stateNodes will NOT be operated on by " + this.getClass().getSimpleName() + " because they are not part of the state, or they appear in more than one thread: " + tabooStr);
 	    }
+	    for (StateNode state : excludeInput.get()) {
+	    	
+	    	if (includeInput.get().contains(state)) {
+	    		throw new IllegalArgumentException(state.getID() + " must not be on the 'exclude' and 'include' lists!");
+	    	}
+	    	
+	    	if (!doNotInclude.contains(state)) {
+	    		Log.warning("Excluding " + state.getID() + " from operator by request");
+	    		doNotInclude.add(state);
+	    	}
+	    }
 	    
 	    
 	    
@@ -176,7 +190,8 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						distributions.remove(j);
 						distributions.remove(i);
 						distributions.add(dist3);
-						Log.warning("Merging " + dist1.getID() + " with " + dist2.getID() + " because they have the same tree");
+						dist3.setID(dist1.getID() + "_" + dist2.getID());
+						Log.warning("Merging " + dist1.getID() + " with " + dist2.getID() + " because they have the same tree (" + tree1.getID() + ")" );
 						tidyDistributions(distributions);
 						return;
 						
@@ -309,6 +324,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				
 			if (includeRealParametersInput.get()) {
 				Set<StateNode> stateNodeList = new HashSet<>();
+				stateNodeList.addAll(includeInput.get());
 				ParallelMCMCRealParameterOperator.getRealParameterStateNodes(d.treelikelihood, otherState.stateNodeInput.get(), stateNodeList);
 				
 				
