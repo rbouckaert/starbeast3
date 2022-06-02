@@ -301,62 +301,8 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         for (final Tree gtree : geneTrees) {
         	
             final Alignment alignment = gtree.m_taxonset.get().alignmentInput.get();
-            
-
-            // Convert partially-ambiguous sites into a non-ambiguous state
-            List<Sequence> sequences = new ArrayList<>();
-            DataType dataType = alignment.getDataType();
-            boolean changesWereMade = false; 
-            for (String taxon : alignment.getTaxaNames()) {
-            	
-            	String oldSeq = alignment.getSequenceAsString(taxon);
-            	String newSeq = "";
-            	for (int site = 0; site < oldSeq.length(); site++) {
-            		String visibleState = oldSeq.substring(site, site+1);
-            		int code = dataType.stringToEncoding(visibleState).get(0);
-            		if (dataType.isAmbiguousCode(code)) {
-            			
-            			
-            			// It is partially ambiguous?
-            			int[] possibleValues = dataType.getStatesForCode(code);
-            			if (possibleValues.length < dataType.getStateCount()) {
-            				
-            				// Make it non-ambiguous
-            				int newCode = possibleValues[0];
-            				visibleState = dataType.getCharacter(newCode);
-            				changesWereMade = true;
-            				
-            			}
-            			
-            			
-            			
-            		}
-            		
-            		newSeq += visibleState;
-            		
- 	
-            	}
-            	
-            	//if (!oldSeq.equals(newSeq)) {
-	            	//Log.warning("Old " + taxon  + ": " + oldSeq);
-	            	//Log.warning("New " + taxon  + ": " + newSeq);
-            	//}
-            	Sequence seq = new Sequence(taxon, newSeq);
-            	sequences.add(seq);
-            	
-            }
-            
-            
-            // Do not waste time (and console printing) if there weren't any changes made
-            Alignment nonAmbig = alignment;
-            if (changesWereMade) {
-            	nonAmbig = new Alignment();
-            	nonAmbig.initByName("sequence", sequences, "userDataType", dataType);
-            }
-           
-
             final ClusterTree ctree = new ClusterTree();
-            ctree.initByName("initial", gtree, "clusterType", "upgma", "taxa", nonAmbig);
+            ctree.initByName("initial", gtree, "clusterType", "upgma", "taxa", alignment);
             gtree.scale(1 / mu);
 
             maxNsites = max(maxNsites, alignment.getSiteCount());
