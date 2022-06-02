@@ -93,7 +93,7 @@ If the site model is linked, then multiple gene trees will share a site model (a
 
 ### Tree model
 
-Linking tree models does not affect anything in StarBeast3.
+If the tree model is linked, then multiple partitions will share the same gene tree. However, the partitions will still have different site models and clock rates, unless the site model and clock models are also linked. This simplification may be preferred in some cases (e.g. by combining mitochondrial partitions into a single tree), however, as discussed above, it can also hamper parallelisation performance and lead to longer convergence times.
 
 
 ## Questions about StarBeast3
