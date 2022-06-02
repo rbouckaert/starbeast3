@@ -22,6 +22,7 @@ import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.tree.Node;
+import beast.evolution.tree.Tree;
 import genekernel.GTKPointerTree;
 import genekernel.GTKPrior;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
@@ -33,6 +34,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     public Input<SharedSpeciesClockModel> sharedRateModelInput =  new Input<>("sharedRateModel", "Clock model for species tree (instead of speciesTreeRates)");
     
     
+    public Input<Tree> treeInput =  new Input<>("tree", "the gene tree", Input.Validate.OPTIONAL);
     final public Input<GeneTreeForSpeciesTreeDistribution> geneTreeInput = new Input<>("geneTree", "The gene tree this relaxed clock is associated with.", Input.Validate.OPTIONAL);
 	final public Input<GTKPrior> geneTreeKernelPriorInput = new Input<>("kernel", "the kernel of gene trees", Input.Validate.OPTIONAL);
 	final public Input<GTKPointerTree> geneTreePointerInput = new Input<>("pointer", "the tree which points to the kernel", Input.Validate.OPTIONAL);
@@ -65,8 +67,33 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         
         
         
+        this.geneTree = geneTreeInput.get();
+        
+        // Get prior from tree?
+        if (this.geneTree == null && this.treeInput.get() != null) {
+        	
+        	Tree tree = this.treeInput.get();
+        	
+        	// Get prior
+    		GeneTreeForSpeciesTreeDistribution prior = null;
+    		for (BEASTInterface obj : tree.getOutputs()){
+    			if (obj instanceof GeneTreeForSpeciesTreeDistribution){
+    				
+    				if (prior != null && prior != obj){
+    					throw new IllegalArgumentException("Found more than 1 'GeneTreeForSpeciesTreeDistribution' for" + tree.getID());
+    				}
+    				prior = (GeneTreeForSpeciesTreeDistribution) obj;
+    			}
+    		
+    		}
+    		
+    		if (prior != null) geneTree = prior; // geneTreeInput.setValue(prior, this);
+        	
+        }
+        
+        
         // Must specify either A) a gene tree prior, or B) a gene tree kernel AND the pointer
-        if (this.geneTreeInput.get() == null) {
+        if (this.geneTree == null) {
         	if (geneTreeKernelPriorInput.get() == null || this.geneTreePointerInput.get() == null) {
         		Log.warning("StarBeast3Clock: Must specify either A) 'geneTree', or B) 'kernel' AND 'pointer', but not both A and B.");
         		return;
@@ -101,7 +128,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     	
     	// Otherwise, use the one which was parsed
     	else {
-    		return this.geneTreeInput.get();
+    		return this.geneTree;
     	}
     	
     }
@@ -117,7 +144,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         	needsUpdate = true;
         }
         needsUpdate = needsUpdate || meanRateInput.isDirty();
-        if (this.kernel == null) needsUpdate = needsUpdate || geneTreeInput.isDirty();
+        if (this.kernel == null) needsUpdate = needsUpdate || this.geneTree.isDirtyCalculation();
         else needsUpdate = needsUpdate || geneTreeKernelPriorInput.isDirty() || geneTreePointerInput.isDirty();
         
         return needsUpdate;

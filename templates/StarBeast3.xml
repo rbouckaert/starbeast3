@@ -207,7 +207,7 @@
 				<plugin data="@$(n)" id="treeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:$(n)">
 					
 					<siteModel idref="SiteModel.s:$(n)"/>
-					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" geneTree="@treePrior.t:$(n)">
+					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" tree="@Tree.t:$(n)">
 						<clock.rate idref="clockRate.c:$(n)" />
 					</branchRateModel>
 	

@@ -78,12 +78,13 @@ Gene tree models can be linked across the partitions in the Partitions tab of BE
 
 The runtime performance of StarBeast3 benefits from its ability to parallelise inference of gene trees and their site models. This complex operation requires the set of parameters operated on in each thread to be conditionally independent (e.g. two threads must not operate on the same gene tree or the same site model). If the models are heavily linked, then this hampers the ability of StarBeast3 to parallelise inference.  
 
-From a performance perspective, we therefore recommend the user only link models when there is good reason.  
+From a performance perspective, we therefore recommend the user only link (site and clock) models when there is good reason.  
 
 ### Clock model
 By default, each gene tree is associated with its own clock rate, and these rates have a prior distribution with a mean of 1. The substitution rate of a branch in a gene tree is equal to its clock rate multiplied by the clock rate of the species tree (configured in the "Clock Model" tab). This model works quite well and accounts for different genetic loci being exposed to unique selective pressures. When there are many genes trees, the clock rate estimates average out to ~1.0, and therefore are able to be estimated without affecting the estimated species tree height. 
 
 If gene tree clock models are linked, then they will share their clock rate. If **all** clock models are linked, then all gene trees will share the same clock rate, and this will likely introduce convergence issues, because the parameter is non-identifiable with the tree heights. We therefore advise against linking all clock models. 
+
 
 
 ### Site model

@@ -540,7 +540,13 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     	    		// Find the gene tree priors
     	    		BEASTInterface obj2 = doc.pluginmap.get(str2);
     	    		if (obj2 instanceof GeneTreeForSpeciesTreeDistribution) {
+    	    			
+    	    			
+    	    			
     	    			GeneTreeForSpeciesTreeDistribution treePrior = (GeneTreeForSpeciesTreeDistribution)obj2;
+    	    			Tree tree = (Tree) treePrior.treeInput.get();
+    	    			if (!tree.isEstimated()) continue;
+    	    			
     	    			if (!genes.contains(treePrior)) genes.add(treePrior);    	    		
     	    		}
     	    		
