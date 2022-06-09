@@ -57,7 +57,7 @@ The species tree `Clock.rate` can also be estimated (`Mode => uncheck Automatic 
 -- **Calibrated Yule Model**. Same as above, but with time point calibrations. Estimated parameters: cySpeciationRate (same as above). Requires calibrations, which can be added using `+ Add Prior`.
 
 
--- **Birth Death Model**. A model which describes the both the branching (birth) and extinction (death) of species. Estimated parameters: netDiversificationRate (the species birth rate minus the species death rate; this is the same as the Yule Model since its death rate is 0); ExtinctionFraction (the death rate divided by the birth rate; this is also the inverse of the reproduction number). If the extinctionFraction is greater than 1, then the species will eventually become extinct. By default, extinctionFraction is bounded between 0 and 1.
+-- **Birth Death Model**. A model which describes both the branching (birth) and extinction (death) of species. Estimated parameters: netDiversificationRate (the species birth rate minus the species death rate; this is the same as the Yule Model since its death rate is 0); ExtinctionFraction (the death rate divided by the birth rate; this is also the inverse of the reproduction number). If the extinctionFraction is greater than 1, then the species will eventually become extinct. By default, extinctionFraction is bounded between 0 and 1.
 
 
 -- **FBDModel**. Birth death model, but with fossil data included. See tutorial [here](https://www.beast2.org/divergence-dating-with-sampled-ancestors-fbd-model/) for further details.
