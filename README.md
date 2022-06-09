@@ -49,10 +49,20 @@ The species tree `Clock.rate` can also be estimated (`Mode => uncheck Automatic 
 ![Selecting a species tree clock model](tutorial/Fig3.png)
 
 7. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
+
+
 -- **Yule Model**. A model which describes the branching process of species, i.e.  speciation, or births . Estimated parameters: speciationRate (the rate of one species diversifying into two).
+
+
 -- **Calibrated Yule Model**. Same as above, but with time point calibrations. Estimated parameters: cySpeciationRate (same as above). Requires calibrations, which can be added using `+ Add Prior`.
+
+
 -- **Birth Death Model**. A model which describes the both the branching (birth) and extinction (death) of species. Estimated parameters: netDiversificationRate (the species birth rate minus the species death rate; this is the same as the Yule Model since its death rate is 0); ExtinctionFraction (the death rate divided by the birth rate; this is also the inverse of the reproduction number). If the extinctionFraction is greater than 1, then the species will eventually become extinct. By default, extinctionFraction is bounded between 0 and 1.
+
+
 -- **FBDModel**. Birth death model, but with fossil data included. See tutorial [here](https://www.beast2.org/divergence-dating-with-sampled-ancestors-fbd-model/) for further details.
+
+
 -- **Yule skyline collapse.** A species boundary detection method, built on top of the Yule model. See [speedemon](https://github.com/rbouckaert/speedemon) package for further details.
 
 
