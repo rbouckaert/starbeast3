@@ -1,9 +1,10 @@
+
 # StarBeast3
 
 [BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators.
 
 
-
+Also see the StarBeast3  [blog post](https://www.beast2.org/2022/03/31/starbeast3.html)
 
 
 ## Installation
@@ -12,59 +13,6 @@
 * Open BEAUti
 * Select `File => Manage packages`
 * Install starbeast3 package through the [package manager](http://www.beast2.org/managing-packages/) (this may automatically install some other package as well)
-
-
-## Install manually (developer version)
-
-
-This assumes you have BEAST 2 already installed on your machine https://www.beast2.org/
-
-
-To install this package manually, first clone this repository and all of its dependencies from GitHub, including BEAST 2
-
-```
-mkdir beast2
-cd beast2
-git clone https://github.com/CompEvol/BEAST2
-git clone https://github.com/BEAST2-Dev/BEASTLabs
-git clone https://github.com/Rong419/ConstantDistanceOperator
-git clone https://github.com/jordandouglas/ORC
-git clone https://github.com/rbouckaert/starbeast3
-```
-
-Then navigate to into each directory and install them using ant
-
-```
-cd ../BEASTLabs
-ant addon
-
-cd ../ConstantDistanceOperator
-ant addon
-
-cd ../ORC
-ant addon
-
-cd ../starbeast3
-ant addon
-
-cd ../
-```
-
-
-Finally, extract the contents of these addons:
-
-```
-unzip -o BEASTLabs/build/dist/BEASTlabs.addon.v*zip -d ~/.beast/2.6/BEASTLabs/.
-unzip -o ConstantDistanceOperator/build/dist/FastRelaxedClockLogNormal.addon.v*zip -d ~/.beast/2.6/FastRelaxedClockLogNormal/.
-unzip -o ORC/build/dist/ORC.addon.v*zip -d ~/.beast/2.6/ORC/.
-unzip -o starbeast3/build/dist/starbeast3.addon.v*zip -d ~/.beast/2.6/starbeast3/.
-```
-
-
-This assumes that BEAST 2 is installed in the ~/.BEAST 2/ directory. If the package directories do not exist there (eg. ~/.beast/2.6/starbeast3/) then the empty folders must be created first.
-
-If you are not using BEAST 2.6 then replace 2.6 with the appropriate version number.
-For more details see https://beast2.blogs.auckland.ac.nz/managing-packages/#Install_by_hand .
 
 
 
@@ -82,9 +30,9 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 
 ![Defining a species-to-taxon tree mapping](tutorial/Fig1.png)
 
-4. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The `Gamma Parameter` is the mean effective population size (denoted by &mu;N in the StarBeast3 article) and is estimated by default.
+4. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The ploidy is 2 by default.
 
-5. Set the site model of each gene tree in the `Site Model` tab. By default, the `Substitution Rate` (denoted by &nu; in article) is estimated for each gene tree.
+5. Set the site model of each gene tree in the `Site Model` tab. 
 
 ![Setting the gene tree site models](tutorial/Fig2.png)
 
@@ -93,11 +41,20 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
     -   Under the `Species Tree Strict Clock`, every branch in the species tree has the same substitution rate. 
     -   Under the `Species Tree Relaxed Clock`, each species tree branch has an independently-and-identically distributed substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in manuscript). The substitution rates of each gene tree branch are from the species tree. 
 
-The `Clock.rate` can also be estimated, but this is not recommended unless time calibration data is available. 
+The species tree `Clock.rate` can also be estimated (`Mode => uncheck Automatic set clock rate`), but this is not recommended unless time calibration data is available. If you estimate the `Clock.rate` (denoted by &mu; in the StarBeast3 article), you should also change its default 1/X prior to an informed prior (such as a Log-Normal distribution centered around an informed estimate).
+
+
 ![Selecting a species tree clock model](tutorial/Fig3.png)
 
-7. Other priors, including the species tree prior, can be configured using the `Priors` tab.
+7. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
+-- **Yule Model**. A model which describes the branching process of species, i.e.  speciation, or births . Estimated parameters: speciationRate (the rate of one species diversifying into two).
+-- **Calibrated Yule Model**. Same as above, but with time point calibrations. Estimated parameters: cySpeciationRate (same as above). Requires calibrations, which can be added using `+ Add Prior`.
+-- **Birth Death Model**. A model which describes the both the branching (birth) and extinction (death) of species. Estimated parameters: netDiversificationRate (the species birth rate minus the species death rate; this is the same as the Yule Model since its death rate is 0); ExtinctionFraction (the death rate divided by the birth rate; this is also the inverse of the reproduction number). 
+-- **FBDModel**. Birth death model, but with fossil data included. See tutorial [here](https://www.beast2.org/divergence-dating-with-sampled-ancestors-fbd-model/) for further details.
+-- **Yule skyline collapse.** A species boundary detection method, built on top of the Yule model. See [speedemon](https://github.com/rbouckaert/speedemon) package for further details.
 
+
+Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article).
 
 8. Save the XML template using `File/Save`
 
@@ -116,7 +73,39 @@ where `N` is the number of threads allocated to the parallel gene tree operator 
 
 Also see tutorial for *BEAST (see [StarBEAST tutorial](https://taming-the-beast.org/tutorials/StarBeast-Tutorial/)).
 
+
+## Linking models
+
+Gene tree models can be linked across the partitions in the Partitions tab of BEAUti, as per usual. However, we advise caution when linking models in StarBeast3, as discussed below.
+
+![Linking models](tutorial/Fig5.png)
+
+
+### A note on performance
+
+The runtime performance of StarBeast3 benefits from its ability to parallelise inference of gene trees and their site models. This complex operation requires the set of parameters operated on in each thread to be conditionally independent (e.g. two threads must not operate on the same gene tree or the same site model). If the models are heavily linked, then this hampers the ability of StarBeast3 to parallelise inference.  
+
+From a performance perspective, we therefore recommend the user only link (site and clock) models when there is good reason.  
+
+### Clock model
+By default, each gene tree is associated with its own clock rate, and these rates have a prior distribution with a mean of 1. The substitution rate of a branch in a gene tree is equal to its clock rate multiplied by the clock rate of the species tree (configured in the "Clock Model" tab). This model works quite well and accounts for different genetic loci being exposed to unique selective pressures. When there are many genes trees, the clock rate estimates average out to ~1.0, and therefore are able to be estimated without affecting the estimated species tree height. 
+
+If gene tree clock models are linked, then they will share their clock rate. If **all** clock models are linked, then all gene trees will share the same clock rate, and this will likely introduce convergence issues, because the parameter is non-identifiable with the tree heights. We therefore advise against linking all clock models. 
+
+
+
+### Site model
+
+If the site model is linked, then multiple gene trees will share a site model (and its parameters). This simplification may be preferred in some cases, however, as discussed above, it can also hamper parallelisation performance and lead to longer convergence times.
+
+
+### Tree model
+
+If the tree model is linked, then multiple partitions will share the same gene tree. However, the partitions will still have different site models and clock rates, unless the site model and clock models are also linked. Linking trees is useful for combining mitochondrial partitions into a single phylogeny, for example, and can greatly reduce the search space.  
+
+
 ## Questions about StarBeast3
+
 
 BEAST user list: [https://groups.google.com/forum/#!forum/beast-users](https://groups.google.com/forum/#!forum/beast-users)
 
@@ -141,5 +130,4 @@ Remco Bouckaert: [r.bouckaert@auckland.ac.nz](r.bouckaert@auckland.ac.nz)
 **StarBeast:** Heled, Joseph, and Alexei J. Drummond. "Bayesian inference of species trees from multilocus data." Molecular biology and evolution 27.3 (2009): 570-580.
 
 **StarBeast2**: Ogilvie, Huw A., Remco R. Bouckaert, and Alexei J. Drummond. "StarBEAST2 brings faster species tree inference and accurate estimates of substitution rates." Molecular biology and evolution 34.8 (2017): 2101-2114.
-
 
