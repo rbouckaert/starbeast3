@@ -407,7 +407,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						l.add(s);
 						f = new Transform.LogitTransform(l);
 						
-						Log.warning("Adding logit " + s.getID());
+						Log.warning("Adding logit(" + rp.getLower() + "," + rp.getUpper() + ") " + s.getID());
 						
 						
 						

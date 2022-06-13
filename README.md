@@ -38,11 +38,13 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 
 6. Select a clock model using the `Clock Model` tab. 
 
-    -   Under the `Species Tree Strict Clock`, every branch in the species tree has the same substitution rate. 
-    -   Under the `Species Tree Relaxed Clock`, each species tree branch has an independently-and-identically distributed substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in manuscript). The substitution rates of each gene tree branch are from the species tree. 
+--  **Species Tree Strict Clock**: Every branch in the species tree has the same substitution rate. 
 
 
-The species tree `Clock.rate` can also be estimated (`Mode => uncheck Automatic set clock rate`), but this is not recommended unless time calibration data is available. If you estimate the `Clock.rate` (denoted by &mu; in the StarBeast3 article), you should also change its default 1/X prior to an informed prior (such as a Log-Normal distribution centered around an informed estimate).
+--  **Species Tree Relaxed Clock**: Each species tree branch has an independent and identically distributed substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in StarBeast3 manuscript). The substitution rates of each gene tree branch are from the species tree. The mean branch rate is fixed at 1 so that it does not interfere with tree height estimation.
+
+
+The species tree `Clock.rate` can also be estimated (`Mode => uncheck Automatic set clock rate`), but this is not recommended unless time calibration data is available. If you estimate the `Clock.rate` (denoted by &mu; in the StarBeast3 article), you should also change its default 1/X prior to an informed prior (such as a Log-Normal distribution centered around an informed estimate). If the clock rate is left as default, then the tree heights will be in units of substitutions per site. If the clock rate is estimated, then the clock rate should be in units of substitutions per site per units of time, so that the tree heights are in units of time (eg. millions of years). 
 
 
 
@@ -67,7 +69,7 @@ This model assumes that the birth rate is greater than the death rate, and there
 -- **Yule skyline collapse.** A species boundary detection method, built on top of the Yule model. See [speedemon](https://github.com/rbouckaert/speedemon) package for further details.
 
 
-Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article).
+Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article), and the `clockRates` are the relative subsitution rate of each gene tree. By default, these are log-normal distributions with a small variance and a mean of 1, to avoid interference with tree height estimation. 
 
 8. Save the XML template using `File/Save`
 
@@ -109,12 +111,12 @@ If gene tree clock models are linked, then they will share their clock rate. If 
 
 ### Site model
 
-If the site model is linked, then multiple gene trees will share a site model (and its parameters). This simplification may be preferred in some cases, however, as discussed above, it can also hamper parallelisation performance and lead to longer convergence times.
+If the site model is linked, then multiple gene trees will share a site model (and its parameters). This simplification may be preferred in some cases, however, as discussed above, excessive linking can also hamper parallelisation performance and lead to slightly longer convergence times.
 
 
 ### Tree model
 
-If the tree model is linked, then multiple partitions will share the same gene tree. However, the partitions will still have different site models and clock rates, unless the site model and clock models are also linked. Linking trees is useful for combining mitochondrial partitions into a single phylogeny, for example, and can greatly reduce the search space.  
+If the tree model is linked, then multiple partitions will share the same gene tree. However, the partitions will still have different site models and clock rates, unless the site model and clock models are also linked. Linking trees is useful for combining mitochondrial partitions into a single phylogeny, for example, and can greatly reduce the search space. We recommend linking trees when there is too much data to achieve convergence in a timely manner.
 
 
 ## Questions about StarBeast3
