@@ -2539,9 +2539,7 @@ Barrow, Lisa N., et al. "Species tree estimation of North American chorus frogs 
 <logger fileName="$(filebase).SB_all_71.trees" logEvery="10000" mode="tree">
 			<log clockModel="@SpeciesTreeRelaxedClock.c:SB_all_71" spec="starbeast3.GeneTreeLogger" tree="@GeneTree.t:SB_all_71"/>
 		</logger>
-<logger fileName="runtime.log" id="RuntimeLogger" logEvery="10000" spec="beast.core.Logger">
-<log id="runtime" spec="poetry.util.RuntimeLoggable" static="true"/>
-</logger>
+
 </run>
 </beast>
 

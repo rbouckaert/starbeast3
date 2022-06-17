@@ -8125,9 +8125,7 @@ Simulated dataset with 4 species and 12 taxa
 <logger fileName="$(filebase).gene39.trees" id="treelog.t:gene39" logEvery="10000" mode="tree">
 			<log clockModel="@SpeciesTreeRelaxedClock.c:gene39" spec="starbeast3.GeneTreeLogger" tree="@GeneTree.t:gene39"/>
 		</logger>
-<logger fileName="runtime.log" id="RuntimeLogger" logEvery="10000" spec="beast.core.Logger">
-<log id="runtime" spec="poetry.util.RuntimeLoggable" static="true"/>
-</logger>
+
 </run>
 </beast>
 

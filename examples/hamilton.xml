@@ -4237,9 +4237,7 @@ Hamilton, Chris A., et al. "Expanding anchored hybrid enrichment to resolve both
 <logger fileName="$(filebase).T94_L143.trees" id="treelog.t:T94_L143" logEvery="10000" mode="tree">
 			<log clockModel="@SpeciesTreeRelaxedClock.c:T94_L143" spec="starbeast3.GeneTreeLogger" tree="@GeneTree.t:T94_L143"/>
 		</logger>
-<logger fileName="runtime.log" id="RuntimeLogger" logEvery="10000" spec="beast.core.Logger">
-<log id="runtime" spec="poetry.util.RuntimeLoggable" static="true"/>
-</logger>
+
 </run>
 </beast>
 

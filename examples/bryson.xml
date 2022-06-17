@@ -3937,9 +3937,7 @@ Bryson Jr, Robert W., et al. "A phylogenomic perspective on the biogeography of 
 
 
 
-<logger fileName="runtime.log" id="RuntimeLogger" logEvery="10000" spec="beast.core.Logger">
-<log id="runtime" spec="poetry.util.RuntimeLoggable" static="true"/>
-</logger>
+
 </run>
 </beast>
 
