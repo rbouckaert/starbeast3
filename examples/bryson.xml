@@ -893,56 +893,56 @@ Bryson Jr, Robert W., et al. "A phylogenomic perspective on the biogeography of 
 </taxon>
 </taxonset>
 	</stateNode>
-            <parameter id="clockRate.c:uce1914fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3471fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6165fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2326fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6553fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce691fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce4314fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5816fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2516fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce990fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5557fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1601fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3668fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6081fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2955fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6769fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1591fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7067fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3568fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce418fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6765fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5892fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2531fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1021fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7999fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3013fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1412fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3246fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce715fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7415fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce540fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2073fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5322fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2377fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3688fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2839fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3439fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3847fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce946fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7138fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7037fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5346fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3139fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6091fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2358fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5968fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7539fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7432fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5156fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7202fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+            <parameter lower="0.0" id="clockRate.c:uce1914fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3471fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6165fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2326fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6553fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce691fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce4314fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5816fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2516fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce990fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5557fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1601fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3668fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6081fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2955fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6769fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1591fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7067fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3568fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce418fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6765fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5892fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2531fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1021fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7999fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3013fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1412fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3246fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce715fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7415fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce540fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2073fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5322fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2377fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3688fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2839fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3439fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3847fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce946fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7138fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7037fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5346fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3139fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6091fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2358fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5968fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7539fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7432fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5156fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7202fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
             <parameter id="kappa.s:uce1914fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:uce3471fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:uce6165fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>

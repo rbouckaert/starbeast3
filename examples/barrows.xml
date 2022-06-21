@@ -690,32 +690,32 @@ Barrow, Lisa N., et al. "Species tree estimation of North American chorus frogs 
 </taxon>
 </taxonset>
 	</stateNode>
-            <parameter id="clockRate.c:SB_all_57" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_140" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_17" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_148" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_162" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_137" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_167" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_182" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_104" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_116" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_108" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_168" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_82" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_183" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_92" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_125" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_58" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_102" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_169" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_80" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_07" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_08" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_129" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_166" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_172" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:SB_all_71" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+            <parameter lower="0.0" id="clockRate.c:SB_all_57" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_140" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_17" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_148" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_162" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_137" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_167" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_182" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_104" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_116" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_108" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_168" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_82" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_183" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_92" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_125" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_58" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_102" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_169" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_80" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_07" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_08" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_129" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_166" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_172" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:SB_all_71" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
             <parameter id="kappa.s:SB_all_57" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:SB_all_140" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:SB_all_17" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
