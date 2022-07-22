@@ -201,9 +201,6 @@ public class SpeciesTreePrior extends TreeDistribution {
     @Override
     public List<String> getArguments() {
     	List<String> arguments = new ArrayList<>();
-        arguments.add(treeInput.get().getID());
-        if (popSizesBottomInput.get() != null) arguments.add(popSizesBottomInput.get().getID());
-        if (popSizesTopInput.get() != null) arguments.add(popSizesTopInput.get().getID());
         return arguments;
     }
 
