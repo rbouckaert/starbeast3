@@ -893,56 +893,56 @@ Bryson Jr, Robert W., et al. "A phylogenomic perspective on the biogeography of 
 </taxon>
 </taxonset>
 	</stateNode>
-            <parameter id="clockRate.c:uce1914fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3471fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6165fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2326fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6553fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce691fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce4314fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5816fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2516fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce990fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5557fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1601fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3668fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6081fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2955fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6769fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1591fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7067fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3568fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce418fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6765fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5892fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2531fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1021fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7999fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3013fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce1412fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3246fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce715fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7415fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce540fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2073fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5322fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2377fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3688fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2839fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3439fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3847fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce946fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7138fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7037fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5346fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce3139fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce6091fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce2358fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5968fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7539fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7432fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce5156fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:uce7202fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+            <parameter lower="0.0" id="clockRate.c:uce1914fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3471fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6165fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2326fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6553fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce691fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce4314fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5816fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2516fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce990fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5557fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1601fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3668fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6081fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2955fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6769fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1591fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7067fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3568fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce418fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6765fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5892fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2531fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1021fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7999fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3013fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce1412fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3246fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce715fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7415fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce540fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2073fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5322fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2377fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3688fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2839fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3439fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3847fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce946fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7138fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7037fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5346fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce3139fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce6091fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce2358fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5968fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7539fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7432fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce5156fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:uce7202fasta" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
             <parameter id="kappa.s:uce1914fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:uce3471fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:uce6165fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
@@ -993,56 +993,56 @@ Bryson Jr, Robert W., et al. "A phylogenomic perspective on the biogeography of 
 <parameter id="kappa.s:uce7432fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:uce5156fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:uce7202fasta" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
-            <parameter dimension="4" id="freqParameter.s:uce1914fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3471fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce6165fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2326fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce6553fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce691fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce4314fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce5816fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2516fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce990fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce5557fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce1601fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3668fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce6081fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2955fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce6769fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce1591fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7067fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3568fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce418fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce6765fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce5892fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2531fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce1021fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7999fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3013fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce1412fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3246fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce715fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7415fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce540fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2073fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce5322fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2377fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3688fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2839fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3439fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3847fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce946fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7138fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7037fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce5346fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce3139fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce6091fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce2358fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce5968fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7539fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7432fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce5156fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:uce7202fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+            <parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce1914fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3471fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce6165fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2326fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce6553fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce691fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce4314fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce5816fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2516fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce990fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce5557fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce1601fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3668fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce6081fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2955fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce6769fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce1591fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7067fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3568fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce418fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce6765fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce5892fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2531fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce1021fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7999fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3013fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce1412fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3246fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce715fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7415fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce540fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2073fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce5322fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2377fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3688fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2839fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3439fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3847fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce946fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7138fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7037fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce5346fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce3139fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce6091fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce2358fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce5968fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7539fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7432fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce5156fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:uce7202fasta" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
             <parameter id="birthRate" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
         
 

@@ -1520,106 +1520,106 @@ Simulated dataset with 16 species and 48 taxa
 </taxon>
 </taxonset>
 	</stateNode>
-            <parameter id="clockRate.c:gene18" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene5" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene98" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene48" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene62" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene14" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene32" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene15" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene37" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene56" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene40" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene79" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene63" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene13" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene9" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene39" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene54" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene52" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene71" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene2" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene96" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene45" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene27" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene16" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene3" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene85" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene90" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene50" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene8" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene22" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene80" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene30" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene95" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene6" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene75" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene55" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene67" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene23" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene7" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene34" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene99" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene43" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene58" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene69" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene31" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene92" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene1" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene88" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene81" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene29" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene17" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene42" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene59" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene87" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene44" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene57" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene26" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene74" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene76" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene49" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene24" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene70" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene4" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene78" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene35" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene12" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene60" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene66" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene33" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene77" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene10" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene28" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene82" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene51" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene47" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene72" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene19" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene68" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene53" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene89" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene91" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene83" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene73" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene84" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene65" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene61" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene97" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene25" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene100" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene93" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene64" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene20" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene11" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene36" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene46" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene86" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene41" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene94" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene21" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:gene38" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+            <parameter lower="0.0" id="clockRate.c:gene18" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene5" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene98" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene48" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene62" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene14" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene32" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene15" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene37" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene56" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene40" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene79" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene63" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene13" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene9" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene39" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene54" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene52" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene71" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene2" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene96" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene45" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene27" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene16" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene3" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene85" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene90" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene50" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene8" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene22" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene80" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene30" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene95" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene6" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene75" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene55" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene67" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene23" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene7" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene34" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene99" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene43" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene58" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene69" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene31" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene92" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene1" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene88" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene81" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene29" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene17" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene42" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene59" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene87" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene44" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene57" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene26" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene74" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene76" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene49" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene24" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene70" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene4" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene78" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene35" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene12" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene60" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene66" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene33" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene77" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene10" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene28" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene82" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene51" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene47" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene72" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene19" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene68" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene53" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene89" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene91" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene83" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene73" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene84" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene65" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene61" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene97" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene25" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene100" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene93" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene64" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene20" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene11" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene36" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene46" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene86" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene41" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene94" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene21" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:gene38" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
             <parameter id="kappa.s:gene18" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:gene5" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:gene98" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
@@ -1720,106 +1720,106 @@ Simulated dataset with 16 species and 48 taxa
 <parameter id="kappa.s:gene94" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:gene21" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:gene38" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
-            <parameter dimension="4" id="freqParameter.s:gene18" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene5" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene98" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene48" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene62" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene14" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene32" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene15" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene37" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene56" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene40" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene79" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene63" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene13" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene9" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene39" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene54" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene52" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene71" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene2" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene96" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene45" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene27" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene16" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene3" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene85" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene90" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene50" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene8" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene22" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene80" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene30" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene95" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene6" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene75" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene55" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene67" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene23" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene7" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene34" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene99" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene43" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene58" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene69" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene31" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene92" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene1" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene88" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene81" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene29" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene17" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene42" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene59" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene87" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene44" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene57" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene26" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene74" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene76" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene49" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene24" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene70" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene4" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene78" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene35" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene12" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene60" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene66" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene33" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene77" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene10" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene28" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene82" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene51" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene47" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene72" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene19" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene68" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene53" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene89" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene91" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene83" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene73" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene84" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene65" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene61" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene97" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene25" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene100" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene93" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene64" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene20" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene11" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene36" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene46" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene86" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene41" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene94" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene21" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:gene38" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+            <parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene18" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene5" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene98" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene48" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene62" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene14" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene32" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene15" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene37" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene56" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene40" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene79" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene63" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene13" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene9" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene39" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene54" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene52" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene71" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene2" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene96" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene45" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene27" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene16" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene3" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene85" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene90" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene50" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene8" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene22" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene80" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene30" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene95" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene6" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene75" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene55" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene67" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene23" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene7" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene34" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene99" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene43" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene58" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene69" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene31" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene92" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene1" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene88" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene81" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene29" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene17" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene42" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene59" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene87" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene44" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene57" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene26" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene74" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene76" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene49" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene24" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene70" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene4" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene78" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene35" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene12" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene60" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene66" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene33" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene77" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene10" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene28" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene82" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene51" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene47" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene72" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene19" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene68" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene53" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene89" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene91" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene83" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene73" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene84" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene65" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene61" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene97" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene25" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene100" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene93" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene64" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene20" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene11" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene36" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene46" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene86" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene41" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene94" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene21" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:gene38" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
             <parameter id="birthRate" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
         
 

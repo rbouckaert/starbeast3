@@ -1016,56 +1016,56 @@ Hamilton, Chris A., et al. "Expanding anchored hybrid enrichment to resolve both
 </taxon>
 </taxonset>
 	</stateNode>
-            <parameter id="clockRate.c:T94_L156" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L147" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L148" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L10" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L14" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L102" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L106" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L155" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L15" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L139" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L12" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L16" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L149" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L140" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L1" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L154" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L109" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L110" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L105" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L134" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L146" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L130" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L13" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L126" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L11" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L113" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L142" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L104" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L159" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L145" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L111" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L150" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L135" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L115" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L157" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L103" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L112" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L131" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L153" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L107" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L144" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L123" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L124" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L125" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L108" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L137" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L121" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L138" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L160" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
-<parameter id="clockRate.c:T94_L143" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+            <parameter lower="0.0" id="clockRate.c:T94_L156" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L147" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L148" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L10" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L14" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L102" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L106" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L155" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L15" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L139" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L12" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L16" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L149" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L140" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L1" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L154" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L109" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L110" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L105" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L134" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L146" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L130" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L13" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L126" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L11" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L113" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L142" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L104" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L159" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L145" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L111" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L150" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L135" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L115" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L157" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L103" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L112" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L131" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L153" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L107" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L144" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L123" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L124" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L125" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L108" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L137" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L121" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L138" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L160" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
+<parameter lower="0.0" id="clockRate.c:T94_L143" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
             <parameter id="kappa.s:T94_L156" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:T94_L147" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:T94_L148" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
@@ -1116,56 +1116,56 @@ Hamilton, Chris A., et al. "Expanding anchored hybrid enrichment to resolve both
 <parameter id="kappa.s:T94_L138" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:T94_L160" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
 <parameter id="kappa.s:T94_L143" lower="0.0" name="stateNode" spec="parameter.RealParameter">2.0</parameter>
-            <parameter dimension="4" id="freqParameter.s:T94_L156" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L147" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L148" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L10" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L14" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L102" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L106" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L155" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L15" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L139" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L12" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L16" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L149" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L140" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L1" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L154" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L109" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L110" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L105" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L134" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L146" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L130" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L13" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L126" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L11" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L113" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L142" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L104" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L159" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L145" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L111" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L150" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L135" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L115" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L157" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L103" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L112" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L131" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L153" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L107" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L144" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L123" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L124" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L125" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L108" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L137" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L121" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L138" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L160" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
-<parameter dimension="4" id="freqParameter.s:T94_L143" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+            <parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L156" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L147" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L148" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L10" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L14" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L102" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L106" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L155" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L15" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L139" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L12" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L16" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L149" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L140" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L1" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L154" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L109" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L110" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L105" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L134" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L146" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L130" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L13" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L126" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L11" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L113" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L142" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L104" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L159" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L145" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L111" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L150" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L135" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L115" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L157" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L103" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L112" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L131" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L153" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L107" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L144" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L123" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L124" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L125" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L108" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L137" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L121" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L138" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L160" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
+<parameter dimension="4" lower="0.0" upper="1.0" id="freqParameter.s:T94_L143" name="stateNode" spec="parameter.RealParameter">0.25</parameter>
             <parameter id="birthRate" name="stateNode" spec="parameter.RealParameter">1.0</parameter>
         
 
