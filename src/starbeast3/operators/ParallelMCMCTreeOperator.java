@@ -220,16 +220,27 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		List<Operator> operators = new ArrayList<>();
 		for (ParallelMCMCTreeOperatorTreeDistribution d : distributions) {
 			if (!distrs.contains(d.geneprior)) {
-				Log.warning("Adding dist " + d.getID());
+				Log.warning("Adding dist " + d.geneprior.getID());
 				distrs.add(d.geneprior);
 			}
 			if (!distrs.contains(d.treelikelihood)) {
-				Log.warning("Adding dist " + d.getID());
+				Log.warning("Adding dist " + d.treelikelihood.getID());
 				distrs.add(d.treelikelihood); 
 			}
 			
 			
-			System.out.println("Adding: " + d.geneprior.getID() + " / " + d.treelikelihood.getID());
+			// Any other tree prior distributions?
+			Set<Distribution> priorsSet = new HashSet<>();
+			getParameterPriors(d.tree, priorsSet);
+			for (Distribution dist : priorsSet) {
+				if (!distrs.contains(dist)) {
+					Log.warning("Adding dist " + dist.getID());
+					distrs.add(dist);	
+				}
+			}
+			
+			
+			//System.out.println("Adding: " + d.geneprior.getID() + " / " + d.treelikelihood.getID());
 			
 			
 			// Include the tree?
@@ -347,8 +358,8 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				/**
 				 * Add priors to dist
 				 */
-				Set<Distribution> priorsSet = new HashSet<>();
-				getRealParameterPriors(stateNodeList, priorsSet);
+				priorsSet = new HashSet<>();
+				getParameterPriors(stateNodeList, priorsSet);
 				for (Distribution dist : priorsSet) {
 					if (!distrs.contains(dist)) {
 						Log.warning("Adding dist " + dist.getID());

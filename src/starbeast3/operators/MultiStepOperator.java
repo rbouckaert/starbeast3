@@ -419,26 +419,41 @@ public abstract class MultiStepOperator extends Operator {
     }
     
     
-	protected static void getRealParameterPriors(Set<StateNode> stateNodeList, Set<Distribution> priorsList) {
+    
+
+    
+    
+	protected static void getParameterPriors(Set<StateNode> stateNodeList, Set<Distribution> priorsList) {
 		for (StateNode sn : stateNodeList) {
 			for (BEASTInterface o : sn.getOutputs()) {
 				if (o instanceof Distribution) {
-					getRealParameterPriors(o, (Distribution) o, priorsList);
+					getPriors(o, (Distribution) o, priorsList);
 				}
 			}
 		}		
 	}
 	
 	
+	protected static void getParameterPriors(StateNode sn, Set<Distribution> priorsList) {
+		for (BEASTInterface o : sn.getOutputs()) {
+			if (o instanceof Distribution) {
+				getPriors(o, (Distribution) o, priorsList);
+			}
+		}
+	}
+	
+	
 	
 
-	protected static void getRealParameterPriors(BEASTInterface o, Distribution distr, Set<Distribution> priorsList) {
+	protected static void getPriors(BEASTInterface o, Distribution distr, Set<Distribution> priorsList) {
+		if (o.getOutputs() == null) return;
 		for (BEASTInterface o2 : o.getOutputs()) {
+			if (o2 == null) continue;
 			if (o2.getID() != null && o2.getID().equals("prior")) {
 				priorsList.add(distr);
 				break;
 			}
-			getRealParameterPriors(o2, distr, priorsList);
+			getPriors(o2, distr, priorsList);
 		}
 	}
     

@@ -160,7 +160,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 				
 				
 				Set<Distribution> priorsSet = new HashSet<>();
-				getRealParameterPriors(stateNodeSet, priorsSet);
+				getParameterPriors(stateNodeSet, priorsSet);
 				distrs.addAll(priorsSet);			
 				
 				int dim = 0;
