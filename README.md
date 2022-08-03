@@ -7,6 +7,9 @@
 Also see the StarBeast3  [blog post](https://www.beast2.org/2022/03/31/starbeast3.html)
 
 
+This repository is currently being migrated to BEAST 2.7. Please see the v2.6 branch for compatability with BEAST 2.6.
+
+
 ## Installation
 
 * Install BEAST 2 (available from [http://beast2.org](http://beast2.org)).
