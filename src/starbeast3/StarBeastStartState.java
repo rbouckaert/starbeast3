@@ -125,7 +125,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         BranchRateModelSB3 s = null;
         if (speciesTreeRatesInput.get() != null) {
         	s = speciesTreeRatesInput.get();
-        }else if (sharedRateModelInput != null) {
+        }else if (sharedRateModelInput.get() != null) {
         	s = sharedRateModelInput.get().getClockModel();	
         }
     	if (s != null && s instanceof UCRelaxedClockModelSB3) {

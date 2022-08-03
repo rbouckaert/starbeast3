@@ -6,7 +6,11 @@ import java.util.List;
 import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Distribution;
+import beast.core.Input;
 import beast.core.Param;
+import beast.core.Input.Validate;
+import beast.core.parameter.RealParameter;
+import beast.evolution.alignment.Alignment;
 import beast.evolution.likelihood.GenericTreeLikelihood;
 import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.tree.Tree;
@@ -16,29 +20,66 @@ import starbeast3.evolution.likelihood.MetaTreeLikelihood;
 
 @Description("Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
 public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
+	
+	
+	
+	
+	final public Input<Tree> treeInput = new Input<>("tree", "the tree", Validate.REQUIRED);
+	final public Input<GenericTreeLikelihood> treelikelihoodInput = new Input<>("treelikelihood", "treelikelihood part of the distribution", Validate.REQUIRED);
+	final public Input<GeneTreeForSpeciesTreeDistribution> genepriorInput = new Input<>("geneprior", "prior on the gene tree", Validate.REQUIRED);
+	final public Input<List<RealParameter>> includeInput = new Input<>("include", "optional additional parameters to include", new ArrayList<>());
+	
+	
 	Tree tree;
 	//Distribution treelikelihood;
 	GenericTreeLikelihood treelikelihood;
 	GeneTreeForSpeciesTreeDistribution geneprior;
+	List<RealParameter> includeExtraParameters;
 	
+	
+	
+	 
 	public Tree getTree() {return tree;}
 	public void setTree(Tree tree) {this.tree = tree;}
 	public GenericTreeLikelihood getTreelikelihood() {return treelikelihood;}
 	public void setTreelikelihood(GenericTreeLikelihood treelikelihood) {this.treelikelihood = treelikelihood;}
 	public GeneTreeForSpeciesTreeDistribution getGeneprior() {return geneprior;}
 	public void setGeneprior(GeneTreeForSpeciesTreeDistribution geneprior) {this.geneprior = geneprior;}
+	public List<RealParameter> getInclude() {return includeExtraParameters;}
+	public void setInclude(List<RealParameter> parameters) {this.includeExtraParameters = parameters;}
 
+	
+	public ParallelMCMCTreeOperatorTreeDistribution() {
+		
+	}
+	/*
 	public ParallelMCMCTreeOperatorTreeDistribution(@Param(name="tree", description="tree for which") Tree tree,
 			@Param(name="treelikelihood", description="treelikelihood part of the distribution") GenericTreeLikelihood treelikelihood,
-			@Param(name="geneprior", description="prior on the gene tree") GeneTreeForSpeciesTreeDistribution geneprior) {
+			@Param(name="geneprior", description="prior on the gene tree") GeneTreeForSpeciesTreeDistribution geneprior){
 		this.tree = tree;
 		this.treelikelihood = treelikelihood;
 		this.geneprior = geneprior;
+		this.includeExtraParameters = new ArrayList<>();
 	}
 	
+	
+	public ParallelMCMCTreeOperatorTreeDistribution(@Param(name="tree", description="tree for which") Tree tree,
+			@Param(name="treelikelihood", description="treelikelihood part of the distribution") GenericTreeLikelihood treelikelihood,
+			@Param(name="geneprior", description="prior on the gene tree") GeneTreeForSpeciesTreeDistribution geneprior,
+			@Param(name="include", description="additional real parameter to include") List<RealParameter> include) {
+		this.tree = tree;
+		this.treelikelihood = treelikelihood;
+		this.geneprior = geneprior;
+		this.includeExtraParameters = include;
+	}
+	*/
 
 	@Override
 	public void initAndValidate() {
+		this.tree = treeInput.get();
+		this.treelikelihood = treelikelihoodInput.get();
+		this.geneprior = genepriorInput.get();
+		this.includeExtraParameters = includeInput.get();
 	}
 	
 	

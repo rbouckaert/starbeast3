@@ -219,6 +219,10 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		List<StateNode> stateNodes = new ArrayList<>();
 		List<Operator> operators = new ArrayList<>();
 		for (ParallelMCMCTreeOperatorTreeDistribution d : distributions) {
+			
+			
+			
+			
 			if (!distrs.contains(d.geneprior)) {
 				Log.warning("Adding dist " + d.geneprior.getID());
 				distrs.add(d.geneprior);
@@ -334,8 +338,11 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				
 				
 			if (includeRealParametersInput.get()) {
+				
+				// Real parameters
 				Set<StateNode> stateNodeList = new HashSet<>();
 				stateNodeList.addAll(includeInput.get());
+				stateNodeList.addAll(d.getInclude());
 				ParallelMCMCRealParameterOperator.getRealParameterStateNodes(d.treelikelihood, otherState.stateNodeInput.get(), stateNodeList);
 				
 				
