@@ -2,7 +2,7 @@ package starbeast3.util;
 
 import java.util.Arrays;
 
-import beast.evolution.tree.Node;
+import beast.base.evolution.tree.Node;
 
 public class TreeTopologySerialiser {
 	

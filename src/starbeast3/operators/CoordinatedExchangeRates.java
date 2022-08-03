@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.operators.KernelDistribution;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.math.distributions.LogNormalDistributionModel;
-import beast.math.distributions.ParametricDistribution;
-import beast.math.distributions.PiecewiseLinearDistribution;
-import beast.util.Randomizer;
-import consoperators.ConsOperatorUtils;
-import consoperators.InConstantDistanceOperator;
-import genekernel.GTKPrior;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.core.Log;
+import beast.base.inference.operator.kernel.KernelDistribution;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.inference.distribution.LogNormalDistributionModel;
+import beast.base.inference.distribution.ParametricDistribution;
+import beast.base.util.Randomizer;
+import orc.consoperators.ConsOperatorUtils;
+import orc.consoperators.InConstantDistanceOperator;
+import orc.consoperators.PiecewiseLinearDistribution;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.genekernel.GTKPrior;
 
 
 /**
@@ -102,10 +102,10 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 		
 		// Real rates or quantile parameterisation?
 		if (rateInput.get() != null) {
-			rates = rateInput.get(this);
+			rates = rateInput.get();
 			clockMode = ClockMode.rates;
 		}else if (quantileInput.get() != null) { 
-			rates = quantileInput.get(this);
+			rates = quantileInput.get();
 			clockMode = ClockMode.quantiles;
 			rateDistribution = distributionInput.get();
 			if (rateDistribution == null) {
@@ -119,7 +119,7 @@ public class CoordinatedExchangeRates extends InConstantDistanceOperator {
 		
 		// Window size, tree, and sub-operator (use this operator if unspecified)
 		twindowSize = twindowSizeInput.get() == null ? 0 : twindowSizeInput.get();
-		tree =  treeInput.get(this);
+		tree =  treeInput.get();
 		proposalKernel = proposalKernelInput.get();
 		
 		

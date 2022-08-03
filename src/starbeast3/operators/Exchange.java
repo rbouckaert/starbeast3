@@ -49,12 +49,12 @@
 
 package starbeast3.operators;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
-import genekernel.GTKTreeOperator;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
+import starbeast3.genekernel.GTKTreeOperator;
 
 
 /*

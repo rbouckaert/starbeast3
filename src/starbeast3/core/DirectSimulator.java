@@ -1,15 +1,15 @@
 package starbeast3.core;
 
-import beast.core.BEASTInterface;
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.Logger;
-import beast.core.State;
-import beast.core.StateNode;
-import beast.core.StateNodeInitialiser;
-import beast.core.Runnable;
-import beast.util.Randomizer;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Description;
+import beast.base.inference.Distribution;
+import beast.base.core.Input;
+import beast.base.inference.Logger;
+import beast.base.inference.State;
+import beast.base.inference.StateNode;
+import beast.base.inference.StateNodeInitialiser;
+import beast.base.inference.Runnable;
+import beast.base.util.Randomizer;
 
 
 import java.util.ArrayList;

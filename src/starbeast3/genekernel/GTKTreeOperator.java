@@ -1,9 +1,9 @@
-package genekernel;
+package starbeast3.genekernel;
 
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 
 
 /**

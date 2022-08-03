@@ -1,12 +1,12 @@
-package genekernel;
+package starbeast3.genekernel;
 
 import java.util.List;
 
-import beast.core.BEASTInterface;
-import beast.core.Input;
-import beast.core.parameter.IntegerParameter;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Input;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 
 
 /**

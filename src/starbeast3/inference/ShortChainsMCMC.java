@@ -18,17 +18,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.math3.stat.inference.*;
 import org.xml.sax.SAXException;
 
-import beast.app.BeastMCMC;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Logger;
-import beast.core.Logger.LogFileMode;
-import beast.core.MCMC;
-import beast.core.StateNodeInitialiser;
-import beast.core.util.Log;
-import beast.util.XMLParser;
-import beast.util.XMLParserException;
-import beast.util.XMLProducer;
+import beastfx.app.beast.BeastMCMC;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.Logger;
+import beast.base.inference.Logger.LogFileMode;
+import beast.base.inference.MCMC;
+import beast.base.inference.StateNodeInitialiser;
+import beast.base.core.Log;
+import beast.base.core.ProgramStatus;
+import beast.base.parser.XMLParser;
+import beast.base.parser.XMLParserException;
+import beast.base.parser.XMLProducer;
 
 
 @Description("Runs short MCMC chains -- one per posterior sample -- "
@@ -53,9 +54,9 @@ public class ShortChainsMCMC extends MCMC {
 	public void initAndValidate() {
 		round = 0;
 		pLevel = pLevelInput.get();
-		nrOfThreads = Math.min(maxNrOfThreadsInput.get(), BeastMCMC.m_nThreads);
+		nrOfThreads = Math.min(maxNrOfThreadsInput.get(), ProgramStatus.m_nThreads);
 		// prevent any of the short chain MCMSs threading:
-		BeastMCMC.m_nThreads = 1;
+		ProgramStatus.m_nThreads = 1;
 		exec = Executors.newFixedThreadPool(nrOfThreads);
 		chainLength = chainLengthInput.get();
 

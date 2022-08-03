@@ -1,9 +1,9 @@
 package starbeast3.operators;
 
-import beast.core.Description;
-import beast.core.OperatorScheduleRecalculator;
-import beast.core.util.Log;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.core.Log;
+import beast.base.util.Randomizer;
+import starbeast3.core.OperatorScheduleRecalculator;
 
 
 @Description("Learns the number of threads to alot to a parallel operator by maximising samples/hr.")

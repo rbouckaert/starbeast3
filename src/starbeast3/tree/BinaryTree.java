@@ -6,14 +6,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import beast.core.BEASTInterface;
-import beast.core.Description;
-import beast.core.StateNode;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeInterface;
-import beast.util.TreeParser;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Description;
+import beast.base.inference.StateNode;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.evolution.tree.TreeParser;
 
 @Description("Binary tree with efficient store/restore")
 public class BinaryTree extends Tree implements TreeInterface {

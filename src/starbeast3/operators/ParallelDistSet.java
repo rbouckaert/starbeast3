@@ -3,10 +3,10 @@ package starbeast3.operators;
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.tree.Tree;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.tree.Tree;
 
 @Description("A set of parallel tree distributions, which will all be added to the same thread in a ParallelMCMCOperator")
 public class ParallelDistSet extends BEASTObject implements Comparable<ParallelDistSet> {

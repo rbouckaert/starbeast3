@@ -2,11 +2,11 @@ package starbeast3.operators;
 
 import java.util.*;
 
-import beast.core.Description;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeInterface;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.util.Randomizer;
 
 /**
 * @author Huw Ogilvie
@@ -26,7 +26,7 @@ public class CoordinatedUniform extends CoordinatedOperator {
 
     @Override
     public void initAndValidate() {
-        speciesTree = speciesTreeInput.get(this);
+        speciesTree = speciesTreeInput.get();
         super.initAndValidate();
     }
 
@@ -99,7 +99,7 @@ public class CoordinatedUniform extends CoordinatedOperator {
             findConnectingNodes(geneTreeRootNode, jConnectingNodes, leftChildDescendants, rightChildDescendants, tipwardFreedom, rootwardFreedom);
             
             allConnectingNodes.addAll(jConnectingNodes);
-            geneTree.startEditing(null); // hack to stop beast.core.State.Trie memory leak
+            geneTree.startEditing(null); // hack to stop beast.base.inference.State.Trie memory leak
         }
 
         return allConnectingNodes;

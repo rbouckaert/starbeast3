@@ -9,22 +9,28 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import beast.app.BeastMCMC;
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.ParallelMCMC;
-import beast.core.State;
-import beast.core.StateNode;
-import beast.core.parameter.RealParameter;
-import beast.core.util.CompoundDistribution;
-import beast.core.util.Log;
-import beast.evolution.operators.*;
-import beast.evolution.tree.Tree;
-import beast.util.Transform;
+import beastfx.app.beast.BeastMCMC;
+import beast.base.core.Description;
+import beast.base.inference.Distribution;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.inference.State;
+import beast.base.inference.StateNode;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.CompoundDistribution;
+import beast.base.core.Log;
+import beast.base.core.ProgramStatus;
+import beast.base.evolution.operator.ScaleOperator;
+import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
+import beast.base.evolution.operator.kernel.BactrianScaleOperator;
+import beast.base.evolution.tree.Tree;
+import beast.base.inference.operator.kernel.BactrianDeltaExchangeOperator;
+import beast.base.inference.operator.kernel.BactrianIntervalOperator;
+import beast.base.inference.operator.kernel.BactrianRandomWalkOperator;
+import beast.base.inference.operator.kernel.Transform;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.core.ParallelMCMC;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
 public class ParallelMCMCTreeOperator extends MultiStepOperator {
@@ -71,8 +77,8 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	    otherState.initialise();
 		 
 		nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
-				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
-				BeastMCMC.m_nThreads;
+				Math.min(ProgramStatus.m_nThreads, maxNrOfThreadsInput.get()) : 
+				ProgramStatus.m_nThreads;
 		nrOfThreads = Math.min(nrOfThreads, distributions.size());
 		Log.warning("Running " + this.getID() + " with " + this.nrOfThreads + " threads");
 		//System.exit(1);
@@ -254,7 +260,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				
 				
 				// Uniform operator
-				beast.evolution.operators.Uniform UniformOperator = new beast.evolution.operators.Uniform();
+				beast.base.evolution.operator.Uniform UniformOperator = new beast.base.evolution.operator.Uniform();
 				UniformOperator.initByName("tree", d.tree, "weight", 30.0);
 				operators.add(UniformOperator);
 				
@@ -262,27 +268,27 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					
 					
 					// Root scaler
-					beast.evolution.operators.BactrianScaleOperator treeRootScaler = new beast.evolution.operators.BactrianScaleOperator();
+					beast.base.evolution.operator.kernel.BactrianScaleOperator treeRootScaler = new beast.base.evolution.operator.kernel.BactrianScaleOperator();
 					treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 10.0, "rootOnly", true);
 					operators.add(treeRootScaler);
 					
 					// Bactrian interval
-					beast.evolution.operators.BactrianNodeOperator intervalOperator = new beast.evolution.operators.BactrianNodeOperator();
+					beast.base.evolution.operator.kernel.BactrianNodeOperator intervalOperator = new beast.base.evolution.operator.kernel.BactrianNodeOperator();
 					intervalOperator.initByName("tree", d.tree, "weight", 10.0);
 					operators.add(intervalOperator);
 					
 					// Subtree slide
-					beast.evolution.operators.BactrianSubtreeSlide SubtreeSlide = new beast.evolution.operators.BactrianSubtreeSlide();
+					beast.base.evolution.operator.kernel.BactrianSubtreeSlide SubtreeSlide = new beast.base.evolution.operator.kernel.BactrianSubtreeSlide();
 					SubtreeSlide.initByName("tree", d.tree, "weight", 10.0);
 					operators.add(SubtreeSlide);
 					
 					
 					// Adaptable operators for tree scaling
-					orc.operators.AdaptableOperatorSampler adaptable = new orc.operators.AdaptableOperatorSampler();
+					beast.base.evolution.operator.AdaptableOperatorSampler adaptable = new beast.base.evolution.operator.AdaptableOperatorSampler();
 					List<Operator> adaptOperators = new ArrayList<>();
 					
 					// Tree scaler
-					beast.evolution.operators.BactrianUpDownOperator treeScaler = new beast.evolution.operators.BactrianUpDownOperator();
+					beast.base.inference.operator.kernel.BactrianUpDownOperator treeScaler = new beast.base.inference.operator.kernel.BactrianUpDownOperator();
 					treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 1.0);
 					adaptOperators.add(treeScaler);
 					
@@ -306,7 +312,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					
 				} else {
 	//		        <operator id="treeScaler.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
-					ScaleOperator treeScaler = new ScaleOperator();
+					BactrianScaleOperator treeScaler = new BactrianScaleOperator();
 					treeScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0);
 					operators.add(treeScaler);
 	//		    	<operator id="treeRootScaler.t:$(n)" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:$(n)" weight="3.0"/>
@@ -315,7 +321,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					operators.add(treeRootScaler);
 	
 	//		    	<operator id="SubtreeSlide.t:$(n)" spec="SubtreeSlide" tree="@Tree.t:$(n)" weight="15.0"/>
-					beast.evolution.operators.SubtreeSlide SubtreeSlide = new beast.evolution.operators.SubtreeSlide();
+					BactrianSubtreeSlide SubtreeSlide = new BactrianSubtreeSlide();
 					SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
 					operators.add(SubtreeSlide);
 				}
@@ -323,15 +329,15 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				
 	
 	//		    <operator id="narrow.t:$(n)" spec="Exchange" tree="@Tree.t:$(n)" weight="15.0"/>
-				beast.evolution.operators.Exchange narrow = new beast.evolution.operators.Exchange();
+				beast.base.evolution.operator.Exchange narrow = new beast.base.evolution.operator.Exchange();
 				narrow.initByName("tree", d.tree, "weight", 15.0);
 				operators.add(narrow);
 	//	    	<operator id="wide.t:$(n)" spec="Exchange" isNarrow="false" tree="@Tree.t:$(n)" weight="3.0"/>
-				beast.evolution.operators.Exchange wide = new beast.evolution.operators.Exchange();
+				beast.base.evolution.operator.Exchange wide = new beast.base.evolution.operator.Exchange();
 				wide.initByName("tree", d.tree, "isNarrow", false, "weight", 15.0);
 				operators.add(wide);
 	//		    <operator id="WilsonBalding.t:$(n)" spec="WilsonBalding" tree="@Tree.t:$(n)" weight="3.0"/>
-				beast.evolution.operators.WilsonBalding WilsonBalding = new beast.evolution.operators.WilsonBalding();
+				beast.base.evolution.operator.WilsonBalding WilsonBalding = new beast.base.evolution.operator.WilsonBalding();
 				WilsonBalding.initByName("tree", d.tree, "weight", 15.0);
 				operators.add(WilsonBalding);
 			}
@@ -404,7 +410,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					// simplex parameter
 					if (s.getID().startsWith("freq")) {
 						
-						DeltaExchangeOperator op = new DeltaExchangeOperator();
+						BactrianDeltaExchangeOperator op = new BactrianDeltaExchangeOperator();
 						op.initByName("parameter", s, "delta", 0.2, "weight", 0.5);
 						operators.add(op);
 						f = new Transform.LogConstrainedSumTransform(s, 1.0);

@@ -1,7 +1,7 @@
 package starbeast3.evolution.speciation;
 
 import java.text.DecimalFormat;
-import beast.evolution.tree.Node;
+import beast.base.evolution.tree.Node;
 
 public interface PopulationModel {
 	

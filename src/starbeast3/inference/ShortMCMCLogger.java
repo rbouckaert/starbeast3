@@ -9,8 +9,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import beast.core.Logger;
-import beast.core.util.Log;
+import beast.base.inference.Logger;
+import beast.base.core.Log;
 
 public class ShortMCMCLogger extends Logger {
 

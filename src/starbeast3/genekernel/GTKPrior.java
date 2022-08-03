@@ -1,4 +1,4 @@
-package genekernel;
+package starbeast3.genekernel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,19 +7,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.State;
-import beast.core.StateNode;
-import beast.core.Input.Validate;
-import beast.core.Operator;
-import beast.core.parameter.IntegerParameter;
-import beast.core.util.Log;
-import beast.evolution.alignment.Taxon;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
+import beast.base.inference.Distribution;
+import beast.base.core.Input;
+import beast.base.inference.State;
+import beast.base.inference.StateNode;
+import beast.base.core.Input.Validate;
+import beast.base.inference.Operator;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.SpeciesTree;
 import starbeast3.SpeciesTreePrior;

@@ -1,4 +1,6 @@
-package beast.core;
+package starbeast3.core;
+
+import beast.base.inference.OperatorSchedule;
 
 public class OperatorScheduleRecalculator extends OperatorSchedule {
 

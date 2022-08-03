@@ -1,8 +1,8 @@
 package starbeast3.operators;
 
-import beast.core.Input;
-import beast.core.parameter.IntegerParameter;
-import beast.core.Input.Validate;
+import beast.base.core.Input;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.core.Input.Validate;
 
 /**
  *

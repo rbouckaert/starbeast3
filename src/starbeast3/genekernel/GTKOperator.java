@@ -1,16 +1,16 @@
-package genekernel;
+package starbeast3.genekernel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.app.beauti.Beauti;
-import beast.core.BEASTInterface;
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.StateNode;
-import beast.evolution.operators.KernelDistribution;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.inference.StateNode;
+import beast.base.inference.operator.kernel.KernelDistribution;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
+import beastfx.app.beauti.Beauti;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
 

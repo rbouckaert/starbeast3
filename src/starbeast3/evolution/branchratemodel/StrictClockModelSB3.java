@@ -1,17 +1,19 @@
 package starbeast3.evolution.branchratemodel;
 
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.branchratemodel.BranchRateModel;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.TreeInterface;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.inference.StateNode;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.branchratemodel.BranchRateModel;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.TreeInterface;
 
 public class StrictClockModelSB3 extends BranchRateModel.Base implements BranchRateModelSB3 {
 
 	
 	final public Input<TreeInterface> treeInput = new Input<>("tree", "(Species) tree to apply per-branch rates to.", Input.Validate.REQUIRED);
 	
-	RealParameter muParameter;
+	Function muParameter;
 	private double mu = 1.0;
 	private int numSpecies;
 	double[] ratesArray;
@@ -20,8 +22,11 @@ public class StrictClockModelSB3 extends BranchRateModel.Base implements BranchR
     public void initAndValidate() {
         muParameter = meanRateInput.get();
         if (muParameter != null) {
-            muParameter.setBounds(Math.max(0.0, muParameter.getLower()), muParameter.getUpper());
-            mu = muParameter.getValue();
+        	if (muParameter instanceof RealParameter) {
+        		((RealParameter)muParameter).setBounds(Math.max(0.0, ((RealParameter)muParameter).getLower()), ((RealParameter)muParameter).getUpper());
+        	}
+            
+            mu = muParameter.getArrayValue();
         }
         this.numSpecies = treeInput.get().getNodeCount();
         this.ratesArray = new double[this.numSpecies];
@@ -37,19 +42,23 @@ public class StrictClockModelSB3 extends BranchRateModel.Base implements BranchR
     @Override
     public boolean requiresRecalculation() {
     	if (muParameter == null) return false;
-    	mu = muParameter.getValue();
-    	return muParameter.isDirtyCalculation();
+    	mu = muParameter.getArrayValue();
+    	if (muParameter instanceof StateNode) {
+    		return ((StateNode)muParameter).isDirtyCalculation();
+    	}
+    	return false;
+    	
     }
     
     @Override
     protected void restore() {
-    	if (muParameter != null) mu = muParameter.getValue();
+    	if (muParameter != null) mu = muParameter.getArrayValue();
         super.restore();
     }
 
     @Override
     protected void store() {
-    	if (muParameter != null)  mu = muParameter.getValue();
+    	if (muParameter != null)  mu = muParameter.getArrayValue();
         super.store();
     }
 

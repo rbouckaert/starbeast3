@@ -1,7 +1,7 @@
-package genekernel;
+package starbeast3.genekernel;
 
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 
 public class GTKGeneTree extends Tree {
 	

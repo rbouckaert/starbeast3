@@ -3,20 +3,14 @@ package starbeast3.operators;
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.Param;
-import beast.core.Input.Validate;
-import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.likelihood.GenericTreeLikelihood;
-import beast.evolution.likelihood.TreeLikelihood;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeInterface;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.likelihood.GenericTreeLikelihood;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
-import starbeast3.evolution.likelihood.MetaTreeLikelihood;
 
 @Description("Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
 public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
@@ -147,9 +141,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	 * Call before beginning parallel MCMC
 	 */
 	public void startThreading() {
-		if (this.getTreelikelihood() instanceof MetaTreeLikelihood) {
-			((MetaTreeLikelihood)this.getTreelikelihood()).startThreading();
-		}
+		
 	}
 	
 	
@@ -157,9 +149,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	 * Call after finishing parallel MCMC
 	 */
 	public void stopThreading() {
-		if (this.getTreelikelihood() instanceof MetaTreeLikelihood) {
-			((MetaTreeLikelihood)this.getTreelikelihood()).stopThreading();
-		}
+		
 	}
 
 	

@@ -1,4 +1,4 @@
-package beast.core;
+package starbeast3.core;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -11,17 +11,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.xml.sax.SAXException;
 
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Input.Validate;
-import beast.core.MCMC;
-import beast.core.Operator;
-import beast.core.State;
-import beast.core.StateNode;
-import beast.core.util.CompoundDistribution;
-import beast.core.util.Evaluator;
-import beast.core.util.Log;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.Distribution;
+import beast.base.core.Input.Validate;
+import beast.base.inference.MCMC;
+import beast.base.inference.Operator;
+import beast.base.inference.State;
+import beast.base.inference.StateNode;
+import beast.base.inference.CompoundDistribution;
+import beast.base.inference.Evaluator;
+import beast.base.core.Log;
+import beast.base.util.Randomizer;
 
 @Description("Implements MCMC without logging, or resume and suppresses all screen output. Used for ParallelMCMCOperator.")
 public class ParallelMCMC extends MCMC {
@@ -275,7 +276,7 @@ public class ParallelMCMC extends MCMC {
         // make local state the current state
         int index = 0;
         for (StateNode stateNode : state.stateNodeInput.get()) {
-        	stateNode.state = state;
+        	stateNode.setState(state);
     		otherStateNr[index] = stateNode.index;
         	stateNode.index = index++;
     	}
@@ -365,7 +366,7 @@ public class ParallelMCMC extends MCMC {
         // restore to original State
         index = 0;
         for (StateNode stateNode : state.stateNodeInput.get()) {
-        	stateNode.state = otherState;
+        	stateNode.setState(otherState);
     		stateNode.index = otherStateNr[index++];
         }
         sampleCount += chainLength;
@@ -375,7 +376,7 @@ public class ParallelMCMC extends MCMC {
      * Perform a single MCMC propose+accept/reject step.
      *
      * @param sampleNr the index of the current MCMC step
-     * @return the selected {@link beast.core.Operator}
+     * @return the selected {@link beast.base.inference.Operator}
      */
     protected Operator propagateState(final long sampleNr) {
         state.store(sampleNr);

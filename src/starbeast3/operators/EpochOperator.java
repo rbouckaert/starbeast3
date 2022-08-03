@@ -4,16 +4,16 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.StateNode;
-import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.operators.KernelDistribution;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.inference.StateNode;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.core.Log;
+import beast.base.inference.operator.kernel.KernelDistribution;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
 @Description("Scale operator that scales random epoch in a tree")

@@ -1,30 +1,30 @@
 package starbeast3.operators;
 
-import beast.app.beauti.BeautiDoc;
-import beast.core.BEASTInterface;
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.core.util.CompoundDistribution;
-import beast.core.util.Log;
-import beast.evolution.branchratemodel.BranchRateModel;
-import beast.evolution.branchratemodel.UCRelaxedClockModel;
-import beast.evolution.operators.KernelDistribution;
-import beast.evolution.operators.KernelDistribution.Bactrian;
-import beast.evolution.operators.KernelDistribution.Bactrian.mode;
-import beast.evolution.operators.TreeOperator;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeInterface;
-import beast.math.distributions.PiecewiseLinearDistribution;
-import beast.util.Randomizer;
-import genekernel.GTKPrior;
-import genekernel.GTKTreeOperator;
+import beastfx.app.inputeditor.BeautiDoc;
+import orc.consoperators.PiecewiseLinearDistribution;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Description;
+import beast.base.inference.Distribution;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.CompoundDistribution;
+import beast.base.core.Log;
+import beast.base.evolution.branchratemodel.BranchRateModel;
+import beast.base.evolution.branchratemodel.UCRelaxedClockModel;
+import beast.base.inference.operator.kernel.KernelDistribution;
+import beast.base.inference.operator.kernel.KernelDistribution.Bactrian;
+import beast.base.inference.operator.kernel.KernelDistribution.Bactrian.mode;
+import beast.base.evolution.operator.TreeOperator;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.util.Randomizer;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.StarBeast3Clock;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
+import starbeast3.genekernel.GTKPrior;
+import starbeast3.genekernel.GTKTreeOperator;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     	
     	geneTreeDistributions = this.getTreeDistributions(this);
     	
-        final Tree tree = treeInput.get(this);
+        final Tree tree = treeInput.get();
         int nodeCount = tree.getNodeCount(); //return the number of nodes in the tree
 
         //the chosen node to work on

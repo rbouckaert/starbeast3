@@ -1,6 +1,6 @@
 package starbeast3.util;
 
-import beast.util.Randomizer;
+import beast.base.util.Randomizer;
 
 /**
  *  this class is used to make sure the apache library uses random numbers from the BEAST Randomizer

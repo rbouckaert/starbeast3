@@ -5,18 +5,18 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Loggable;
-import beast.core.StateNode;
-import beast.core.parameter.Parameter;
-import beast.evolution.speciation.TreeTopFinder;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import genekernel.GeneTreeKernel;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.core.Loggable;
+import beast.base.inference.StateNode;
+import beast.base.inference.parameter.Parameter;
+import starbeast3.genekernel.GeneTreeKernel;
+import beast.base.evolution.speciation.TreeTopFinder;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 
 
 

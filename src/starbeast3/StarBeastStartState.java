@@ -14,29 +14,35 @@ import java.util.Set;
 
 import org.apache.commons.math.MathException;
 
-import beast.core.*;
-import beast.core.Input.Validate;
-import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.alignment.Sequence;
-import beast.evolution.alignment.Taxon;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.alignment.distance.Distance;
-import beast.evolution.alignment.distance.JukesCantorDistance;
-import beast.evolution.datatype.DataType;
-import beast.evolution.speciation.CalibratedYuleModel;
-import beast.evolution.speciation.CalibrationPoint;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.RandomTree;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.coalescent.ConstantPopulation;
-import beast.math.distributions.MRCAPrior;
-import beast.util.ClusterTree;
-import genekernel.GTKPrior;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Citation;
+import beast.base.core.Description;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.StateNode;
+import beast.base.inference.StateNodeInitialiser;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.distance.Distance;
+import beast.base.evolution.distance.JukesCantorDistance;
+import beast.base.evolution.datatype.DataType;
+import beast.base.evolution.speciation.CalibratedYuleModel;
+import beast.base.evolution.speciation.CalibrationPoint;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.coalescent.RandomTree;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.coalescent.ConstantPopulation;
+import beast.base.evolution.tree.MRCAPrior;
+import beast.base.evolution.tree.ClusterTree;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 import starbeast3.evolution.branchratemodel.SharedSpeciesClockModel;
 import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
+import starbeast3.genekernel.GTKPrior;
 
 /**
 * @author Joseph Heled
@@ -574,7 +580,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     }
 
     @Override
-    public void getInitialisedStateNodes(final List<StateNode> stateNodes) {
+    public void getInitialisedStateNodes(List<StateNode> stateNodes) {
         if( hasCalibrations ) {
             stateNodes.add((Tree) calibratedYule.get().treeInput.get());
         } else {
@@ -606,4 +612,6 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             }
         }
     }
+    
+
 }

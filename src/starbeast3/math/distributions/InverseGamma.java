@@ -6,10 +6,10 @@ import org.apache.commons.math.distribution.ContinuousDistribution;
 import org.apache.commons.math.distribution.Distribution;
 import org.apache.commons.math.distribution.GammaDistributionImpl;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.math.distributions.ParametricDistribution;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.distribution.ParametricDistribution;
 
 
 

@@ -2,7 +2,11 @@ package starbeast3.operators;
 
 import java.util.*;
 
-import beast.core.*;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.Logger;
+import beast.base.inference.Operator;
+import beast.base.inference.OperatorSchedule;
 
 @Description("Operator schedule that takes in account MultiStepOperators so logging "
 		+ "is done at the correct MCMC step")
@@ -71,6 +75,6 @@ public class MultiStepOperatorSchedule extends OperatorSchedule {
     
     @Override
     public Operator selectOperator() {
-    	throw new RuntimeException("MultiStepOperatorSchedule should be used with " + beast.core.MCMCsb3.class.getName() + " not with beast.core.MCMC");
+    	throw new RuntimeException("MultiStepOperatorSchedule should be used with " + starbeast3.core.MCMCsb3.class.getName() + " not with beast.base.inference.MCMC");
     }
 }

@@ -1,9 +1,5 @@
 package starbeast3.operators;
 
-import genekernel.GTKGeneTree;
-import genekernel.GTKOperator;
-import genekernel.GTKPointerTree;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,12 +7,15 @@ import org.apache.commons.math.distribution.PoissonDistribution;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import org.apache.commons.math.util.MathUtils;
 
-import beast.core.Input;
-import beast.core.parameter.IntegerParameter;
-import beast.core.util.Log;
-import beast.evolution.tree.Tree;
-import beast.math.distributions.Poisson;
-import beast.util.Randomizer;
+import beast.base.core.Input;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.core.Log;
+import beast.base.evolution.tree.Tree;
+import beast.base.inference.distribution.Poisson;
+import beast.base.util.Randomizer;
+import starbeast3.genekernel.GTKGeneTree;
+import starbeast3.genekernel.GTKOperator;
+import starbeast3.genekernel.GTKPointerTree;
 
 
 /**

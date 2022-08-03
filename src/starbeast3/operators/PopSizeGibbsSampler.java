@@ -5,20 +5,21 @@ import java.util.List;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.Input.Validate;
-import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.tree.TreeInterface;
-import beast.evolution.tree.coalescent.TreeIntervals;
-import beast.math.distributions.Gamma;
-import beast.math.distributions.InverseGamma;
-import beast.math.distributions.ParametricDistribution;
-import genekernel.GTKOperator;
-import genekernel.GTKPrior;
+import beast.base.core.Description;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.core.Log;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.evolution.tree.TreeIntervals;
+import beast.base.inference.distribution.Gamma;
+import beast.base.inference.distribution.InverseGamma;
+import beast.base.inference.distribution.ParametricDistribution;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.genekernel.GTKOperator;
+import starbeast3.genekernel.GTKPrior;
 import starbeast3.util.*;
 
 /*
@@ -65,7 +66,8 @@ public class PopSizeGibbsSampler extends GTKOperator {
 	final public Input<TreeIntervals> treeIntervalsInput = new Input<>("intervals", "tree intervals for use with single tree -- should not be used if gene-attribute is used");
 	
 	
-	RealParameter popSizes, priorAlpha, priorBeta;
+	RealParameter popSizes;
+	Function priorAlpha, priorBeta;
 	ParametricDistribution prior;
 	TreeIntervals treeIntervals;
 
@@ -77,8 +79,8 @@ public class PopSizeGibbsSampler extends GTKOperator {
 		popSizes = popSizesInput.get();
 		prior = priorInput.get();
 		treeIntervals = treeIntervalsInput.get();
-		priorAlpha = (RealParameter) prior.getInput("alpha").get();
-		priorBeta = (RealParameter) prior.getInput("beta").get();
+		priorAlpha = (Function) prior.getInput("alpha").get();
+		priorBeta = (Function) prior.getInput("beta").get();
 		if (treeIntervals != null) { 
 			return;
 		}
@@ -149,8 +151,8 @@ public class PopSizeGibbsSampler extends GTKOperator {
 		}
 		
 		
-		double alpha = priorAlpha.getValue() + a;
-		double beta = priorBeta.getValue() + b;
+		double alpha = priorAlpha.getArrayValue() + a;
+		double beta = priorBeta.getArrayValue() + b;
 		
 		GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
 		double newN = 1.0/g.sample();
@@ -196,8 +198,8 @@ public class PopSizeGibbsSampler extends GTKOperator {
 		b += c;
 		
 		
-		double alpha = priorAlpha.getValue() + a;
-		double beta = priorBeta.getValue() + b;
+		double alpha = priorAlpha.getArrayValue() + a;
+		double beta = priorBeta.getArrayValue() + b;
 		
 		GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
 		double newN = 1.0/g.sample();

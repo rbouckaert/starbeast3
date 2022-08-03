@@ -1,7 +1,7 @@
 package starbeast3.evolution.branchratemodel;
 
-import beast.core.CalculationNode;
-import beast.core.Input;
+import beast.base.inference.CalculationNode;
+import beast.base.core.Input;
 
 public class SharedSpeciesClockModel extends CalculationNode {
 	

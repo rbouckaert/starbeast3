@@ -2,12 +2,12 @@ package starbeast3.operators;
 
 import java.util.*;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeInterface;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.util.Randomizer;
 import starbeast3.SpeciesTree;
 import starbeast3.operators.CoordinatedOperator;
 
@@ -113,7 +113,7 @@ public class CoordinatedExponential extends CoordinatedOperator {
             final Set<Node> jConnectingNodes = new HashSet<Node>();
             findConnectingNodes(geneTreeRootNode, jConnectingNodes, leftChildDescendants, rightChildDescendants, tipwardFreedom);
             allConnectingNodes.addAll(jConnectingNodes);
-            geneTree.startEditing(null); // hack to stop beast.core.State.Trie memory leak
+            geneTree.startEditing(null); // hack to stop beast.base.inference.State.Trie memory leak
         }
 
         return allConnectingNodes;

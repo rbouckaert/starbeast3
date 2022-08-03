@@ -9,7 +9,7 @@ package starbeast3;
 
 import java.util.List;
 
-import beast.evolution.tree.Node;
+import beast.base.evolution.tree.Node;
 
 final class SanityChecks {
     protected static boolean checkTreeSanity(Node node) {

@@ -3,11 +3,11 @@ package starbeast3.operators;
 import java.util.*;
 
 
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.evolution.tree.Node;
-import genekernel.GTKOperator;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.evolution.tree.Node;
 import starbeast3.SpeciesTree;
+import starbeast3.genekernel.GTKOperator;
 
 
 public abstract class CoordinatedOperator extends GTKOperator {

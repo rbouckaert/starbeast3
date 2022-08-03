@@ -28,10 +28,12 @@ package starbeast3.operators;
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.core.Description;
-import beast.evolution.operators.TreeOperator;
-import beast.evolution.tree.*;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.evolution.operator.TreeOperator;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.util.Randomizer;
 
 /**
  * Implements the fixed height subtree prune regraft move. Described by Sebastian Hoehna et al

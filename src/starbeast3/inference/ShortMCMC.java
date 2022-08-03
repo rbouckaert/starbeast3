@@ -9,10 +9,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import beast.core.Description;
-import beast.core.Logger;
-import beast.core.MCMC;
-import beast.core.util.Log;
+import beast.base.core.Description;
+import beast.base.inference.Logger;
+import beast.base.inference.MCMC;
+import beast.base.core.Log;
 
 @Description("Runs MCMC silently inside ShortChainMCMC -- do not use directly")
 public class ShortMCMC extends MCMC {

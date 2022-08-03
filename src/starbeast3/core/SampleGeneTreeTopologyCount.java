@@ -1,16 +1,13 @@
 package starbeast3.core;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.HashMap;
 
-import beast.app.util.OutFile;
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.State;
-import beast.core.parameter.IntegerParameter;
-import beast.core.util.Log;
-import beast.evolution.tree.Tree;
+import beast.base.core.Input;
+import beast.base.inference.parameter.IntegerParameter;
+import beastfx.app.util.OutFile;
+import beast.base.core.Log;
+import beast.base.evolution.tree.Tree;
 import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.util.TreeTopologySerialiser;
 

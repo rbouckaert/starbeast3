@@ -13,15 +13,16 @@ import org.apache.commons.math.distribution.ExponentialDistributionImpl;
 import org.apache.commons.math.distribution.NormalDistribution;
 import org.apache.commons.math.distribution.NormalDistributionImpl;
 
-import beast.core.Input;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.TreeInterface;
-import beast.math.distributions.ParametricDistribution;
-import beast.math.distributions.PiecewiseLinearDistribution;
-import beast.util.Randomizer;
-import beast.evolution.branchratemodel.BranchRateModel;
+import beast.base.core.Input;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.inference.StateNode;
+import beast.base.inference.distribution.ParametricDistribution;
+import beast.base.util.Randomizer;
+import orc.consoperators.PiecewiseLinearDistribution;
+import beast.base.evolution.branchratemodel.BranchRateModel;
 
 public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements BranchRateModelSB3 {
     
@@ -296,10 +297,13 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         	binRatesNeedsUpdate = true;
         }
 
-        needsUpdate = binRatesNeedsUpdate || meanRateInput.isDirty() || 
-        				(mode == Mode.categories && discreteRatesInput.isDirty()) ||
-        				(mode == Mode.rates && realRatesInput.isDirty()) ||
-        				(mode == Mode.quantiles && quantilesInput.isDirty());
+        if (meanRateInput.get() instanceof StateNode) {
+        	needsUpdate = ((StateNode)meanRateInput.get()).isDirtyCalculation();
+        }
+        needsUpdate = needsUpdate || binRatesNeedsUpdate || 
+        				(mode == Mode.categories && discreteRatesInput.get().isDirtyCalculation()) ||
+        				(mode == Mode.rates && realRatesInput.get().isDirtyCalculation()) ||
+        				(mode == Mode.quantiles && quantilesInput.get().isDirtyCalculation());
         
         return needsUpdate;
     }
@@ -451,11 +455,10 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
     	
 
         Double estimatedMean;
-        final RealParameter estimatedMeanParameter = meanRateInput.get();
-        if (estimatedMeanParameter == null) {
+        if (meanRateInput.get() == null) {
             estimatedMean = 1.0;
         } else {
-            estimatedMean = estimatedMeanParameter.getValue();
+            estimatedMean = meanRateInput.get().getArrayValue();
         }
 
         

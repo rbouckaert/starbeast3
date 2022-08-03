@@ -1,4 +1,4 @@
-package genekernel;
+package starbeast3.genekernel;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -9,13 +9,13 @@ import java.util.ListIterator;
 
 import org.w3c.dom.Node;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.Input.Validate;
-import beast.core.StateNode;
-import beast.core.parameter.RealParameter;
-import beast.evolution.tree.Tree;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.core.Input.Validate;
+import beast.base.inference.StateNode;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.tree.Tree;
 
 public class GeneTreeKernel extends StateNode {
 	
@@ -216,6 +216,12 @@ public class GeneTreeKernel extends StateNode {
 		for (Tree tree : this.trees) {
 			tree.setEverythingDirty(isDirty);
 		}
+	}
+
+	@Override
+	public void log(long sample, PrintStream out) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

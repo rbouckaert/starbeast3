@@ -7,19 +7,19 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
-import beast.core.BEASTInterface;
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.MCMC;
-import beast.core.Operator;
-import beast.core.OperatorScheduleRecalculator;
-import beast.core.ParallelMCMC;
-import beast.core.State;
-import beast.core.StateNode;
-import beast.core.util.Log;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Description;
+import beast.base.inference.Distribution;
+import beast.base.core.Input;
+import beast.base.inference.MCMC;
+import beast.base.inference.Operator;
+import beast.base.inference.State;
+import beast.base.inference.StateNode;
+import beast.base.core.Log;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
+import starbeast3.core.OperatorScheduleRecalculator;
+import starbeast3.core.ParallelMCMC;
 
 @Description("Operator that does proposals that count for one step or more steps in the MCMC")
 public abstract class MultiStepOperator extends Operator {

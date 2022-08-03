@@ -9,29 +9,30 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 
 
-import beast.app.BeastMCMC;
-import beast.core.BEASTInterface;
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Operator;
-import beast.core.ParallelMCMC;
-import beast.core.State;
-import beast.core.StateNode;
-import beast.core.parameter.CompoundRealParameter;
-import beast.core.parameter.RealParameter;
-import beast.core.util.CompoundDistribution;
-import beast.core.util.Log;
-import beast.evolution.branchratemodel.BranchRateModel;
-import beast.evolution.operators.AdaptableVarianceMultivariateNormalOperator;
-import beast.evolution.operators.DeltaExchangeOperator;
-import beast.evolution.operators.ScaleOperator;
-import beast.evolution.sitemodel.SiteModelInterface;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.substitutionmodel.SubstitutionModel;
-import beast.util.Transform;
+import beastfx.app.beast.BeastMCMC;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Description;
+import beast.base.inference.Distribution;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.Operator;
+import beast.base.inference.State;
+import beast.base.inference.StateNode;
+import beast.base.inference.parameter.CompoundRealParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.CompoundDistribution;
+import beast.base.core.Log;
+import beast.base.core.ProgramStatus;
+import beast.base.evolution.branchratemodel.BranchRateModel;
+import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
+import beast.base.inference.operator.DeltaExchangeOperator;
+import beast.base.evolution.operator.ScaleOperator;
+import beast.base.evolution.sitemodel.SiteModelInterface;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.inference.operator.kernel.Transform;
+import starbeast3.core.ParallelMCMC;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 
 @Description("Run MCMC on different treelikelihood parts of the model in parallel before combining them in a single Gibbs move")
@@ -49,8 +50,8 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 		List<Distribution> distributions = distributionInput.get().pDistributions.get();
 		 
 		nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
-				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
-				BeastMCMC.m_nThreads;
+				Math.min(ProgramStatus.m_nThreads, maxNrOfThreadsInput.get()) : 
+				ProgramStatus.m_nThreads;
 		if (nrOfThreads > distributions.size()) {
 			nrOfThreads = distributions.size();
 		}

@@ -15,18 +15,21 @@ package starbeast3;
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.app.beauti.BeautiDoc;
-import beast.core.BEASTInterface;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.branchratemodel.BranchRateModel;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import genekernel.GTKPointerTree;
-import genekernel.GTKPrior;
+import beastfx.app.inputeditor.BeautiDoc;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.inference.CalculationNode;
+import beast.base.inference.StateNode;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.core.Log;
+import beast.base.evolution.branchratemodel.BranchRateModel;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 import starbeast3.evolution.branchratemodel.SharedSpeciesClockModel;
+import starbeast3.genekernel.GTKPointerTree;
+import starbeast3.genekernel.GTKPrior;
 
 public class StarBeast3Clock extends BranchRateModel.Base {
 	
@@ -49,7 +52,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     GTKPrior kernel;
     GTKPointerTree pointer;
     
-    protected RealParameter meanRate;
+    protected Function meanRate;
     BranchRateModelSB3 speciesTreeRatesX;
     GeneTreeForSpeciesTreeDistribution geneTree;
     
@@ -130,7 +133,6 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     	else {
     		return this.geneTree;
     	}
-    	
     }
     
 
@@ -138,14 +140,17 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     public boolean requiresRecalculation() {
     	
     	
-    	if (speciesTreeRatesInput.get() != null && speciesTreeRatesInput.isDirty()) {
+    	if (speciesTreeRatesInput.get() != null && speciesTreeRatesInput.get() instanceof CalculationNode && ((CalculationNode)speciesTreeRatesInput.get()).isDirtyCalculation()) {
     		needsUpdate = true;
-        }else if (sharedRateModelInput != null && sharedRateModelInput.isDirty()) {
+        }else if (sharedRateModelInput != null && sharedRateModelInput.get().isDirtyCalculation()) {
         	needsUpdate = true;
         }
-        needsUpdate = needsUpdate || meanRateInput.isDirty();
+    	if (meanRateInput.get() instanceof StateNode) {
+    		needsUpdate = needsUpdate || ((StateNode)meanRateInput.get()).isDirtyCalculation();
+    	}
+        
         if (this.kernel == null) needsUpdate = needsUpdate || this.geneTree.isDirtyCalculation();
-        else needsUpdate = needsUpdate || geneTreeKernelPriorInput.isDirty() || geneTreePointerInput.isDirty();
+        else needsUpdate = needsUpdate || geneTreeKernelPriorInput.get().isDirtyCalculation() || geneTreePointerInput.get().isDirtyCalculation();
         
         return needsUpdate;
     }
@@ -166,7 +171,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
 
     protected void update() {
     	geneTree = this.getGeneTreePrior();
-        final double geneTreeRate = meanRate.getValue();
+        final double geneTreeRate = meanRate.getArrayValue();
         final double[] speciesTreeRates = speciesTreeRatesX.getRatesArray();
         final double[] speciesOccupancy = geneTree.getSpeciesOccupancy();
 
@@ -216,7 +221,11 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     				//first=false;
     				//clock.meanRateInput.get().isEstimatedInput.set(false);
     			//}else {
-    				clock.meanRateInput.get().isEstimatedInput.set(true);
+    				if (clock.meanRateInput.get() instanceof StateNode) {
+    					StateNode rp = (StateNode)clock.meanRateInput.get();
+    					rp.isEstimatedInput.set(true);
+    				}
+    				
     			//}
     			
     			

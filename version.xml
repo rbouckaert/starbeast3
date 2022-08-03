@@ -1,6 +1,73 @@
-<package name='starbeast3' version='1.0.5'>
-	<depends on='beast2' atleast='2.6.0'/>
-	<depends on='BEASTLabs' atleast='1.9.7'/>
-	<depends on='ORC' atleast='1.0.3'/>
-	<depends on="SA" atleast="2.0.0"/>
+<package name='starbeast3' version='1.1.0'>
+	<depends on='BEAST.base' atleast='2.7.0'/>
+	<depends on='BEAST.app' atleast='2.7.0'/>
+	<depends on='BEASTLabs' atleast='2.0.0'/>
+	<depends on='ORC' atleast='1.0.4'/>
+	<!--<depends on="SA" atleast="2.0.0"/> Will add this back when SA is compatible with beast 2.7-->
+
+
+
+
+    <service type="beast.base.core.BEASTInterface">
+        <provider classname="starbeast3.app.beauti.StarBeastAlignmentProvider3"/>
+        <provider classname="starbeast3.core.DirectSimulator"/>
+        <provider classname="starbeast3.core.MCMCsb3"/>
+        <provider classname="starbeast3.core.OperatorScheduleRecalculator"/>
+        <provider classname="starbeast3.core.ParallelMCMC"/>
+        <provider classname="starbeast3.core.SampleGeneTreeTopologyCount"/>
+        <provider classname="starbeast3.core.SampleTimeLog"/>
+        <provider classname="starbeast3.evolution.branchratemodel.RandomLocalClockModelSB3"/>
+        <provider classname="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel"/>
+        <provider classname="starbeast3.evolution.branchratemodel.StrictClockModelSB3"/>
+        <provider classname="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3"/>
+        <provider classname="starbeast3.evolution.speciation.ConstantPopulations"/>
+        <provider classname="starbeast3.evolution.tree.BranchLengthLogger"/>
+        <provider classname="starbeast3.genekernel.GeneTreeKernel"/>
+        <provider classname="starbeast3.genekernel.GTKGeneTree"/>
+        <provider classname="starbeast3.genekernel.GTKPointerTree"/>
+        <provider classname="starbeast3.genekernel.GTKPrior"/>
+        <provider classname="starbeast3.GeneTreeForSpeciesTreeDistribution"/>
+        <provider classname="starbeast3.GeneTreeLogger"/>
+        <provider classname="starbeast3.inference.ShortChainsMCMC"/>
+        <provider classname="starbeast3.inference.ShortMCMC"/>
+        <provider classname="starbeast3.inference.ShortMCMCLogger"/>
+        <provider classname="starbeast3.math.distributions.InverseGamma"/>
+        <provider classname="starbeast3.operators.AVMNCubeOperator"/>
+        <provider classname="starbeast3.operators.BactrianSubtreeSlide"/>
+        <provider classname="starbeast3.operators.BactrianTreeScaleOperator"/>
+        <provider classname="starbeast3.operators.BactrianUpDownOperator"/>
+        <provider classname="starbeast3.operators.ConstantDistanceOperatorSpeciesTree"/>
+        <provider classname="starbeast3.operators.CoordinatedExchangeRates"/>
+        <provider classname="starbeast3.operators.CoordinatedExponential"/>
+        <provider classname="starbeast3.operators.CoordinatedUniform"/>
+        <provider classname="starbeast3.operators.DiscreteRateCycle"/>
+        <provider classname="starbeast3.operators.DiscreteRateUniform"/>
+        <provider classname="starbeast3.operators.EpochOperator"/>
+        <provider classname="starbeast3.operators.Exchange"/>
+        <provider classname="starbeast3.operators.FixedHeightSubtreePruneRegraftOperator"/>
+        <provider classname="starbeast3.operators.GTKExpander"/>
+        <provider classname="starbeast3.operators.MultiStepOperatorSchedule"/>
+        <provider classname="starbeast3.operators.NEROperator_dAE_dBE_dCE"/>
+        <provider classname="starbeast3.operators.NodeReheight2"/>
+        <provider classname="starbeast3.operators.ParallelDistSet"/>
+        <provider classname="starbeast3.operators.ParallelMCMCRealParameterOperator"/>
+        <provider classname="starbeast3.operators.ParallelMCMCTreeOperator"/>
+        <provider classname="starbeast3.operators.ParallelMCMCTreeOperatorTreeDistribution"/>
+        <provider classname="starbeast3.operators.PopSizeGibbsSampler"/>
+        <provider classname="starbeast3.operators.RealCycle"/>
+        <provider classname="starbeast3.operators.SubtreeSlide"/>
+        <provider classname="starbeast3.operators.TreeScaleOperator"/>
+        <provider classname="starbeast3.operators.Uniform"/>
+        <provider classname="starbeast3.operators.WilsonBalding"/>
+        <provider classname="starbeast3.SpeciesTree"/>
+        <provider classname="starbeast3.SpeciesTreeLogger"/>
+        <provider classname="starbeast3.SpeciesTreePrior"/>
+        <provider classname="starbeast3.StarBeast3Clock"/>
+        <provider classname="starbeast3.StarBeastStartState"/>
+        <provider classname="starbeast3.tree.BinaryNode"/>
+        <provider classname="starbeast3.tree.BinaryTree"/>
+    </service>
+
+
+
 </package>

@@ -1,16 +1,16 @@
 package starbeast3.operators;
 
-import beast.app.beauti.Beauti;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Operator;
-import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.Node;
-import beast.util.Randomizer;
-import genekernel.GTKOperator;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.Operator;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.Node;
+import beast.base.util.Randomizer;
+import beastfx.app.beauti.Beauti;
 import starbeast3.SpeciesTree;
+import starbeast3.genekernel.GTKOperator;
 
 import java.util.List;
 

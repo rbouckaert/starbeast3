@@ -1,4 +1,4 @@
-package beast.app.beauti;
+package starbeast3.app.beauti;
 
 import java.awt.*;
 import java.text.DateFormat;
@@ -20,12 +20,14 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import beast.app.draw.BEASTObjectInputEditor;
-import beast.core.BEASTInterface;
-import beast.core.Input;
-import beast.core.util.Log;
-import beast.evolution.alignment.Taxon;
-import beast.evolution.tree.TraitSet;
+import beastfx.app.inputeditor.BEASTObjectInputEditor;
+import beastfx.app.inputeditor.BeautiDoc;
+import beastfx.app.inputeditor.GuessPatternDialog;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Input;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.evolution.tree.TraitSet;
 import starbeast3.SpeciesTree;
 
 public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
@@ -105,7 +107,7 @@ public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
                 box.add(createButtonBox());
                 box.add(createListBox());
             }
-            add(box);
+           // TEMPIRARILY COMMENTING OUT UNTIL COMPATIBLE WITH FX  add(box);
         }
     } // init
 

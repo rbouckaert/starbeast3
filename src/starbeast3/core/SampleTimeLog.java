@@ -4,13 +4,13 @@ import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import beast.core.CalculationNode;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.Loggable;
-import beast.core.Operator;
-import beast.core.OperatorSchedule;
-import beast.core.util.Log;
+import beast.base.inference.CalculationNode;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.core.Loggable;
+import beast.base.inference.Operator;
+import beast.base.inference.OperatorSchedule;
+import beast.base.core.Log;
 import starbeast3.operators.MultiStepOperator;
 
 public class SampleTimeLog extends CalculationNode implements Loggable, Function {

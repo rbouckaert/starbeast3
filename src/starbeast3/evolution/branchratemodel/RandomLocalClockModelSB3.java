@@ -6,13 +6,13 @@
 
 package starbeast3.evolution.branchratemodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.BooleanParameter;
-import beast.core.parameter.RealParameter;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.TreeInterface;
-import beast.evolution.branchratemodel.BranchRateModel;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.parameter.BooleanParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.evolution.branchratemodel.BranchRateModel;
 
 
 @Description("Based on RandomLocalClockModel in BEAST v2.4")
@@ -112,11 +112,10 @@ public class RandomLocalClockModelSB3 extends BranchRateModel.Base implements Br
         final double treeHeight = treeRoot.getHeight();
 
         double estimatedMean;
-        final RealParameter estimatedMeanParameter = meanRateInput.get();
-        if (estimatedMeanParameter == null) {
+        if (meanRateInput.get() == null) {
             estimatedMean = 1.0;
         } else {
-            estimatedMean = estimatedMeanParameter.getValue();
+            estimatedMean = meanRateInput.get().getArrayValue();
         }
 
         ratesArray[rootNodeNumber] = estimatedMean;

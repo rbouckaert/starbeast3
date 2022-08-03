@@ -3,8 +3,8 @@ package starbeast3.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 
 
 /** node in a binary tree **/

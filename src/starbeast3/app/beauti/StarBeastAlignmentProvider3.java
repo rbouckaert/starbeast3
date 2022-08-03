@@ -1,10 +1,12 @@
-package beast.app.beauti;
+package starbeast3.app.beauti;
 
 import java.io.File;
 import java.util.List;
 
-import beast.core.BEASTInterface;
-import beast.evolution.operators.DeltaExchangeOperator;
+import beast.base.core.BEASTInterface;
+import beast.base.inference.operator.DeltaExchangeOperator;
+import beastfx.app.inputeditor.BeautiAlignmentProvider;
+import beastfx.app.inputeditor.BeautiDoc;
 
 public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 
@@ -14,7 +16,7 @@ public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 		final int alignmentCount = newAlignments.size();
 
 		doc.autoSetClockRate = true;
-		doc.beauti.autoSetClockRate.setSelected(true);
+		doc.beauti.get_autoSetClockRate().setSelected(true);
 		doc.autoUpdateFixMeanSubstRate = false;
 
 		System.out.println(String.format("N_ALIGNMENTS = %d", doc.alignments.size()));

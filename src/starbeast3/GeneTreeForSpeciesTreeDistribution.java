@@ -9,22 +9,22 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-import beast.app.beauti.Beauti;
-import beast.core.Description;
-import beast.core.Distribution;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.State;
-import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.alignment.Taxon;
-import beast.evolution.alignment.TaxonSet;
+import beast.base.core.Description;
+import beast.base.inference.Distribution;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.State;
+import beast.base.inference.parameter.RealParameter;
+import beastfx.app.beauti.Beauti;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.evolution.alignment.TaxonSet;
 import starbeast3.SpeciesTreePrior;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.evolution.tree.TreeDistribution;
-import beast.evolution.tree.TreeInterface;
-import beast.evolution.tree.coalescent.TreeIntervals;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeDistribution;
+import beast.base.evolution.tree.TreeInterface;
+import beast.base.evolution.tree.TreeIntervals;
 import starbeast3.evolution.speciation.PopulationModel;
 
 

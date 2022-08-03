@@ -1,10 +1,14 @@
-package beast.core;
+package starbeast3.core;
 
 import java.io.IOException;
 
-import beast.core.util.Evaluator;
-import beast.core.util.Log;
-import beast.util.Randomizer;
+import beast.base.inference.Distribution;
+import beast.base.inference.Evaluator;
+import beast.base.inference.MCMC;
+import beast.base.inference.Operator;
+import beast.base.core.Description;
+import beast.base.core.Log;
+import beast.base.util.Randomizer;
 import starbeast3.operators.MultiStepOperator;
 import starbeast3.operators.MultiStepOperatorSchedule;
 

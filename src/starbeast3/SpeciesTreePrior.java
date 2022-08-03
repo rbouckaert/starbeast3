@@ -6,16 +6,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.State;
-import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.TreeDistribution;
-import beast.math.distributions.Gamma;
-import beast.math.distributions.InverseGamma;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.State;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.TreeDistribution;
+import beast.base.inference.distribution.Gamma;
+import beast.base.inference.distribution.InverseGamma;
 import starbeast3.evolution.speciation.PopulationModel;
 
 

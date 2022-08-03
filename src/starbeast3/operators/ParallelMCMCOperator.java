@@ -7,15 +7,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
-import beast.app.BeastMCMC;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.MCMC;
-import beast.core.Operator;
-import beast.core.ParallelMCMC;
-import beast.core.State;
-import beast.core.StateNode;
-import beast.core.util.Log;
+import beastfx.app.beast.BeastMCMC;
+import starbeast3.core.ParallelMCMC;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.MCMC;
+import beast.base.inference.Operator;
+import beast.base.inference.State;
+import beast.base.inference.StateNode;
+import beast.base.core.Log;
 
 @Description("Run MCMC on different parts of the model in parallel before combining them in a single Gibbs move")
 public class ParallelMCMCOperator {
@@ -42,8 +42,8 @@ extends Operator implements MultiStepOperator {
 	public void initAndValidate() {
 		mcmcs = mcmcInput.get();
 		int nrOfThreads = maxNrOfThreadsInput.get() > 0 ? 
-				Math.min(BeastMCMC.m_nThreads, maxNrOfThreadsInput.get()) : 
-				BeastMCMC.m_nThreads;
+				Math.min(ProgramStatus.m_nThreads, maxNrOfThreadsInput.get()) : 
+				ProgramStatus.m_nThreads;
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
 	    otherState = otherStateInput.get();
 	    for (ParallelMCMC pMCMC : mcmcs) {
