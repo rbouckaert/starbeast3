@@ -206,36 +206,6 @@ public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
         table.setRowHeight(24 * fontsize / 13);
         scrollPane = new JScrollPane(table);
 
-// AJD: This ComponentListener breaks the resizing of the tip dates table, so I have removed it.
-//        scrollPane.addComponentListener(new ComponentListener() {
-//            @Override
-//            public void componentShown(ComponentEvent e) {}
-//
-//            @Override
-//            public void componentResized(ComponentEvent e) {
-//                Component c = (Component) e.getSource();
-//                while (c.getParent() != null && !(c.getParent() instanceof JSplitPane)) {
-//                    c = c.getParent();
-//                }
-//                if (c.getParent() != null) {
-//                    Dimension preferredSize = c.getSize();
-//                    preferredSize.height = Math.max(preferredSize.height - 170, 0);
-//                    preferredSize.width = Math.max(preferredSize.width - 25, 0);
-//                    scrollPane.setPreferredSize(preferredSize);
-//                } else if (doc.getFrame() != null) {
-//                    Dimension preferredSize = doc.getFrame().getSize();
-//                    preferredSize.height = Math.max(preferredSize.height - 170, 0);
-//                    preferredSize.width = Math.max(preferredSize.width - 25, 0);
-//                    scrollPane.setPreferredSize(preferredSize);
-//                }
-//            }
-//
-//            @Override
-//            public void componentMoved(ComponentEvent e) {}
-//
-//            @Override
-//            public void componentHidden(ComponentEvent e) {}
-//        });
 
         return scrollPane;
     } // createListBox

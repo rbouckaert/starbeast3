@@ -22,8 +22,6 @@ public class StarBeastAlignmentProvider3 extends BeautiAlignmentProvider {
 		System.out.println(String.format("N_ALIGNMENTS = %d", doc.alignments.size()));
 		
 		
-		
-		
 		// initialize delta exchange operator in order to increase weight to something more sensible
 		DeltaExchangeOperator operator = (DeltaExchangeOperator) doc.pluginmap.get("FixMeanMutationRatesOperator");
 		if (operator == null) {

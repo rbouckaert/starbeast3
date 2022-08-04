@@ -216,10 +216,10 @@
 
 
 				<log id="TreeStat.t:$(n)" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree.t:$(n)"/>
-				<log id="TreeDistanceNJ.t:$(n)" metric="RNNI" spec="beast.base.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
+				<log id="TreeDistanceNJ.t:$(n)" metric="RNNI" spec="beastlabs.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
 					<ref clusterType="neighborjoining" spec="beast.base.evolution.tree.ClusterTree" taxa="@$(n)"/>
 				</log>
-				<log id="TreeDistanceUPGMA.t:$(n)" metric="RNNI" spec="beast.base.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
+				<log id="TreeDistanceUPGMA.t:$(n)" metric="RNNI" spec="beastlabs.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
 					<ref clusterType="upgma" spec="beast.base.evolution.tree.ClusterTree" taxa="@$(n)"/>
 				</log>
 
