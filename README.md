@@ -1,10 +1,8 @@
 
+
 # StarBeast3
 
-[BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators.
-
-
-Also see the StarBeast3  [blog post](https://www.beast2.org/2022/03/31/starbeast3.html)
+[BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators. Also see StarBeast3  [blog post](https://www.beast2.org/2022/03/31/starbeast3.html).
 
 
 This repository is currently being migrated to BEAST 2.7. Please see the v2.6 branch for compatability with BEAST 2.6.
@@ -66,13 +64,10 @@ The species tree `Clock.rate` can also be estimated (`Mode => uncheck Automatic 
 This model assumes that the birth rate is greater than the death rate, and therefore the species is not going extinct. If ExtinctionFraction is 0, then it is equivalent to the Yule model.
 
 
--- **FBDModel**. Birth death model, but with fossil data included. See tutorial [here](https://www.beast2.org/divergence-dating-with-sampled-ancestors-fbd-model/) for further details.
-
-
 -- **Yule skyline collapse.** A species boundary detection method, built on top of the Yule model. See [speedemon](https://github.com/rbouckaert/speedemon) package for further details.
 
 
-Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article), and the `clockRates` are the relative subsitution rate of each gene tree. By default, these are log-normal distributions with a small variance and a mean of 1, to avoid interference with tree height estimation. 
+Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article), and the `clockRates` are the relative subsitution rate of each gene tree. By default, these are log-normal distributions with a small variance and a mean of 1, to avoid interference with tree height estimation, and the clock rate of the first partition is fixed at 1. 
 
 8. Save the XML template using `File/Save`
 
@@ -105,16 +100,15 @@ The runtime performance of StarBeast3 benefits from its ability to parallelise i
 
 From a performance perspective, we therefore recommend the user only link (site and clock) models when there is good reason.  
 
+
 ### Clock model
-By default, each gene tree is associated with its own clock rate, and these rates have a prior distribution with a mean of 1. The substitution rate of a branch in a gene tree is equal to its clock rate multiplied by the clock rate of the species tree (configured in the "Clock Model" tab). This model works quite well and accounts for different genetic loci being exposed to unique selective pressures. When there are many genes trees, the clock rate estimates average out to ~1.0, and therefore are able to be estimated without affecting the estimated species tree height. 
+By default, each gene tree is associated with its own clock rate, and these rates have a prior distribution with a mean of 1 (except for the first partition which is fixed at 1). The substitution rate of a branch in a gene tree is equal to its clock rate multiplied by the clock rate of the species tree (configured in the "Clock Model" tab). This model works quite well and accounts for different genetic loci being exposed to unique selective pressures. When there are many genes trees, the clock rate estimates average out to ~1.0, and therefore are able to be estimated without affecting the estimated species tree height. 
 
-If gene tree clock models are linked, then they will share their clock rate. If **all** clock models are linked, then all gene trees will share the same clock rate, and this will likely introduce convergence issues, because the parameter is non-identifiable with the tree heights. We therefore advise against linking all clock models. 
-
-
+If gene tree clock models are linked, then they will share their clock rate. However, as discussed above, excessive linking can hamper parallelisation performance and lead to slightly longer convergence times.
 
 ### Site model
 
-If the site model is linked, then multiple gene trees will share a site model (and its parameters). This simplification may be preferred in some cases, however, as discussed above, excessive linking can also hamper parallelisation performance and lead to slightly longer convergence times.
+If the site model is linked, then multiple gene trees will share a site model (and its parameters). This simplification may be preferred in some cases, however, as discussed above, excessive linking can also lead to slightly longer convergence times.
 
 
 ### Tree model
