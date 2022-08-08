@@ -445,6 +445,9 @@ ClusterTree/clusterType//'>
 			<mergepoint id="aux-sb3-partitiontemplate"/>
 
 
+			<connect method="starbeast3.evolution.branchratemodel.StarBeast3Clock.estimateGeneClockRates" />
+
+
 			
 			
 			

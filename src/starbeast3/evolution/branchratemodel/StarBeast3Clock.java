@@ -12,16 +12,18 @@
 package starbeast3.evolution.branchratemodel;
 
 
-import java.util.ArrayList;
-import java.util.List;
 
 import beastfx.app.inputeditor.BeautiDoc;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import beast.base.core.BEASTInterface;
 import beast.base.core.Function;
 import beast.base.core.Input;
-import beast.base.inference.CalculationNode;
 import beast.base.inference.StateNode;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.inference.util.InputUtil;
 import beast.base.core.Log;
 import beast.base.evolution.branchratemodel.BranchRateModel;
@@ -205,6 +207,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     public static void estimateGeneClockRates(BeautiDoc doc) {
     	
     	
+    	
     	boolean first = true;
     	for (String str : doc.pluginmap.keySet()) {
     		
@@ -212,18 +215,26 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     		BEASTInterface obj = doc.pluginmap.get(str);
     		if (obj instanceof StarBeast3Clock) {
     			
-    			// Get the clock rate
     			StarBeast3Clock clock = (StarBeast3Clock)obj;
-    			//if (first) {
-    				//first=false;
-    				//clock.meanRateInput.get().isEstimatedInput.set(false);
-    			//}else {
-    				if (clock.meanRateInput.get() instanceof StateNode) {
-    					StateNode rp = (StateNode)clock.meanRateInput.get();
-    					//rp.isEstimatedInput.set(true);
-    				}
+    			if (clock.meanRateInput.get() != null && clock.meanRateInput.get() instanceof StateNode) {
+					
+    				StateNode rp = (StateNode)clock.meanRateInput.get();
     				
-    			//}
+    				//rp.isEstimatedInput.set(true);
+    				
+    				
+    				// Get the clock rate
+        			if (first) {
+        				first=false;
+        				rp.isEstimatedInput.set(false);
+        			}else {
+    					rp.isEstimatedInput.set(true);
+        			}
+    				
+    				
+				}
+    			
+    			
     			
     			
     		}
