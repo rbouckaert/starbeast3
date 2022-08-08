@@ -14,8 +14,10 @@ import org.apache.commons.math.distribution.NormalDistribution;
 import org.apache.commons.math.distribution.NormalDistributionImpl;
 
 import beast.base.core.Input;
+import beast.base.core.Log;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.util.InputUtil;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.TreeInterface;
 import beast.base.inference.StateNode;
@@ -297,13 +299,16 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
         	binRatesNeedsUpdate = true;
         }
 
-        if (meanRateInput.get() instanceof StateNode) {
-        	needsUpdate = ((StateNode)meanRateInput.get()).isDirtyCalculation();
-        }
-        needsUpdate = needsUpdate || binRatesNeedsUpdate || 
-        				(mode == Mode.categories && discreteRatesInput.get().isDirtyCalculation()) ||
-        				(mode == Mode.rates && realRatesInput.get().isDirtyCalculation()) ||
-        				(mode == Mode.quantiles && quantilesInput.get().isDirtyCalculation());
+       
+        needsUpdate = binRatesNeedsUpdate || InputUtil.isDirty(meanRateInput) ||
+        				(mode == Mode.categories && InputUtil.isDirty(discreteRatesInput)) ||
+        				(mode == Mode.rates && InputUtil.isDirty(realRatesInput)) ||
+        				(mode == Mode.quantiles && InputUtil.isDirty(quantilesInput));
+        
+        
+        
+        //Log.warning("checking " + (mode == Mode.rates) + "&&" + InputUtil.isDirty(realRatesInput) + "&&" + realRatesInput.get().isDirtyCalculation() );
+        
         
         return needsUpdate;
     }
@@ -518,12 +523,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
             }
         }
         
-        //final double M = Math.log(MEAN_CLOCK_RATE) - (0.5 * currentLogNormalStdev * currentLogNormalStdev);
-        //System.out.println(quantileDistribution + " q1 = " + quantiles.getValue(0) +  " r1 = " + ratesArray[0]);
-        //for (int i = 0; i < ratesArray.length; i ++) {
-        	//System.out.print(ratesArray[i] + "\t");
-        //}
-        //System.out.println("");
+
 
         return ratesArray;
     }
@@ -537,7 +537,6 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
                 needsUpdate = false;
             }
         }
-        
 
         assert ratesArray[node.getNr()] > 0.0;
         return ratesArray[node.getNr()];

@@ -1,4 +1,4 @@
-package starbeast3;
+package starbeast3.evolution.speciation;
 
 
 
@@ -16,16 +16,13 @@ import beast.base.core.Input.Validate;
 import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
 import beastfx.app.beauti.Beauti;
-import beast.base.core.Log;
 import beast.base.evolution.alignment.Taxon;
 import beast.base.evolution.alignment.TaxonSet;
-import starbeast3.SpeciesTreePrior;
+import starbeast3.tree.SpeciesTree;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
-import beast.base.evolution.tree.TreeDistribution;
 import beast.base.evolution.tree.TreeInterface;
 import beast.base.evolution.tree.TreeIntervals;
-import starbeast3.evolution.speciation.PopulationModel;
 
 
 

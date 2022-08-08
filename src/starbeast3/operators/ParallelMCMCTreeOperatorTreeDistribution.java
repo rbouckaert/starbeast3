@@ -7,10 +7,10 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.parameter.RealParameter;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import beast.base.evolution.likelihood.GenericTreeLikelihood;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
 
 @Description("Distribution on a tree conditinionally independent from all other distributions given the state of the rest of parameter space")
 public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {

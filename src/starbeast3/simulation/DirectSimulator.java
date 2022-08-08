@@ -1,4 +1,4 @@
-package starbeast3.core;
+package starbeast3.simulation;
 
 import beast.base.core.BEASTInterface;
 import beast.base.core.Description;

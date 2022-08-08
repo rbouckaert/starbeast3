@@ -1,4 +1,4 @@
-package starbeast3.evolution.tree;
+package starbeast3.tree;
 
 
 

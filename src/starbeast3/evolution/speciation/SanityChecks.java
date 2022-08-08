@@ -5,14 +5,14 @@
  */
 
 
-package starbeast3;
+package starbeast3.evolution.speciation;
 
 import java.util.List;
 
 import beast.base.evolution.tree.Node;
 
 final class SanityChecks {
-    protected static boolean checkTreeSanity(Node node) {
+    public static boolean checkTreeSanity(Node node) {
         final double nodeHeight = node.getHeight();
         final List<Node> children = node.getChildren();
         assert children.size() == 2;

@@ -20,10 +20,10 @@ import beast.base.evolution.alignment.TaxonSet;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.util.Randomizer;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
-import starbeast3.SpeciesTree;
-import starbeast3.SpeciesTreePrior;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.evolution.speciation.PopulationModel;
+import starbeast3.evolution.speciation.SpeciesTreePrior;
+import starbeast3.tree.SpeciesTree;
 
 public class GTKPrior extends Distribution {
 

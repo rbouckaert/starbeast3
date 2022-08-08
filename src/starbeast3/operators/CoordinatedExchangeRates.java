@@ -17,7 +17,7 @@ import beast.base.util.Randomizer;
 import orc.consoperators.ConsOperatorUtils;
 import orc.consoperators.InConstantDistanceOperator;
 import orc.consoperators.PiecewiseLinearDistribution;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.genekernel.GTKPrior;
 
 

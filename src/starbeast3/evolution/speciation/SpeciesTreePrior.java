@@ -1,4 +1,4 @@
-package starbeast3;
+package starbeast3.evolution.speciation;
 
 
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.TreeDistribution;
 import beast.base.inference.distribution.Gamma;
 import beast.base.inference.distribution.InverseGamma;
-import starbeast3.evolution.speciation.PopulationModel;
 
 
 

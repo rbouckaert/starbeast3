@@ -4,6 +4,7 @@ import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.inference.StateNode;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.util.InputUtil;
 import beast.base.evolution.branchratemodel.BranchRateModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.TreeInterface;
@@ -43,11 +44,7 @@ public class StrictClockModelSB3 extends BranchRateModel.Base implements BranchR
     public boolean requiresRecalculation() {
     	if (muParameter == null) return false;
     	mu = muParameter.getArrayValue();
-    	if (muParameter instanceof StateNode) {
-    		return ((StateNode)muParameter).isDirtyCalculation();
-    	}
-    	return false;
-    	
+    	return InputUtil.isDirty(meanRateInput);
     }
     
     @Override

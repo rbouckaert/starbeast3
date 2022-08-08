@@ -29,8 +29,8 @@ import beast.base.inference.operator.kernel.BactrianDeltaExchangeOperator;
 import beast.base.inference.operator.kernel.BactrianIntervalOperator;
 import beast.base.inference.operator.kernel.BactrianRandomWalkOperator;
 import beast.base.inference.operator.kernel.Transform;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.core.ParallelMCMC;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 
 @Description("Run MCMC on different gene tree parts of the model in parallel before combining them in a single Gibbs move")
 public class ParallelMCMCTreeOperator extends MultiStepOperator {

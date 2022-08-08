@@ -10,7 +10,11 @@
 
 
 		<!-- Strict clock -->
-        <subtemplate id='SpeciesTreeStrictClock' class='starbeast3.evolution.branchratemodel.StrictClockModelSB3' mainid='strictClockModel.$(n)'>
+        <subtemplate id='SpeciesTreeStrictClock' class='starbeast3.evolution.branchratemodel.StrictClockModelSB3' mainid='strictClockModel.$(n)'
+        	 hmc='SB3StrictClockPrior/index/=Priors/ClockPrior/,
+        	 			strictClockModel/clock.rate/=StrictClock/clock.rate/,
+                        strictClockRateScaler/index/=Operators/BactrianRateScaler/index/,
+                        updown.all/index/=Operators/BactrianUpDown/index/'>
             <![CDATA[
 
 				<plugin id="strictClockModel.$(n)" tree="@Tree.t:$(n)" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
@@ -46,7 +50,9 @@
 		
 		
 		 <!-- Relaxed clock -->
-        <subtemplate id='SpeciesTreeRelaxedClock' class='starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3' mainid='relaxedClockModel.$(n)'>
+        <subtemplate id='SpeciesTreeRelaxedClock' class='starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3' mainid='relaxedClockModel.$(n)'
+        	hmc='relaxedClockModel/clock.rate/=StrictClock/clock.rate,
+                     SB3RelaxedClockPrior/index/=Priors/ClockPrior/'>
          
             <![CDATA[
 

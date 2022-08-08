@@ -11,7 +11,7 @@ import beast.base.inference.operator.kernel.KernelDistribution;
 import beast.base.evolution.tree.Tree;
 import beast.base.util.Randomizer;
 import beastfx.app.beauti.Beauti;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 
 
 /**

@@ -1,4 +1,4 @@
-package starbeast3;
+package starbeast3.tree;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

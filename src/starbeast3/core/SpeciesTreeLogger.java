@@ -1,4 +1,4 @@
-package starbeast3;
+package starbeast3.core;
 
 
 import java.io.PrintStream;
@@ -13,6 +13,7 @@ import beast.base.core.Input.Validate;
 import beast.base.core.Loggable;
 import beast.base.inference.StateNode;
 import beast.base.inference.parameter.Parameter;
+import starbeast3.evolution.speciation.SpeciesTreePrior;
 import beast.base.evolution.speciation.TreeTopFinder;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;

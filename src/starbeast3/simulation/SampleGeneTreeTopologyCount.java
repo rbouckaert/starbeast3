@@ -1,4 +1,4 @@
-package starbeast3.core;
+package starbeast3.simulation;
 
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import beast.base.inference.parameter.IntegerParameter;
 import beastfx.app.util.OutFile;
 import beast.base.core.Log;
 import beast.base.evolution.tree.Tree;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.util.TreeTopologySerialiser;
 
 /**

@@ -8,8 +8,8 @@ import beast.base.inference.CalculationNode;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.parameter.RealParameter;
+import starbeast3.tree.SpeciesTree;
 import beast.base.evolution.tree.Node;
-import starbeast3.SpeciesTree;
 
 /**
 * @author Huw Ogilvie

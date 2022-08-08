@@ -9,7 +9,7 @@
  * Adapted by Jordan Douglas for starbeast3
  */
 
-package starbeast3;
+package starbeast3.evolution.branchratemodel;
 
 
 import java.util.ArrayList;
@@ -22,12 +22,12 @@ import beast.base.core.Input;
 import beast.base.inference.CalculationNode;
 import beast.base.inference.StateNode;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.util.InputUtil;
 import beast.base.core.Log;
 import beast.base.evolution.branchratemodel.BranchRateModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
-import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
-import starbeast3.evolution.branchratemodel.SharedSpeciesClockModel;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.genekernel.GTKPointerTree;
 import starbeast3.genekernel.GTKPrior;
 
@@ -140,17 +140,14 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     public boolean requiresRecalculation() {
     	
     	
-    	if (speciesTreeRatesInput.get() != null && speciesTreeRatesInput.get() instanceof CalculationNode && ((CalculationNode)speciesTreeRatesInput.get()).isDirtyCalculation()) {
+    	if (speciesTreeRatesInput.get() != null && InputUtil.isDirty(speciesTreeRatesInput))  {
     		needsUpdate = true;
-        }else if (sharedRateModelInput != null && sharedRateModelInput.get().isDirtyCalculation()) {
+        }else if (sharedRateModelInput != null && InputUtil.isDirty(sharedRateModelInput)) {
         	needsUpdate = true;
         }
-    	if (meanRateInput.get() instanceof StateNode) {
-    		needsUpdate = needsUpdate || ((StateNode)meanRateInput.get()).isDirtyCalculation();
-    	}
-        
+        needsUpdate = needsUpdate || InputUtil.isDirty(meanRateInput);
         if (this.kernel == null) needsUpdate = needsUpdate || this.geneTree.isDirtyCalculation();
-        else needsUpdate = needsUpdate || geneTreeKernelPriorInput.get().isDirtyCalculation() || geneTreePointerInput.get().isDirtyCalculation();
+        else needsUpdate = needsUpdate || InputUtil.isDirty(geneTreeKernelPriorInput) || InputUtil.isDirty(geneTreePointerInput);
         
         return needsUpdate;
     }
@@ -223,7 +220,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     			//}else {
     				if (clock.meanRateInput.get() instanceof StateNode) {
     					StateNode rp = (StateNode)clock.meanRateInput.get();
-    					rp.isEstimatedInput.set(true);
+    					//rp.isEstimatedInput.set(true);
     				}
     				
     			//}

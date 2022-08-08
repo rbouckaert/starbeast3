@@ -6,7 +6,7 @@
     
 <map name="Beta">beast.base.inference.distribution.Beta</map>
 <map name="Exponential">beast.base.inference.distribution.Exponential</map>
-<map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
+<map name="InverseGamma">starbeast3.math.distributions.InverseGamma</map>
 <map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
 <map name="Gamma">beast.base.inference.distribution.Gamma</map>
 <map name="Uniform">beast.base.inference.distribution.Uniform</map>
@@ -106,22 +106,22 @@
 			starbeast3.RandomLocalRates.noCache,
 			starbeast3.ConstantPopulations.speciesTree,
 			starbeast3.LinearWithConstantRoot.speciesTree,			
-			starbeast3.GeneTreeForSpeciesTreeDistribution.useTipDates,
-			starbeast3.GeneTreeForSpeciesTreeDistribution.sampling,
-			starbeast3.GeneTreeForSpeciesTreeDistribution.tree,
-			starbeast3.GeneTreeForSpeciesTreeDistribution.populationModel,
-			starbeast3.GeneTreeForSpeciesTreeDistribution.speciesTree,
-			starbeast3.GeneTreeForSpeciesTreeDistribution.speciesTreePrior,
-			starbeast3.GeneTreeForSpeciesTreeDistribution.treeIntervals,
-			starbeast3.SpeciesTreePrior.popFunction,
-			starbeast3.SpeciesTreePrior.taxonset,
-			starbeast3.SpeciesTreePrior.popFunction,
-			starbeast3.SpeciesTreePrior.tree,
-			starbeast3.SpeciesTreePrior.treePrior,
-			starbeast3.SpeciesTreePrior.topPopSize,
-			starbeast3.SpeciesTreePrior.bottomPopSize,
-			starbeast3.SpeciesTreePrior.populationModel,
-			starbeast3.SpeciesTreePrior.treeIntervals,
+			starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution.useTipDates,
+			starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution.sampling,
+			starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution.tree,
+			starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution.populationModel,
+			starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution.speciesTree,
+			starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution.speciesTreePrior,
+			starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution.treeIntervals,
+			starbeast3.evolution.speciation.SpeciesTreePrior.popFunction,
+			starbeast3.evolution.speciation.SpeciesTreePrior.taxonset,
+			starbeast3.evolution.speciation.SpeciesTreePrior.popFunction,
+			starbeast3.evolution.speciation.SpeciesTreePrior.tree,
+			starbeast3.evolution.speciation.SpeciesTreePrior.treePrior,
+			starbeast3.evolution.speciation.SpeciesTreePrior.topPopSize,
+			starbeast3.evolution.speciation.SpeciesTreePrior.bottomPopSize,
+			starbeast3.evolution.speciation.SpeciesTreePrior.populationModel,
+			starbeast3.evolution.speciation.SpeciesTreePrior.treeIntervals,
 			starbeast3.evolution.branchratemodel.StrictClockModelSB3.tree,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.estimateRoot,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.noCache,
@@ -131,13 +131,95 @@
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.tree,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.nBins,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.distr"
-		buttonLabelMap="beast.app.beauti.BeautiInitDlg.&gt;&gt; details=Edit parameters">
+		buttonLabelMap="beast.app.beauti.BeautiInitDlg.&gt;&gt; details=Edit parameters"
+		hmc='BirthDeath/index/,
+popMean/index/=Priors/PopSizePrior/,
+treePrior/ploidy/index/,
+RandomTree/rootHeight/,
+RandomTree/adjustTreeNodeHeights/,
+StrictClock/clock.rate/,
+FrequenciesExchanger/weightvector/,
+FrequenciesExchanger/delta/,
+FrequenciesExchanger/integer/,
+FrequenciesExchanger/weight/,
+FrequenciesExchanger/autoOptimize/,
+BayesianSkyline/index/,
+ConstantPopulation0/popSize/,
+mcmc/numInitializationAttempts/,
+mcmc/preBurnin/,
+mcmc/storeEvery/,
+mcmc/operatorschedule/,
+mcmc/chainLength/,
+mcmc/sampleFromPrior/,
+tracelog/fileName/,
+tracelog/sort/,
+tracelog/sanitiseHeaders/,
+tracelog/logEvery/,
+tracelog/mode/,
+ExtendedBayesianSkyline/index/,
+CalibratedYuleModel/index/,
+treeLikelihood/siteModel/,
+treeLikelihood/branchRateModel/,
+OperatorSchedule/detailedRejection/,
+OperatorSchedule/autoOptimizeDelay/,
+OperatorSchedule/transform/,
+OperatorSchedule/weight/,
+OperatorSchedule/weightIsPercentage/,
+OperatorSchedule/autoOptimize/,
+screenlog/fileName/,
+screenlog/sort/,
+screenlog/sanitiseHeaders/,
+screenlog/logEvery/,
+screenlog/mode/,
+CoalescentExponential/index/,
+NewickTree/adjustTipHeights/,
+NewickTree/newick/,
+NewickTree/IsLabelledNewick/,
+NewickTree/adjustTreeNodeHeights/,
+NewickTree/offset/,
+NewickTree/threshold/,
+NewickTree/scale/,
+NewickTree/binarizeMultifurcations/,
+NewickTree/singlechild/,
+MarkovChainedPopSizes/reverse/,
+MarkovChainedPopSizes/parameter/,
+MarkovChainedPopSizes/uselog/,
+MarkovChainedPopSizes/jeffreys/,
+MarkovChainedPopSizes/shape/,
+MarkovChainedPopSizes/initialMean/,
+MarkovChainedPopSizes/useLogNormal/,
+StarBeast3/Operators/=Standard/Operators/,
+StarBeast3/Gene_Ploidy/,
+StarBeast3/Taxon_Sets/,
+StarBeast3/Priors/=Standard/Priors/,
+StarBeast3/Species_Clock_Model/,
+StarBeast3/MCMC/=Standard/MCMC/,
+StarBeast3/Partitions/=Standard/Partitions/,
+StarBeast3/Site_Model/=Standard/Site_Model/,
+StarBeast3/Initialization/=Standard/Initialization/,
+StarBeast3/Starting_tree/=Standard/Starting_tree/,
+speciationRate/estimate/,
+speciationRate/dimension/,
+speciationRate/lower/,
+speciationRate/minordimension/,
+speciationRate/keys/,
+speciationRate/upper/,
+treelog/fileName/,
+treelog/sort/,
+treelog/sanitiseHeaders/,
+treelog/logEvery/,
+treelog/mode/,
+CoalescentConstant/index/,
+YuleModel/index/,
+ClusterTree/clock.rate/,
+ClusterTree/adjustTreeNodeHeights/,
+ClusterTree/clusterType//'>
 
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Partitions" tiptext="Data Partitions" path="distribution/distribution[id='likelihood']/distribution/data" hasPartitions="none" icon="2220.pngx" forceExpansion="FALSE" type="beast.base.evolution.alignment.Alignment"/>
 		<mergepoint id="aux-sb3-partitions-panels"/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Taxon sets" tiptext="Specify taxon sets that make up species" path="operator[id='Reheight.t:Species']/taxonset" hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Taxon Sets" tiptext="Specify taxon sets that make up species" path="operator[id='Reheight.t:Species']/taxonset" hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
 
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Gene Ploidy" tiptext="The ploidy for each gene (locus)" path="distribution/distribution[id='speciescoalescent']/distribution" hasPartitions="none" icon="2.pngx" forceExpansion="TRUE"/>
@@ -147,7 +229,7 @@
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Site Model" tiptext="Site model and substitution model specifications" path="siteModel" hasPartitions="SiteModel" icon="3.pngx" forceExpansion="TRUE"/>
 		<mergepoint id="aux-sb3-sitemodel-panels"/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Clock Model" icon='4.png.x' tiptext="Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
 		<mergepoint id='aux-sb3-clockmodel-panels'/>
 		
 
@@ -178,7 +260,7 @@
 				</tree>
 
 
-				<distribution id="treePrior.t:$(n)" spec="starbeast3.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" populationModel="@speciesTreePopulationModel" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:$(n)"/>
+				<distribution id="treePrior.t:$(n)" spec="starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" populationModel="@speciesTreePopulationModel" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:$(n)"/>
 			
 				<logger id='treelog.t:$(n)' spec='beast.base.inference.Logger' logEvery="10000" fileName="$(tree).trees" mode='tree'>
 					<log id='TreeWithMetaDataLogger.t:$(n)' spec='beast.base.evolution.TreeWithMetaDataLogger' tree='@Tree.t:$(n)'>
@@ -207,7 +289,7 @@
 				<plugin data="@$(n)" id="treeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:$(n)">
 					
 					<siteModel idref="SiteModel.s:$(n)"/>
-					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" tree="@Tree.t:$(n)">
+					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.evolution.branchratemodel.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" tree="@Tree.t:$(n)">
 						<clock.rate idref="clockRate.c:$(n)" />
 					</branchRateModel>
 	
@@ -363,12 +445,12 @@
 			<mergepoint id="aux-sb3-partitiontemplate"/>
 
 
-			<connect method="starbeast3.StarBeast3Clock.estimateGeneClockRates" />
 			
 			
 			
 		</partitiontemplate>
 
+		
 		<mergepoint id="sb3SubstModelTemplates"/>
 		<mergepoint id="sb3ClockModelTemplates"/>
 		<mergepoint id="sb3TreePriorTemplates"/>
@@ -392,7 +474,7 @@
 	
 		<stateNode idref="speciationRate.t:Species" />
         <parameter id="popSize" name="stateNode" value="1" lower="0.0"/>
-        <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.SpeciesTree">
+        <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.tree.SpeciesTree">
             <taxonset id="taxonsuperset" spec="beast.base.evolution.alignment.TaxonSet">
 				<!--
 				need to specify at least one taxon for a TaxonSet, so insert a dummy taxon here
@@ -417,7 +499,7 @@
 		</distribution>
 		
 					
-		<distribution bottomPopSize="@popSize" gammaParameter="@popMean" id="SpeciesTreePopSize.Species" spec="starbeast3.SpeciesTreePrior" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species" treePrior="@YuleModel.t:Species">
+		<distribution bottomPopSize="@popSize" gammaParameter="@popMean" id="SpeciesTreePopSize.Species" spec="starbeast3.evolution.speciation.SpeciesTreePrior" popFunction="constant" taxonset="@taxonsuperset" tree="@Tree.t:Species" treePrior="@YuleModel.t:Species">
 				<populationModel id="speciesTreePopulationModel" spec="starbeast3.evolution.speciation.ConstantPopulations" populationSizes="@popSize" speciesTree="@Tree.t:Species" />
 		</distribution>
 
@@ -536,7 +618,7 @@
 		
 		
 		<!-- UpDown  -->
-		<operator id="updown.all" spec="UpDownOperator" scaleFactor="0.75" weight="1.0">
+		<operator id="updown.all" spec="beast.base.inference.operator.kernel.BactrianUpDownOperator" scaleFactor="0.75" weight="1.0">
 		 	<up idref="speciationRate.t:Species"/>               
             <down idref="Tree.t:Species"/>
                     
@@ -603,7 +685,7 @@
 
 
     <logger fileName="species.trees" id="speciesTreeLogger" logEvery="10000" mode="tree" spec="Logger">
-        <log id="SpeciesTreeLoggerX" popSize="@popSize" spec="starbeast3.SpeciesTreeLogger" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
+        <log id="SpeciesTreeLoggerX" popSize="@popSize" spec="starbeast3.core.SpeciesTreeLogger" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
             <treetop id="treeTopFinder" spec="beast.base.evolution.speciation.TreeTopFinder">
             </treetop>
         </log>
@@ -616,7 +698,7 @@
         <log idref="prior"/>
     </logger>
 
-    <init id="SBI" spec="starbeast3.StarBeastStartState" 
+    <init id="SBI" spec="starbeast3.core.StarBeastStartState" 
     	estimate="false" 
 		method="point-estimate"
     	popMean="@popMean" 

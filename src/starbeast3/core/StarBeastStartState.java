@@ -1,4 +1,4 @@
-package starbeast3;
+package starbeast3.core;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
@@ -42,6 +42,7 @@ import beast.base.evolution.tree.ClusterTree;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 import starbeast3.evolution.branchratemodel.SharedSpeciesClockModel;
 import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
+import starbeast3.evolution.speciation.SpeciesTreePrior;
 import starbeast3.genekernel.GTKPrior;
 
 /**

@@ -19,10 +19,10 @@ import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
 import beast.base.util.Randomizer;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
-import starbeast3.StarBeast3Clock;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
+import starbeast3.evolution.branchratemodel.StarBeast3Clock;
 import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.genekernel.GTKPrior;
 import starbeast3.genekernel.GTKTreeOperator;
 

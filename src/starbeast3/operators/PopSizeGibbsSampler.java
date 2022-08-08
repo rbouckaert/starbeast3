@@ -17,7 +17,7 @@ import beast.base.evolution.tree.TreeIntervals;
 import beast.base.inference.distribution.Gamma;
 import beast.base.inference.distribution.InverseGamma;
 import beast.base.inference.distribution.ParametricDistribution;
-import starbeast3.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.genekernel.GTKOperator;
 import starbeast3.genekernel.GTKPrior;
 import starbeast3.util.*;

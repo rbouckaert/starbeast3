@@ -23,12 +23,12 @@ import javax.swing.table.TableCellRenderer;
 import beastfx.app.inputeditor.BEASTObjectInputEditor;
 import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.GuessPatternDialog;
+import starbeast3.tree.SpeciesTree;
 import beast.base.core.BEASTInterface;
 import beast.base.core.Input;
 import beast.base.core.Log;
 import beast.base.evolution.alignment.Taxon;
 import beast.base.evolution.tree.TraitSet;
-import starbeast3.SpeciesTree;
 
 public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
 
@@ -41,7 +41,7 @@ public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
 
     @Override
     public Class<?> type() {
-        return starbeast3.SpeciesTree.class;
+        return starbeast3.tree.SpeciesTree.class;
     }
     SpeciesTree tree;
     TraitSet traitSet;

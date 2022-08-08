@@ -2,7 +2,10 @@
 	<!-- tree priors -->
 	<mergewith point="sb3TreePriorTemplates">
 		<!-- Plain ol' Yule -->
-		<subtemplate id="YuleModel" class="beast.base.evolution.speciation.YuleModel" mainid="YuleModel.t:$(n)">
+		<subtemplate id="YuleModel" class="beast.base.evolution.speciation.YuleModel" mainid="YuleModel.t:$(n)" 
+			hmc='
+speciationRatePrior/index/=Priors/YuleBirthRatePrior/
+'>
 <![CDATA[
 			<distribution id="YuleModel.t:$(n)" spec="beast.base.evolution.speciation.YuleModel" tree="@Tree.t:$(n)">
 				<birthDiffRate spec="parameter.RealParameter" id="speciationRate.t:$(n)" value="1.0" lower="0.0" estimate="true" />
@@ -58,7 +61,10 @@
 		
 		<!-- Calibrated Yule -->
 		<subtemplate id="CalibratedYuleModel" class="beast.base.evolution.speciation.CalibratedYuleModel" mainid="CalibratedYuleModel.t:$(n)" 
-			suppressInputs="beast.base.evolution.speciation.CalibratedYuleModel.logMarginal,beast.base.evolution.speciation.CalibratedYuleModel.tree,beast.base.evolution.speciation.CalibratedYuleModel.treeIntervals,beast.base.evolution.speciation.CalibratedYuleModel.calibrations">
+			suppressInputs="beast.base.evolution.speciation.CalibratedYuleModel.logMarginal,beast.base.evolution.speciation.CalibratedYuleModel.tree,beast.base.evolution.speciation.CalibratedYuleModel.treeIntervals,beast.base.evolution.speciation.CalibratedYuleModel.calibrations"
+			hmc="
+cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
+">
 			<![CDATA[
 						<distribution id="CalibratedYuleModel.t:$(n)" spec="beast.base.evolution.speciation.CalibratedYuleModel" tree="@Tree.t:$(n)">
 							<birthRate spec="parameter.RealParameter" id="cySpeciationRate.t:$(n)" value="1.0" lower="0.0" upper="10000.0" estimate="true" />
@@ -96,7 +102,10 @@
 		
 
 		<!-- Birth Death model (parameterized as per Gernhard 2008) -->
-		<subtemplate id="BirthDeathModel" class="beast.base.evolution.speciation.BirthDeathGernhard08Model" mainid="BirthDeathModel.t:$(n)">
+		<subtemplate id="BirthDeathModel" class="beast.base.evolution.speciation.BirthDeathGernhard08Model" mainid="BirthDeathModel.t:$(n)"
+			hmc='
+netDiversificationRatePrior/index/=Priors/BirthRatePrior/,
+ExtinctionFractionPrior/index/=Priors/DeathRatePrior/'>
 <![CDATA[
 			<distribution id="BirthDeathModel.t:$(n)" spec="beast.base.evolution.speciation.BirthDeathGernhard08Model" tree="@Tree.t:$(n)">
 				<birthDiffRate spec="parameter.RealParameter" id="netDiversificationRate.t:$(n)" value="1.0" lower="0.0" upper="10000.0" estimate="true" />
