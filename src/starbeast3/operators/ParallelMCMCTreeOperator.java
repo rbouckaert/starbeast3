@@ -291,13 +291,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					beast.base.inference.operator.kernel.BactrianUpDownOperator treeScaler = new beast.base.inference.operator.kernel.BactrianUpDownOperator();
 					treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 1.0);
 					adaptOperators.add(treeScaler);
-					
-					// Epoch scaler
-					EpochOperator epochOperator = new EpochOperator();
-					List<GeneTreeForSpeciesTreeDistribution> trees = new ArrayList<>();
-					trees.add(d.geneprior);
-					epochOperator.initByName("scaleFactor", 0.5, "gene", trees, "weight", 1.0);
-					adaptOperators.add(epochOperator);
+
 					
 					// Subtree slide
 					adaptOperators.add(SubtreeSlide);

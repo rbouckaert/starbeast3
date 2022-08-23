@@ -15,10 +15,6 @@ package starbeast3.evolution.branchratemodel;
 
 import beastfx.app.inputeditor.BeautiDoc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import beast.base.core.BEASTInterface;
 import beast.base.core.Function;
@@ -207,8 +203,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     public static void estimateGeneClockRates(BeautiDoc doc) {
     	
     	
-    	
-    	boolean first = true;
+    	boolean first = false;
     	for (String str : doc.pluginmap.keySet()) {
     		
     		// Find the StarBeast3Clocks

@@ -123,6 +123,11 @@
 			starbeast3.evolution.speciation.SpeciesTreePrior.populationModel,
 			starbeast3.evolution.speciation.SpeciesTreePrior.treeIntervals,
 			starbeast3.evolution.branchratemodel.StrictClockModelSB3.tree,
+			starbeast3.evolution.branchratemodel.StarBeast3Clock.speciesTreeRates,
+			starbeast3.evolution.branchratemodel.StarBeast3Clock.sharedRateModel,
+			starbeast3.evolution.branchratemodel.StarBeast3Clock.geneTree,
+			starbeast3.evolution.branchratemodel.StarBeast3Clock.kernel,
+			starbeast3.evolution.branchratemodel.StarBeast3Clock.pointer,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.estimateRoot,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.noCache,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.discreteRates,
@@ -229,7 +234,11 @@ ClusterTree/clusterType//'>
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Site Model" tiptext="Site model and substitution model specifications" path="siteModel" hasPartitions="SiteModel" icon="3.pngx" forceExpansion="TRUE"/>
 		<mergepoint id="aux-sb3-sitemodel-panels"/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
+
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Gene Clock Model" icon='4.png.x' tiptext="Gene Clock model" path="distribution/distribution[id='likelihood']/distribution/branchRateModel" forceExpansion="TRUE"/>
+		<mergepoint id='aux-sb3-clockmodel-panels'/>
+
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Species Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
 		<mergepoint id='aux-sb3-clockmodel-panels'/>
 		
 
@@ -444,10 +453,9 @@ ClusterTree/clusterType//'>
 
 			<mergepoint id="aux-sb3-partitiontemplate"/>
 
-
+			<!--
 			<connect method="starbeast3.evolution.branchratemodel.StarBeast3Clock.estimateGeneClockRates" />
-
-
+			-->
 			
 			
 			
@@ -458,6 +466,8 @@ ClusterTree/clusterType//'>
 		<mergepoint id="sb3ClockModelTemplates"/>
 		<mergepoint id="sb3TreePriorTemplates"/>
 		<mergepoint id="parametricDistributions"/>
+
+
 		
 		
 	</beauticonfig>
