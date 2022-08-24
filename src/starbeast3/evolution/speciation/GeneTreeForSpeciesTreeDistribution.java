@@ -13,6 +13,7 @@ import beast.base.core.Description;
 import beast.base.inference.Distribution;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
+import beast.base.core.Log;
 import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
 import beastfx.app.beauti.Beauti;
@@ -340,7 +341,7 @@ public class GeneTreeForSpeciesTreeDistribution extends Distribution {
      * Map this gene tree node to one or more species
      * @return
      */
-    public List<Node> mapGeneNodeToSpeciesNodes(int geneNodeNr) {
+    public List<Node> mapGeneBranchToSpeciesNodes(int geneNodeNr) {
     	
     	List<Node> speciesNodes = new ArrayList<>();
     	
@@ -355,6 +356,21 @@ public class GeneTreeForSpeciesTreeDistribution extends Distribution {
     	
     	
     }
+    
+    /**
+     * Same as above, but it only looks at the node and not the whole branch
+     * @param geneNodeNr
+     * @return
+     */
+    public Node mapGeneNodeToSpeciesNode(int geneNodeNr) {
+    	if (!clockuptodate) update();
+    	int nr = geneNodeSpeciesAssignment[geneNodeNr];
+    	if (nr < 0) return null;
+    	return speciesTree.getNode(nr);
+    }
+    
+    
+    
     
 
     @Override
