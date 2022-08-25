@@ -2,6 +2,7 @@ package starbeast3.operators;
 
 
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-import beastfx.app.beast.BeastMCMC;
 import beast.base.core.Description;
 import beast.base.inference.Distribution;
 import beast.base.core.Function;

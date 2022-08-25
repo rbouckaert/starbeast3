@@ -5,7 +5,9 @@
 	<depends on='ORC' atleast='1.0.4'/>
 	<!--<depends on="SA" atleast="2.0.0"/> Will add this back when SA is compatible with beast 2.7-->
 
-
+    <service type="beastfx.app.inputeditor.InputEditor">
+        <provider classname="starbeast3.app.beauti.StarBeast3ClockInputEditor"/>
+    </service>
 
 
     <service type="beast.base.core.BEASTInterface">
