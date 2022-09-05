@@ -234,10 +234,12 @@ ClusterTree/clusterType//'>
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Site Model" tiptext="Site model and substitution model specifications" path="siteModel" hasPartitions="SiteModel" icon="3.pngx" forceExpansion="TRUE"/>
 		<mergepoint id="aux-sb3-sitemodel-panels"/>
 
+		<!--
 		<panel spec='beastfx.app.inputeditor.BeautiPanelConfig' panelname="Gene Clock Model" tiptext="Clock model"
             path='branchRateModel' type="starbeast3.evolution.branchratemodel.StarBeast3Clock"
             hasPartitions="ClockModel" forceExpansion='TRUE'
         />
+    -->
 		<mergepoint id='aux-sb3-clockmodel-panels'/>
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Species Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>

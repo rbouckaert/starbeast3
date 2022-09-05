@@ -209,8 +209,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     private static Boolean initialValueOfAutoSet = null;
     public static void estimateGeneClockRates(BeautiDoc doc) {
     	
-    	if (true) return;
-    	
+    	/*
     	if (initialValueOfAutoSet == null) initialValueOfAutoSet = doc.beauti.get_autoSetClockRate().isSelected();
     	
     	// Loaded in an old file. Do not overwrite
@@ -225,7 +224,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     		beautiClocksChecked.clear();
     		return;
     	}
-    	
+    	*/
     	for (String str : doc.pluginmap.keySet()) {
     		
     		// Find the StarBeast3Clocks
@@ -234,18 +233,19 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     			
     			StarBeast3Clock clock = (StarBeast3Clock)obj;
     			
+    			/*
     			// Do not revisit this clock or the users wishes will be overridden
 				if (beautiClocksChecked.containsKey(clock) && beautiClocksChecked.get(clock) > 0) {
 					Log.warning("StarBeast3Clock Skipping " + clock.getID());
 					continue;
 				}
-    			
+    			*/
     			
     			if (clock.meanRateInput.get() != null && clock.meanRateInput.get() instanceof StateNode) {
 					
     				StateNode rp = (StateNode)clock.meanRateInput.get();
-    				
-    				
+    				rp.isEstimatedInput.set(true);
+    				/*
     				// The first clock is not estimated
         			if (firstBeautiClock == null || firstBeautiClock == clock) {
         				firstBeautiClock = clock;
@@ -260,7 +260,7 @@ public class StarBeast3Clock extends BranchRateModel.Base {
         				val += beautiClocksChecked.get(clock);
         			}
         			beautiClocksChecked.put(clock, val);
-    				
+    				*/
 				}
     			
     		}
