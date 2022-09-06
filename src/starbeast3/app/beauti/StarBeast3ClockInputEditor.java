@@ -12,24 +12,20 @@ import beast.base.core.Input;
 import beast.base.inference.StateNode;
 import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.ListInputEditor;
-import beastfx.app.inputeditor.AlignmentListInputEditor.Partition0;
 import beastfx.app.util.FXUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import starbeast3.evolution.branchratemodel.StarBeast3Clock;
 
 public class StarBeast3ClockInputEditor extends ListInputEditor {
-	final private static String hmcURL = "";
 
 	public StarBeast3ClockInputEditor() {
 	}
@@ -57,7 +53,6 @@ public class StarBeast3ClockInputEditor extends ListInputEditor {
 		pane = FXUtils.newVBox();
 		HBox label = FXUtils.newHBox();
 		label.getChildren().add(new Label("Select which clock partition to estimate"));
-		label.getChildren().add(FXUtils.createHMCButton(hmcURL));
 		pane.getChildren().add(label);
 		TableView<Item> table = new TableView<>();
 
@@ -66,14 +61,17 @@ public class StarBeast3ClockInputEditor extends ListInputEditor {
 	    selecteAllCheckBox.setOnAction(
 	        event -> {
 	          event.consume();
+	          if (doc.autoSetClockRate) {
+	        	  return;
+	          }
 	          table.getItems().forEach(
 	        		  item -> item.setSelected(selecteAllCheckBox.isSelected())
 	          );
 	        });
 
-	    table.setEditable(true);
+	    table.setEditable(!doc.autoSetClockRate);
 	    
-	    TableColumn<Item, String> nameCol = new TableColumn<>("Clock model");
+	    TableColumn<Item, String> nameCol = new TableColumn<>("Partition");
 	    nameCol.setPrefWidth(550);
 	    nameCol.setCellValueFactory(data -> data.getValue().nameProperty());
 	    table.getColumns().add(nameCol);
@@ -85,6 +83,7 @@ public class StarBeast3ClockInputEditor extends ListInputEditor {
 
 	    selectedCol.setCellFactory( tc -> {
 	    	CheckBoxTableCell cell =  new CheckBoxTableCell<>();
+	    	cell.setEditable(!doc.autoSetClockRate);
 	    	List o = cell.getChildrenUnmodifiable();
 	    	return cell;
 	    });
@@ -94,7 +93,7 @@ public class StarBeast3ClockInputEditor extends ListInputEditor {
 			Item item = (Item) e.getSource();
 			item.setSelected(newValue);
 		});
-	    selectedCol.setEditable(true);
+	    selectedCol.setEditable(!doc.autoSetClockRate);
 	    table.getColumns().add(selectedCol);
 
 	    pane.getChildren().add(table);
@@ -113,7 +112,6 @@ public class StarBeast3ClockInputEditor extends ListInputEditor {
 		
 	    private BooleanProperty selected = new SimpleBooleanProperty();
 	    public void setSelected(Boolean selected) { 
-			System.err.println(name + " => " + selected);
 	    	this.selected.set(selected); 
 			Function f = clock.meanRateInput.get();
 			StateNode s = (StateNode) f;

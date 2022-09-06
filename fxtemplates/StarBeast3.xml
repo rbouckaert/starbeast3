@@ -198,6 +198,7 @@ StarBeast3/Gene_Ploidy/,
 StarBeast3/Taxon_Sets/,
 StarBeast3/Priors/=Standard/Priors/,
 StarBeast3/Species_Clock_Model/,
+StarBeast3/Gene_Clock_Model/,
 StarBeast3/MCMC/=Standard/MCMC/,
 StarBeast3/Partitions/=Standard/Partitions/,
 StarBeast3/Site_Model/=Standard/Site_Model/,
@@ -456,9 +457,6 @@ ClusterTree/clusterType//'>
 
 
 			<mergepoint id="aux-sb3-partitiontemplate"/>
-
-			<connect method="starbeast3.app.beauti.StarBeastAlignmentProvider3.estimateGeneClockRates" />
-			
 		</partitiontemplate>
 
 		
