@@ -5,7 +5,7 @@
 [BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators. Also see StarBeast3  [blog post](https://www.beast2.org/2022/03/31/starbeast3.html).
 
 
-This repository is currently being migrated to BEAST 2.7. Please see the v2.6 branch for compatability with BEAST 2.6.
+This repository branch is for BEAST 2.7. Please see the v2.6 branch for compatability with BEAST 2.6.
 
 
 ## Installation
