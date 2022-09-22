@@ -37,7 +37,11 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 
 ![Setting the gene tree site models](tutorial/Fig2.png)
 
-6. Select a clock model using the `Clock Model` tab. 
+6. The clock rate for each gene tree can be estimated or fixed using the `Gene Clock Model` tab. By default, all gene clock rates are estimated and are drawn from a Log-Normal prior. If there are a small number of loci, it may be preferrable to leave one of these fixed at 1.0. Note that these gene clock rates are relative to the clock rate definied in the  `Species Clock Model` tab, and thus should be sampled from a prior with a mean of 1.
+
+![Setting the gene tree clock models](tutorial/Fig2b.png)
+
+7. Select a clock model using the `Species Clock Model` tab. 
 
 --  **Species Tree Strict Clock**: Every branch in the species tree has the same substitution rate. 
 
@@ -45,13 +49,13 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 --  **Species Tree Relaxed Clock**: Each species tree branch has an independent and identically distributed substitution rate with a LogNormal(mean = 1, logSD = Stddev) distribution, where Stddev is estimated (denoted by &sigma; in StarBeast3 manuscript). The substitution rates of each gene tree branch are from the species tree. The mean branch rate is fixed at 1 so that it does not interfere with tree height estimation.
 
 
-The species tree `Clock.rate` can also be estimated (`Mode => uncheck Automatic set clock rate`), but this is not recommended unless time calibration data is available. If you estimate the `Clock.rate` (denoted by &mu; in the StarBeast3 article), you should also change its default 1/X prior to an informed prior (such as a Log-Normal distribution centered around an informed estimate). If the clock rate is left as default, then the tree heights will be in units of substitutions per site. If the clock rate is estimated, then the clock rate should be in units of substitutions per site per units of time, so that the tree heights are in units of time (eg. millions of years). 
+The species tree `Clock.rate` can also be estimated (Ensure that `Mode => Automatic set clock rate` is unchecked), but this is not recommended unless time calibration data is available. If you estimate the `Clock.rate` (denoted by &mu; in the StarBeast3 article), you should also change its default 1/X prior to an informed prior (such as a Log-Normal distribution centered around an informed estimate). If the clock rate is left as default, then the tree heights will be in units of substitutions per site. If the clock rate is estimated, then the clock rate should be in units of substitutions per site per units of time, so that the tree heights are in units of time (eg. millions of years). 
 
 
 
 ![Selecting a species tree clock model](tutorial/Fig3.png)
 
-7. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
+8. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
 
 
 -- **Yule Model**. A model which describes the branching process of species, i.e.  speciation, or births . Estimated parameters: speciationRate (the rate of one species diversifying into two).
@@ -69,16 +73,16 @@ This model assumes that the birth rate is greater than the death rate, and there
 
 Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article), and the `clockRates` are the relative subsitution rate of each gene tree. By default, these are log-normal distributions with a small variance and a mean of 1, to avoid interference with tree height estimation, and the clock rate of the first partition is fixed at 1. 
 
-8. Save the XML template using `File/Save`
+9. Save the XML template using `File/Save`
 
-9. Run BEAST on the saved XML file using
+10. Run BEAST on the saved XML file using
         ```beast/bin/beast -threads N starbeast3.xml```
 where `N` is the number of threads allocated to the parallel gene tree operator (default 1). The gene trees are partitioned into `N` threads and operated on independently.
 
-10. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
+11. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
 
 
-11. The MSC model (including the species tree, gene trees, effective population sizes, and branch rates) can be visualised using UglyTrees (see [https://uglytrees.nz/](https://uglytrees.nz/)).
+12. The MSC model (including the species tree, gene trees, effective population sizes, and branch rates) can be visualised using UglyTrees (see [https://uglytrees.nz/](https://uglytrees.nz/)).
 
 
 ![MSC model viewed using UglyTrees](tutorial/Fig4.png)
@@ -102,7 +106,7 @@ From a performance perspective, we therefore recommend the user only link (site 
 
 
 ### Clock model
-By default, each gene tree is associated with its own clock rate, and these rates have a prior distribution with a mean of 1 (except for the first partition which is fixed at 1). The substitution rate of a branch in a gene tree is equal to its clock rate multiplied by the clock rate of the species tree (configured in the "Clock Model" tab). This model works quite well and accounts for different genetic loci being exposed to unique selective pressures. When there are many genes trees, the clock rate estimates average out to ~1.0, and therefore are able to be estimated without affecting the estimated species tree height. 
+By default, each gene tree is associated with its own relative clock rate, and these rates have a prior distribution with a mean of 1. The substitution rate of a branch in a gene tree is equal to its clock rate multiplied by the clock rate of the species tree (configured in the "Clock Model" tab). This model works quite well and accounts for different genetic loci being exposed to unique selective pressures. When there are many genes trees, the clock rate estimates average out to ~1.0, and therefore are able to be estimated without affecting the estimated species tree height. 
 
 If gene tree clock models are linked, then they will share their clock rate. However, as discussed above, excessive linking can hamper parallelisation performance and lead to slightly longer convergence times.
 

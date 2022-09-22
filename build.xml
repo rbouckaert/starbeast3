@@ -7,7 +7,7 @@
 	</description>
 
 	<!-- set global properties for this build -->
-	<property name="versionstarbeast3" value="1.1.1" />
+	<property name="versionstarbeast3" value="1.1.2" />
 	<property name="srcstarbeast3" location="src" />
 	<property name="docstarbeast3" location="doc" />
 	<property name="buildstarbeast3" location="build" />

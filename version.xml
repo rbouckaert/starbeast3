@@ -1,4 +1,4 @@
-<package name='starbeast3' version='1.1.1'>
+<package name='starbeast3' version='1.1.2'>
 	<depends on='BEAST.base' atleast='2.7.0'/>
 	<depends on='BEAST.app' atleast='2.7.0'/>
 	<depends on='BEASTLabs' atleast='2.0.0'/>
