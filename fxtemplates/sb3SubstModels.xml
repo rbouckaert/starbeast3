@@ -445,7 +445,14 @@ RateGTPrior/index/=Priors/RateGTRPrior/,
             <frequencies id='equalFreqs.s:$(n)' spec='Frequencies' data='@$(n)' estimate='false'/>
 ]]>
         </subtemplate>
+    
+
+
+
     </mergewith>
+
+
+
     
     
 </beast>

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
+import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
 import beast.base.inference.Distribution;
 import beast.base.core.Function;
@@ -24,6 +25,7 @@ import beast.base.core.ProgramStatus;
 import beast.base.evolution.operator.ScaleOperator;
 import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
 import beast.base.evolution.operator.kernel.BactrianScaleOperator;
+import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.tree.Tree;
 import beast.base.inference.operator.kernel.BactrianDeltaExchangeOperator;
 import beast.base.inference.operator.kernel.BactrianIntervalOperator;
@@ -39,6 +41,9 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
     final public Input<Boolean> includeRealParametersInput = new Input<>("includeRealParameters", "flag to include Real Parameters for each of the partitions in the analysis", true);
     final public Input<List<StateNode>> excludeInput = new Input<>("exclude", "parameters to ensure are not operated on", new ArrayList<>());
     final public Input<List<StateNode>> includeInput = new Input<>("include", "parameters to add to the state, in case they are not automatically detected", new ArrayList<>());
+    
+    final public Input<List<StateNode>> logsumInput = new Input<>("logsum", "these parameters, if operated on, will have their total sum respected by the avmn operator", new ArrayList<>());
+    
     
     
 	final public Input<List<ParallelDistSet>> distributionInput = new Input<>("distribution", 
@@ -382,7 +387,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				}
 				
 				List<Transform> transformations = new ArrayList<>();
-				Transform f;
+				Transform f = null;
 				
 				// Add the tree?
 				if (!doNotInclude.contains(d.tree)) {
@@ -402,15 +407,19 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					// scale parameter
 					// location parameter
 					// simplex parameter
-					if (s.getID().startsWith("freq")) {
+					if (s.getID().startsWith("freq") || logsumInput.get().contains(s)) {
 						
 						BactrianDeltaExchangeOperator op = new BactrianDeltaExchangeOperator();
 						op.initByName("parameter", s, "delta", 0.2, "weight", 0.5);
 						operators.add(op);
-						f = new Transform.LogConstrainedSumTransform(s, 1.0);
+						double sum = 0;
+						for (int i = 0; i < s.getDimension(); i++) {
+							sum += s.getArrayValue(i);
+						}
+						f = new Transform.LogConstrainedSumTransform(s, sum);
 						
 						
-						Log.warning("Adding logsum " + s.getID());
+						Log.warning("Adding logsum(" + sum + ") for " + s.getID());
 						
 					} 
 					
@@ -465,7 +474,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						
 					}
 					
-					transformations.add(f);
+					if (f != null) transformations.add(f);
 					
 				}
 				
@@ -530,9 +539,31 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		List<String> stateNodeIds = new ArrayList<>();
 		Log.warning(" States : " + mainState.toString());
 		for (int i = 0; i < mainState.getNrOfStateNodes(); i ++) {
+			
+			
+			
 			StateNode state = mainState.getStateNode(i);
 			stateNodeIds.add(state.getID());
+			
+			
+			// bModelTest: do not add the rates
+			if (state instanceof RealParameter) {
+				for (BEASTInterface o : state.getOutputs()) {
+					if (o.getClass().getCanonicalName().equals("bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel")) {
+						GeneralSubstitutionModel sm = (GeneralSubstitutionModel)o;
+						if (sm.ratesInput.get() == state) {
+							if (!taboo.contains(state)) taboo.add(state);
+							Log.warning("NucleotideRevJumpSubstModel" + sm.getID() + " contains rates " + state.getID() + " so it will not be operator on by " + this.getID());
+							continue;
+						}
+					}
+				}
+			}
+			
 		}
+		
+		
+		
 		
 		
 		for (int i = 0; i < dists.size(); i ++) {
