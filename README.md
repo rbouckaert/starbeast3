@@ -33,7 +33,7 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 
 4. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The ploidy is 2 by default.
 
-5. Set the site model of each gene tree in the `Site Model` tab. 
+5. Set the site model of each gene tree in the `Site Model` tab. The bModelTest (for nucleotide) and OBAMA (for protein) site models are also available, if the respective packages are installed.
 
 ![Setting the gene tree site models](tutorial/Fig2.png)
 
@@ -79,7 +79,8 @@ Additionally, `popMean` is the mean effective population size (denoted by &mu;N 
 
 10. Run BEAST on the saved XML file using
         ```beast/bin/beast -threads N starbeast3.xml```
-where `N` is the number of threads allocated to the parallel gene tree operator (default 1). The gene trees are partitioned into `N` threads and operated on independently.
+where `N` is the number of threads allocated to the parallel gene tree operator (default 1). The gene trees are partitioned into `N` threads and operated on independently. StarBeast3 will usually run slightly slower initially while the parallel MCMC chain lengths are being optimised, and then the program suddenly speeds up afterwards.
+
 
 11. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
 
