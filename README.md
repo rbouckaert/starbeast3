@@ -31,17 +31,24 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 
 ![Defining a species-to-taxon tree mapping](tutorial/Fig1.png)
 
-4. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The ploidy is 2 by default.
 
-5. Set the site model of each gene tree in the `Site Model` tab. The bModelTest (for nucleotide) and OBAMA (for protein) site models are also available, if the respective packages are installed.
+4. To specify sample dates, open the `Tip dates` tab. This model assumes that every gene locus was sampled at the same date as that of the species. 
+
+![Setting the gene tree site models](tutorial/Fig1b.png)
+
+5. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The ploidy is 2 by default.
+
+6. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The ploidy is 2 by default.
+
+7. Set the site model of each gene tree in the `Site Model` tab. The bModelTest (for nucleotide) and OBAMA (for protein) site models are also available, if the respective packages are installed.
 
 ![Setting the gene tree site models](tutorial/Fig2.png)
 
-6. The clock rate for each gene tree can be estimated or fixed using the `Gene Clock Model` tab. By default, all gene clock rates are estimated and are drawn from a Log-Normal prior. If there are a small number of loci, it may be preferrable to leave one of these fixed at 1.0. Note that these gene clock rates are relative to the clock rate definied in the  `Species Clock Model` tab, and thus should be sampled from a prior with a mean of 1.
+8. The clock rate for each gene tree can be estimated or fixed using the `Gene Clock Model` tab. By default, all gene clock rates are estimated and are drawn from a Log-Normal prior. If there are a small number of loci, it may be preferrable to leave one of these fixed at 1.0. Note that these gene clock rates are relative to the clock rate definied in the  `Species Clock Model` tab, and thus should be sampled from a prior with a mean of 1.
 
 ![Setting the gene tree clock models](tutorial/Fig2b.png)
 
-7. Select a clock model using the `Species Clock Model` tab. 
+9. Select a clock model using the `Species Clock Model` tab. 
 
 --  **Species Tree Strict Clock**: Every branch in the species tree has the same substitution rate. 
 
@@ -55,7 +62,7 @@ The species tree `Clock.rate` can also be estimated (Ensure that `Mode => Automa
 
 ![Selecting a species tree clock model](tutorial/Fig3.png)
 
-8. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
+10. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
 
 
 -- **Yule Model**. A model which describes the branching process of species, i.e.  speciation, or births . Estimated parameters: speciationRate (the rate of one species diversifying into two).
@@ -75,17 +82,17 @@ This model assumes that the birth rate is greater than the death rate, and there
 
 Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article), and the `clockRates` are the relative subsitution rate of each gene tree. By default, these are log-normal distributions with a small variance and a mean of 1, to avoid interference with tree height estimation, and the clock rate of the first partition is fixed at 1. 
 
-9. Save the XML template using `File/Save`
+11. Save the XML template using `File/Save`
 
-10. Run BEAST on the saved XML file using
+12. Run BEAST on the saved XML file using
         ```beast/bin/beast -threads N starbeast3.xml```
 where `N` is the number of threads allocated to the parallel gene tree operator (default 1). The gene trees are partitioned into `N` threads and operated on independently. StarBeast3 will usually run slightly slower initially while the parallel MCMC chain lengths are being optimised, and then the program suddenly speeds up afterwards.
 
 
-11. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
+13. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
 
 
-12. The MSC model (including the species tree, gene trees, effective population sizes, and branch rates) can be visualised using UglyTrees (see [https://uglytrees.nz/](https://uglytrees.nz/)).
+14. The MSC model (including the species tree, gene trees, effective population sizes, and branch rates) can be visualised using UglyTrees (see [https://uglytrees.nz/](https://uglytrees.nz/)).
 
 
 ![MSC model viewed using UglyTrees](tutorial/Fig4.png)
@@ -150,4 +157,5 @@ Remco Bouckaert: [r.bouckaert@auckland.ac.nz](r.bouckaert@auckland.ac.nz)
 **StarBeast:** Heled, Joseph, and Alexei J. Drummond. "Bayesian inference of species trees from multilocus data." Molecular biology and evolution 27.3 (2009): 570-580.
 
 **StarBeast2**: Ogilvie, Huw A., Remco R. Bouckaert, and Alexei J. Drummond. "StarBEAST2 brings faster species tree inference and accurate estimates of substitution rates." Molecular biology and evolution 34.8 (2017): 2101-2114.
+
 

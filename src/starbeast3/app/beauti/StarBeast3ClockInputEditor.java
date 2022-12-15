@@ -52,7 +52,7 @@ public class StarBeast3ClockInputEditor extends ListInputEditor {
 		
 		pane = FXUtils.newVBox();
 		HBox label = FXUtils.newHBox();
-		label.getChildren().add(new Label("Select which clock partition to estimate"));
+		label.getChildren().add(new Label("Select which partition clock rates to estimate. Unestimated rates default to 1. All rates below are relative to the species tree clock rate."));
 		pane.getChildren().add(label);
 		TableView<Item> table = new TableView<>();
 

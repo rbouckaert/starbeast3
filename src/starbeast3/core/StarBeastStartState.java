@@ -42,8 +42,10 @@ import beast.base.evolution.tree.ClusterTree;
 import starbeast3.evolution.branchratemodel.BranchRateModelSB3;
 import starbeast3.evolution.branchratemodel.SharedSpeciesClockModel;
 import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import starbeast3.evolution.speciation.SpeciesTreePrior;
 import starbeast3.genekernel.GTKPrior;
+import starbeast3.tree.SpeciesTree;
 
 /**
 * @author Joseph Heled
@@ -147,10 +149,15 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     	
         
     }
+    
+    
+    
 
     @Override
     public void initStateNodes() {
 
+    	
+    	// Find calibrations
         final Set<BEASTInterface> treeOutputs = speciesTreeInput.get().getOutputs();
         List<MRCAPrior> calibrations = new ArrayList<>();
         for (final Object plugin : treeOutputs ) {
@@ -175,7 +182,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         	
         }
         
-
+        // Calibrations
         if( hasCalibrations ) {
             if( calibrations.size() > 0 ) {
                 throw new IllegalArgumentException("Not implemented: mix of calibrated yule and MRCA priors: " +
@@ -203,6 +210,13 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
                     break;
             }
         }
+        
+        
+        // Ensure that all gene tree tips are the same height as their species
+        for (Tree gtree : genes) {
+        	this.resetGeneTreeTipHeights((SpeciesTree) speciesTreeInput.get(), gtree);
+        }
+        
 
         if (rates != null) {
         	// rates.setLower(lowerRate);
@@ -280,9 +294,8 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
 
     private void fullInit() {
+    	
         // Build gene trees from  alignments
-    	
-    	
     	if (geneKernelPriorInput.get() != null) {
     		throw new IllegalArgumentException("Point-estimates are currently not supported when using a gene tree kernel. Please use method='random'.");
     	}
@@ -314,16 +327,20 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
             maxNsites = max(maxNsites, alignment.getSiteCount());
         }
+        
+        
+        // Build tip map
         final Map<String, Integer> geneTips2Species = new HashMap<>();
         final List<Taxon> taxonSets = species.taxonsetInput.get();
-
         for(int k = 0; k < speciesNames.size(); ++k) {
             final Taxon nx = taxonSets.get(k);
             final List<Taxon> taxa = ((TaxonSet) nx).taxonsetInput.get();
-            for( final Taxon n : taxa ) {
+            for(final Taxon n : taxa ) {
               geneTips2Species.put(n.getID(), k);
             }
         }
+
+        
         final double[] dg = new double[(speciesCount*(speciesCount-1))/2];
 
         final double[][] genesDmins = new double[geneTrees.size()][];
@@ -612,6 +629,82 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
                 stateNodes.add(popt);
             }
         }
+    }
+    
+    
+    /**
+     * Ensure that all gene tree leaves are the same as their species leaf
+     * Then ensure that all internal nodes are above their children
+     * @param speciesTree
+     * @param gtree
+     */
+    private void resetGeneTreeTipHeights(SpeciesTree speciesTree, Tree gtree) {
+    	
+    	
+    	// Find GeneTreeForSpeciesTreeDistribution for this gene tree
+        final Set<BEASTInterface> treeOutputs = gtree.getOutputs();
+        GeneTreeForSpeciesTreeDistribution prior = null;
+        for (final Object plugin : treeOutputs ) {
+            if( plugin instanceof GeneTreeForSpeciesTreeDistribution ) {
+            	prior = (GeneTreeForSpeciesTreeDistribution) plugin;
+            	break;
+            }
+        }
+    	
+        if (prior == null) {
+        	Log.warning("Cannot reset tip dates for " + gtree.getID() + " because it does not have a tree prior");
+        	return;
+        }
+        
+        if (prior.speciesTreeInput.get() != speciesTree) {
+        	Log.warning("Cannot reset tip dates for " + gtree.getID() + " because its tree prior does not have the matching species tree " + prior.speciesTreeInput.get().getID());
+        	return;
+        }
+    	
+    	// Set leaf heights
+        for (Node geneLeaf: gtree.getExternalNodes()) {
+        	
+        	// Find mapped node
+        	Node speciesLeaf = prior.mapGeneNodeToSpeciesNode(geneLeaf.getNr());
+        	if (!speciesLeaf.isLeaf()) {
+        		throw new IllegalArgumentException("Unexpected error: the species tree node mapped to gene leaf " + geneLeaf.getID() + " is not a leaf");
+        	}
+        	
+        	// Set its height
+        	geneLeaf.setHeight(speciesLeaf.getHeight());
+        }
+        
+        
+       // Recursively set internal node heights above their leaves
+        shiftInternalNodes(gtree.getRoot());
+        	
+        
+	}
+    
+    /**
+     * Ensure that all internal nodes are above both children
+     * @param node
+     */
+    private void shiftInternalNodes(Node node) {
+    	
+    	if (node.isLeaf()) return;
+    	
+    	
+    	// Repeat for children
+    	double maxChildHeight = 0;
+    	for (Node child : node.getChildren()) {
+    		shiftInternalNodes(child);
+    		maxChildHeight = Math.max(maxChildHeight, child.getHeight());
+    	}
+    	
+    	// Set this height above the oldest child
+    	if (node.getHeight() <= maxChildHeight) {
+    		double newHeight = maxChildHeight*1.1 + 1e-8;
+    		node.setHeight(newHeight);
+    	}
+    	
+    	
+    	
     }
     
 

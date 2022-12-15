@@ -228,6 +228,8 @@ ClusterTree/clusterType//'>
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Taxon Sets" tiptext="Specify taxon sets that make up species" path="operator[id='Reheight.t:Species']/taxonset" hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
 
 
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Tip Dates" tiptext="Allows to specify date that a taxon was sampled" path="operator[id='ParallelMCMCTreeOperator']/speciesTree" hasPartitions="none" icon="2.png.x" forceExpansion="TRUE"/>
+
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Gene Ploidy" tiptext="The ploidy for each gene (locus)" path="distribution/distribution[id='speciescoalescent']/distribution" hasPartitions="none" icon="2.pngx" forceExpansion="TRUE"/>
 
 
@@ -361,7 +363,8 @@ ClusterTree/clusterType//'>
 			<connect srcID="treePrior.t:$(n)" targetID="CoordinatedExponential.t:Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="treePrior.t:$(n)" targetID="CoordinatedUniform.t:Species" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="treePrior.t:$(n)" targetID="CoordinatedExchange" inputName="gene" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-	
+
+
 			
 			<connect srcID="Tree.t:$(n)" targetID="updown.all" inputName="down" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="clockRate.c:$(n)" targetID="updown.all" inputName="down" if="inposterior(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
@@ -472,8 +475,13 @@ ClusterTree/clusterType//'>
 	
 	
 	
+<taxonset id="taxonsuperset" spec="starbeast3.tree.StarBeast3TaxonSet">
+	<taxon spec="beast.base.evolution.alignment.TaxonSet" id="Beauti2DummyTaxonSet">
+		<taxon spec="beast.base.evolution.alignment.Taxon" id="dummyTaxon"/>
+	</taxon>
+</taxonset>
 
-
+<tree id="Tree.t:Species" spec="starbeast3.tree.SpeciesTree" taxonset="@taxonsuperset" estimate="true"/>
 
 
 <run chainLength="10000000" id="mcmc" spec="MCMC" storeEvery="50000">
@@ -482,20 +490,10 @@ ClusterTree/clusterType//'>
 	
 
 	
-	
-		<stateNode idref="speciationRate.t:Species" />
+	<stateNode idref="Tree.t:Species" />
+	<stateNode idref="speciationRate.t:Species" />
         <parameter id="popSize" name="stateNode" value="1" lower="0.0"/>
-        <tree id="Tree.t:Species" name="stateNode" spec="starbeast3.tree.SpeciesTree">
-            <taxonset id="taxonsuperset" spec="beast.base.evolution.alignment.TaxonSet">
-				<!--
-				need to specify at least one taxon for a TaxonSet, so insert a dummy taxon here
-				This one is cleared by the TaxonSetInputEditor
-				-->
-				<taxon spec="beast.base.evolution.alignment.TaxonSet" id="Beauti2DummyTaxonSet">
-					<taxon spec="beast.base.evolution.alignment.Taxon" id="dummyTaxon"/>
-				</taxon>
-			</taxonset>
-        </tree>
+	
         <parameter id="popMean" name="stateNode" value="1" lower="0"/>
     </state>
 
@@ -615,13 +613,12 @@ ClusterTree/clusterType//'>
 
 
 
-		<operator idref="UniformOperator.t:Species"/>
-		<operator idref="BactrianNodeOperator.t:Species" />
-		<!-- TODO <operator idref="ConstantDistanceOperatorSpeciesTree"/> -->
-		<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" tree="@Tree.t:Species" weight="1.0"/>
-		
-		<operator idref="CoordinatedUniform.t:Species" />
-		<operator idref="CoordinatedExponential.t:Species" />
+	<operator idref="UniformOperator.t:Species"/>
+	<operator idref="BactrianNodeOperator.t:Species" />
+	<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" tree="@Tree.t:Species" weight="1.0"/>
+	
+	<operator idref="CoordinatedUniform.t:Species" />
+	<operator idref="CoordinatedExponential.t:Species" />
 
 
 

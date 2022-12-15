@@ -375,7 +375,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     		   if (geneTreeNode.isLeaf()) continue;
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = upper - (r_x / r_x_) * (upper - t_g);
-    		   if(t_g != t_g_) {
+    		   if(t_g != t_g_ && !geneTreeNode.isLeaf()) {
     			   geneTreeNode.setHeight(t_g_);
     			   numNodesMappedX ++;
     		   }
@@ -388,7 +388,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     		   if (geneTreeNode.isLeaf()) continue;
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = t_L + (r_L / r_L_) * (t_g - t_L);
-    		   if(t_g != t_g_) {
+    		   if(t_g != t_g_ && !geneTreeNode.isLeaf()) {
     			   geneTreeNode.setHeight(t_g_);
     			   numNodesMappedL ++;
     		   }
@@ -401,7 +401,7 @@ public class ConstantDistanceOperatorSpeciesTree extends GTKTreeOperator {
     		   if (geneTreeNode.isLeaf()) continue;
     		   t_g = geneTreeNode.getHeight();
     		   t_g_ = t_R + (r_R / r_R_) * (t_g - t_R);
-    		   if(t_g != t_g_) {
+    		   if(t_g != t_g_ && !geneTreeNode.isLeaf()) {
     			   geneTreeNode.setHeight(t_g_);
     			   numNodesMappedR ++;
     		   }
