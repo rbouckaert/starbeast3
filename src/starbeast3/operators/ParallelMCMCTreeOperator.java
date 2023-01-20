@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
 import beast.base.core.BEASTInterface;
+import beast.base.core.BEASTObject;
 import beast.base.core.Description;
 import beast.base.inference.Distribution;
+import beast.base.inference.MCMC;
 import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.inference.Operator;
@@ -55,6 +58,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	final public Input<Boolean> unthreadInput = new Input<>("unthread", "flag to convert ThreadedTreeLikelihood back into TreeLikelihood when this is called", false);
 	  
 
+	boolean sampleFromPrior = false;
     
     List<ParallelDistSet> distributions;
     
@@ -66,6 +70,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		mcmcs = new ArrayList<>();
 		
 		
+
 		
 		// Tidy the distributions
 		tidyDistributions(this.distributions);
@@ -80,6 +85,11 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		
 	    otherState = otherStateInput.get();
 	    otherState.initialise();
+	    
+	    
+		
+	  
+		
 		 
 		nrOfThreads = maxNrOfThreadsInput.get() > 0 ?
 				Math.min(ProgramStatus.m_nThreads, maxNrOfThreadsInput.get()) : 
@@ -89,6 +99,11 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		//System.exit(1);
 	    exec = Executors.newFixedThreadPool(nrOfThreads);
 	    
+	    
+	    
+	    
+	    // Sample from prior?
+	    this.sampleFromPrior = this.sampleFromPriorEnabled();
 	    
 	    
 	    
@@ -174,6 +189,8 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	
 
 
+
+
 	/*
 	 * If there is one tree which appears in more than 1 likelihood or prior, then merge the threads together
 	 */
@@ -238,7 +255,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				Log.warning("Adding dist " + d.geneprior.getID());
 				distrs.add(d.geneprior);
 			}
-			if (!distrs.contains(d.treelikelihood)) {
+			if (!sampleFromPrior && !distrs.contains(d.treelikelihood)) {
 				Log.warning("Adding dist " + d.treelikelihood.getID());
 				distrs.add(d.treelikelihood); 
 			}
@@ -553,7 +570,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						GeneralSubstitutionModel sm = (GeneralSubstitutionModel)o;
 						if (sm.ratesInput.get() == state) {
 							if (!taboo.contains(state)) taboo.add(state);
-							Log.warning("NucleotideRevJumpSubstModel" + sm.getID() + " contains rates " + state.getID() + " so it will not be operator on by " + this.getID());
+							Log.warning("NucleotideRevJumpSubstModel" + sm.getID() + " contains bModeltest rates " + state.getID() + " so it will not be operated on by " + this.getID());
 							continue;
 						}
 					}
@@ -666,6 +683,30 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 	}
 
 
+	/**
+	 * Check if we are sampling from the prior
+	 * @param otherState
+	 * @return
+	 */
+	private boolean sampleFromPriorEnabled() {
+		
+
+		
+		for (BEASTInterface obj : this.getOutputs()) {
+			Log.warning(obj.getID() + "," + obj.getClass().getCanonicalName());
+            if (obj instanceof MCMC) {
+            	MCMC mcmc = (MCMC)obj;
+            	if (mcmc.sampleFromPriorInput.get()) {
+            		Log.warning(this.getID() + ": sampling from prior is enabled");
+            		return true;
+            	}
+            }
+            
+		}
+		
+		Log.warning(this.getID() + ": sampling from prior is disabled");
+		return false;
+	}
 
     
     
