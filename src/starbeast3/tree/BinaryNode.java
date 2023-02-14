@@ -83,7 +83,15 @@ public class BinaryNode extends Node {
     public String toSortedNewick(final int[] maxNodeInClade) {
         return toSortedNewick(maxNodeInClade, false);
     }
-        
+
+    @Override
+    public Node getChild(final int childIndex) {
+    	if (childIndex == 0) {
+    		return getLeft();
+    	}
+        return getRight();
+    }
+
     @Override
     public List<Node> getChildren() {
     	if (children == null) {
