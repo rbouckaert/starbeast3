@@ -108,6 +108,30 @@ Gene tree models can be linked across the partitions in the Partitions tab of BE
 ![Linking models](tutorial/Fig5.png)
 
 
+
+### Fixing the initial species tree
+
+
+The initial tree can be fixed by editing the xml file. This requires finding the ``<init id="SBI">`` block and inserting a ``fixed`` block into it:
+
+```
+    <init id="SBI" spec="starbeast3.core.StarBeastStartState" birthRate="@speciationRate.t:Species" estimate="false" method="fixed" popMean="@popMean" speciesTree="@Tree.t:Species">
+                <gene idref="Tree.t:26"/>
+            <fixed estimate="false" id="RandomTree.t:Species" initial="@Tree.t:Species" IsLabelledNewick="true" adjustTipHeights='false' spec="beast.base.evolution.tree.TreeParser" newick="(((((heterodus:0.004,umbrinus:0.004):0.001,idahoensis:0.005):0.002,mazama:0.005):0.001,((townsendii:0.001,talpoides:0.001):0.002,monticola:0.001):0.01):0.004,bottae:0.02)
+            ">
+            </fixed>
+    </init
+```
+the ``newick`` string should specify the topology and branch lengths of the species tree. For this to work safely, the species tree labels should ideally consist of alphanumeric characters only (no spaces or brackets).  In this method, the tip heights can also be set such that the leaves are not all extant (time 0). Tip heights will remain fixed throughout the analysis. At this stage, the initial gene trees are not readily fixed, but they will conform with the initial species tree.
+
+
+### Fixing the species tree topology
+
+To set up a fixed-topology analysis, the species tree operators which propose tree topologies must be switched off. This involves deleting, or commenting out, any blocks in the xml file which correspond to the follwoing operators: Reheight.t:Species, BactrianSubtreeSlide.t:Species, WilsonBalding.t:Species, Wide.t:Species, and AdaptableTopologyOperator.tree.Species. 
+
+
+
+
 ### A note on performance
 
 The runtime performance of StarBeast3 benefits from its ability to parallelise inference of gene trees and their site models. This complex operation requires the set of parameters operated on in each thread to be conditionally independent (e.g. two threads must not operate on the same gene tree or the same site model). If the models are heavily linked, then this hampers the ability of StarBeast3 to parallelise inference.  
@@ -157,5 +181,6 @@ Remco Bouckaert: [r.bouckaert@auckland.ac.nz](r.bouckaert@auckland.ac.nz)
 **StarBeast:** Heled, Joseph, and Alexei J. Drummond. "Bayesian inference of species trees from multilocus data." Molecular biology and evolution 27.3 (2009): 570-580.
 
 **StarBeast2**: Ogilvie, Huw A., Remco R. Bouckaert, and Alexei J. Drummond. "StarBEAST2 brings faster species tree inference and accurate estimates of substitution rates." Molecular biology and evolution 34.8 (2017): 2101-2114.
+
 
 

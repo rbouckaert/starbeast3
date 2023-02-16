@@ -6,8 +6,10 @@ import static java.lang.Math.min;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +38,8 @@ import beast.base.evolution.speciation.CalibrationPoint;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.coalescent.RandomTree;
 import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeParser;
+import beast.base.evolution.tree.TreeUtils;
 import beast.base.evolution.tree.coalescent.ConstantPopulation;
 import beast.base.evolution.tree.MRCAPrior;
 import beast.base.evolution.tree.ClusterTree;
@@ -57,6 +61,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
     static enum Method {
         POINT("point-estimate"),
+        FIXED("fixed"),
         ALL_RANDOM("random");
 
         Method(final String name) {
@@ -75,6 +80,8 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             Method.POINT, Method.values());
 
     final public Input<Tree> speciesTreeInput = new Input<>("speciesTree", "The species tree to initialize");
+    final public Input<TreeParser> fixedInput = new Input<>("fixed", "Optionally provide a newick of the species tree to use at start state");
+    
     
     final public Input<List<Tree>> genesInput = new Input<>("gene", "Gene trees to initialize", new ArrayList<>());
     //,
@@ -128,6 +135,16 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         super.initAndValidate();
         hasCalibrations = calibratedYule.get() != null;
         genes = genesInput.get();
+        
+        // Fix the intial tree?
+        if (fixedInput.get() != null) {
+        	initMethod.set(Method.FIXED);
+        }
+        if (initMethod.get() == Method.FIXED) {
+        	if (fixedInput.get() == null) {
+        		throw new IllegalArgumentException("Please provide a starting 'newick' if using the fixed method");
+        	}
+        }
 
         
         // Get clock model
@@ -162,7 +179,10 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         List<MRCAPrior> calibrations = new ArrayList<>();
         for (final Object plugin : treeOutputs ) {
             if( plugin instanceof MRCAPrior ) {
-                calibrations.add((MRCAPrior) plugin);
+            	MRCAPrior o = (MRCAPrior) plugin;
+            	if (!calibrations.contains(o)) {
+            		calibrations.add(o);
+            	}
             }
         }
         
@@ -196,7 +216,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         } else {
             if( calibrations.size() > 0 )  {
                 initWithMRCACalibrations(calibrations);
-                return;
+                //return;
             }
 
             final Method method = initMethod.get();
@@ -208,8 +228,13 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
                 case ALL_RANDOM:
                     randomInit();
                     break;
+                case FIXED:
+                    fixedInit();
+                    break;
             }
         }
+        
+        
         
         
         // Ensure that all gene tree tips are the same height as their species
@@ -244,7 +269,9 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         
     }
     
-    RealParameter rates;
+    
+
+	RealParameter rates;
     double lowerRate;
 
     private double[] firstMeetings(final Tree gtree, final Map<String, Integer> tipName2Species, final int speciesCount) {
@@ -409,7 +436,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         
         
 
-        System.out.println(ctree.getRoot().toNewick());
+       // System.out.println(ctree.getRoot().toNewick());
         
         final Map<String, Integer> sptips2SpeciesIndex = new HashMap<>();
         for(int i = 0; i < speciesNames.size(); ++i) {
@@ -523,6 +550,15 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         for (final Tree gtree : geneTrees) {
             gtree.makeCaterpillar(speciesTreeHeight, speciesTreeHeight/gtree.getInternalNodeCount(), true);
         }
+    }
+    
+    
+    /**
+     * Fix the starting species tree
+     */
+    private void fixedInit() {
+    	TreeParser tp = fixedInput.get();
+    	tp.initStateNodes();
     }
 
     private void randomInit() {
