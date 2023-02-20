@@ -10,11 +10,15 @@ import beast.base.evolution.tree.Tree;
 /** node in a binary tree **/
 public class BinaryNode extends Node {
 	private BinaryTree tree;
-    private List<Node> children;
+    // private List<Node> children;
 	
 	public BinaryNode(int labelNr, BinaryTree tree) {
 		this.labelNr = labelNr;
 		this.tree = tree;
+		if (labelNr < tree.getTaxaNames().length) {
+			this.ID = tree.getTaxaNames()[labelNr];
+		}
+		
 	}
 	
 	@Override
@@ -95,13 +99,22 @@ public class BinaryNode extends Node {
     @Override
     public List<Node> getChildren() {
     	if (children == null) {
-    		children = new ArrayList<Node>(); 
-    		children.add(getLeft());
-    		children.add(getRight());
+    		children = new ArrayList<Node>();
+    		if (!isLeaf()) {
+    			children.add(getLeft());
+    			children.add(getRight());
+    		}
     		return children;
     	}
-    	children.set(0, getLeft());
-    	children.set(1, getRight());
+		if (!isLeaf()) {
+			if (children.size() == 0) {
+    			children.add(getLeft());
+    			children.add(getRight());
+			} else {
+				children.set(0, getLeft());
+				children.set(1, getRight());
+			}
+		}
     	return children;
     }
 
@@ -176,4 +189,6 @@ public class BinaryNode extends Node {
 
         return dof;
     }
+
+
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
 import beast.base.inference.StateNode;
+import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.TaxonSet;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
@@ -302,15 +303,20 @@ public class BinaryTree extends Tree implements TreeInterface {
 	        final BinaryTree tree = (BinaryTree) other;        
 	        initByName("taxonset", tree.getTaxonset());
 	        assignFromFragile(other);
-	        setID(tree.getID());
+	        if (tree.getID() != null) {
+	        	setID(tree.getID());
+	        }
 		} else if (other instanceof TreeInterface) {
 	        final TreeInterface tree = (TreeInterface) other;
 	        if (tree.getTaxonset() != null) {
 	        	initByName("taxonset", tree.getTaxonset());
 	        } else {
-	        	initByName("taxa", ((BEASTInterface)tree).getInput("taxa").get());
+	        	TaxonSet taxonset = new TaxonSet((Alignment) ((BEASTInterface)tree).getInput("taxa").get());
+	        	initByName("taxonset", taxonset);
 	        }
-	        setID(tree.getID());
+	        if (tree.getID() != null) {
+	        	setID(tree.getID());
+	        }
 	        assignFromFragile(other);
 		} else {
 			throw new IllegalArgumentException("Expected state node of type tree");
@@ -444,4 +450,5 @@ public class BinaryTree extends Tree implements TreeInterface {
         	nodes[m].setNr(m);
         }
     }
+
 }
