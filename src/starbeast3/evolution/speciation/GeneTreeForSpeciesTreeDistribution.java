@@ -4,10 +4,12 @@ package starbeast3.evolution.speciation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
+import java.util.Set;
 
 import beast.base.core.Description;
 import beast.base.inference.Distribution;
@@ -289,6 +291,30 @@ public class GeneTreeForSpeciesTreeDistribution extends Distribution {
         
     }
 
+	
+	/**
+	 * Get the names of the gene leaves which are mapped to this species name, using taxon sets
+	 * @param leafName
+	 * @return
+	 */
+	 public Set<String> getLineagesInSpeciesLeaf(final String leafName) {
+		 Set<String> matches = new HashSet();
+		 final TaxonSet taxonSuperset = taxonSetInput.get() != null ? taxonSetInput.get() : speciesTreePriorInput.get().taxonSetInput.get();
+		 final List<Taxon> taxonSets = taxonSuperset.taxonsetInput.get();
+	        for (final Taxon taxonSet : taxonSets) {
+	        	if (!taxonSet.getID().equals(leafName)) continue;
+	        	
+	        	
+	            final List<Taxon> taxa = ((TaxonSet) taxonSet).taxonsetInput.get();
+	            for (final Taxon aTaxa : taxa) {
+	            	matches.add(aTaxa.getID());
+	            }
+	        }
+		 
+		 return matches;
+		 
+	 }
+	
     /**
      * @param lineageID
      * @return species ID to which the lineage ID belongs according to the TaxonSets

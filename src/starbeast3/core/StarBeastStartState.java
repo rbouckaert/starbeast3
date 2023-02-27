@@ -430,7 +430,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         	if (rootHeight > 0) {
 	        	double scale = rootHeight / ctree.getRoot().getHeight();
 	        	ctree.scale(scale);
-	        	System.out.println("Scaling species tree to get height " + rootHeight);
+	        	System.out.println("Scaling species tree to height " + rootHeight);
         	}
         }
         
@@ -557,9 +557,156 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
      * Fix the starting species tree
      */
     private void fixedInit() {
+    	
+    	//Log.warning("before: " +  speciesTreeInput.get().getRoot().toNewick());
     	TreeParser tp = fixedInput.get();
     	tp.initStateNodes();
+    	//Log.warning("after: " +  speciesTreeInput.get().getRoot().toNewick());
+    	
+    	// Fit the gene trees into the species tree
+    	
+    	for (Tree gtree : genes) {
+
+	    	// Find GeneTreeForSpeciesTreeDistribution for this gene tree
+	        final Set<BEASTInterface> treeOutputs = gtree.getOutputs();
+	        GeneTreeForSpeciesTreeDistribution prior = null;
+	        for (final Object plugin : treeOutputs ) {
+	            if( plugin instanceof GeneTreeForSpeciesTreeDistribution ) {
+	            	prior = (GeneTreeForSpeciesTreeDistribution) plugin;
+	            	break;
+	            }
+	        }
+	        
+	        if (prior == null) {
+	        	continue;
+	        }
+	        
+	        if (prior.speciesTreeInput.get() != speciesTreeInput.get()) {
+	        	continue;
+	        }
+	        
+	        prior.requiresRecalculation();
+	    	
+	        
+	        
+	    	// Ensure that all gene tree nodes are above the species they are mapped to
+	        double ddt = speciesTreeInput.get().getRoot().getHeight() * 1e-4;
+	        double dt = ddt;
+	        double rootHeight = speciesTreeInput.get().getRoot().getHeight();
+	        
+	        
+	       
+	        
+	        
+
+	        // Place all coalescent events slightly above the root initially in case the following fails
+	        for (Node geneNode: gtree.getInternalNodes()) {
+	        	
+	        
+	        	// Set its height
+	        	//Log.warning("Setting node heigt from " + geneNode.getHeight() + " to " + (speciesNode.getHeight() + dt) );
+	        	geneNode.setHeight(rootHeight + dt);
+	        	dt += ddt;
+	        }
+	        
+	        
+	        
+	        placeGeneTreeWithinSpeciesTree(speciesTreeInput.get().getRoot(), prior, gtree, gtree.getLeafNodeCount());
+	       // if (newRoot != null) {
+	        	
+	        	//Tree newTree = new Tree(newRoot);
+	        	//if (gtree.m_taxonset.get() != null) {
+	        		//newTree.m_taxonset.setValue(gtree.m_taxonset.get(), gtree);
+	        	//}
+	        	//Log.warning(gtree.getRoot().toNewick());
+		        //gtree.assignFromWithoutID(newTree);
+		        prior.requiresRecalculation();
+		        
+		        
+	        //}
+
+	
+    	}
+    	
+    	
     }
+    
+    
+    private int placeGeneTreeWithinSpeciesTree(Node speciesNode, GeneTreeForSpeciesTreeDistribution prior, Tree gTree, int internalNodeNr) {
+    	
+    	
+    	// Create a clade within the species leaf
+    	if (speciesNode.isLeaf()) {
+    		
+    		
+    		// Find all of the gene leaves that belong to this species tree leaf
+    		Set<String> leaves = prior.getLineagesInSpeciesLeaf(speciesNode.getID());
+        	if (leaves.isEmpty()) {
+        		Log.warning("Unexpected: cannot find gene leaves for " + speciesNode.getID());
+        		return -1;
+        	}
+        	List<Node> leafNodes = new ArrayList<>();
+        	for (Node leaf : gTree.getExternalNodes()) {
+        		if (leaves.contains(leaf.getID()) )leafNodes.add(leaf);
+        	}
+        	if (leafNodes.isEmpty()) {
+        		Log.warning("Unexpected: cannot find gene nodes for " + speciesNode.getID());
+        		return -1;
+        	}
+        	
+        	
+        	// Rearrange the gene tree into a caterpillar
+        	double ddt = speciesNode.getLength() / leaves.size();
+        	double dt = speciesNode.getHeight() + ddt;
+        	Node mrca = null;
+        	for (Node leaf : leafNodes) {
+        		
+        		leaf.setHeight(speciesNode.getHeight());
+        		if (mrca == null) {
+        			mrca = leaf;
+        		}else {
+        			
+        			Node newMrca = gTree.getNode(internalNodeNr);
+        			newMrca.setHeight(dt);
+        			newMrca.removeAllChildren(true);
+        			newMrca.addChild(mrca);
+        			newMrca.addChild(leaf);
+        			mrca = newMrca;
+        			dt += ddt;
+        			
+        			internalNodeNr++;
+        		}
+        	}
+        	
+        	return internalNodeNr;
+        	
+    	}
+    	
+    	
+    	// Species tree internal node: take the two child nodes and coalesce them within the common ancestor
+    	int internalNodeNrLeft = placeGeneTreeWithinSpeciesTree(speciesNode.getChild(0), prior, gTree, internalNodeNr)-1;
+    	if (internalNodeNrLeft > 0) {
+    		internalNodeNr = internalNodeNrLeft+1;
+    	}
+    	int internalNodeNrRight = placeGeneTreeWithinSpeciesTree(speciesNode.getChild(1), prior, gTree, internalNodeNr)-1;
+    	if (internalNodeNrRight > 0) {
+    		internalNodeNr = internalNodeNrRight+1;
+    	}
+    	
+    	Node mrca = gTree.getNode(internalNodeNr);
+    	internalNodeNr++;
+    	
+    	double height = speciesNode.isRoot() ? speciesNode.getHeight()*1.1 : (speciesNode.getHeight() + speciesNode.getLength()*0.5);
+    	mrca.setHeight(height);
+    	mrca.removeAllChildren(true);
+    	mrca.addChild(gTree.getNode(internalNodeNrLeft));
+    	mrca.addChild(gTree.getNode(internalNodeNrRight));
+    	return internalNodeNr;
+    	
+    }
+    
+    
+    
 
     private void randomInit() {
         double lam = 1;

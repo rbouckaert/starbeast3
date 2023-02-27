@@ -6,6 +6,8 @@ import java.util.List;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
+import beast.base.core.Log;
+import beast.base.inference.Distribution;
 import beast.base.inference.parameter.RealParameter;
 import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 import beast.base.evolution.likelihood.GenericTreeLikelihood;
@@ -21,6 +23,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	final public Input<Tree> treeInput = new Input<>("tree", "the tree", Validate.REQUIRED);
 	final public Input<GenericTreeLikelihood> treelikelihoodInput = new Input<>("treelikelihood", "treelikelihood part of the distribution", Validate.REQUIRED);
 	final public Input<GeneTreeForSpeciesTreeDistribution> genepriorInput = new Input<>("geneprior", "prior on the gene tree", Validate.REQUIRED);
+	final public Input<List<Distribution>> distInput = new Input<>("dist", "other distributions which will be affected by changing the tree", new ArrayList<>());
 	final public Input<List<RealParameter>> includeInput = new Input<>("include", "optional additional parameters to include", new ArrayList<>());
 	
 	
@@ -29,7 +32,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	GenericTreeLikelihood treelikelihood;
 	GeneTreeForSpeciesTreeDistribution geneprior;
 	List<RealParameter> includeExtraParameters;
-	
+	List<Distribution> otherDistributions;
 	
 	
 	 
@@ -41,7 +44,9 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 	public void setGeneprior(GeneTreeForSpeciesTreeDistribution geneprior) {this.geneprior = geneprior;}
 	public List<RealParameter> getInclude() {return includeExtraParameters;}
 	public void setInclude(List<RealParameter> parameters) {this.includeExtraParameters = parameters;}
-
+	public void setOtherDists(List<Distribution> d){ this.otherDistributions = d; }
+	public void addOtherDists(List<Distribution> d){ this.otherDistributions.addAll(d); }
+	public List<Distribution> getOtherDists(){ return this.otherDistributions; }
 	
 	public ParallelMCMCTreeOperatorTreeDistribution() {
 		
@@ -74,6 +79,7 @@ public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
 		this.treelikelihood = treelikelihoodInput.get();
 		this.geneprior = genepriorInput.get();
 		this.includeExtraParameters = includeInput.get();
+		this.otherDistributions = distInput.get();
 	}
 	
 	

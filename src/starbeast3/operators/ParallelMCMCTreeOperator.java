@@ -252,12 +252,18 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 			
 			
 			if (!distrs.contains(d.geneprior)) {
-				Log.warning("Adding dist " + d.geneprior.getID());
-				distrs.add(d.geneprior);
+				Log.warning("Adding dist " + d.getGeneprior().getID());
+				distrs.add(d.getGeneprior());
+			}
+			for (Distribution d2 : d.getOtherDists()) {
+				if (!distrs.contains(d2)) {
+					Log.warning("Adding dist " + d2.getID());
+					distrs.add(d2);
+				}
 			}
 			if (!sampleFromPrior && !distrs.contains(d.treelikelihood)) {
-				Log.warning("Adding dist " + d.treelikelihood.getID());
-				distrs.add(d.treelikelihood); 
+				Log.warning("Adding dist " + d.getTreelikelihood().getID());
+				distrs.add(d.getTreelikelihood()); 
 			}
 			
 			
@@ -554,7 +560,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		
 		List<StateNode> taboo = new ArrayList<>();
 		List<String> stateNodeIds = new ArrayList<>();
-		Log.warning(" States : " + mainState.toString());
+		//Log.warning(" States : " + mainState.toString());
 		for (int i = 0; i < mainState.getNrOfStateNodes(); i ++) {
 			
 			
