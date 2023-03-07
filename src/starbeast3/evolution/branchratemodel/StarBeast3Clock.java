@@ -13,17 +13,10 @@ package starbeast3.evolution.branchratemodel;
 
 
 
-import beastfx.app.inputeditor.BeautiDoc;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import beast.base.core.BEASTInterface;
 import beast.base.core.Function;
 import beast.base.core.Input;
-import beast.base.inference.StateNode;
 import beast.base.inference.util.InputUtil;
 import beast.base.core.Log;
 import beast.base.evolution.branchratemodel.BranchRateModel;
@@ -92,9 +85,13 @@ public class StarBeast3Clock extends BranchRateModel.Base {
     		
     		}
     		
-    		if (prior != null) geneTree = prior; // geneTreeInput.setValue(prior, this);
+    		if (prior != null) {
+    			geneTree = prior; 
+    			geneTreeInput.set(prior);
+    		}
         	
         }
+        
         
         
         // Must specify either A) a gene tree prior, or B) a gene tree kernel AND the pointer

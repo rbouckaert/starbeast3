@@ -239,7 +239,7 @@ public class UCRelaxedClockModelSB3 extends BranchRateModel.Base implements Bran
 				    
 				}
 	        	
-	        	realRates.setLower(0.0);
+	        	if (realRates.getLower() < 0) realRates.setLower(0.0);
 	        	binRatesNeedsUpdate = false;
 	        	break;
 	        }
