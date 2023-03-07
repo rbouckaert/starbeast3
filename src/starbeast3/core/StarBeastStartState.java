@@ -25,6 +25,7 @@ import beast.base.core.Input.Validate;
 import beast.base.inference.StateNode;
 import beast.base.inference.StateNodeInitialiser;
 import beast.base.inference.parameter.RealParameter;
+import beastlabs.evolution.tree.ConstrainedClusterTree;
 import beast.base.core.Log;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
@@ -223,7 +224,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
             switch( method ) {
                 case POINT:
-                    fullInit();
+                    fullInit(calibrations);
                     break;
                 case ALL_RANDOM:
                     randomInit();
@@ -320,7 +321,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     }
 
 
-    private void fullInit() {
+    private void fullInit(List<MRCAPrior> mrcapriors) {
     	
         // Build gene trees from  alignments
     	if (geneKernelPriorInput.get() != null) {
@@ -414,22 +415,36 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             dg[i] = d;
         }
 
-        final ClusterTree ctree = new ClusterTree();
-        final Distance distance = new Distance() {
-            @Override
-            public double pairwiseDistance(final int s1, final int s2) {
-                final int i = getDMindex(speciesCount, s1,s2);
-                return dg[i];
-            }
-        };
-        ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance);
-        
+        if (mrcapriors.size() == 0) {
+        	// no MRCA calibrations
+		    final ClusterTree ctree = new ClusterTree();
+		    final Distance distance = new Distance() {
+		        @Override
+		        public double pairwiseDistance(final int s1, final int s2) {
+		            final int i = getDMindex(speciesCount, s1,s2);
+		            return dg[i];
+		        }
+		    };
+		    ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance);
+        } else {
+		    final ConstrainedClusterTree ctree = new ConstrainedClusterTree();
+		    final Distance distance = new Distance() {
+		        @Override
+		        public double pairwiseDistance(final int s1, final int s2) {
+		            final int i = getDMindex(speciesCount, s1,s2);
+		            return dg[i];
+		        }
+		    };
+		    ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance, "constraint", mrcapriors);
+        	
+        }
+
         // Set height?
         if (rootHeightInput.get() != null) {
         	double rootHeight = rootHeightInput.get().getArrayValue();
         	if (rootHeight > 0) {
-	        	double scale = rootHeight / ctree.getRoot().getHeight();
-	        	ctree.scale(scale);
+	        	double scale = rootHeight / stree.getRoot().getHeight();
+	        	stree.scale(scale);
 	        	System.out.println("Scaling species tree to height " + rootHeight);
         	}
         }

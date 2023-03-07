@@ -77,7 +77,7 @@ public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
 
             useTipDates = new CheckBox("Use tip dates");
             useTipDates.setSelected(traitSet != null);
-            useTipDates.selectedProperty().addListener(new ChangeListener<>() {
+            useTipDates.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     try {
