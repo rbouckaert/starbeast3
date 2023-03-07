@@ -367,7 +367,7 @@ ClusterTree/clusterType//'>
 
 			
 			<connect srcID="Tree.t:$(n)" targetID="updown.all" inputName="down" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-			<connect srcID="clockRate.c:$(n)" targetID="updown.all" inputName="down" if="inposterior(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
+			<connect srcID="clockRate.c:$(n)" targetID="updown.all" inputName="up" if="inposterior(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
 
 			
 			<connect srcID="treeLikelihood.$(n)" targetID="tracelog" inputName="log" if="inposterior(treeLikelihood.$(n))"/>
