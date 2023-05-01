@@ -8,6 +8,17 @@
 This repository branch is for BEAST 2.7. Please see the v2.6 branch for compatability with BEAST 2.6.
 
 
+
+## Faster operators
+
+
+The species tree constant distance, below, explores the space of node heights (y-axis) and branch rates (orange is fast, yellow is slow) simultaneously, by moving both gene and species tree nodes.
+
+
+![](tutorial/CD.gif)
+
+
+
 ## Installation
 
 * Install BEAST 2 (available from [http://beast2.org](http://beast2.org)).
