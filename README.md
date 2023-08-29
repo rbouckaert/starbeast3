@@ -9,14 +9,6 @@ This repository branch is for BEAST 2.7. Please see the v2.6 branch for compatab
 
 
 
-## Faster operators
-
-
-The species tree constant distance, below, explores the space of node heights (y-axis) and branch rates (orange is fast, yellow is slow) simultaneously, by moving both gene and species tree nodes.
-
-
-![](tutorial/CD.gif)
-
 
 
 ## Installation
@@ -42,6 +34,9 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 
 ![Defining a species-to-taxon tree mapping](tutorial/Fig1.png)
 
+**Note:** Ensure that the species have different names to the gene tree taxa, or it can cause problems later
+
+*Hint:* To help with visualisation later on, it is recommended that the species names are substrings of the gene taxa names (e.g. species="homo_sapiens", taxon="homo_sapiens.1"). This will help UglyTrees to find the mapping between genes and species in step 13.
 
 4. To specify sample dates, open the `Tip dates` tab. This model assumes that every gene locus was sampled at the same date as that of the species. 
 
@@ -49,17 +44,16 @@ This tutorial is based on the Gopher example data by [Belfiore et al. 2008](http
 
 5. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The ploidy is 2 by default.
 
-6. To define the ploidy of each gene tree, open the `Gene Ploidy` tab. The ploidy is 2 by default.
 
-7. Set the site model of each gene tree in the `Site Model` tab. The bModelTest (for nucleotide) and OBAMA (for protein) site models are also available, if the respective packages are installed.
+6. Set the site model of each gene tree in the `Site Model` tab. The bModelTest (for nucleotide) and OBAMA (for protein) site models are also available, if the respective packages are installed.
 
 ![Setting the gene tree site models](tutorial/Fig2.png)
 
-8. The clock rate for each gene tree can be estimated or fixed using the `Gene Clock Model` tab. By default, all gene clock rates are estimated and are drawn from a Log-Normal prior. If there are a small number of loci, it may be preferrable to leave one of these fixed at 1.0. Note that these gene clock rates are relative to the clock rate definied in the  `Species Clock Model` tab, and thus should be sampled from a prior with a mean of 1.
+7. The clock rate for each gene tree can be estimated or fixed using the `Gene Clock Model` tab. By default, all gene clock rates are estimated and are drawn from a Log-Normal prior. If there are a small number of loci, it may be preferrable to leave one of these fixed at 1.0. Note that these gene clock rates are relative to the clock rate definied in the  `Species Clock Model` tab, and thus should be sampled from a prior with a mean of 1.
 
 ![Setting the gene tree clock models](tutorial/Fig2b.png)
 
-9. Select a clock model using the `Species Clock Model` tab. 
+8. Select a clock model using the `Species Clock Model` tab. 
 
 --  **Species Tree Strict Clock**: Every branch in the species tree has the same substitution rate. 
 
@@ -73,7 +67,7 @@ The species tree `Clock.rate` can also be estimated (Ensure that `Mode => Automa
 
 ![Selecting a species tree clock model](tutorial/Fig3.png)
 
-10. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
+9. Other priors, including the species tree prior, can be configured using the `Priors` tab. The following species tree priors are included:
 
 
 -- **Yule Model**. A model which describes the branching process of species, i.e.  speciation, or births . Estimated parameters: speciationRate (the rate of one species diversifying into two).
@@ -93,17 +87,17 @@ This model assumes that the birth rate is greater than the death rate, and there
 
 Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article), and the `clockRates` are the relative subsitution rate of each gene tree. By default, these are log-normal distributions with a small variance and a mean of 1, to avoid interference with tree height estimation, and the clock rate of the first partition is fixed at 1. 
 
-11. Save the XML template using `File/Save`
+10. Save the XML template using `File/Save`
 
-12. Run BEAST on the saved XML file using
+11. Run BEAST on the saved XML file using
         ```beast/bin/beast -threads N starbeast3.xml```
 where `N` is the number of threads allocated to the parallel gene tree operator (default 1). The gene trees are partitioned into `N` threads and operated on independently. StarBeast3 will usually run slightly slower initially while the parallel MCMC chain lengths are being optimised, and then the program suddenly speeds up afterwards.
 
 
-13. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
+12. MCMC convergence can be measured using Tracer (see [https://www.beast2.org/tracer-2/](https://www.beast2.org/tracer-2/)).
 
 
-14. The MSC model (including the species tree, gene trees, effective population sizes, and branch rates) can be visualised using UglyTrees (see [https://uglytrees.nz/](https://uglytrees.nz/)).
+13. The MSC model (including the species tree, gene trees, effective population sizes, and branch rates) can be visualised using UglyTrees (see [https://uglytrees.nz/](https://uglytrees.nz/)).
 
 
 ![MSC model viewed using UglyTrees](tutorial/Fig4.png)
