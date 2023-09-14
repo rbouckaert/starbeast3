@@ -571,54 +571,25 @@ ClusterTree/clusterType//'>
     </operator>
 	
 	
-	
 
 
-	<operator id="BactrianSubtreeSlide.t:Species" size="0.002" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
-	<operator id="WilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
-	<operator id="Wide.t:Species" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
-	<operator id="AdaptableTopologyOperator.tree.Species" spec="beast.base.evolution.operator.AdaptableOperatorSampler" tree="@Tree.t:Species" uniformp="0.1" weight="15.0">
-
-		<metric spec="beastlabs.evolution.tree.RNNIMetric" taxonset="@taxonsuperset"/>
-
-		<!-- Narrow exchange -->
-		<operator id="Narrow.t:Species" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
-
-		<!-- TODO NER 
-		<operator id="NEROperator_dAE_dBE_dCE" rates="@rates.clock" spec="orc.ner.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" weight="1"/>
-		-->
-
-		<!-- Coordinate narrow exchange -->
-		<operator id="CoordinatedExchange" spec="starbeast3.operators.CoordinatedExchangeRates" tree="@Tree.t:Species" weight="1">
-
-		</operator>
-
-		<!-- TODO Coordinate narrow exchange rates 
-		<operator id="CoordinatedExchangeRates" rates="@rates.clock" spec="starbeast3.operators.NEROperator_dAE_dBE_dCE" tree="@Tree.t:Species" weight="1">
-						<plate var="n" range="1,2,3,4,5,6,7,8,9,10">
-						<gene idref="treePrior.t:$(n)"/>
-						</plate>
-		</operator>
-		-->
-		
-	</operator>
 	
 	
 	
 	
-	<operator id="UniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
+	
 	<operator id="TreeRootScaler.t:Species" rootOnly="true" scaleFactor="0.7" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" tree="@Tree.t:Species" weight="3.0"/>
 	<operator id="BactrianNodeOperator.t:Species" spec="beast.base.evolution.operator.kernel.BactrianNodeOperator" tree="@Tree.t:Species" weight="3.0"/>
 	<operator id="AdaptableTopologyOperator.lengths.Species" spec="beast.base.evolution.operator.AdaptableOperatorSampler" tree="@Tree.t:Species" uniformp="0.1" weight="100">
 
 
 
-	<operator idref="UniformOperator.t:Species"/>
-	<operator idref="BactrianNodeOperator.t:Species" />
-	<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" tree="@Tree.t:Species" weight="1.0"/>
-	
-	<operator idref="CoordinatedUniform.t:Species" />
-	<operator idref="CoordinatedExponential.t:Species" />
+		
+		<operator idref="BactrianNodeOperator.t:Species" />
+		<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" tree="@Tree.t:Species" weight="1.0"/>
+		
+		<operator idref="CoordinatedUniform.t:Species" />
+		<operator idref="CoordinatedExponential.t:Species" />
 
 
 

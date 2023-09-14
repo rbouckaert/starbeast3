@@ -15,6 +15,13 @@ speciationRatePrior/index/=Priors/YuleBirthRatePrior/
 				 <distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="10000.0"/>
 			</prior>
 			
+			<operator id="UniformOperator.t:$(n)" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
+			<operator id="WilsonBalding.t:$(n)" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
+			<operator id="Wide.t:$(n)" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
+			<operator id="Narrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
+			<operator id="BactrianSubtreeSlide.t:$(n)" size="0.002" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
+	
+			
 			<operator id="AdaptableOperatorSampler.YuleModel.t:$(n)" parameter="@speciationRate.t:$(n)" spec="beast.base.evolution.operator.AdaptableOperatorSampler" weight="5.0">
 				<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" weight="1.0"/>
 				<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:$(n)" prior2="@speciationRatePrior.t:$(n)" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
@@ -44,6 +51,26 @@ speciationRatePrior/index/=Priors/YuleBirthRatePrior/
 
 			<connect srcID="AdaptableOperatorSampler.YuleModel.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true">
 				Adaptively operate on the the birth (a.k.a. speciation) rate of the species tree
+			</connect>
+			
+			<connect srcID="UniformOperator.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Operate on tree node heights
+			</connect>
+			
+			<connect srcID="WilsonBalding.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Wilson Balding operator
+			</connect>
+			
+			<connect srcID="Wide.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Wide exchange operator
+			</connect>
+			
+			<connect srcID="Narrow.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Narrow exchange operator
+			</connect>
+			
+			<connect srcID="BactrianSubtreeSlide.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Bactrian subtree slide operator
 			</connect>
 
 
@@ -75,6 +102,13 @@ cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 						</prior>
 
 						<operator id="cySpeciationRateScale.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="1.0" parameter="@cySpeciationRate.t:$(n)"/>
+						
+						<operator id="cyUniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
+						<operator id="cyWilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
+						<operator id="cyWide.t:Species" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
+						<operator id="cyNarrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
+						<operator id="cyBactrianSubtreeSlide.t:$(n)" size="0.002" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
+			
 			]]>
 
 			<connect srcID="CalibratedYuleModel.t:$(n)" targetID="prior" inputName="distribution" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
@@ -96,6 +130,28 @@ cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 			<connect srcID="cySpeciationRate.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(cySpeciationRate.t:$(n)) and cySpeciationRate.t:$(n)/estimate=true"/>
 
 			<connect srcID="cySpeciationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(cySpeciationRate.t:$(n))"/>
+		
+			<connect srcID="cyUniformOperator.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Operate on tree node heights
+			</connect>
+			
+			<connect srcID="cyWilsonBalding.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Wilson Balding operator
+			</connect>
+			
+			<connect srcID="cyWide.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Wide exchange operator
+			</connect>
+			
+			<connect srcID="cyNarrow.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Narrow exchange operator
+			</connect>
+			
+			<connect srcID="cyBactrianSubtreeSlide.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Bactrian subtree slide operator
+			</connect>
+		
+		
 		</subtemplate>
 		
 		
@@ -121,7 +177,12 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/'>
                     <beta spec="parameter.RealParameter" lower="0.0">1.0</beta>
                 </Beta>
 			</prior>
-
+			
+			<operator id="bdUniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
+			<operator id="bdWilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
+			<operator id="bdWide.t:Species" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
+			<operator id="bdNarrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
+			<operator id="bdBactrianSubtreeSlide.t:$(n)" size="0.002" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
 
 			<operator id="netDiversificationRateScale.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@netDiversificationRate.t:$(n)"/>
 			<operator id="ExtinctionFractionScale.t:$(n)" parameter="@ExtinctionFraction.t:$(n)" scaleFactor="0.5" spec="ScaleOperator" weight="3.0" />
@@ -151,6 +212,26 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/'>
 			</connect>
 			<connect srcID="ExtinctionFractionUniform.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(ExtinctionFraction.t:$(n)) and ExtinctionFraction.t:$(n)/estimate=true">
 				Sample uniformly the extinction fraction of tree t:$(n)
+			</connect>
+			
+			<connect srcID="bdUniformOperator.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Operate on tree node heights
+			</connect>
+			
+			<connect srcID="bdWilsonBalding.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Wilson Balding operator
+			</connect>
+			
+			<connect srcID="bdWide.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Wide exchange operator
+			</connect>
+			
+			<connect srcID="bdNarrow.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Narrow exchange operator
+			</connect>
+			
+			<connect srcID="bdBactrianSubtreeSlide.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Bactrian subtree slide operator
 			</connect>
 
 
