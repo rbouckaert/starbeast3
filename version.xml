@@ -7,9 +7,14 @@
 
     <service type="beastfx.app.inputeditor.InputEditor">
         <provider classname="starbeast3.app.beauti.StarBeast3ClockInputEditor"/>
-	<provider classname="starbeast3.app.beauti.StarBeastTipDatesInputEditor"/>
+    	<provider classname="starbeast3.app.beauti.StarBeastTipDatesInputEditor"/>
+        <provider classname="starbeast3.app.beauti.SAMRCAPriorInputEditorSB3"/>
     </service>
 
+
+    <service type="beastfx.app.beauti.PriorProvider">
+        <provider classname="starbeast3.app.beauti.SAMRCAPriorProviderSB3"/>
+    </service>
 
     <service type="beast.base.core.BEASTInterface">
         <provider classname="starbeast3.app.beauti.StarBeastAlignmentProvider3"/>
@@ -24,8 +29,9 @@
         <provider classname="starbeast3.evolution.branchratemodel.StrictClockModelSB3"/>
         <provider classname="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3"/>
         <provider classname="starbeast3.evolution.speciation.ConstantPopulations"/>
+        <provider classname="starbeast3.evolution.speciation.BirthProcess"/>
         <provider classname="starbeast3.tree.BranchLengthLogger"/>
-	<provider classname="starbeast3.tree.StarBeast3TaxonSet"/>
+	    <provider classname="starbeast3.tree.StarBeast3TaxonSet"/>
         <provider classname="starbeast3.genekernel.GeneTreeKernel"/>
         <provider classname="starbeast3.genekernel.GTKGeneTree"/>
         <provider classname="starbeast3.genekernel.GTKPointerTree"/>
@@ -35,6 +41,7 @@
         <provider classname="starbeast3.inference.ShortMCMC"/>
         <provider classname="starbeast3.inference.ShortMCMCLogger"/>
         <provider classname="starbeast3.math.distributions.InverseGamma"/>
+        <provider classname="starbeast3.math.distributions.SAMRCAPriorSB3"/>
         <provider classname="starbeast3.operators.AVMNCubeOperator"/>
         <provider classname="starbeast3.operators.BactrianSubtreeSlide"/>
         <provider classname="starbeast3.operators.BactrianTreeScaleOperator"/>
@@ -45,6 +52,7 @@
         <provider classname="starbeast3.operators.CoordinatedUniform"/>
         <provider classname="starbeast3.operators.DiscreteRateCycle"/>
         <provider classname="starbeast3.operators.DiscreteRateUniform"/>
+        <provider classname="starbeast3.operators.SampledNodeDateRandomWalkerSB3"/>
         <provider classname="starbeast3.operators.EpochOperator"/>
         <provider classname="starbeast3.operators.FixedHeightSubtreePruneRegraftOperator"/>
         <provider classname="starbeast3.operators.GTKExpander"/>

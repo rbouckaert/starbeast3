@@ -300,6 +300,7 @@ public class ParallelMCMC extends MCMC {
         	
         	
             final Operator operator = propagateState(sampleNr);
+            //System.err.print("\n" + sampleNr + " " + operator.getName()+ ":");
 
             if (this.robust && (debugFlag && sampleNr % 3 == 0 || sampleNr % 10000 == 0)) {
                 // check that the posterior is correctly calculated at every third

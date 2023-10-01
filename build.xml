@@ -34,6 +34,7 @@
 		
         <pathelement path="${beast2classpath}"/>
         <pathelement path="../BEASTLabs/build"/>
+        <pathelement path="../sampled-ancestors/build"/>
         <pathelement path="../BeastFX/build"/>
         <pathelement path="../ORC/build"/>
 	</path>

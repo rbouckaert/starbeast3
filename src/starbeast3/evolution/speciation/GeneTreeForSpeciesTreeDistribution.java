@@ -416,6 +416,12 @@ public class GeneTreeForSpeciesTreeDistribution extends Distribution {
         
         logP = 0.0;
         
+        // Root contribution
+        int speciesNodeWithGeneTreeRoot = geneNodeSpeciesAssignment[treeInput.get().getRoot().getNr()];
+        logP = popModel.getRootBranchLogP(treeInput.get().getRoot().getHeight(), popSizesBottom.getValue(speciesNodeWithGeneTreeRoot), 
+        									treeInput.get().getLeafNodeCount());
+        
+        
         // Recompute log priors for all branches which are dirty
         final Node[] speciesTreeNodes = speciesTree.getNodesAsArray();
         for (int speciesNodeI = 0; speciesNodeI < speciesNodeCount; speciesNodeI++) {
