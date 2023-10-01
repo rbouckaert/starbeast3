@@ -79,10 +79,11 @@ The species tree `Clock.rate` can also be estimated (Ensure that `Mode => Automa
 -- **Birth Death Model**. A model which describes both the branching (birth) and extinction (death) of species. Estimated parameters: netDiversificationRate (the species birth rate minus the species death rate; this is the same as the Yule Model since its death rate is 0); ExtinctionFraction (the death rate divided by the birth rate). 
 This model assumes that the birth rate is greater than the death rate, and therefore the species is not going extinct. If ExtinctionFraction is 0, then it is equivalent to the Yule model.
 
-
 -- **FBDModel**. Birth death model, but with fossil data included. See tutorial [here](https://www.beast2.org/divergence-dating-with-sampled-ancestors-fbd-model/) for further details.
 
--- **Yule skyline collapse.** A species boundary detection method, built on top of the Yule model. See [speedemon](https://github.com/rbouckaert/speedemon) package for further details.
+-- **Yule skyline.** The Yule model, but with epochs allowing the birth rate to change through time. See [BICEPS](https://github.com/rbouckaert/biceps) package for further details.
+
+-- **Yule skyline collapse.** A species boundary detection method, built on top of the Yule skyline model. See [speedemon](https://github.com/rbouckaert/speedemon) package for further details.
 
 
 Additionally, `popMean` is the mean effective population size (denoted by &mu;N in the StarBeast3 article), and the `clockRates` are the relative subsitution rate of each gene tree. By default, these are log-normal distributions with a small variance and a mean of 1, to avoid interference with tree height estimation, and the clock rate of the first partition is fixed at 1. 
