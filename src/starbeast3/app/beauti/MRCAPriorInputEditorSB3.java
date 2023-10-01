@@ -17,22 +17,22 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
 import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
-import starbeast3.math.distributions.SAMRCAPriorSB3;
+import starbeast3.math.distributions.MRCAPriorSB3;
 import starbeast3.operators.SampledNodeDateRandomWalkerSB3;
 
-public class SAMRCAPriorInputEditorSB3 extends MRCAPriorInputEditor {
+public class MRCAPriorInputEditorSB3 extends MRCAPriorInputEditor {
 
-	public SAMRCAPriorInputEditorSB3(BeautiDoc doc) {
+	public MRCAPriorInputEditorSB3(BeautiDoc doc) {
 		super(doc);
 	}
 
-	public SAMRCAPriorInputEditorSB3() {
+	public MRCAPriorInputEditorSB3() {
 		super();
 	}
 
 	@Override
 	public Class<?> type() {
-		return SAMRCAPriorSB3.class;
+		return MRCAPriorSB3.class;
 	}
     
     public InputEditor createTipsonlyEditor() throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -49,7 +49,7 @@ public class SAMRCAPriorInputEditorSB3 extends MRCAPriorInputEditor {
 		        			if (o instanceof CheckBox) {
 		        				((CheckBox)o).setOnAction(e -> {
 				                	CheckBox src = (CheckBox) e.getSource();
-				                	SAMRCAPriorSB3 prior = (SAMRCAPriorSB3) m_beastObject;
+				                	MRCAPriorSB3 prior = (MRCAPriorSB3) m_beastObject;
 			        				prior.onlyUseTipsInput.setValue(src.isSelected(), prior);
 				                	if (src.isSelected()) {
 				                		enableTipSampling();
@@ -64,7 +64,7 @@ public class SAMRCAPriorInputEditorSB3 extends MRCAPriorInputEditor {
 			}
         };
 
-        SAMRCAPriorSB3 prior = (SAMRCAPriorSB3) m_beastObject;
+        MRCAPriorSB3 prior = (MRCAPriorSB3) m_beastObject;
         Input<?> input = prior.onlyUseTipsInput;
         e.init(input, prior, -1, ExpandOption.FALSE, false);
         return e;
@@ -93,7 +93,7 @@ public class SAMRCAPriorInputEditorSB3 extends MRCAPriorInputEditor {
     private void enableTipSampling() {
     	// First, create/find the operator
     	SampledNodeDateRandomWalkerSB3 operator = null;
-    	SAMRCAPriorSB3 prior = (SAMRCAPriorSB3) m_beastObject;
+    	MRCAPriorSB3 prior = (MRCAPriorSB3) m_beastObject;
     	TaxonSet taxonset = prior.taxonsetInput.get();
     	taxonset.initAndValidate();
     	
@@ -106,17 +106,9 @@ public class SAMRCAPriorInputEditorSB3 extends MRCAPriorInputEditor {
     	
     	if (operator == null) {
     		operator = new SampledNodeDateRandomWalkerSB3();
+
     		
-    		// Genes
-    		List<GeneTreeForSpeciesTreeDistribution> genes = new ArrayList<>();
-    		for (BEASTInterface output : prior.treeInput.get().getOutputs()) {
-    			if (output instanceof GeneTreeForSpeciesTreeDistribution) {
-    				genes.add((GeneTreeForSpeciesTreeDistribution)output);
-    			}
-    		}
-    		
-    		
-    		operator.initByName("tree", prior.treeInput.get(), "gene", genes, "taxonset", taxonset, "windowSize", 1.0, "weight", 1.0);
+    		operator.initByName("tree", prior.treeInput.get(), "taxonset", taxonset, "windowSize", 1.0, "weight", 1.0);
     	}
    		operator.setID("tipDatesSampler." + taxonset.getID());
    	    	
@@ -127,7 +119,7 @@ public class SAMRCAPriorInputEditorSB3 extends MRCAPriorInputEditor {
 	private static void disableTipSampling(BEASTInterface m_beastObject, BeautiDoc doc) {
     	// First, find the operator
 		SampledNodeDateRandomWalkerSB3 operator = null;
-		SAMRCAPriorSB3 prior = (SAMRCAPriorSB3) m_beastObject;
+		MRCAPriorSB3 prior = (MRCAPriorSB3) m_beastObject;
     	TaxonSet taxonset = prior.taxonsetInput.get();
     	
     	// We cannot rely on the operator ID created in enableTipSampling()

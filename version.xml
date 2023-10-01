@@ -8,12 +8,12 @@
     <service type="beastfx.app.inputeditor.InputEditor">
         <provider classname="starbeast3.app.beauti.StarBeast3ClockInputEditor"/>
     	<provider classname="starbeast3.app.beauti.StarBeastTipDatesInputEditor"/>
-        <provider classname="starbeast3.app.beauti.SAMRCAPriorInputEditorSB3"/>
+        <provider classname="starbeast3.app.beauti.MRCAPriorInputEditorSB3"/>
     </service>
 
 
     <service type="beastfx.app.beauti.PriorProvider">
-        <provider classname="starbeast3.app.beauti.SAMRCAPriorProviderSB3"/>
+        <provider classname="starbeast3.app.beauti.MRCAPriorProviderSB3"/>
     </service>
 
     <service type="beast.base.core.BEASTInterface">
@@ -41,7 +41,7 @@
         <provider classname="starbeast3.inference.ShortMCMC"/>
         <provider classname="starbeast3.inference.ShortMCMCLogger"/>
         <provider classname="starbeast3.math.distributions.InverseGamma"/>
-        <provider classname="starbeast3.math.distributions.SAMRCAPriorSB3"/>
+        <provider classname="starbeast3.math.distributions.MRCAPriorSB3"/>
         <provider classname="starbeast3.operators.AVMNCubeOperator"/>
         <provider classname="starbeast3.operators.BactrianSubtreeSlide"/>
         <provider classname="starbeast3.operators.BactrianTreeScaleOperator"/>

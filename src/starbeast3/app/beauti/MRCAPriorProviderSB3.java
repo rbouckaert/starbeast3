@@ -19,9 +19,9 @@ import beastfx.app.inputeditor.BEASTObjectPanel;
 import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.TaxonSetDialog;
 import beastfx.app.util.Alert;
-import starbeast3.math.distributions.SAMRCAPriorSB3;
+import starbeast3.math.distributions.MRCAPriorSB3;
 
-public class SAMRCAPriorProviderSB3 implements PriorProvider {
+public class MRCAPriorProviderSB3 implements PriorProvider {
 	
 	
 	
@@ -29,7 +29,7 @@ public class SAMRCAPriorProviderSB3 implements PriorProvider {
 
 	@Override
 	public List<Distribution> createDistribution(BeautiDoc doc) {
-		SAMRCAPriorSB3 prior = new SAMRCAPriorSB3();
+		MRCAPriorSB3 prior = new MRCAPriorSB3();
         try {
 
             List<Tree> trees = new ArrayList<>();
@@ -106,7 +106,7 @@ public class SAMRCAPriorProviderSB3 implements PriorProvider {
 	/* expect args to be TaxonSet, Distribution, tree partition (if any) */
 	@Override
 	public List<Distribution> createDistribution(BeautiDoc doc, List<Object> args) {
-		SAMRCAPriorSB3 prior = new SAMRCAPriorSB3();
+		MRCAPriorSB3 prior = new MRCAPriorSB3();
         TaxonSet taxonSet = (TaxonSet) args.get(0);
         BEASTObjectPanel.addPluginToMap(taxonSet, doc);
         prior.taxonsetInput.setValue(taxonSet, prior);
@@ -143,11 +143,11 @@ public class SAMRCAPriorProviderSB3 implements PriorProvider {
 	
 	@Override
 	public String getDescription() {
-		return "StarBeast3 sampled ancestors MRCA prior";
+		return "StarBeast3 MRCA prior";
 	}
 
 
-    private Set<Taxon> getTaxonCandidates(SAMRCAPriorSB3 prior, BeautiDoc doc) {
+    private Set<Taxon> getTaxonCandidates(MRCAPriorSB3 prior, BeautiDoc doc) {
         Set<Taxon> candidates = new HashSet<>();
         Tree tree = prior.treeInput.get();
         String [] taxa = null;
