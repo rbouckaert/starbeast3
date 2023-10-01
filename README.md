@@ -118,7 +118,7 @@ Gene tree models can be linked across the partitions in the Partitions tab of BE
 
 ## StarBeast3 MRCA Prior
 
-To add a prior on most-recent common ancestors (MRCA), press `+ Add Prior' at the bottom of the Priors tab, and select `StarBeast3 MRCA Prior'. Do not select the standard `MRCA Prior' (because its tipsOnly setting is incompatible with multispecies coalescent models).
+To add a prior on most-recent common ancestors (MRCA), press '+ Add Prior' at the bottom of the Priors tab, and select 'StarBeast3 MRCA Prior'. Do not select the standard `MRCA Prior' (because its tipsOnly setting is incompatible with multispecies coalescent models).
 
 
 If tipsOnly=true, then make sure to enable `Use tip dates' in the Tip Dates tab, and initialise the dates accordingly. This will allow the estimation of the dates of old leaves in the tree, for example those informed by fossil calibration data.
