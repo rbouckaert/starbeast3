@@ -107,14 +107,6 @@ where `N` is the number of threads allocated to the parallel gene tree operator 
 Also see tutorial for *BEAST (see [StarBEAST tutorial](https://taming-the-beast.org/tutorials/StarBeast-Tutorial/)).
 
 
-## Linking models
-
-Gene tree models can be linked across the partitions in the Partitions tab of BEAUti, as per usual. However, we advise caution when linking models in StarBeast3, as discussed below.
-
-![Linking models](tutorial/Fig5.png)
-
-
-
 
 ## StarBeast3 MRCA Prior
 
@@ -125,7 +117,7 @@ If tipsOnly=true, then make sure to enable `Use tip dates' in the Tip Dates tab,
 
 
 
-### Fixing the initial species tree
+## Fixing the initial species tree
 
 
 The initial tree can be fixed by editing the xml file. This requires finding the ``<init id="SBI">`` block and inserting a ``fixed`` block into it:
@@ -141,9 +133,17 @@ The initial tree can be fixed by editing the xml file. This requires finding the
 the ``newick`` string should specify the topology and branch lengths of the species tree. For this to work safely, the species tree labels should ideally consist of alphanumeric characters only (no spaces or brackets).  In this method, the tip heights can also be set such that the leaves are not all extant (time 0). Tip heights will remain fixed throughout the analysis. At this stage, the initial gene trees are not readily fixed, but they will conform with the initial species tree.
 
 
-### Fixing the species tree topology
+## Fixing the species tree topology
 
 To set up a fixed-topology analysis, the species tree operators which propose tree topologies must be switched off. This involves deleting, or commenting out, any blocks in the xml file which correspond to the follwoing operators: Reheight.t:Species, BactrianSubtreeSlide.t:Species, WilsonBalding.t:Species, Wide.t:Species, and AdaptableTopologyOperator.tree.Species. 
+
+
+
+## Linking models
+
+Gene tree models can be linked across the partitions in the Partitions tab of BEAUti, as per usual. However, we advise caution when linking models in StarBeast3, as discussed below.
+
+![Linking models](tutorial/Fig5.png)
 
 
 
