@@ -110,7 +110,7 @@ Also see tutorial for *BEAST (see [StarBEAST tutorial](https://taming-the-beast.
 
 ## Tip date sampling
 
-Press '+ Add Prior' at the bottom of the Priors tab, and select 'StarBeast3 MRCA Prior'. Do not select the standard `MRCA Prior' (because its tipsOnly operators are incompatible with multispecies coalescent models). Then set tipsOnly=true, and make sure to enable `Use tip dates' in the Tip Dates tab with dates initialised accordingly. 
+Press '+ Add Prior' at the bottom of the Priors tab, and select 'StarBeast3 MRCA Prior'. Do not select the standard 'MRCA Prior' (because its tipsOnly operators are incompatible with multispecies coalescent models). Then set tipsOnly=true, and make sure to enable `Use tip dates' in the Tip Dates tab with dates initialised accordingly. 
 
 
 This will allow the estimation of the dates of certain leaves in the tree, for example those informed by fossil calibration data. This approach makes for a robust and flexible alternative to having time calibrations on the MRCA node.
