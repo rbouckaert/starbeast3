@@ -4,7 +4,7 @@
 30 November 2023 | Jordan Douglas
 
 
-In this tutorial, we will explore primate multilocus genomic data using a multispecies coalescent model. We will demonstrate how to perform this analysis using StarBeast3 and how the model can be visualised and interpreted. We will also compare the resulting tree with a traditional concatenated phylogeny to demonstrate the biases that can be overcome with multispecies coalescent methods.
+In this tutorial, we will explore primate multilocus genomic data using a multispecies coalescent model. We will demonstrate how to perform this analysis using StarBeast3 and how the model can be visualised and interpreted.
 
 ## Dependencies
 
@@ -15,9 +15,11 @@ Please install [BEAST 2.7.5](https://www.beast2.org/) or greater before starting
 The bush babies (family: Galagidae) are a group of nocturnal primates native to sub-Saharan Africa. They are a sister group of the lorises (family: Lorisidae).
 
 
-Pozzi et al. 2014 compiled a genomic dataset sampled from 30 primates, including bush babies and lorises. Their original dataset contains 27 partitions. In this tutorial, we will consider just 3 genomic partitions. They also produced time calibrations of ancestral nodes, which we will use in this tutorial. We will estimate the phylogeny of these three 3 loci, plus a 4th 'fossil' locus that captures time calibration data. These four gene trees will be constrained within a single species tree phylogeny.
+Pozzi et al. 2014 compiled a genomic dataset sampled from 30 primates, including bush babies and lorises. 
+Their original dataset contains 27 partitions. 
+In this tutorial, we will consider just 3 of these loci. They also compiled fossil data, which we will use in this tutorial. We will estimate the phylogeny of these three 3 loci, plus a 4th 'fossil' locus that captures time calibration data. These four gene trees will be constrained within a single species tree phylogeny.
 
-**Step 1.1.** Download the genetic data .nex file [here](data/primates_3loci.nex) and the fossil .fasta file [here](data/fossils.fasta).
+**Step 1.1.** Download the genetic data .nex file [here](https://raw.githubusercontent.com/rbouckaert/starbeast3/master/workshop/data/primates_3loci.nex) and the fossil .fasta file [here](https://raw.githubusercontent.com/rbouckaert/starbeast3/master/workshop/data/fossils.fasta).
 
 ![A bush baby](figs/bushbaby.jpg)
 
@@ -33,7 +35,7 @@ First, we will load the dataset into the StarBeast3 BEAUti template.
 
 **Step 2.4.** Load the two downloaded datasets into BEAUti (genetic and fossils). Specify 'nucleotide' as the data type. You should see 4 partitions appear - ADORA3, RAG2, SIM1, and fossils. There will be 33 taxa - 30 are extant and 3 are fossils.
 
-Next, we will group individuals together into species. Some of the taxa were initially assigned into the wrong species in previous studies. For example two primates were assigned as *Galagoides demidoff*, however phylogenetic analyses suggested they were in fact different species (Pozzi et al. 2014, Douglas et al. 2022b). The individuals have therefore been relabelled for the purposes of this tutorial.
+Next, we will group individuals together into species. Some of the taxa were initially assigned into the wrong species in previous studies. For example two primates were assigned as *Galagoides demidoff*, however phylogenetic analyses suggested they were in fact different species (Douglas et al. 2022b). Some taxa have therefore been relabelled for the purpose of this tutorial.
 
 
 **Step 2.5.** Open the Taxon Sets tab. Press `Guess => Split on character => _ => and take groups 1-2 => OK`. Now you should see our 33 taxa have been grouped into 28 species.
@@ -45,7 +47,7 @@ Next, we will group individuals together into species. Some of the taxa were ini
 
 We will use the bModelTest site model on each loci. This method will compare several nucleotide substitution models.
 
-**Step 2.6.** Open the Site Model tab. Select the ADORA 3 partition, and then select 'BEAST Model test' from the dropdown. Highlight all 3 genetic loci on the left hand side (shift + click) and select Clone from 'ADORA3', and then OK. We will leave the fossil partition as default.
+**Step 2.6.** Open the Site Model tab. Select the ADORA3 partition, and then select 'BEAST Model test' from the dropdown. Highlight all 3 genetic loci on the left hand side (shift + click) and select Clone from 'ADORA3', and then OK. We will leave the fossil partition as default.
 
 
 ![Selecting a substitution model](figs/fig2.png)
@@ -70,20 +72,19 @@ We will use the fossilised birth death (FBD) model as a tree prior.
 
 Lastly, we need to incorporate time calibration data. We will do this by estimating the heights of three fossils, which are leaves in the tree. Each fossil is associated with a prior distribution of ages, and is constrained within a separate clade in the tree. We will consider just three fossils in this tutorial, but for a longer list please see Pozzi et al. 2014.
 
-Ardipithecus
+
 
 | Fossil | Clade | Age| Prior | Reference |
 |--|--|--|--|--|
-| 1 *Ardipithecus* | Homo sapiens, Pan troglodytes | 5.2 mya | LogNormal(M=5.4, S=0.1) | Haile-Selassie et al. 2001 |
-| 2 *Sivapithecus* | Homo sapiens, Pan troglodytes, Pongo pygmaeus, **Fossil 1** | 12.5 mya | LogNormal(M=14.75, S=0.1) | Kelley 2002 |
-| 3 *Saharagalago* | Arctocebus calabarensis, Perodicticus potto, Loris tardigradus, Nycticebus coucang, Nycticebus bengalensis, Nycticebus pygmaeus | >36.9 mya | LogNormal(M=47, S=0.1) | Seiffert et al. 2003 |
+| 1 *Ardipithecus* | *Homo sapiens*, *Pan troglodytes* | 5.2 mya | LogNormal(M=5.4, S=0.1) | Haile-Selassie et al. 2001 |
+| 2 *Sivapithecus* | *Homo sapiens*, *Pan troglodytes*, *Pongo pygmaeus*, **Fossil 1** | 12.5 mya | LogNormal(M=14.75, S=0.1) | Kelley 2002 |
+| 3 *Saharagalago* | *Arctocebus calabarensis*, *Perodicticus potto*, *Loris tardigradus*, *Nycticebus coucang*, *Nycticebus bengalensis*, *Nycticebus pygmaeus* | >36.9 mya | LogNormal(M=47, S=0.1) | Seiffert et al. 2003 |
 
 
-,,,,,
 
 **Step 2.11.** To set the initial date of each fossil, open the 'Tip Dates' tab. Enable 'Use tip dates'. Select 'Before the present' in the second dropdown box. Find fossil1, fossil2, and fossil3 on the list and set their initial 'Date' to the ages specified above.
 
-Repeat the following steps for each fossil in the table above:
+Repeat the following four steps for each fossil in the table above:
 
 **Step 2.12.** We need to add a prior distribution for each fossil age.  Open the 'Priors'  tab. For each fossil, first press '+ Add Prior' and select 'StarBeast3 MRCA Prior'. Then move the fossil over to the right hand side, and give the Taxon set an appropriate label (e.g., fossil1 can be called Ardipithecus). Press OK. 
 
@@ -114,13 +115,14 @@ If you encounter any issues along the way, you can download the pre-generated ou
 
 ## 4. Interpreting results
 
-First, we will view the MCMC chain of multispecies coalescent trees. We will use UglyTrees to do this. By default, the width of each species tree is proportional to the effective population size.
+First, we will view the MCMC chain of multispecies coalescent trees. We will use UglyTrees to do this. By default, the width of each species tree node is proportional to the effective population size.
 
 **Step 4.1.** Go to [UglyTrees](www.uglytrees.nz)  and load species.trees as a species tree. Load ADORA3.trees, RAG2.trees, and SIM1.trees as gene trees. Press 'Draw Trees'. Use the arrow keys (left and right) to navigate through the posterior chain of estimated trees.  
 
 **Question 4.1.** Can you find the three fossils on the tree?
 
 **Question 4.2.** Can you spot any coalescent events that occurred in a lineage older than the common ancestor of the two species?
+
 
 ![Selecting MRCA Priors](figs/fig6.png)
 
@@ -137,7 +139,7 @@ Now, we will diagnose the MCMC chain and determine if it has converged.
 
 ![Selecting MRCA Priors](figs/fig5.png)
 
-Finally, we will summarise the species tree as a maximum-clade credibility (MCC) tree.
+Finally, we will summarise the species tree as a maximum clade credibility (MCC) tree.
 
 **Step 4.3.** Open the BEAST 2 Tree Annotator tool. Generate an MCC tree from the species.trees file, setting **heights** to 'mean'. Use FigTree or UglyTrees to view the summary tree.
 
