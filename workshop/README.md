@@ -21,7 +21,7 @@ In this tutorial, we will consider just 3 of these loci. They also compiled foss
 
 **Step 1.1.** Download the genetic data .nex file [here](https://raw.githubusercontent.com/rbouckaert/starbeast3/master/workshop/data/primates_3loci.nex) and the fossil .fasta file [here](https://raw.githubusercontent.com/rbouckaert/starbeast3/master/workshop/data/fossils.fasta).
 
-![A bush baby](figs/bushbaby.jpg)
+![A bush baby](https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/The_Mohol_bushbaby_%28Galago_moholi%29%2C_crop.jpg/800px-The_Mohol_bushbaby_%28Galago_moholi%29%2C_crop.jpg)
 
 ## 2. Set up multispecies coalescent method in BEAUti
 
@@ -33,7 +33,7 @@ First, we will load the dataset into the StarBeast3 BEAUti template.
 
 **Step 2.3.** Initialise the StarBeast3 template. `File => Template => StarBeast3`.
 
-**Step 2.4.** Load the two downloaded datasets into BEAUti (genetic and fossils). Specify 'nucleotide' as the data type. You should see 4 partitions appear - ADORA3, RAG2, SIM1, and fossils. There will be 33 taxa - 30 are extant and 3 are fossils.
+**Step 2.4.** Load the two downloaded datasets into BEAUti (genetic and fossils). Specify `nucleotide` as the data type. You should see 4 partitions appear - ADORA3, RAG2, SIM1, and fossils. There will be 33 taxa - 30 are extant and 3 are fossils.
 
 Next, we will group individuals together into species. Some of the taxa were initially assigned into the wrong species in previous studies. For example two primates were assigned as *Galagoides demidoff*, however phylogenetic analyses suggested they were in fact different species (Douglas et al. 2022b). Some taxa have therefore been relabelled for the purpose of this tutorial.
 
@@ -47,28 +47,28 @@ Next, we will group individuals together into species. Some of the taxa were ini
 
 We will use the bModelTest site model on each loci. This method will compare several nucleotide substitution models.
 
-**Step 2.6.** Open the Site Model tab. Select the ADORA3 partition, and then select 'BEAST Model test' from the dropdown. Highlight all 3 genetic loci on the left hand side (shift + click) and select Clone from 'ADORA3', and then OK. We will leave the fossil partition as default.
+**Step 2.6.** Open the Site Model tab. Select the ADORA3 partition, and then select `BEAST Model test` from the dropdown. Highlight all 3 genetic loci on the left hand side (shift + click) and select Clone from 'ADORA3', and then OK. We will leave the fossil partition as default.
 
 
 ![Selecting a substitution model](figs/fig2.png)
 
-By default, each loci will have its relative clock rate estimated and the organisms are diploid (ploidy=2). You can confirm these on the 'Gene Clock Model' and 'Gene ploidy' tabs. These parameters have no meaning in the case of the fossil partition.
+By default, each loci will have its relative clock rate estimated and the organisms are diploid (ploidy=2). You can confirm these on the `Gene Clock Model` and `Gene ploidy` tabs. These parameters have no meaning in the case of the fossil partition.
 
 Now, we will estimate the molecular substitution rate of the species tree in units of substitutions per site per million years. We will also apply a relaxed clock model so that the clock rate can vary across lineages.
 
- **Step 2.7.** Open the 'Species Clock Model' tab and select 'Species Tree Relaxed Clock'. Tick the 'estimate' box next to 'Clock.rate' so that the clock rate is estimated.
+ **Step 2.7.** Open the `Species Clock Model` tab and select `Species Tree Relaxed Clock`. Tick the `estimate` box next to `Clock.rate` so that the clock rate is estimated.
 
 We need to select a prior for the molecular substitution rate. Chintalapati et al. 2020 estimated primates have around 1e-9 - 5e-9 mutations per site per year. This is equal to 0.001-0.005 mutations per site per million years. We will use this to inform a prior distribution on the clock rate: LogNormal(mean = 0.003, sd = 1).
 
- **Step 2.8.** Open the 'Priors' tab, and assign a LogNormal(M=0.0025, S=1) prior to 'SpeciesTreeRelaxedClockRate.Species'. Ensure that 'Mean in Real Space' is ticked.
+ **Step 2.8.** Open the `Priors` tab, and assign a LogNormal(M=0.0025, S=1) prior to `SpeciesTreeRelaxedClockRate.Species`. Ensure that `Mean in Real Space` is ticked.
 
 
 We will use the fossilised birth death (FBD) model as a tree prior. 
 
 
- **Step 2.9.** Select the FBDModel as a Tree prior (at the top of the priors tab). Open the tree prior settings and disable the 'estimate' box next to Origin. Assign a LogNormal(M=1, S=3) prior to 'diversificationRateFBD.t:Species'. Ensure that 'Mean in Real Space' is ticked. We will also assume that the species extinction rate is slightly less than the speciation rate: assign a Beta(alpha=5, beta=1) prior to 'turnoverFBD.t:Species'.
+ **Step 2.9.** Select the `FBDModel` as a Tree prior (at the top of the priors tab). Open the tree prior settings and disable the `estimate` box next to Origin. Assign a LogNormal(M=1, S=3) prior to `diversificationRateFBD.t:Species`. Ensure that `Mean in Real Space` is ticked. We will also assume that the species extinction rate is slightly less than the speciation rate: assign a Beta(alpha=5, beta=1) prior to `turnoverFBD.t:Species`.
 
- **Step 2.10.** Assign an uninformed LogNormal(M=1, S=2) prior to 'popMean'. Ensure that 'Mean in Real Space' is ticked. 
+ **Step 2.10.** Assign an uninformed LogNormal(M=1, S=2) prior to `popMean`. Ensure that `Mean in Real Space` is ticked. 
 
 Lastly, we need to incorporate time calibration data. We will do this by estimating the heights of three fossils, which are leaves in the tree. Each fossil is associated with a prior distribution of ages, and is constrained within a separate clade in the tree. We will consider just three fossils in this tutorial, but for a longer list please see Pozzi et al. 2014.
 
@@ -82,17 +82,17 @@ Lastly, we need to incorporate time calibration data. We will do this by estimat
 
 
 
-**Step 2.11.** To set the initial date of each fossil, open the 'Tip Dates' tab. Enable 'Use tip dates'. Select 'Before the present' in the second dropdown box. Find fossil1, fossil2, and fossil3 on the list and set their initial 'Date' to the ages specified above.
+**Step 2.11.** To set the initial date of each fossil, open the `Tip Dates` tab. Enable `Use tip dates`. Select `Before the present` in the second dropdown box. Find fossil1, fossil2, and fossil3 on the list and set their initial `Date` to the ages specified above.
 
 Repeat the following four steps for each fossil in the table above:
 
-**Step 2.12.** We need to add a prior distribution for each fossil age.  Open the 'Priors'  tab. For each fossil, first press '+ Add Prior' and select 'StarBeast3 MRCA Prior'. Then move the fossil over to the right hand side, and give the Taxon set an appropriate label (e.g., fossil1 can be called Ardipithecus). Press OK. 
+**Step 2.12.** We need to add a prior distribution for each fossil age.  Open the `Priors`  tab. For each fossil, first press `+ Add Prior` and select `StarBeast3 MRCA Prior`. Then move the fossil over to the right hand side, and give the Taxon set an appropriate label (e.g., fossil1 can be called Ardipithecus). Press OK. 
 
-**Step 2.13.** Find the fossil on the list of priors. Open the dropdown and select a LogNormal prior. Expand its settings by pressing the triangle. Enter the M and S values for the prior specified in the table above, ensuring that 'Mean in Real Space' is ticked. Tick the '**Tipsonly**' box (at the bottom). 
+**Step 2.13.** Find the fossil on the list of priors. Open the dropdown and select a LogNormal prior. Expand its settings by pressing the triangle. Enter the M and S values for the prior specified in the table above, ensuring that `Mean in Real Space` is ticked. Tick the `**Tipsonly**` box (at the bottom). 
 
-**Step 2.14.** We also have to specify the clade that each fossil belongs to. For each fossil, press '+ Add Prior' once more, and select 'StarBeast3 MRCA Prior'. Move the **fossil and all other clade members** to the right hand side, and assign a suitable name. For example, move fossil1, sapiens, and troglodytes to the right, and save as 'Ardipithecus_clade'.
+**Step 2.14.** We also have to specify the clade that each fossil belongs to. For each fossil, press `+ Add Prior` once more, and select `StarBeast3 MRCA Prior`. Move the **fossil and all other clade members** to the right hand side, and assign a suitable name. For example, move fossil1, sapiens, and troglodytes to the right, and save as `Ardipithecus_clade`.
 
-**Step 2.15.** Find the clade on the list of priors. Tick the 'Monophyletic' box (at the bottom). We will **not** give these a height prior distribution.
+**Step 2.15.** Find the clade on the list of priors. Tick the `Monophyletic` box (at the bottom). We will **not** give these a height prior distribution.
 
 
 ![Selecting MRCA Priors](figs/fig3.png)
@@ -117,7 +117,7 @@ If you encounter any issues along the way, you can download the pre-generated ou
 
 First, we will view the MCMC chain of multispecies coalescent trees. We will use UglyTrees to do this. By default, the width of each species tree node is proportional to the effective population size.
 
-**Step 4.1.** Go to [UglyTrees](www.uglytrees.nz)  and load species.trees as a species tree. Load ADORA3.trees, RAG2.trees, and SIM1.trees as gene trees. Press 'Draw Trees'. Use the arrow keys (left and right) to navigate through the posterior chain of estimated trees.  
+**Step 4.1.** Go to [UglyTrees](www.uglytrees.nz)  and load species.trees as a species tree. Load ADORA3.trees, RAG2.trees, and SIM1.trees as gene trees. Press `Draw Trees`. Use the arrow keys (left and right) to navigate through the posterior chain of estimated trees.  
 
 **Question 4.1.** Can you find the three fossils on the tree?
 
@@ -141,7 +141,7 @@ Now, we will diagnose the MCMC chain and determine if it has converged.
 
 Finally, we will summarise the species tree as a maximum clade credibility (MCC) tree.
 
-**Step 4.3.** Open the BEAST 2 Tree Annotator tool. Generate an MCC tree from the species.trees file, setting **heights** to 'mean'. Use FigTree or UglyTrees to view the summary tree.
+**Step 4.3.** Open the BEAST 2 Tree Annotator tool. Generate an MCC tree from the species.trees file, setting **heights** to `mean`. Use FigTree or UglyTrees to view the summary tree.
 
 
 **Question 4.6.** Which lineages have evolved the fastest (i.e., highest clock rates)? Which ones have evolved the slowest?
