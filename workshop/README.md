@@ -133,7 +133,7 @@ If you encounter any issues along the way, you can download the pre-generated XM
 
 
 
-![A bush baby using BEAST 2](figs/bushbaby.jpg)
+![A bush baby using BEAST 2](figs/bushbaby.jpg | width=300)
 
 
 ## 3. Running BEAST 2
