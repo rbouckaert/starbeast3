@@ -131,6 +131,11 @@ Now we are done! We just have to save the file.
 
 If you encounter any issues along the way, you can download the pre-generated XML file [here](data/primates.xml).
 
+
+
+![A bush baby using BEAST 2](figs/bushbaby.png)
+
+
 ## 3. Running BEAST 2
 
 Now, we will perform Bayesian inference using BEAST 2. 
@@ -177,6 +182,12 @@ Finally, we will summarise the species tree as a maximum clade credibility (MCC)
 **Question 4.7.** Which lineages have evolved the fastest (i.e., highest clock rates)? Which ones have evolved the slowest?
 
 **Question 4.8.** What are the clade supports like on this tree? Is the phylogeny well-supported? What could be done to increase the clade support?
+
+
+
+
+
+
 
 ## References
 
