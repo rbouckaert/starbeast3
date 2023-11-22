@@ -29,7 +29,14 @@ First, we will load the dataset into the StarBeast3 BEAUti template.
 
 **Step 2.1.** Launch BEAUti
 
-**Step 2.2.** Install the latest version of **StarBeast3**. This is done through `File => Manage Packages`. You will need to restart BEAUti for this to take effect.
+**Step 2.2.** Install the latest version of **StarBeast3**. This is done through `File => Manage Packages`. 
+Select `starbeast3` from the list and press the `Install/Upgrade` button. 
+This automatically installs the packages that **StarBeast3** depends on, such as **ORC**.
+Close the package manager. You will need to restart BEAUti for this to take effect.
+
+![Mangage packages](figs/fig-1.png)
+
+By the way, if you wonder why the screen shot is in dark mode, this is because the Dark theme has been selected. You can find this under the menu `View => Theme Dark`.
 
 **Step 2.3.** Initialise the StarBeast3 template. `File => Template => StarBeast3`.
 
@@ -177,6 +184,10 @@ Now, we will diagnose the MCMC chain and determine if it has converged.
 Finally, we will summarise the species tree as a maximum clade credibility (MCC) tree.
 
 **Step 4.3.** Open the BEAST 2 Tree Annotator tool. Generate an MCC tree from the species.trees file, setting **heights** to `mean`. Use FigTree or UglyTrees or your favourite software to view the summary tree.
+
+![Tree Annotator Tool](figs/fig7.png)
+
+A pre-generated summary tree file is [here](results/species.tree).
 
 
 **Question 4.7.** Which lineages have evolved the fastest (i.e., highest clock rates)? Which ones have evolved the slowest?
