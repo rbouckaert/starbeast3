@@ -1,7 +1,12 @@
+---
+author: Jordan Douglas
+level: Intermediate
+title: StarBeast3 tutorial
+subtitle: Multispecies coalescent divergence dating with fossil leaves
+beastversion: 2.7.6
+---
 
-
-# StarBeast3: multispecies divergence dating with fossil leaves
-30 November 2023 | Jordan Douglas
+# StarBeast3 tutorial: Multispecies coalescent divergence dating with fossil leaves
 
 
 In this tutorial, we will explore primate multilocus genomic data using a multispecies coalescent model. We will demonstrate how to perform this analysis using StarBeast3 and how the model can be visualised and interpreted.
