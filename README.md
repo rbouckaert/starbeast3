@@ -23,7 +23,7 @@ This repository branch is for BEAST 2.7. Please see the v2.6 branch for compatab
 ## Using StarBeast3
 
 
-This tutorial is based on the Gopher example data by [Belfiore et al. 2008](https://doi.org/10.1080/10635150802044011).
+This tutorial is based on the Gopher example data by [Belfiore et al. 2008](https://doi.org/10.1080/10635150802044011). Please also see a tutorial on divergence time dating [here](workshop/).
 
 
 1. Open BEAUti, and select the StarBeast3 template  (menu `File/Templates/StarBeast3`).
