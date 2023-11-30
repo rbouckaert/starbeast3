@@ -77,7 +77,7 @@ Now, we will estimate the molecular substitution rate of the species tree in uni
 
 ![Selecting a clock model](figs/fig2b.png)
 
-We need to select a prior for the molecular substitution rate. Chintalapati et al. 2020 estimated primates have around 1e-9 - 5e-9 mutations per site per year. This is equal to 0.001-0.005 mutations per site per million years. We will use this to inform a prior distribution on the clock rate: LogNormal(mean = 0.003, sd = 1).
+We need to select a prior for the molecular substitution rate. Chintalapati et al. 2020 estimated primates have around 1e-9 - 5e-9 mutations per site per year. This is equal to 0.001-0.005 mutations per site per million years. We will use this to inform a prior distribution on the clock rate: LogNormal(mean = 0.0025, sd = 1).
 
  **Step 2.8.** Open the `Priors` tab, and assign a LogNormal(M=0.0025, S=1) prior to `SpeciesTreeRelaxedClockRate.Species`. Ensure that `Mean in Real Space` is ticked.
 
