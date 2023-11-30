@@ -69,7 +69,7 @@ We will use the HKY site model on each locus. This method will compare several n
 
 ![Selecting a substitution model](figs/fig2.png)
 
-By default, each locus will have its relative clock rate estimated and the organisms are diploid (ploidy=2). You can confirm these on the `Gene Clock Model` and `Gene ploidy` tabs. These parameters have no meaning in the case of the fossil partition.
+By default, each locus will have its relative clock rate estimated and the organisms are diploid (ploidy=2). You can confirm these on the `Gene Clock Model` and `Gene ploidy` tabs. The clock rate will have no meaning in the case of the fossil partition.
 
 Now, we will estimate the molecular substitution rate of the species tree in units of substitutions per site per million years. We will also apply a relaxed clock model so that the clock rate can vary across lineages.
 
