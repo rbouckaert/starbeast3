@@ -29,7 +29,9 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
     final public Input<SpeciesTreePrior> speciesTreePriorInput = new Input<>("speciesTreePrior", "species tree prior, used to find which Population Size Function is used. If not specified, assumes 'constant'");
     final public Input<TreeTopFinder> treeTopFinderInput = new Input<>("treetop", "calculates height of species tree", Validate.REQUIRED);
     final public Input<List<Function>> metadataInput = new Input<>("metadata", "meta data to be logged with the tree nodes",new ArrayList<>());
+    final public Input<Boolean> sortTreeInput = new Input<>("sort", "whether to sort the tree before logging.", true);
 
+    
     // TreePopSizeFunction popSizeFunction;
     String metaDataLabel;
 
@@ -79,7 +81,7 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
 
         // write out the log tree with meta data
         out.print("tree STATE_" + sample + " = ");
-        tree.getRoot().sort();
+        if (sortTreeInput.get()) tree.getRoot().sort();
         out.print(toNewick(tree.getRoot(), metadata, metadataTop, /*branchrateMetadata,*/ metadataList));
         //out.print(tree.getRoot().toShortNewick(false));
         out.print(";");
