@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 
 import beast.base.core.Description;
 import beast.base.core.Function;
@@ -11,6 +12,7 @@ import beast.base.core.Input;
 import beast.base.inference.Operator;
 import beast.base.core.Input.Validate;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.util.Randomizer;
 import beast.base.core.Log;
 import beast.base.evolution.tree.TreeInterface;
 import beast.base.evolution.tree.TreeIntervals;
@@ -108,18 +110,35 @@ public class PopSizeGibbsSampler extends GTKOperator {
 		
 		geneTreeDistributions = this.getTreeDistributions(this);
 		
+		
+		double[] newPopSizes = new double[popSizes.getDimension()];
 		double lower = popSizes.getLower();
 		double upper = popSizes.getUpper();
 		for (int i = 0; i < popSizes.getDimension(); i++) {
-			double newValue = samplePopSize(i);
-			if (newValue < lower) {
-				newValue = lower;
-			} else if (newValue > upper) {
-				newValue = upper;
+			
+			try {
+				double newValue = samplePopSize(i);
+				if (newValue < lower) {
+					newValue = lower;
+				} else if (newValue > upper) {
+					newValue = upper;
+				}
+			
+				newPopSizes[i] = newValue;
+				
+			}catch(Exception e) {
+				return Double.NEGATIVE_INFINITY;
 			}
-			popSizes.setValue(i, newValue);
+			
+			
+			
+		}
+		
+		for (int i = 0; i < popSizes.getDimension(); i++) {
+			popSizes.setValue(i, newPopSizes[i]);
 		}
 		return Double.POSITIVE_INFINITY;
+		
 	}
 
 	/** 
@@ -127,7 +146,8 @@ public class PopSizeGibbsSampler extends GTKOperator {
 	 * @param branch
 	 * @return
 	 */
-	private double samplePopSize(int branch) {
+	private double samplePopSize(int branch) throws Exception {
+		
 		if (treeIntervals != null) {
 			return constantCoalescentSample();
 		}
@@ -157,6 +177,7 @@ public class PopSizeGibbsSampler extends GTKOperator {
 		GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
 		double newN = 1.0/g.sample();
 		return newN;
+		
 	}
 /*
 	public static void main(String[] args) {
