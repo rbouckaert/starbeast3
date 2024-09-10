@@ -1,8 +1,8 @@
-<package name='starbeast3' version='1.1.8'>
+<package name='starbeast3' version='1.1.9'>
 	<depends on='BEAST.base' atleast='2.7.3'/>
 	<depends on='BEAST.app' atleast='2.7.3'/>
 	<depends on='BEASTLabs' atleast='2.0.0'/>
-	<depends on='ORC' atleast='1.0.4'/>
+	<depends on='ORC' atleast='1.2.0'/>
 	<depends on="SA" atleast="2.1.0"/> 
 
     <service type="beastfx.app.inputeditor.InputEditor">
