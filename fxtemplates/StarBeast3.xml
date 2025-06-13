@@ -649,7 +649,7 @@ ClusterTree/clusterType//'>
 
 
 
-    <logger fileName="starbeast3.log" id="tracelog" logEvery="10000" model="@posterior" sort="smart" spec="Logger">
+    <logger fileName="$(filebase).log" id="tracelog" logEvery="10000" model="@posterior" sort="smart" spec="Logger">
         <log idref="posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
@@ -663,7 +663,7 @@ ClusterTree/clusterType//'>
 
 
 
-    <logger fileName="species.trees" id="speciesTreeLogger" logEvery="10000" mode="tree" spec="Logger">
+    <logger fileName="$(filebase).species.trees" id="speciesTreeLogger" logEvery="10000" mode="tree" spec="Logger">
         <log id="SpeciesTreeLoggerX" popSize="@popSize" spec="starbeast3.core.SpeciesTreeLogger" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:Species">
             <treetop id="treeTopFinder" spec="beast.base.evolution.speciation.TreeTopFinder">
             </treetop>
