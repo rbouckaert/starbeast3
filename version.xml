@@ -3,7 +3,8 @@
 	<depends on='BEAST.app' atleast='2.7.3'/>
 	<depends on='BEASTLabs' atleast='2.0.0'/>
 	<depends on='ORC' atleast='1.2.0'/>
-	<depends on="SA" atleast="2.1.0"/> 
+	<depends on="SA" atleast="2.1.0"/>
+    <depends on="MM" atleast="1.2.1"/>
 
     <service type="beastfx.app.inputeditor.InputEditor">
         <provider classname="starbeast3.app.beauti.StarBeast3ClockInputEditor"/>
@@ -18,6 +19,7 @@
 
     <service type="beast.base.core.BEASTInterface">
         <provider classname="starbeast3.app.beauti.StarBeastAlignmentProvider3"/>
+        <provider classname="starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider"/>
         <provider classname="starbeast3.simulation.DirectSimulator"/>
         <provider classname="starbeast3.core.MCMCsb3"/>
         <provider classname="starbeast3.core.OperatorScheduleRecalculator"/>
