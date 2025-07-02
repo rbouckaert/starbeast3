@@ -18,9 +18,11 @@
 	<property name="libBeast2" location="${beast2path}/lib" />
 	<property name="srcBeast2" location="${beast2path}/src" />
 	<property name="beast2classpath" location="${beast2path}/build" />
+<!--	<property name="mmpath" location="../morph-models"/>-->
 	<property name="Add_on_dir" value="${release_dir}/add-on" />
 
     <import file="${beast2path}/build.xml" />
+<!--	<import file="${mmpath}/build.xml" />-->
 
 	<property name="main_class_CladeAge" value="beast.app.ca.starbeast3Panel" />
 	<property name="report" value="${buildstarbeast3}/junitreport"/>
@@ -35,6 +37,7 @@
         <pathelement path="${beast2classpath}"/>
         <pathelement path="../BEASTLabs/build"/>
         <pathelement path="../sampled-ancestors/build"/>
+		<pathelement path="../morph-models/build"/>
         <pathelement path="../BeastFX/build"/>
         <pathelement path="../ORC/build"/>
 	</path>
@@ -198,9 +201,9 @@
 			<fileset dir="examples" />
 		</copy>
 		
-		<copy todir="${Add_on_dir}/doc">
-			<fileset dir="doc" includes="starbeast3.pdf"/>
-		</copy>
+<!--		<copy todir="${Add_on_dir}/doc">-->
+<!--			<fileset dir="doc" includes="starbeast3.pdf"/>-->
+<!--		</copy>-->
 		<copy todir="${Add_on_dir}/lib">
 			<fileset dir="${diststarbeast3}" includes="starbeast3.addon.jar" />
 		</copy>

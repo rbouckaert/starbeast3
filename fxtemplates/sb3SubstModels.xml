@@ -445,6 +445,17 @@ RateGTPrior/index/=Priors/RateGTRPrior/,
             <frequencies id='equalFreqs.s:$(n)' spec='Frequencies' data='@$(n)' estimate='false'/>
 ]]>
         </subtemplate>
+
+        <!-- LewisMK substitution model -->
+        <subtemplate id='LewisMK' class='morphmodels.evolution.substitutionmodel.LewisMK' mainid='LewisMK.s:$(n)'
+                     suppressInputs='morphmodels.evolution.substitutionmodel.LewisMK.stateNumber,
+			morphmodels.evolution.substitutionmodel.LewisMK.datatype,
+			morphmodels.evolution.substitutionmodel.LewisMK.frequencies,
+			morphmodels.evolution.substitutionmodel.LewisMK.proportionInvariant'>
+            <![CDATA[
+    <plugin spec='morphmodels.evolution.substitutionmodel.LewisMK' id='LewisMK.s:$(n)'/>
+]]>
+        </subtemplate>
     
 
 

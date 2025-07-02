@@ -247,7 +247,7 @@ ClusterTree/clusterType//'>
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Species Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
 		<mergepoint id='aux-sb3-clockmodel-panels'/>
-		
+
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
 		<mergepoint id="aux-sb3-initilisation-panels"/>
@@ -462,6 +462,74 @@ ClusterTree/clusterType//'>
 			<mergepoint id="aux-sb3-partitiontemplate"/>
 		</partitiontemplate>
 
+		<alignmentProvider id="Add Morphology to Species Tree" spec='starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider' template='@StarBEAST3MKTrait'/>
+
+		<subtemplate id='StarBEAST3MKTrait' class='beast.base.evolution.alignment.FilteredAlignment' mainid='$(n)'
+					 suppressInputs = 'morphmodels.evolution.substitutionmodel.LewisMK.stateNumber,
+			morphmodels.evolution.substitutionmodel.LewisMK.datatype,
+			morphmodels.evolution.substitutionmodel.LewisMK.frequencies,
+			morphmodels.evolution.substitutionmodel.LewisMK.proportionInvariant'>
+
+			<![CDATA[
+			<stateNode id="clockRate.c:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="true"/>
+
+			<distribution id="morphTreeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:Species">
+				<data spec="beast.base.evolution.alignment.FilteredAlignment" id="$(n)" filter="0-end">
+					<userDataType spec="beast.base.evolution.datatype.StandardData" id="morphDataType.$(n)" />
+				</data>
+				<siteModel spec="SiteModel" id="SiteModel.s:$(n)" gammaCategoryCount="0">
+					<substModel spec="morphmodels.evolution.substitutionmodel.LewisMK" id="LewisMK.s:$(n)" datatype="@morphDataType.$(n)"/>
+					<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
+					<shape spec="parameter.RealParameter" id="gammaShape.s:$(n)" value="1.0" estimate="false"/>
+				</siteModel>
+				<!-- Species-tree strict clock for this morphology partition -->
+
+				<branchRateModel id="strictClockModel.c:$(n)" spec="StrictClockModel" clock.rate="@clockRate.c:$(n)"/>
+			</distribution>
+
+			<prior id="MutationRatePrior.s:$(n)" x="@mutationRate.s:$(n)">
+				<distr spec="OneOnX"/>
+			</prior>
+
+			<prior id="clockRatePrior.c:$(n)" x="@clockRate.c:$(n)">
+				<distr spec="beast.base.inference.distribution.LogNormalDistributionModel" meanInRealSpace="true">
+					<S id="clockRatePriorStdev.s:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="false"/>
+					<M id="clockRatePriorMean.s:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="false"/>
+				</distr>
+			</prior>
+
+			<prior id="GammaShapePrior.s:$(n)" x="@gammaShape.s:$(n)">
+				<distr spec="LogNormalDistributionModel" meanInRealSpace="true" M="1.0" S="2.0"/>
+			</prior>
+
+			<operator id="mutationRateScaler.s:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="1.0" parameter="@mutationRate.s:$(n)"/>
+			<operator id="gammaShapeScaler.s:$(n)" scaleFactor="0.75" spec="ScaleOperator" weight="1.0" parameter="@gammaShape.s:$(n)"/>
+			<operator id="clockRateScaler.c:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@clockRate.c:$(n)"/>
+		]]>
+
+			<connect srcID="morphTreeLikelihood.$(n)" targetID="likelihood" inputName="distribution" if="isInitializing"/>
+			<connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
+
+			<connect srcID="MutationRatePrior.s:$(n)" targetID="prior" inputName="distribution" if="nooperator(FixMeanMutationRatesOperator) and inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
+
+			<connect srcID="mutationRate.s:$(n)" targetID="state" inputName="stateNode" if="inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
+			<connect srcID="gammaShape.s:$(n)" targetID="state" inputName="stateNode" if="inposterior(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
+			<connect srcID="clockRate.c:$(n)" targetID="state" inputName="stateNode" if="inposterior(Tree.t:$(n)) and clockRate.c:$(n)/estimate=true"/>
+			<connect srcID='clockRatePrior.c:$(n)'  targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'>Prior on strict clock rate for morphological data c:$(n)</connect>
+
+			<connect srcID="mutationRateScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
+			<connect srcID="gammaShapeScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inposterior(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
+			<connect srcID="clockRateScaler.c:$(n)" targetID="mcmc" inputName="operator" if="inposterior(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
+
+			<connect srcID="morphTreeLikelihood.$(n)" targetID="tracelog" inputName="log" if="inlikelihood(morphTreeLikelihood.$(n))"/>
+			<connect srcID="mutationRate.s:$(n)" targetID="tracelog" inputName="log" if="inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
+			<connect srcID="gammaShape.s:$(n)" targetID="tracelog" inputName="log" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
+			<connect srcID="clockRate.c:$(n)" targetID="tracelog" inputName="log" if="inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
+
+			<connect srcID="GammaShapePrior.s:$(n)" targetID="prior" inputName="distribution" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
+
+		</subtemplate>
+
 		
 		<mergepoint id="sb3SubstModelTemplates"/>
 		<mergepoint id="sb3ClockModelTemplates"/>
@@ -482,6 +550,8 @@ ClusterTree/clusterType//'>
 </taxonset>
 
 <tree id="Tree.t:Species" spec="starbeast3.tree.SpeciesTree" taxonset="@taxonsuperset" estimate="true"/>
+
+
 
 
 <run chainLength="10000000" id="mcmc" spec="MCMC" storeEvery="50000">
@@ -699,8 +769,8 @@ ClusterTree/clusterType//'>
 
 	
 		</sharedRateModel>
-				
-			
+
+
 
     </init>
 	

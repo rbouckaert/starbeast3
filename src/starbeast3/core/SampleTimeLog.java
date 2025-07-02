@@ -17,7 +17,7 @@ public class SampleTimeLog extends CalculationNode implements Loggable, Function
 	
 	
 	
-	final public Input<OperatorSchedule> operatorScheduleInput = new Input<>("schedule", "The oeprator schedule, used for determining number of proposals", Input.Validate.REQUIRED);
+	final public Input<OperatorSchedule> operatorScheduleInput = new Input<>("schedule", "The operator schedule, used for determining number of proposals", Input.Validate.REQUIRED);
 
   	protected LocalDateTime dateTimeLast_l;
   	protected LocalDateTime dateTimeFirst_l;
