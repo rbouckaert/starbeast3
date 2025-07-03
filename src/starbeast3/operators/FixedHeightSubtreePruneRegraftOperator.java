@@ -90,7 +90,7 @@ public class FixedHeightSubtreePruneRegraftOperator extends TreeOperator {
         } while (root == i || i.getParent() == root);
 
         iP = i.getParent();
-        CiP = iP.getLeft() == iP ? iP.getLeft() : iP.getRight();
+        CiP = iP.getLeft() == i ? iP.getRight() : iP.getLeft();
         PiP = iP.getParent();
 
         // get the height of the parent
