@@ -1,10 +1,9 @@
-<package name='starbeast3' version='1.2.0'>
+<package name='starbeast3' version='1.2.1'>
 	<depends on='BEAST.base' atleast='2.7.3'/>
 	<depends on='BEAST.app' atleast='2.7.3'/>
 	<depends on='BEASTLabs' atleast='2.0.0'/>
 	<depends on='ORC' atleast='1.2.0'/>
 	<depends on="SA" atleast="2.1.0"/>
-    <depends on="MM" atleast="1.2.1"/>
 
     <service type="beastfx.app.inputeditor.InputEditor">
         <provider classname="starbeast3.app.beauti.StarBeast3ClockInputEditor"/>
@@ -32,6 +31,7 @@
         <provider classname="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3"/>
         <provider classname="starbeast3.evolution.speciation.ConstantPopulations"/>
         <provider classname="starbeast3.evolution.speciation.BirthProcess"/>
+        <provider classname="starbeast3.evolution.substitutionmodel.LewisMK"/>
         <provider classname="starbeast3.tree.BranchLengthLogger"/>
 	    <provider classname="starbeast3.tree.StarBeast3TaxonSet"/>
         <provider classname="starbeast3.genekernel.GeneTreeKernel"/>

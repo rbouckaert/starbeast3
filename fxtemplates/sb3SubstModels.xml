@@ -447,13 +447,13 @@ RateGTPrior/index/=Priors/RateGTRPrior/,
         </subtemplate>
 
         <!-- LewisMK substitution model -->
-        <subtemplate id='LewisMK' class='morphmodels.evolution.substitutionmodel.LewisMK' mainid='LewisMK.s:$(n)'
-                     suppressInputs='morphmodels.evolution.substitutionmodel.LewisMK.stateNumber,
-			morphmodels.evolution.substitutionmodel.LewisMK.datatype,
-			morphmodels.evolution.substitutionmodel.LewisMK.frequencies,
-			morphmodels.evolution.substitutionmodel.LewisMK.proportionInvariant'>
+        <subtemplate id='LewisMK' class='starbeast3.evolution.substitutionmodel.LewisMK' mainid='LewisMK.s:$(n)'
+                     suppressInputs='starbeast3.evolution.substitutionmodel.LewisMK.stateNumber,
+			starbeast3.evolution.substitutionmodel.LewisMK.datatype,
+			starbeast3.evolution.substitutionmodel.LewisMK.frequencies,
+			starbeast3.evolution.substitutionmodel.LewisMK.proportionInvariant'>
             <![CDATA[
-    <plugin spec='morphmodels.evolution.substitutionmodel.LewisMK' id='LewisMK.s:$(n)'/>
+    <plugin spec='starbeast3.evolution.substitutionmodel.LewisMK' id='LewisMK.s:$(n)'/>
 ]]>
         </subtemplate>
     

@@ -465,10 +465,10 @@ ClusterTree/clusterType//'>
 		<alignmentProvider id="Add Morphology to Species Tree" spec='starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider' template='@StarBEAST3MKTrait'/>
 
 		<subtemplate id='StarBEAST3MKTrait' class='beast.base.evolution.alignment.FilteredAlignment' mainid='$(n)'
-					 suppressInputs = 'morphmodels.evolution.substitutionmodel.LewisMK.stateNumber,
-			morphmodels.evolution.substitutionmodel.LewisMK.datatype,
-			morphmodels.evolution.substitutionmodel.LewisMK.frequencies,
-			morphmodels.evolution.substitutionmodel.LewisMK.proportionInvariant'>
+					 suppressInputs = 'starbeast3.evolution.substitutionmodel.LewisMK.stateNumber,
+			starbeast3.evolution.substitutionmodel.LewisMK.datatype,
+			starbeast3.evolution.substitutionmodel.LewisMK.frequencies,
+			starbeast3.evolution.substitutionmodel.LewisMK.proportionInvariant'>
 
 			<![CDATA[
 			<stateNode id="clockRate.c:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="true"/>
@@ -478,7 +478,7 @@ ClusterTree/clusterType//'>
 					<userDataType spec="beast.base.evolution.datatype.StandardData" id="morphDataType.$(n)" />
 				</data>
 				<siteModel spec="SiteModel" id="SiteModel.s:$(n)" gammaCategoryCount="0">
-					<substModel spec="morphmodels.evolution.substitutionmodel.LewisMK" id="LewisMK.s:$(n)" datatype="@morphDataType.$(n)"/>
+					<substModel spec="starbeast3.evolution.substitutionmodel.LewisMK" id="LewisMK.s:$(n)" datatype="@morphDataType.$(n)"/>
 					<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
 					<shape spec="parameter.RealParameter" id="gammaShape.s:$(n)" value="1.0" estimate="false"/>
 				</siteModel>

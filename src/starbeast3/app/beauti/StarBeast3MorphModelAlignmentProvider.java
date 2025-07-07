@@ -4,7 +4,7 @@ import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
 import beast.base.evolution.alignment.Alignment;
 import beastfx.app.inputeditor.BeautiDoc;
-import morphmodels.app.beauti.BeautiMorphModelAlignmentProvider;
+import starbeast3.app.beauti.BeautiMorphModelAlignmentProvider;
 import starbeast3.tree.SpeciesTree;
 import starbeast3.tree.StarBeast3TaxonSet;
 
@@ -25,3 +25,5 @@ public class StarBeast3MorphModelAlignmentProvider extends BeautiMorphModelAlign
         super.processAlignment(alignment, filteredAlignments, ascertained, doc);
     }
 }
+
+
