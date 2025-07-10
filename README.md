@@ -12,7 +12,7 @@ Please refer to the following guides:
 1. Official guide (below).
 2. Taming the Beast workshop with the fossilised birth-death model (2025). [Go to page.](https://taming-the-beast.org/tutorials/StarBeast3-Tutorial/) 
 3. Workshop with tip date estimation (2023). [Go to page.](https://github.com/rbouckaert/starbeast3/tree/master/workshop)
-4. StarBeast3 blog on the BEAST 2 website. [Go to page.](https://www.beast2.org/2022/03/31/starbeast3.html)
+4. StarBeast3 blog on the BEAST 2 website (2022). [Go to page.](https://www.beast2.org/2022/03/31/starbeast3.html)
 
 
 
