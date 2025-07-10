@@ -2,10 +2,17 @@
 
 # StarBeast3
 
-[BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators. Also see StarBeast3  [blog post](https://www.beast2.org/2022/03/31/starbeast3.html).
-
+[BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators. 
 
 This repository branch is for BEAST 2.7. Please see the v2.6 branch for compatibility with BEAST 2.6.
+
+### Resources
+
+Please refer to the following guides:
+1. Official guide (below).
+2. Taming the Beast workshop with the fossilised birth-death model (2025). [Go to page.](https://taming-the-beast.org/tutorials/StarBeast3-Tutorial/) 
+3. Workshop with tip date estimation (2023). [Go to page.](https://github.com/rbouckaert/starbeast3/tree/master/workshop)
+4. StarBeast3 blog on the BEAST 2 website. [Go to page.](https://www.beast2.org/2022/03/31/starbeast3.html)
 
 
 
