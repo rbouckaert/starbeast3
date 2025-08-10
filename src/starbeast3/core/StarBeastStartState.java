@@ -70,7 +70,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         }
 
         @Override
-		public String toString() {
+        public String toString() {
             return ename;
         }
 
@@ -139,32 +139,32 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         
         // Fix the intial tree?
         if (fixedInput.get() != null) {
-        	initMethod.set(Method.FIXED);
+            initMethod.set(Method.FIXED);
         }
         if (initMethod.get() == Method.FIXED) {
-        	if (fixedInput.get() == null) {
-        		throw new IllegalArgumentException("Please provide a starting 'newick' if using the fixed method");
-        	}
+            if (fixedInput.get() == null) {
+                throw new IllegalArgumentException("Please provide a starting 'newick' if using the fixed method");
+            }
         }
 
         
         // Get clock model
         BranchRateModelSB3 s = null;
         if (speciesTreeRatesInput.get() != null) {
-        	s = speciesTreeRatesInput.get();
+            s = speciesTreeRatesInput.get();
         }else if (sharedRateModelInput.get() != null) {
-        	s = sharedRateModelInput.get().getClockModel();	
+            s = sharedRateModelInput.get().getClockModel(); 
         }
-    	if (s != null && s instanceof UCRelaxedClockModelSB3) {
-    		UCRelaxedClockModelSB3 s2 = (UCRelaxedClockModelSB3) s;
-    		RealParameter p = s2.realRatesInput.get();
-    		if (p != null) {
-    			rates = p;
-    			lowerRate = 0.1; // p .getLower();
-    		}
-    	}
-    	
-    	
+        if (s != null && s instanceof UCRelaxedClockModelSB3) {
+            UCRelaxedClockModelSB3 s2 = (UCRelaxedClockModelSB3) s;
+            RealParameter p = s2.realRatesInput.get();
+            if (p != null) {
+                rates = p;
+                lowerRate = 0.1; // p .getLower();
+            }
+        }
+        
+        
         
     }
     
@@ -174,16 +174,16 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     @Override
     public void initStateNodes() {
 
-    	
-    	// Find calibrations
+        
+        // Find calibrations
         final Set<BEASTInterface> treeOutputs = speciesTreeInput.get().getOutputs();
         List<MRCAPrior> calibrations = new ArrayList<>();
         for (final Object plugin : treeOutputs ) {
             if( plugin instanceof MRCAPrior ) {
-            	MRCAPrior o = (MRCAPrior) plugin;
-            	if (!calibrations.contains(o)) {
-            		calibrations.add(o);
-            	}
+                MRCAPrior o = (MRCAPrior) plugin;
+                if (!calibrations.contains(o)) {
+                    calibrations.add(o);
+                }
             }
         }
         
@@ -191,16 +191,16 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         
         // If a gene tree kernel is being used, then initialise the gene trees here to those in the kernel
         if (geneKernelPriorInput.get() != null) {
-        	GTKPrior kernel = geneKernelPriorInput.get();
-        	
-        	// There should not be any genes added to the gene list
-        	if (genes.size() > 0) {
-        		throw new IllegalArgumentException("Make sure you do not provide any gene trees when using a gene tree kernel");
-        	}
-        	
-        	// Set the genes tree list as the kernel gene tree list
-        	genes = kernel.kernelInput.get().getCoercedTrees();
-        	
+            GTKPrior kernel = geneKernelPriorInput.get();
+            
+            // There should not be any genes added to the gene list
+            if (genes.size() > 0) {
+                throw new IllegalArgumentException("Make sure you do not provide any gene trees when using a gene tree kernel");
+            }
+            
+            // Set the genes tree list as the kernel gene tree list
+            genes = kernel.kernelInput.get().getCoercedTrees();
+            
         }
         
         // Calibrations
@@ -210,10 +210,10 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
                         "place all priors in the calibrated Yule");
             }
             try {
-				initWithCalibrations();
-			} catch (MathException e) {
-				throw new IllegalArgumentException(e);
-			}
+                initWithCalibrations();
+            } catch (MathException e) {
+                throw new IllegalArgumentException(e);
+            }
         } else {
             if( calibrations.size() > 0 )  {
                 initWithMRCACalibrations(calibrations);
@@ -240,45 +240,45 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         
         // Ensure that all gene tree tips are the same height as their species
         for (Tree gtree : genes) {
-        	this.resetGeneTreeTipHeights((SpeciesTree) speciesTreeInput.get(), gtree);
+            this.resetGeneTreeTipHeights((SpeciesTree) speciesTreeInput.get(), gtree);
         }
         
 
         if (rates != null) {
-        	// rates.setLower(lowerRate);
+            // rates.setLower(lowerRate);
         }
         
         
         // Set origin branch length to slightly above tallest tree
         if (!originInput.get().isEmpty() || !originBranchInput.get().isEmpty()) {
-        	
-        	double maxGeneTreeHeight = 0;
-        	for (Tree gene : genes) {
-        		maxGeneTreeHeight = Math.max(gene.getRoot().getHeight(), maxGeneTreeHeight);
-        	}
-        	double speciesHeight = speciesTreeInput.get().getRoot().getHeight();
-        	
-        	for (RealParameter originParam : originInput.get()) {
-        		originParam.setValue(2 * (maxGeneTreeHeight - speciesHeight) + speciesHeight);
-        	}
-        	
-        	for (RealParameter originLengthParam : originBranchInput.get()) {
-        		originLengthParam.setValue(2 * (maxGeneTreeHeight - speciesHeight));
-        	}
-        	
+            
+            double maxGeneTreeHeight = 0;
+            for (Tree gene : genes) {
+                maxGeneTreeHeight = Math.max(gene.getRoot().getHeight(), maxGeneTreeHeight);
+            }
+            double speciesHeight = speciesTreeInput.get().getRoot().getHeight();
+            
+            for (RealParameter originParam : originInput.get()) {
+                originParam.setValue(2 * (maxGeneTreeHeight - speciesHeight) + speciesHeight);
+            }
+            
+            for (RealParameter originLengthParam : originBranchInput.get()) {
+                originLengthParam.setValue(2 * (maxGeneTreeHeight - speciesHeight));
+            }
+            
         }
         
     }
     
     
 
-	RealParameter rates;
+    RealParameter rates;
     double lowerRate;
 
     private double[] firstMeetings(final Tree gtree, final Map<String, Integer> tipName2Species, final int speciesCount) {
         final Node[] nodes = gtree.listNodesPostOrder(null, null);
         @SuppressWarnings("unchecked")
-		final Set<Integer>[] tipsSpecies = new Set[nodes.length];
+        final Set<Integer>[] tipsSpecies = new Set[nodes.length];
         for(int k = 0; k < tipsSpecies.length; ++k) {
             tipsSpecies[k] = new HashSet<>();
         }
@@ -293,7 +293,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             } else {
                 assert n.getChildCount() == 2;
                 @SuppressWarnings("unchecked")
-				final Set<Integer>[] sps = new Set[2];
+                final Set<Integer>[] sps = new Set[2];
                 sps[0] = tipsSpecies[n.getChild(0).getNr()];
                 sps[1] = tipsSpecies[n.getChild(1).getNr()];
                 final Set<Integer> u = new HashSet<>(sps[0]);
@@ -322,12 +322,12 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
 
     private void fullInit(List<MRCAPrior> mrcapriors) {
-    	
+        
         // Build gene trees from  alignments
-    	if (geneKernelPriorInput.get() != null) {
-    		throw new IllegalArgumentException("Point-estimates are currently not supported when using a gene tree kernel. Please use method='random'.");
-    	}
-    	
+        if (geneKernelPriorInput.get() != null) {
+            throw new IllegalArgumentException("Point-estimates are currently not supported when using a gene tree kernel. Please use method='random'.");
+        }
+        
 
         final Function muInput = this.muInput.get();
         final double mu =  (muInput != null )  ? muInput.getArrayValue() : 1;
@@ -347,7 +347,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         
         
         for (final Tree gtree : geneTrees) {
-        	
+            
             final Alignment alignment = gtree.m_taxonset.get().alignmentInput.get();
             final ClusterTree ctree = new ClusterTree();
             ctree.initByName("initial", gtree, "clusterType", "upgma", "taxa", alignment);
@@ -380,24 +380,24 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
 
             for(int i = 0; i < dmin.length; ++i) {
                 if (dmin[i] == Double.MAX_VALUE) {
-                	// this happens when a gene tree has no taxa for some species-tree taxon.
-                	// TODO: ensure that if this happens, there will always be an "infinite"
-                	// distance between species-taxon 0 and the species-taxon with missing lineages,
-                	// so i < speciesCount - 1.
-                	// What if lineages for species-taxon 0 are missing? Then all entries will be 'infinite'.
-                	String id = (i < speciesCount - 1? stree.getExternalNodes().get(i+1).getID() : "unknown taxon");
-                	if (i == 0) {
-                		// test that all entries are 'infinite', which implies taxon 0 has lineages missing 
-                		boolean b = true;
-                		for (int k = 1; b && k < speciesCount - 1; k++) {
-                			b = (dmin[k] == Double.MAX_VALUE);
-                		}
-                		if (b) {
-                			// if all entries have 'infinite' distances, it is probably the first taxon that is at fault
-                			id = stree.getExternalNodes().get(0).getID();
-                		}
-                	}
-                	// throw new RuntimeException("Gene tree " + g.getID() + " has no lineages for species taxon " + id + " ");
+                    // this happens when a gene tree has no taxa for some species-tree taxon.
+                    // TODO: ensure that if this happens, there will always be an "infinite"
+                    // distance between species-taxon 0 and the species-taxon with missing lineages,
+                    // so i < speciesCount - 1.
+                    // What if lineages for species-taxon 0 are missing? Then all entries will be 'infinite'.
+                    String id = (i < speciesCount - 1? stree.getExternalNodes().get(i+1).getID() : "unknown taxon");
+                    if (i == 0) {
+                        // test that all entries are 'infinite', which implies taxon 0 has lineages missing 
+                        boolean b = true;
+                        for (int k = 1; b && k < speciesCount - 1; k++) {
+                            b = (dmin[k] == Double.MAX_VALUE);
+                        }
+                        if (b) {
+                            // if all entries have 'infinite' distances, it is probably the first taxon that is at fault
+                            id = stree.getExternalNodes().get(0).getID();
+                        }
+                    }
+                    // throw new RuntimeException("Gene tree " + g.getID() + " has no lineages for species taxon " + id + " ");
                 } else {
                     dg[i] += dmin[i];
                 }
@@ -416,37 +416,37 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         }
 
         if (mrcapriors.size() == 0) {
-        	// no MRCA calibrations
-		    final ClusterTree ctree = new ClusterTree();
-		    final Distance distance = new Distance() {
-		        @Override
-		        public double pairwiseDistance(final int s1, final int s2) {
-		            final int i = getDMindex(speciesCount, s1,s2);
-		            return dg[i];
-		        }
-		    };
-		    ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance);
+            // no MRCA calibrations
+            final ClusterTree ctree = new ClusterTree();
+            final Distance distance = new Distance() {
+                @Override
+                public double pairwiseDistance(final int s1, final int s2) {
+                    final int i = getDMindex(speciesCount, s1,s2);
+                    return dg[i];
+                }
+            };
+            ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance);
         } else {
-		    final ConstrainedClusterTree ctree = new ConstrainedClusterTree();
-		    final Distance distance = new Distance() {
-		        @Override
-		        public double pairwiseDistance(final int s1, final int s2) {
-		            final int i = getDMindex(speciesCount, s1,s2);
-		            return dg[i];
-		        }
-		    };
-		    ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance, "constraint", mrcapriors);
-        	
+            final ConstrainedClusterTree ctree = new ConstrainedClusterTree();
+            final Distance distance = new Distance() {
+                @Override
+                public double pairwiseDistance(final int s1, final int s2) {
+                    final int i = getDMindex(speciesCount, s1,s2);
+                    return dg[i];
+                }
+            };
+            ctree.initByName("initial", stree, "taxonset", species,"clusterType", "upgma", "distance", distance, "constraint", mrcapriors);
+            
         }
 
         // Set height?
         if (rootHeightInput.get() != null) {
-        	double rootHeight = rootHeightInput.get().getArrayValue();
-        	if (rootHeight > 0) {
-	        	double scale = rootHeight / stree.getRoot().getHeight();
-	        	stree.scale(scale);
-	        	System.out.println("Scaling species tree to height " + rootHeight);
-        	}
+            double rootHeight = rootHeightInput.get().getArrayValue();
+            if (rootHeight > 0) {
+                double scale = rootHeight / stree.getRoot().getHeight();
+                stree.scale(scale);
+                System.out.println("Scaling species tree to height " + rootHeight);
+            }
         }
         
         
@@ -525,20 +525,20 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
             totBranches /= 2* (streeNodeas.length - 1);
             final RealParameter popm = popMean.get();
             if( popm != null ) {
-            	setParameterValue(popm, totBranches);
+                setParameterValue(popm, totBranches);
             }
             final SpeciesTreePrior speciesTreePrior = speciesTreePriorInput.get();
             if( speciesTreePrior != null ) {
                 final RealParameter popb = speciesTreePrior.popSizesBottomInput.get();
                 if( popb != null ) {
                     for(int i = 0; i < popb.getDimension(); ++i) {
-                    	setParameterValue(popb, i, 2*totBranches);
+                        setParameterValue(popb, i, 2*totBranches);
                     }
                 }
                 final RealParameter popt = speciesTreePrior.popSizesTopInput.get();
                 if( popt != null ) {
                     for(int i = 0; i < popt.getDimension(); ++i) {
-                    	setParameterValue(popt, i, totBranches);
+                        setParameterValue(popt, i, totBranches);
                     }
                 }
             }
@@ -547,17 +547,17 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
     
     /** set parameter value taking bounds in account: if out of bounds, use closest boundary value instead **/
     private void setParameterValue(RealParameter p, double value) {
-    	setParameterValue(p, 0, value);
+        setParameterValue(p, 0, value);
     }
     
     private void setParameterValue(RealParameter p, int index, double value) {
-    	if (value < p.getLower()) {
-    		value = p.getLower();
-    	}
-    	if (value > p.getUpper()) {
-    		value = p.getUpper();
-    	}
-    	p.setValue(index, value);
+        if (value < p.getLower()) {
+            value = p.getLower();
+        }
+        if (value > p.getUpper()) {
+            value = p.getUpper();
+        }
+        p.setValue(index, value);
     }
 
     private void randomInitGeneTrees(double speciesTreeHeight) {
@@ -572,152 +572,192 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
      * Fix the starting species tree
      */
     private void fixedInit() {
-    	
-    	//Log.warning("before: " +  speciesTreeInput.get().getRoot().toNewick());
-    	TreeParser tp = fixedInput.get();
-    	tp.initStateNodes();
-    	//Log.warning("after: " +  speciesTreeInput.get().getRoot().toNewick());
-    	
-    	// Fit the gene trees into the species tree
-    	
-    	for (Tree gtree : genes) {
+        
+        //Log.warning("before: " +  speciesTreeInput.get().getRoot().toNewick());
+        TreeParser tp = fixedInput.get();
+        tp.initStateNodes();
+        //Log.warning("after: " +  speciesTreeInput.get().getRoot().toNewick());
+        
+        // Fit the gene trees into the species tree
+        
+        for (Tree gtree : genes) {
 
-	    	// Find GeneTreeForSpeciesTreeDistribution for this gene tree
-	        final Set<BEASTInterface> treeOutputs = gtree.getOutputs();
-	        GeneTreeForSpeciesTreeDistribution prior = null;
-	        for (final Object plugin : treeOutputs ) {
-	            if( plugin instanceof GeneTreeForSpeciesTreeDistribution ) {
-	            	prior = (GeneTreeForSpeciesTreeDistribution) plugin;
-	            	break;
-	            }
-	        }
-	        
-	        if (prior == null) {
-	        	continue;
-	        }
-	        
-	        if (prior.speciesTreeInput.get() != speciesTreeInput.get()) {
-	        	continue;
-	        }
-	        
-	        prior.requiresRecalculation();
-	    	
-	        
-	        
-	    	// Ensure that all gene tree nodes are above the species they are mapped to
-	        double ddt = speciesTreeInput.get().getRoot().getHeight() * 1e-4;
-	        double dt = ddt;
-	        double rootHeight = speciesTreeInput.get().getRoot().getHeight();
-	        
-	        
-	       
-	        
-	        
+            // Find GeneTreeForSpeciesTreeDistribution for this gene tree
+            final Set<BEASTInterface> treeOutputs = gtree.getOutputs();
+            GeneTreeForSpeciesTreeDistribution prior = null;
+            for (final Object plugin : treeOutputs ) {
+                if( plugin instanceof GeneTreeForSpeciesTreeDistribution ) {
+                    prior = (GeneTreeForSpeciesTreeDistribution) plugin;
+                    break;
+                }
+            }
+            
+            if (prior == null) {
+                continue;
+            }
+            
+            if (prior.speciesTreeInput.get() != speciesTreeInput.get()) {
+                continue;
+            }
+            
+            prior.requiresRecalculation();
+            
+            
+            
+            // Ensure that all gene tree nodes are above the species they are mapped to
+            double ddt = speciesTreeInput.get().getRoot().getHeight() * 1e-4;
+            double dt = ddt;
+            double rootHeight = speciesTreeInput.get().getRoot().getHeight();
+            
+            
+           
+            
+            
 
-	        // Place all coalescent events slightly above the root initially in case the following fails
-	        for (Node geneNode: gtree.getInternalNodes()) {
-	        	
-	        
-	        	// Set its height
-	        	//Log.warning("Setting node heigt from " + geneNode.getHeight() + " to " + (speciesNode.getHeight() + dt) );
-	        	geneNode.setHeight(rootHeight + dt);
-	        	dt += ddt;
-	        }
-	        
-	        
-	        
-	        placeGeneTreeWithinSpeciesTree(speciesTreeInput.get().getRoot(), prior, gtree, gtree.getLeafNodeCount());
-	       // if (newRoot != null) {
-	        	
-	        	//Tree newTree = new Tree(newRoot);
-	        	//if (gtree.m_taxonset.get() != null) {
-	        		//newTree.m_taxonset.setValue(gtree.m_taxonset.get(), gtree);
-	        	//}
-	        	//Log.warning(gtree.getRoot().toNewick());
-		        //gtree.assignFromWithoutID(newTree);
-		        prior.requiresRecalculation();
-		        
-		        
-	        //}
+            // Place all coalescent events slightly above the root initially in case the following fails
+            for (Node geneNode: gtree.getInternalNodes()) {
+                
+            
+                // Set its height
+                //Log.warning("Setting node heigt from " + geneNode.getHeight() + " to " + (speciesNode.getHeight() + dt) );
+                geneNode.setHeight(rootHeight + dt);
+                dt += ddt;
+            }
+            
+            
+            
+            placeGeneTreeWithinSpeciesTree(speciesTreeInput.get().getRoot(), prior, gtree, gtree.getLeafNodeCount());
+           // if (newRoot != null) {
+                
+                //Tree newTree = new Tree(newRoot);
+                //if (gtree.m_taxonset.get() != null) {
+                    //newTree.m_taxonset.setValue(gtree.m_taxonset.get(), gtree);
+                //}
+            // if (gtree.getID().equals("Tree.t:region_19")){
+            //     Log.warning(gtree.getID() + " " + gtree.getRoot().toNewick());
+            // }
+                
+                //gtree.assignFromWithoutID(newTree);
+                prior.requiresRecalculation();
+                
+                
+            //}
 
-	
-    	}
-    	
-    	
+    
+        }
+        
+        
     }
     
     
     private int placeGeneTreeWithinSpeciesTree(Node speciesNode, GeneTreeForSpeciesTreeDistribution prior, Tree gTree, int internalNodeNr) {
-    	
-    	
-    	// Create a clade within the species leaf
-    	if (speciesNode.isLeaf()) {
-    		
-    		
-    		// Find all of the gene leaves that belong to this species tree leaf
-    		Set<String> leaves = prior.getLineagesInSpeciesLeaf(speciesNode.getID());
-        	if (leaves.isEmpty()) {
-        		Log.warning("Unexpected: cannot find gene leaves for " + speciesNode.getID());
-        		return -1;
-        	}
-        	List<Node> leafNodes = new ArrayList<>();
-        	for (Node leaf : gTree.getExternalNodes()) {
-        		if (leaves.contains(leaf.getID()) )leafNodes.add(leaf);
-        	}
-        	if (leafNodes.isEmpty()) {
-        		Log.warning("Unexpected: cannot find gene nodes for " + speciesNode.getID());
-        		return -1;
-        	}
-        	
-        	
-        	// Rearrange the gene tree into a caterpillar
-        	double ddt = speciesNode.getLength() / leaves.size();
-        	double dt = speciesNode.getHeight() + ddt;
-        	Node mrca = null;
-        	for (Node leaf : leafNodes) {
-        		
-        		leaf.setHeight(speciesNode.getHeight());
-        		if (mrca == null) {
-        			mrca = leaf;
-        		}else {
-        			
-        			Node newMrca = gTree.getNode(internalNodeNr);
-        			newMrca.setHeight(dt);
-        			newMrca.removeAllChildren(true);
-        			newMrca.addChild(mrca);
-        			newMrca.addChild(leaf);
-        			mrca = newMrca;
-        			dt += ddt;
-        			
-        			internalNodeNr++;
-        		}
-        	}
-        	
-        	return internalNodeNr;
-        	
-    	}
-    	
-    	
-    	// Species tree internal node: take the two child nodes and coalesce them within the common ancestor
-    	int internalNodeNrLeft = placeGeneTreeWithinSpeciesTree(speciesNode.getChild(0), prior, gTree, internalNodeNr)-1;
-    	if (internalNodeNrLeft > 0) {
-    		internalNodeNr = internalNodeNrLeft+1;
-    	}
-    	int internalNodeNrRight = placeGeneTreeWithinSpeciesTree(speciesNode.getChild(1), prior, gTree, internalNodeNr)-1;
-    	if (internalNodeNrRight > 0) {
-    		internalNodeNr = internalNodeNrRight+1;
-    	}
-    	
-    	Node mrca = gTree.getNode(internalNodeNr);
-    	internalNodeNr++;
-    	
-    	double height = speciesNode.isRoot() ? speciesNode.getHeight()*1.1 : (speciesNode.getHeight() + speciesNode.getLength()*0.5);
-    	mrca.setHeight(height);
-    	mrca.removeAllChildren(true);
-    	mrca.addChild(gTree.getNode(internalNodeNrLeft));
-    	mrca.addChild(gTree.getNode(internalNodeNrRight));
-    	return internalNodeNr;
-    	
+        
+        
+        // Create a clade within the species leaf
+        if (speciesNode.isLeaf()) {
+            
+            
+            // Find all of the gene leaves that belong to this species tree leaf
+            Set<String> leaves = prior.getLineagesInSpeciesLeaf(speciesNode.getID());
+            if (leaves.isEmpty()) {
+                Log.warning("Unexpected: cannot find gene leaves for " + speciesNode.getID() + " in " + gTree.getID());
+                return -1;
+            }
+            List<Node> leafNodes = new ArrayList<>();
+            for (Node leaf : gTree.getExternalNodes()) {
+                if (leaves.contains(leaf.getID())) leafNodes.add(leaf);
+            }
+            if (leafNodes.isEmpty()) {
+                Log.warning("Unexpected: cannot find gene nodes for " + speciesNode.getID() + " in " + gTree.getID());
+                return -1;
+            }
+
+
+           
+            
+            
+            // Rearrange the gene tree into a caterpillar
+            double ddt = speciesNode.getLength() / (1.0 * leaves.size());
+            double dt = speciesNode.getHeight() + ddt;
+            Node mrca = null;
+            for (Node leaf : leafNodes) {
+                
+                leaf.setHeight(speciesNode.getHeight());
+                if (mrca == null) {
+                    mrca = leaf;
+                }else {
+                    
+                    Node newMrca = gTree.getNode(internalNodeNr);
+                    newMrca.setHeight(dt);
+                    newMrca.removeAllChildren(true);
+                    newMrca.addChild(mrca);
+                    newMrca.addChild(leaf);
+                    mrca = newMrca;
+                    dt += ddt;
+                    
+                    internalNodeNr++;
+                }
+            }
+            
+            if (leafNodes.size() == 1){
+                 //Log.warning("Success for " + speciesNode.getID() + " in " + gTree.getID() + " with just one leaf " + leafNodes.get(0).getNr());
+                return leafNodes.get(0).getNr();
+            }else{
+                //Log.warning("Success for " + speciesNode.getID() + " in " + gTree.getID() + " with just many leaves " + leafNodes.size());
+                return internalNodeNr-1;
+            }
+
+            
+            
+        }
+        
+        
+        // Species tree internal node: take the two child nodes and coalesce them within the common ancestor
+        int internalNodeNrLeft = placeGeneTreeWithinSpeciesTree(speciesNode.getChild(0), prior, gTree, internalNodeNr);
+        if (internalNodeNrLeft >= gTree.getLeafNodeCount()) {
+            internalNodeNr = internalNodeNrLeft+1;
+        }
+        int internalNodeNrRight = placeGeneTreeWithinSpeciesTree(speciesNode.getChild(1), prior, gTree, internalNodeNr);
+        if (internalNodeNrRight >= gTree.getLeafNodeCount()) {
+            internalNodeNr = internalNodeNrRight+1;
+        }
+        
+
+
+        if (internalNodeNrLeft >= 0 && internalNodeNrRight >= 0 && internalNodeNrLeft != internalNodeNrRight){
+
+
+            //Log.warning("i=" + internalNodeNr + " left=" + internalNodeNrLeft + " right=" + internalNodeNrRight);
+
+            Node mrca = gTree.getNode(internalNodeNr);
+            
+            double height = speciesNode.isRoot() ? speciesNode.getHeight()*1.1 : (speciesNode.getHeight() + speciesNode.getLength()*0.5);
+            mrca.setHeight(height);
+            mrca.removeAllChildren(true);
+            mrca.addChild(gTree.getNode(internalNodeNrLeft));
+            mrca.addChild(gTree.getNode(internalNodeNrRight));
+
+            return internalNodeNr;
+
+        }
+
+
+        if (internalNodeNrLeft < 0 && internalNodeNrRight >= 0) {
+             return internalNodeNrRight;
+        }
+
+        if (internalNodeNrLeft >= 0 && internalNodeNrRight < 0) {
+             return internalNodeNrLeft;
+        }
+
+        if (internalNodeNrLeft < 0 && internalNodeNrRight < 0){
+            return -1;
+        }
+
+        return internalNodeNr-1;
+
+        
+        
     }
     
     
@@ -837,72 +877,72 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
      * @param gtree
      */
     private void resetGeneTreeTipHeights(SpeciesTree speciesTree, Tree gtree) {
-    	
-    	
-    	// Find GeneTreeForSpeciesTreeDistribution for this gene tree
+        
+        
+        // Find GeneTreeForSpeciesTreeDistribution for this gene tree
         final Set<BEASTInterface> treeOutputs = gtree.getOutputs();
         GeneTreeForSpeciesTreeDistribution prior = null;
         for (final Object plugin : treeOutputs ) {
             if( plugin instanceof GeneTreeForSpeciesTreeDistribution ) {
-            	prior = (GeneTreeForSpeciesTreeDistribution) plugin;
-            	break;
+                prior = (GeneTreeForSpeciesTreeDistribution) plugin;
+                break;
             }
         }
-    	
+        
         if (prior == null) {
-        	Log.warning("Cannot reset tip dates for " + gtree.getID() + " because it does not have a tree prior");
-        	return;
+            Log.warning("Cannot reset tip dates for " + gtree.getID() + " because it does not have a tree prior");
+            return;
         }
         
         if (prior.speciesTreeInput.get() != speciesTree) {
-        	Log.warning("Cannot reset tip dates for " + gtree.getID() + " because its tree prior does not have the matching species tree " + prior.speciesTreeInput.get().getID());
-        	return;
+            Log.warning("Cannot reset tip dates for " + gtree.getID() + " because its tree prior does not have the matching species tree " + prior.speciesTreeInput.get().getID());
+            return;
         }
-    	
-    	// Set leaf heights
+        
+        // Set leaf heights
         for (Node geneLeaf: gtree.getExternalNodes()) {
-        	
-        	// Find mapped node
-        	Node speciesLeaf = prior.mapGeneNodeToSpeciesNode(geneLeaf.getNr());
-        	if (!speciesLeaf.isLeaf()) {
-        		throw new IllegalArgumentException("Unexpected error: the species tree node mapped to gene leaf " + geneLeaf.getID() + " is not a leaf");
-        	}
-        	
-        	// Set its height
-        	geneLeaf.setHeight(speciesLeaf.getHeight());
+            
+            // Find mapped node
+            Node speciesLeaf = prior.mapGeneNodeToSpeciesNode(geneLeaf.getNr());
+            if (!speciesLeaf.isLeaf()) {
+                throw new IllegalArgumentException("Unexpected error: the species tree node mapped to gene leaf " + geneLeaf.getID() + " is not a leaf");
+            }
+            
+            // Set its height
+            geneLeaf.setHeight(speciesLeaf.getHeight());
         }
         
         
        // Recursively set internal node heights above their leaves
         shiftInternalNodes(gtree.getRoot());
-        	
+            
         
-	}
+    }
     
     /**
      * Ensure that all internal nodes are above both children
      * @param node
      */
     private void shiftInternalNodes(Node node) {
-    	
-    	if (node.isLeaf()) return;
-    	
-    	
-    	// Repeat for children
-    	double maxChildHeight = 0;
-    	for (Node child : node.getChildren()) {
-    		shiftInternalNodes(child);
-    		maxChildHeight = Math.max(maxChildHeight, child.getHeight());
-    	}
-    	
-    	// Set this height above the oldest child
-    	if (node.getHeight() <= maxChildHeight) {
-    		double newHeight = maxChildHeight*1.1 + 1e-8;
-    		node.setHeight(newHeight);
-    	}
-    	
-    	
-    	
+        
+        if (node.isLeaf()) return;
+        
+        
+        // Repeat for children
+        double maxChildHeight = 0;
+        for (Node child : node.getChildren()) {
+            shiftInternalNodes(child);
+            maxChildHeight = Math.max(maxChildHeight, child.getHeight());
+        }
+        
+        // Set this height above the oldest child
+        if (node.getHeight() <= maxChildHeight) {
+            double newHeight = maxChildHeight*1.1 + 1e-8;
+            node.setHeight(newHeight);
+        }
+        
+        
+        
     }
     
 
