@@ -146,6 +146,14 @@ To set up a fixed-topology analysis, the species tree operators which propose tr
 
 
 
+## Stochastic mapping
+
+The substitutions along each lineage in each gene tree can be reconstructed using the [BeastMap](https://github.com/jordandouglas/BeastMap) package. Furthermore, as illustrated below using the morphology dataset from [Taming the Beast FBD 2025 workshop](https://taming-the-beast.org/tutorials/StarBeast3-Tutorial/), the number of changes in each species lineage can also be estimates. This can be the total number of changes in each gene lineage within the species, or number of morphological changes. Be careful, as the total number of substitutions within a species will grow with the number of individuals within that species, and therefore the counter is best suited for when each extant species has just one individual rather than several. 
+
+
+![BeastMap](tutorial/BeastMap.png)
+
+
 ## Linking models
 
 Gene tree models can be linked across the partitions in the Partitions tab of BEAUti, as per usual. However, we advise caution when linking models in StarBeast3, as discussed below.
