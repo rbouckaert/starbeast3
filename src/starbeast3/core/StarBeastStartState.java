@@ -902,6 +902,9 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
         // Set leaf heights
         for (Node geneLeaf: gtree.getExternalNodes()) {
             
+        	Log.warning(geneLeaf.getID() + " in " + gtree.getID());
+        	Log.warning("" + gtree.getRoot().toNewick());
+        	
             // Find mapped node
             Node speciesLeaf = prior.mapGeneNodeToSpeciesNode(geneLeaf.getNr());
             if (!speciesLeaf.isLeaf()) {
