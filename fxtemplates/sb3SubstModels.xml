@@ -1,187 +1,222 @@
-<beast version='2.0'
-       namespace='beast.app.beauti:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.math.distributions'>
+<beast version="2.8"
+       namespace="beastfx.app.beauti:beastfx.app.inputeditor:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.spec.inference.operator:beast.base.inference.operator:beast.base.spec.evolution.sitemodel:beast.base.spec.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.inference.distribution">
 
        
        
        
-    <mergewith point='sb3SubstModelTemplates'>
+    <mergewith point="sb3SubstModelTemplates">
     
-	
-	
-	
+    
         <!-- gamma site model -->
-        <subtemplate id='Gamma Site Model' class='beast.base.evolution.sitemodel.SiteModel' mainid='SiteModel.s:$(n)'
+        <subtemplate id='Gamma Site Model' class='beast.base.spec.evolution.sitemodel.SiteModel' mainid='SiteModel.s:$(n)'
             hmc='SiteModel/proportionInvariant/,
-                SiteModel/mutationRate/,
-                SiteModel/gammaCategoryCount/,
-                SiteModel/shape/,
-                SiteModel/substModel/,
-                gammaShapeScaler/index/=Operators/BactrianRateScaler/index/,
-                proportionInvariantScaler/index/=Operators/BactrianRateScaler/index/,
-                mutationRateScaler/index/=Operators/BactrianRateScaler/index/,
-                GammaShapePrior/index/=Priors/GammaShapePrior/,
-                PropInvariantPrior/index/=Priors/PropInvariantPrior/,
-                MutationRatePrior/index/=Priors/MutationRatePrior/
-                '>
+SiteModel/mutationRate/,
+SiteModel/gammaCategoryCount/,
+SiteModel/shape/,
+SiteModel/substModel/,
+gammaShapeScaler/index/=Operators/BactrianRateScaler/index/,
+proportionInvariantScaler/index/=Operators/BactrianRateScaler/index/,
+mutationRateScaler/index/=Operators/BactrianRateScaler/index/,
+GammaShapePrior/index/=Priors/GammaShapePrior/,
+PropInvariantPrior/index/=Priors/PropInvariantPrior/,
+MutationRatePrior/index/=Priors/MutationRatePrior/
+'>
             <![CDATA[
-            <plugin spec='SiteModel' id="SiteModel.s:$(n)" gammaCategoryCount='0'>
+            <plugin spec='beast.base.spec.evolution.sitemodel.SiteModel' id="SiteModel.s:$(n)" gammaCategoryCount='0'>
                 <!--substModel will be automatically detected /-->
-                <proportionInvariant spec='parameter.RealParameter' id='proportionInvariant.s:$(n)' value='0.0' lower='0' upper='1' estimate='false'/>
-                <mutationRate        spec='parameter.RealParameter' id='mutationRate.s:$(n)' value='1.0'        estimate='false'/>
-                <shape               spec='parameter.RealParameter' id='gammaShape.s:$(n)' value='1.0'         estimate='false'/>
+                <proportionInvariant spec="beast.base.spec.inference.parameter.RealScalarParam" domain="NonNegativeReal" id='proportionInvariant.s:$(n)' value='0.0' estimate='false'/>
+                <mutationRate        spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id='mutationRate.s:$(n)' value='1.0' estimate='false'/>
+                <shape               spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id='gammaShape.s:$(n)' value='1.0' estimate='false'/>
             </plugin>
-            <prior id='MutationRatePrior.s:$(n)' x='@mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
-            <prior id='GammaShapePrior.s:$(n)' x='@gammaShape.s:$(n)'><distr spec="beast.base.inference.distribution.Exponential" mean='1'/></prior>
-            <prior id='PropInvariantPrior.s:$(n)' x='@proportionInvariant.s:$(n)'><distr spec="beast.base.inference.distribution.Uniform" lower='0' upper='1'/></prior>
-			
 
-			<operator id="proportionInvariantScaler.s:$(n)" spec="beast.base.inference.operator.kernel.BactrianIntervalOperator" scaleFactor="0.75" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
-			<operator id="mutationRateScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@mutationRate.s:$(n)"/>
-			<operator id="gammaShapeScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@gammaShape.s:$(n)"/>
-			
+            <distribution id='MutationRatePrior.s:$(n)' spec='beast.base.spec.inference.distribution.Gamma' param='@mutationRate.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.01" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="100.0" estimate="false"/>
+            </distribution>
+            <distribution id='GammaShapePrior.s:$(n)' spec='beast.base.spec.inference.distribution.TruncatedReal' param='@gammaShape.s:$(n)'>
+                <lower spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.1" estimate="false"/>
+                <!--upper spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="10000.0" estimate="false"/-->
+                <distribution spec='beast.base.spec.inference.distribution.Exponential'>
+                    <mean spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+                </distribution>
+            </distribution>
+            <distribution id='PropInvariantPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Beta' param='@proportionInvariant.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+                <beta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+            </distribution>
 
+
+            <operator id="AVMNOperator.$(n)" spec="beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator" weight="0.1" 
+                coefficient="1.0"
+                scaleFactor="1"
+                beta="0.05"
+                initial="800"
+                burnin="400"
+                every="1" allowNonsense="true">
+                <transformations id="AVMNSumTransform.$(n)" spec="beast.base.spec.inference.operator.Transform$LogConstrainedSumTransform" sum="1.0">
+                    <!-- frequencies -->
+                </transformations>
+                <transformations id="AVMNLogTransform.$(n)" spec="beast.base.spec.inference.operator.Transform$LogTransform">
+                    <!-- site and substitution model parameters -->
+                </transformations>
+                <transformations id="AVMNNoTransform.$(n)" spec="beast.base.spec.inference.operator.Transform$NoTransform">
+                    <!-- tree -->
+                </transformations>
+            </operator>
+
+            <operator id="proportionInvariantScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+                <parameter idref="proportionInvariant.s:$(n)"/>
+                <operator idref="AVMNOperator.$(n)"/>
+                <operator id='proportionInvariantScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
+            </operator>
+
+            <operator id="mutationRateScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+                <parameter idref="mutationRate.s:$(n)"/>
+                <operator idref="AVMNOperator.$(n)"/>
+                <operator id='mutationRateScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@mutationRate.s:$(n)"/>
+            </operator>
+
+            <operator id="gammaShapeScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+                <parameter idref="gammaShape.s:$(n)"/>
+                <operator idref="AVMNOperator.$(n)"/>
+               <operator id='gammaShapeScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@gammaShape.s:$(n)"/>
+            </operator>
             ]]>
 
-			
+                        <connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
 
-			<connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
+<!-- when FixMeanMutationRatesOperator, the prior is uniform due to the operator -->
+            <connect srcID='MutationRatePrior.s:$(n)'         targetID='prior' inputName='distribution' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
+
             <connect srcID='proportionInvariant.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
             <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
+
+
+            <connect srcID='proportionInvariantScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'>Scales proportion of invariant sites parameter of partition $(n)</connect>
+            <connect srcID='mutationRateScaler.s:$(n)'        targetID='mcmc' inputName='operator' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Scales mutation rate of partition s:$(n)</connect>
+            <connect srcID='gammaShapeScaler.s:$(n)'          targetID='mcmc' inputName='operator' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
 
             <connect srcID='proportionInvariant.s:$(n)'       targetID='tracelog' inputName='log' if='inposterior(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
             <connect srcID='gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
 
-            <connect srcID='GammaShapePrior.s:$(n)'          targetID='prior' inputName='distribution' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Prior on gamma shape for gene s:$(n)</connect>
-            <connect srcID='PropInvariantPrior.s:$(n)'       targetID='prior' inputName='distribution' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'>Prior on proportion invariant for gene s:$(n)</connect>
-			<connect srcID='MutationRatePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Prior on gene tree relative mutation rate for gene s:$(n)</connect>
-
-
-
-
-			<connect srcID="proportionInvariantScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true">
-				Scales proportion of invariant sites parameter of partition $(n)
-			</connect>
-			<connect srcID="mutationRateScaler.s:$(n)" targetID="mcmc" inputName="operator" if="nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true">
-				Scales mutation rate of partition s:$(n)
-			</connect>
-			<connect srcID="gammaShapeScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true">
-				Scales gamma shape parameter of partition s:$(n)
-			</connect>
-
-	
-
+            <connect srcID='GammaShapePrior.s:$(n)'           targetID='prior' inputName='distribution' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Prior on gamma shape for partition s:$(n)</connect>
+            <connect srcID='PropInvariantPrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'>Prior on proportion invariant for partition s:$(n)</connect>
 
         </subtemplate>
 
-
-
-
-			
     
 
         <!-- substitution models -->
         <!-- JC69 substitution model -->
-        <subtemplate id='JC69' class='beast.base.evolution.substitutionmodel.JukesCantor' mainid='JC69.s:$(n)'>
+        <subtemplate id='JC69' class='beast.base.spec.evolution.substitutionmodel.JukesCantor' mainid='JC69.s:$(n)'>
             <![CDATA[
         <plugin spec='JukesCantor' id='JC69.s:$(n)'/>
 ]]>
-
-		
-
         </subtemplate>
 
         <!-- HKY substitution model -->
-        <subtemplate id='HKY' class='beast.base.evolution.substitutionmodel.HKY' mainid='hky.s:$(n)'
-            hmc='hky/frequencies/,hky/kappa/,KappaPrior/index/=Priors/KappaPrior/,
+        <subtemplate id='HKY' class='beast.base.spec.evolution.substitutionmodel.HKY' mainid='hky.s:$(n)'
+            hmc='HKY/frequencies/,HKY/kappa/,KappaPrior/index/=Priors/KappaPrior/,
             KappaScaler/index/=Operators/BactrianRateScaler/index/'>
             <![CDATA[
-        <plugin spec='HKY' id='hky.s:$(n)'>
-            <parameter id="kappa.s:$(n)" name='kappa' value="2.0" lower="0.0" estimate='true'/>
-            <frequencies id='estimatedFreqs.s:$(n)' estimate='true' spec='Frequencies'>
-                <frequencies id='freqParameter.s:$(n)' spec='parameter.RealParameter' dimension='4' value='0.25' lower='0' upper='1'/>
+        <plugin spec='beast.base.spec.evolution.substitutionmodel.HKY' id='hky.s:$(n)'>
+            <kappa id="kappa.s:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="2.0" estimate='true'/>
+            <frequencies id='estimatedFreqs.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.Frequencies'>
+                <frequencies id='freqParameter.s:$(n)' spec='beast.base.spec.inference.parameter.SimplexParam' dimension='4' value='0.25 0.25 0.25 0.25'/>
             </frequencies>
         </plugin>
 
+        <operator id="KappaScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="kappa.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='KappaScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.1" weight="0.1" parameter="@kappa.s:$(n)"/>
+        </operator>
 
-        <prior id='KappaPrior.s:$(n)' x='@kappa.s:$(n)'>
-            <distr spec="LogNormalDistributionModel" meanInRealSpace='false'>
-                <parameter name='M' value="1.0" estimate='false'/>
-                <parameter name='S' value="1.25" estimate='false'/>
-            </distr>
-		</prior>
-        <prior id='FrequenciesPrior.s:$(n)' x='@freqParameter.s:$(n)'><distr spec="beast.base.inference.distribution.Uniform" lower='0' upper='1'/></prior>
-		
-		
-		<plugin id="KappaScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@kappa.s:$(n)"/>
-		<plugin id="FrequenciesExchanger.s:$(n)" spec="DeltaExchangeOperator" delta="0.2" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+        <operator id="FrequenciesExchanger.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="freqParameter.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='FrequenciesExchangerX.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+        </operator>
+
+
+        <distribution id='KappaPrior.s:$(n)' spec='beast.base.spec.inference.distribution.LogNormal' param='@kappa.s:$(n)' >
+                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.0" estimate="false"/>
+                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
+        </distribution>
+
+        <distribution id='FrequenciesPrior.s:$(n)' param='@freqParameter.s:$(n)' spec="beast.base.spec.inference.distribution.Dirichlet">
+            <alpha spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal" estimate="false">4.0 4.0 4.0 4.0</alpha>
+        </distribution> 
 
 ]]>
 
             <connect srcID='kappa.s:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true'/>
-            <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
-                     if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
 
-  
+            <connect srcID='kappa.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true'/>
+            <connect srcID='KappaScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true'>Scale HKY transition-transversion
+                parameter of partition s:$(n)
+            </connect>
 
             <connect srcID='kappa.s:$(n)' targetID='tracelog' inputName='log'
                      if='inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true'/>
-            <connect srcID='freqParameter.s:$(n)' targetID='tracelog' inputName='log'
-                     if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
 
             <connect srcID='KappaPrior.s:$(n)' targetID='prior' inputName='distribution'
                      if='inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true'>HKY transition-transversion
                 parameter of partition s:$(n)
             </connect>
-			
-			
-			<connect srcID="KappaScaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(kappa.s:$(n)) and kappa.s:$(n)/estimate=true">Scale HKY transition-transversion
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="FrequenciesExchanger.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true">
-				Exchange values of frequencies of partition s:$(n)
-			</connect>
-			
         </subtemplate>
 
 
         <!-- TN93 substitution model -->
-        <subtemplate id='TN93' class='beast.base.evolution.substitutionmodel.TN93' mainid='tn93.s:$(n)'
+        <subtemplate id='TN93' class='beast.base.spec.evolution.substitutionmodel.TN93' mainid='tn93.s:$(n)'
             hmc='tn93/kappa1/,tn93/frequencies/,tn93/kappa2/,kappa1Prior/index/,kappa2Prior/index/,
             kappa1Scaler/index/=Operators/BactrianRateScaler/index/,
             kappa2Scaler/index/=Operators/BactrianRateScaler/index/'>
             <![CDATA[
-        <plugin spec='TN93' id='tn93.s:$(n)'>
-            <parameter id="kappa1.s:$(n)" name='kappa1' value="2.0" lower="0.0" estimate='true'/>
-            <parameter id="kappa2.s:$(n)" name='kappa2' value="2.0" lower="0.0" estimate='true'/>
-            <frequencies id='estimatedFreqs.s:$(n)' spec='Frequencies'>
-                <frequencies id='freqParameter.s:$(n)' spec='parameter.RealParameter' dimension='4' value='0.25' lower='0' upper='1'/>
+        <plugin spec='beast.base.spec.evolution.substitutionmodel.TN93' id='tn93.s:$(n)'>
+            <parameter id="kappa1.s:$(n)" name='kappa1' spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="2.0" estimate='true'/>
+            <parameter id="kappa2.s:$(n)" name='kappa2' spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="2.0" estimate='true'/>
+            <frequencies id='estimatedFreqs.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.Frequencies'>
+                <frequencies id='freqParameter.s:$(n)' spec='beast.base.spec.inference.parameter.SimplexParam' dimension='4' value='0.25 0.25 0.25 0.25'/>
             </frequencies>
         </plugin>
 
+        <operator id="kappa1Scaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="kappa1.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='kappa1ScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@kappa1.s:$(n)"/>
+        </operator>
 
-		<plugin id="kappa1Scaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@kappa1.s:$(n)"/>
-		<plugin id="kappa2Scaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@kappa2.s:$(n)"/>
-		<plugin id="FrequenciesExchanger.s:$(n)" spec="DeltaExchangeOperator" delta="0.2" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+        <operator id="kappa2Scaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="kappa2.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='kappa2ScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@kappa2.s:$(n)"/>
+        </operator>
 
+        <operator id="FrequenciesExchanger.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="freqParameter.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='FrequenciesExchangerX.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+        </operator>
 
-        <prior id='kappa1Prior.s:$(n)' x='@kappa1.s:$(n)'>
-            <distr spec="LogNormalDistributionModel" meanInRealSpace='false'>
-                <parameter name='M' value="1.0" estimate='false'/>
-                <parameter name='S' value="1.25" estimate='false'/>
-            </distr>
-	</prior>
-        <prior id='kappa2Prior.s:$(n)' x='@kappa2.s:$(n)'>
-            <distr spec="LogNormalDistributionModel" meanInRealSpace='false'>
-                <parameter name='M' value="1.0" estimate='false'/>
-                <parameter name='S' value="1.25" estimate='false'/>
-            </distr>
-	</prior>
-    <prior id='FrequenciesPrior.s:$(n)' x='@freqParameter.s:$(n)'><distr spec="beast.base.inference.distribution.Uniform" lower='0' upper='1'/></prior>
+        <distribution id='kappa1Prior.s:$(n)' spec='beast.base.spec.inference.distribution.LogNormal' param='@kappa1.s:$(n)' >
+                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.0" estimate="false"/>
+                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
+        </distribution>
+
+        <distribution id='kappa2Prior.s:$(n)' spec='beast.base.spec.inference.distribution.LogNormal' param='@kappa2.s:$(n)' >
+                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.0" estimate="false"/>
+                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
+        </distribution>
+
+        <distribution id='FrequenciesPrior.s:$(n)' param='@freqParameter.s:$(n)' spec="beast.base.spec.inference.distribution.Dirichlet">
+            <alpha spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal" estimate="false">4.0 4.0 4.0 4.0</alpha>
+        </distribution> 
 
 ]]>
 
@@ -189,30 +224,25 @@
                      if='inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true'/>
             <connect srcID='kappa2.s:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(kappa2.s:$(n)) and kappa2.s:$(n)/estimate=true'/>
-            <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
-                     if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
 
+            <connect srcID='kappa1.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true'/>
+            <connect srcID='kappa2.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(kappa2.s:$(n)) and kappa2.s:$(n)/estimate=true'/>
 
-			<connect srcID="kappa1Scaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true">Scale TN93 kappa1 (rateAG)
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="kappa2Scaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(kappa2.s:$(n)) and kappa2.s:$(n)/estimate=true">Scale TN93 kappa2 (rateCT)
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="FrequenciesExchanger.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true">
-				Exchange values of frequencies of partition s:$(n)
-			</connect>
-
+            <connect srcID='kappa1Scaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true'>Scale TN93 kappa1 (rateAG)
+                parameter of partition s:$(n)
+            </connect>
+            <connect srcID='kappa2Scaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(kappa2.s:$(n)) and kappa2.s:$(n)/estimate=true'>Scale TN93 kappa2 (rateCT)
+                parameter of partition s:$(n)
+            </connect>
 
             <connect srcID='kappa1.s:$(n)' targetID='tracelog' inputName='log'
                      if='inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true'/>
             <connect srcID='kappa2.s:$(n)' targetID='tracelog' inputName='log'
                      if='inlikelihood(kappa2.s:$(n)) and kappa2.s:$(n)/estimate=true'/>
-            <connect srcID='freqParameter.s:$(n)' targetID='tracelog' inputName='log'
-                     if='inlikelihood(hky.$(n)) and inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
 
             <connect srcID='kappa1Prior.s:$(n)' targetID='prior' inputName='distribution'
                      if='inlikelihood(kappa1.s:$(n)) and kappa1.s:$(n)/estimate=true'>TN93 kappa1 (rateAG) parameter of
@@ -226,8 +256,8 @@
 
 
         <!-- GTR substitution model -->
-        <subtemplate id='GTR' class='beast.base.evolution.substitutionmodel.GTR' mainid='gtr.s:$(n)'
-                     suppressInputs='beast.base.evolution.substitutionmodel.GTR.eigenSystem'
+        <subtemplate id='GTR' class='beast.base.spec.evolution.substitutionmodel.GTR' mainid='gtr.s:$(n)'
+                     suppressInputs='beast.base.spec.evolution.substitutionmodel.GTR.eigenSystem'
                      hmc='gtr/rateGT/,
 gtr/frequencies/,
 gtr/rateAT/,
@@ -248,41 +278,92 @@ RateGTPrior/index/=Priors/RateGTRPrior/,
             RateCTScaler/index/=Operators/BactrianRateScaler/index/,
             RateGTScaler/index/=Operators/BactrianRateScaler/index/'>
             <![CDATA[
-        <plugin spec='GTR' id='gtr.s:$(n)'>
-            <parameter id="rateAC.s:$(n)" name='rateAC' value="1.0" lower="0.0" estimate='true'/>
-            <parameter id="rateAG.s:$(n)" name='rateAG' value="1.0" lower="0.0" estimate='true'/>
-            <parameter id="rateAT.s:$(n)" name='rateAT' value="1.0" lower="0.0" estimate='true'/>
-            <parameter id="rateCG.s:$(n)" name='rateCG' value="1.0" lower="0.0" estimate='true'/>
-            <parameter id="rateCT.s:$(n)" name='rateCT' value="1.0" lower="0.0" estimate='false'/>
-            <parameter id="rateGT.s:$(n)" name='rateGT' value="1.0" lower="0.0" estimate='true'/>
-            <frequencies id='estimatedFreqs.s:$(n)' spec='Frequencies'>
-                <frequencies id='freqParameter.s:$(n)' spec='parameter.RealParameter' dimension='4' value='0.25' lower='0' upper='1'/>
+        <plugin spec='beast.base.spec.evolution.substitutionmodel.GTR' id='gtr.s:$(n)'>
+            <parameter id="rateAC.s:$(n)" name='rateAC' value="1.0" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" estimate='true'/>
+            <parameter id="rateAG.s:$(n)" name='rateAG' value="1.0" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" estimate='true'/>
+            <parameter id="rateAT.s:$(n)" name='rateAT' value="1.0" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" estimate='true'/>
+            <parameter id="rateCG.s:$(n)" name='rateCG' value="1.0" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" estimate='true'/>
+            <parameter id="rateCT.s:$(n)" name='rateCT' value="1.0" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" estimate='false'/>
+            <parameter id="rateGT.s:$(n)" name='rateGT' value="1.0" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" estimate='true'/>
+            <frequencies id='estimatedFreqs.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.Frequencies'>
+                <frequencies id='freqParameter.s:$(n)' spec='beast.base.spec.inference.parameter.SimplexParam' dimension='4' value='0.25 0.25 0.25 0.25'/>
             </frequencies>
         </plugin>
-		
-		
-		
-		<operator id="RateACScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@rateAC.s:$(n)"/>
-		<operator id="RateAGScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@rateAG.s:$(n)"/>
-		<operator id="RateATScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@rateAT.s:$(n)"/>
-		<operator id="RateCGScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@rateCG.s:$(n)"/>
-		<operator id="RateCTScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@rateCT.s:$(n)"/>
-		<operator id="RateGTScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@rateGT.s:$(n)"/>
-		<operator id="FrequenciesExchanger.s:$(n)" spec="DeltaExchangeOperator" delta="0.2" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+
+        <operator id="RateACScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="rateAC.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='RateACScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateAC.s:$(n)"/>
+        </operator>
+
+        <operator id="RateAGScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="rateAG.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='RateAGScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateAG.s:$(n)"/>
+        </operator>
+
+        <operator id="RateATScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="rateAT.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='RateATScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateAT.s:$(n)"/>
+        </operator>
+
+        <operator id="RateCGScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="rateCG.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='RateCGScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateCG.s:$(n)"/>
+        </operator>
+
+        <operator id="RateCTScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="rateCT.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='RateCTScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateCT.s:$(n)"/>
+        </operator>
+
+        <operator id="RateGTScaler.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="rateGT.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='RateGTScalerX.s:$(n)' spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@rateGT.s:$(n)"/>
+        </operator>
+
+        <operator id="FrequenciesExchanger.s:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+            <parameter idref="freqParameter.s:$(n)"/>
+            <operator idref="AVMNOperator.$(n)"/>
+            <operator id='FrequenciesExchangerX.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+        </operator>
 
 
-        <prior id='RateACPrior.s:$(n)' x='@rateAC.s:$(n)'><distr spec="beast.base.inference.distribution.Gamma"><parameter name="alpha" value='0.05' estimate='false'/><parameter name="beta" value='10.0' estimate='false'/></distr></prior>
-        <prior id='RateAGPrior.s:$(n)' x='@rateAG.s:$(n)'><distr spec="beast.base.inference.distribution.Gamma"><parameter name="alpha" value='0.05' estimate="false"/><parameter name="beta" value='20.0' estimate="false"/></distr></prior>
-        <prior id='RateATPrior.s:$(n)' x='@rateAT.s:$(n)'><distr spec="beast.base.inference.distribution.Gamma"><parameter name="alpha" value='0.05' estimate="false"/><parameter name="beta" value='10.0' estimate="false"/></distr></prior>
-        <prior id='RateCGPrior.s:$(n)' x='@rateCG.s:$(n)'><distr spec="beast.base.inference.distribution.Gamma"><parameter name="alpha" value='0.05' estimate="false"/><parameter name="beta" value='10.0' estimate="false"/></distr></prior>
-        <prior id='RateCTPrior.s:$(n)' x='@rateCT.s:$(n)'><distr spec="beast.base.inference.distribution.Gamma"><parameter name="alpha" value='0.05' estimate="false"/><parameter name="beta" value='20.0' estimate="false"/></distr></prior>
-        <prior id='RateGTPrior.s:$(n)' x='@rateGT.s:$(n)'><distr spec="beast.base.inference.distribution.Gamma"><parameter name="alpha" value='0.05' estimate="false"/><parameter name="beta" value='10.0' estimate="false"/></distr></prior>
+        <distribution id='RateACPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Gamma' param='@rateAC.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.05" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="10.0" estimate="false"/>
+        </distribution>
+        <distribution id='RateAGPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Gamma' param='@rateAG.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.05" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="20.0" estimate="false"/>
+        </distribution>
+        <distribution id='RateATPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Gamma' param='@rateAT.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.05" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="10.0" estimate="false"/>
+        </distribution>
+        <distribution id='RateCGPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Gamma' param='@rateCG.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.05" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="10.0" estimate="false"/>
+        </distribution>
+        <distribution id='RateCTPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Gamma' param='@rateCT.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.05" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="20.0" estimate="false"/>
+        </distribution>
+        <distribution id='RateGTPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Gamma' param='@rateGT.s:$(n)' >
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.05" estimate="false"/>
+                <theta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="10.0" estimate="false"/>
+        </distribution>
 
-        <prior id='FrequenciesPrior.s:$(n)' x='@freqParameter.s:$(n)'><distr spec="beast.base.inference.distribution.Uniform" lower='0' upper='1'/></prior>
+
+        <distribution id='FrequenciesPrior.s:$(n)' param='@freqParameter.s:$(n)' spec="beast.base.spec.inference.distribution.Dirichlet">
+            <alpha spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal" estimate="false">4.0 4.0 4.0 4.0</alpha>
+        </distribution> 
 ]]>
 
-            <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
-                     if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
             <connect srcID='rateAC.s:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(rateAC.s:$(n)) and rateAC.s:$(n)/estimate=true'/>
             <connect srcID='rateAG.s:$(n)' targetID='state' inputName='stateNode'
@@ -296,10 +377,44 @@ RateGTPrior/index/=Priors/RateGTRPrior/,
             <connect srcID='rateGT.s:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(rateGT.s:$(n)) and rateGT.s:$(n)/estimate=true'/>
 
+            <connect srcID='rateAC.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(rateAC.s:$(n)) and rateAC.s:$(n)/estimate=true'/>
+            <connect srcID='rateAG.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(rateAG.s:$(n)) and rateAG.s:$(n)/estimate=true'/>
+            <connect srcID='rateAT.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(rateAT.s:$(n)) and rateAT.s:$(n)/estimate=true'/>
+            <connect srcID='rateCG.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(rateCG.s:$(n)) and rateCG.s:$(n)/estimate=true'/>
+            <connect srcID='rateCT.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(rateCT.s:$(n)) and rateCT.s:$(n)/estimate=true'/>
+            <connect srcID='rateGT.s:$(n)' targetID='AVMNLogTransform.$(n)' inputName='f'
+                     if='inlikelihood(rateGT.s:$(n)) and rateGT.s:$(n)/estimate=true'/>
 
+            <connect srcID='RateACScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(rateAC.s:$(n)) and rateAC.s:$(n)/estimate=true'>Scale GTR A-C substitution
+                parameter of partition s:$(n)
+            </connect>
+            <connect srcID='RateAGScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(rateAG.s:$(n)) and rateAG.s:$(n)/estimate=true'>Scale GTR A-G substitution
+                parameter of partition s:$(n)
+            </connect>
+            <connect srcID='RateATScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(rateAT.s:$(n)) and rateAT.s:$(n)/estimate=true'>Scale GTR A-T substitution
+                parameter of partition s:$(n)
+            </connect>
+            <connect srcID='RateCGScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(rateCG.s:$(n)) and rateCG.s:$(n)/estimate=true'>Scale GTR C-G substitution
+                parameter of partition s:$(n)
+            </connect>
+            <connect srcID='RateCTScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(rateCT.s:$(n)) and rateCT.s:$(n)/estimate=true'>Scale GTR C-T substitution
+                parameter of partition s:$(n)
+            </connect>
+            <connect srcID='RateGTScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(rateGT.s:$(n)) and rateGT.s:$(n)/estimate=true'>Scale GTR G-T substitution
+                parameter of partition s:$(n)
+            </connect>
 
-            <connect srcID='freqParameter.s:$(n)' targetID='tracelog' inputName='log'
-                     if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
             <connect srcID='rateAC.s:$(n)' targetID='tracelog' inputName='log'
                      if='inlikelihood(rateAC.s:$(n)) and rateAC.s:$(n)/estimate=true'/>
             <connect srcID='rateAG.s:$(n)' targetID='tracelog' inputName='log'
@@ -337,123 +452,107 @@ RateGTPrior/index/=Priors/RateGTRPrior/,
                      if='inlikelihood(rateGT.s:$(n)) and rateGT.s:$(n)/estimate=true'>GTR G-T substitution parameter of
                 partition s:$(n)
             </connect>
-			
-			
-			
-			<connect srcID="FrequenciesExchanger.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true">Exchange values of
-				frequencies of partition s:$(n)
-			</connect>
-			<connect srcID="RateACScaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(rateAC.s:$(n)) and rateAC.s:$(n)/estimate=true">Scale GTR A-C substitution
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="RateAGScaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(rateAG.s:$(n)) and rateAG.s:$(n)/estimate=true">Scale GTR A-G substitution
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="RateATScaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(rateAT.s:$(n)) and rateAT.s:$(n)/estimate=true">Scale GTR A-T substitution
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="RateCGScaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(rateCG.s:$(n)) and rateCG.s:$(n)/estimate=true">Scale GTR C-G substitution
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="RateCTScaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(rateCT.s:$(n)) and rateCT.s:$(n)/estimate=true">Scale GTR C-T substitution
-				parameter of partition s:$(n)
-			</connect>
-			<connect srcID="RateGTScaler.s:$(n)" targetID="mcmc" inputName="operator"
-					 if="inlikelihood(rateGT.s:$(n)) and rateGT.s:$(n)/estimate=true">Scale GTR G-T substitution
-				parameter of partition s:$(n)
-			</connect>
-			
-			
-			
         </subtemplate>
 
 
         <!-- empirical amino acid substitution models -->
-        <subtemplate id='Blosum62' class='beast.base.evolution.substitutionmodel.Blosum62'
-                     suppressInputs='beast.base.evolution.substitutionmodel.Blosum62.eigenSystem'
+        <subtemplate id='Blosum62' class='beast.base.spec.evolution.substitutionmodel.Blosum62'
+                     suppressInputs='beast.base.spec.evolution.substitutionmodel.Blosum62.eigenSystem'
                      mainid='Blosum62.s:$(n)'><!--value spec='XML'-->
-            <![CDATA[<plugin spec='Blosum62' id='Blosum62.s:$(n)'/>]]></subtemplate>
-        <subtemplate id='Dayhoff' class='beast.base.evolution.substitutionmodel.Dayhoff'
-                     suppressInputs='beast.base.evolution.substitutionmodel.Dayhoff.eigenSystem'
+            <![CDATA[<plugin spec='beast.base.spec.evolution.substitutionmodel.Blosum62' id='Blosum62.s:$(n)'/>]]></subtemplate>
+        <subtemplate id='Dayhoff' class='beast.base.spec.evolution.substitutionmodel.Dayhoff'
+                     suppressInputs='beast.base.spec.evolution.substitutionmodel.Dayhoff.eigenSystem'
                      mainid='Dayhoff.s:$(n)'><!--value spec='XML'-->
-            <![CDATA[<plugin spec='Dayhoff' id='Dayhoff.s:$(n)'/>]]></subtemplate>
-        <subtemplate id='JTT' class='beast.base.evolution.substitutionmodel.JTT'
-                     suppressInputs='beast.base.evolution.substitutionmodel.JTT.eigenSystem'
+            <![CDATA[<plugin spec='beast.base.spec.evolution.substitutionmodel.Dayhoff' id='Dayhoff.s:$(n)'/>]]></subtemplate>
+        <subtemplate id='JTT' class='beast.base.spec.evolution.substitutionmodel.JTT'
+                     suppressInputs='beast.base.spec.evolution.substitutionmodel.JTT.eigenSystem'
                      mainid='JTT.s:$(n)'><!--value spec='XML'-->
-            <![CDATA[<plugin spec='JTT' id='JTT.s:$(n)'/>]]></subtemplate>
-        <subtemplate id='cpREV' class='beast.base.evolution.substitutionmodel.CPREV'
-                     suppressInputs='beast.base.evolution.substitutionmodel.CPREV.eigenSystem'
+            <![CDATA[<plugin spec='beast.base.spec.evolution.substitutionmodel.JTT' id='JTT.s:$(n)'/>]]></subtemplate>
+        <subtemplate id='cpREV' class='beast.base.spec.evolution.substitutionmodel.CPREV'
+                     suppressInputs='beast.base.spec.evolution.substitutionmodel.CPREV.eigenSystem'
                      mainid='CPREV.s:$(n)'><!--value spec='XML'-->
-            <![CDATA[<plugin spec='CPREV' id='CPREV.s:$(n)'/>]]></subtemplate>
-        <subtemplate id='mtREV' class='beast.base.evolution.substitutionmodel.MTREV'
-                     suppressInputs='beast.base.evolution.substitutionmodel.MTREV.eigenSystem'
+            <![CDATA[<plugin spec='beast.base.spec.evolution.substitutionmodel.CPREV' id='CPREV.s:$(n)'/>]]></subtemplate>
+        <subtemplate id='mtREV' class='beast.base.spec.evolution.substitutionmodel.MTREV'
+                     suppressInputs='beast.base.spec.evolution.substitutionmodel.MTREV.eigenSystem'
                      mainid='MTREV.s:$(n)'><!--value spec='XML'-->
-            <![CDATA[<plugin spec='MTREV' id='MTREV.s:$(n)'/>]]></subtemplate>
-        <subtemplate id='WAG' class='beast.base.evolution.substitutionmodel.WAG'
-                     suppressInputs='beast.base.evolution.substitutionmodel.WAG.eigenSystem'
+            <![CDATA[<plugin spec='beast.base.spec.evolution.substitutionmodel.MTREV' id='MTREV.s:$(n)'/>]]></subtemplate>
+        <subtemplate id='WAG' class='beast.base.spec.evolution.substitutionmodel.WAG'
+                     suppressInputs='beast.base.spec.evolution.substitutionmodel.WAG.eigenSystem'
                      mainid='WAG.s:$(n)'><!--value spec='XML'-->
-            <![CDATA[<plugin spec='WAG' id='WAG.s:$(n)'/>]]></subtemplate>
+            <![CDATA[<plugin spec='beast.base.spec.evolution.substitutionmodel.WAG' id='WAG.s:$(n)'/>]]></subtemplate>
 
         <!-- binary model -->
-        <subtemplate id='MutationDeathModel' class='beast.base.evolution.substitutionmodel.MutationDeathModel'
+        <subtemplate id='MutationDeathModel' class='beast.base.spec.evolution.substitutionmodel.MutationDeathModel'
                      mainid='MutationDeathModel.s:$(n)'
-                     suppressInputs="beast.base.evolution.substitutionmodel.MutationDeathModel.substmodel,beast.base.evolution.substitutionmodel.MutationDeathModel.frequencies">
+                     suppressInputs="beast.base.spec.evolution.substitutionmodel.MutationDeathModel.substmodel,beast.base.spec.evolution.substitutionmodel.MutationDeathModel.frequencies">
             <![CDATA[
-		<plugin id='MutationDeathModel.s:$(n)' spec='beast.base.evolution.substitutionmodel.MutationDeathModel'>
-			<parameter name='deathprob' id='deathprob.s:$(n)' value='0.1' estimate='false'/>
-			<frequencies id='freqs.s:$(n)' spec='Frequencies'>
-				<frequencies spec='parameter.RealParameter' value='1 0'/>
-			</frequencies>
-		</plugin>
+        <plugin id='MutationDeathModel.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.MutationDeathModel'>
+            <parameter name='deathprob' id='deathprob.s:$(n)' value='0.1' spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" estimate='false'/>
+            <frequencies id='freqs.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.Frequencies'>
+                <frequencies spec='beast.base.spec.inference.parameter.SimplexParam' value='1 0'/>
+            </frequencies>
+        </plugin>
 ]]>
         </subtemplate>
 
 
         <!-- frequency models -->
-        <subtemplate id='Estimated' class='beast.base.evolution.substitutionmodel.Frequencies'
-                     mainid='estimatedFreqs.s:$(n)'>
+        <subtemplate id='Estimated' class='beast.base.spec.evolution.substitutionmodel.Frequencies'
+                     mainid='estimatedFreqs.s:$(n)' hmc='FrequenciesPrior/index/=Priors/FrequenciesPrior/,
+                     FrequenciesExchanger/index/=Operators/BactrianDeltaExchange/index/'>
             <![CDATA[
-            <frequencies id='estimatedFreqs.s:$(n)' spec='Frequencies'>
-                <frequencies id='freqParameter.s:$(n)' spec='parameter.RealParameter' dimension='4' value='0.25' lower='0' upper='1'/>
+            <frequencies id='estimatedFreqs.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.Frequencies'>
+                <frequencies id='freqParameter.s:$(n)' spec='beast.base.spec.inference.parameter.SimplexParam' dimension='4' value='0.25 0.25 0.25 0.25'/>
             </frequencies>
+
+            <operator id="FrequenciesExchanger.c:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="0.05">
+                <parameter idref="freqParameter.s:$(n)"/>
+                <operator idref="AVMNOperator.$(n)"/>
+                <operator id='FrequenciesExchangerX.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@freqParameter.s:$(n)"/>
+            </operator>
+
+            <distribution id='FrequenciesPrior.s:$(n)' param='@freqParameter.s:$(n)' spec="beast.base.spec.inference.distribution.Dirichlet">
+                <alpha spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal" estimate="false">4.0 4.0 4.0 4.0</alpha>
+            </distribution> 
 
  ]]>
             <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
                      if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
+            <connect srcID='freqParameter.s:$(n)' targetID='AVMNSumTransform.$(n)' inputName='f'
+                     if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
 
+            <connect srcID='FrequenciesExchanger.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>
+                Exchange values of frequencies of partition s:$(n)
+            </connect>
             <connect srcID='freqParameter.s:$(n)' targetID='tracelog' inputName='log'
                      if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
             <connect srcID='FrequenciesPrior.s:$(n)' targetID='prior' inputName='distribution'
                      if='inposterior(estimatedFreqs.s:$(n)) and inposterior(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
         </subtemplate>
 
-        <subtemplate id='Empirical' class='beast.base.evolution.substitutionmodel.Frequencies'
+        <subtemplate id='Empirical' class='beast.base.spec.evolution.substitutionmodel.Frequencies'
                      mainid='empiricalFreqs.s:$(n)'>
             <![CDATA[
-            <frequencies id='empiricalFreqs.s:$(n)' spec='Frequencies' data='@$(n)' estimate='true'/>
+            <frequencies id='empiricalFreqs.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.Frequencies' data='@$(n)' estimate='true'/>
 ]]>
         </subtemplate>
 
-        <subtemplate id='AllEqual' class='beast.base.evolution.substitutionmodel.Frequencies' mainid='equalFreqs.s:$(n)'>
+        <subtemplate id='AllEqual' class='beast.base.spec.evolution.substitutionmodel.Frequencies' mainid='equalFreqs.s:$(n)'>
             <![CDATA[
-            <frequencies id='equalFreqs.s:$(n)' spec='Frequencies' data='@$(n)' estimate='false'/>
+            <frequencies id='equalFreqs.s:$(n)' spec='beast.base.spec.evolution.substitutionmodel.Frequencies' data='@$(n)' estimate='false'/>
 ]]>
         </subtemplate>
+
 
         <!-- LewisMK substitution model -->
-        <subtemplate id='LewisMK' class='starbeast3.evolution.substitutionmodel.LewisMK' mainid='LewisMK.s:$(n)'
-                     suppressInputs='starbeast3.evolution.substitutionmodel.LewisMK.stateNumber,
+        <subtemplate id="LewisMK" class="starbeast3.evolution.substitutionmodel.LewisMK" mainid="LewisMK.s:$(n)"
+                     suppressInputs="starbeast3.evolution.substitutionmodel.LewisMK.stateNumber,
 			starbeast3.evolution.substitutionmodel.LewisMK.datatype,
 			starbeast3.evolution.substitutionmodel.LewisMK.frequencies,
-			starbeast3.evolution.substitutionmodel.LewisMK.proportionInvariant'>
+			starbeast3.evolution.substitutionmodel.LewisMK.proportionInvariant">
             <![CDATA[
-    <plugin spec='starbeast3.evolution.substitutionmodel.LewisMK' id='LewisMK.s:$(n)'/>
+    <plugin spec="starbeast3.evolution.substitutionmodel.LewisMK" id="LewisMK.s:$(n)"/>
 ]]>
         </subtemplate>
     

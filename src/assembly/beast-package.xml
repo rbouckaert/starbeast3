@@ -1,0 +1,43 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 http://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>starbeast3</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <!-- version.xml at ZIP root -->
+    <files>
+        <file>
+            <source>${project.basedir}/version.xml</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+    </files>
+
+    <!-- Only include your own JARs (and any third-party runtime deps).
+         Add additional <include> lines for any non-BEAST runtime dependencies. -->
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <scope>runtime</scope>
+            <includes>
+                <include>io.github.rbouckaert:starbeast3</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <!-- examples/ (if present) -->
+        <fileSet>
+            <directory>${project.basedir}/examples</directory>
+            <outputDirectory>/examples</outputDirectory>
+        </fileSet>
+        <!-- fxtemplates/ (if present; use JPMS module-namespaced resource path) -->
+        <fileSet>
+            <directory>${project.basedir}/fxtemplates</directory>
+            <outputDirectory>/fxtemplates</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

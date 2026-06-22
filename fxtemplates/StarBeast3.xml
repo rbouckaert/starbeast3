@@ -1,22 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beast version="2.6" 
-	namespace="beast.app.beauti:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.math.distributions" 
+<beast version="2.8"
+       namespace="beastfx.app.beauti:beastfx.app.inputeditor:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.spec.inference.operator:beast.base.spec.inference.operator:beast.base.spec.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.inference.distribution"
 	templateinfo="StarBeast3 template for fast multispecies coalescent inference.">
 
     
-<map name="Beta">beast.base.inference.distribution.Beta</map>
-<map name="Exponential">beast.base.inference.distribution.Exponential</map>
-<map name="InverseGamma">starbeast3.math.distributions.InverseGamma</map>
-<map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
-<map name="Gamma">beast.base.inference.distribution.Gamma</map>
-<map name="Uniform">beast.base.inference.distribution.Uniform</map>
-<map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
-<map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
-<map name="Normal">beast.base.inference.distribution.Normal</map>
 
-<map name="prior">beast.base.inference.distribution.Prior</map>
+
 <map name="connect" reserved="true">beastfx.app.inputeditor.BeautiConnector</map>
 <map name="subtemplate" reserved="true">beastfx.app.inputeditor.BeautiSubTemplate</map>
+<map name="Uniform">beast.base.spec.inference.distribution.Uniform</map>
+<map name="Normal">beast.base.spec.inference.distribution.Normal</map>
+<map name="LogNormal">beast.base.spec.inference.distribution.LogNormal</map>
+<map name="Exponential">beast.base.spec.inference.distribution.Exponential</map>
+<map name="Gamma">beast.base.spec.inference.distribution.Gamma</map>
+<map name="Beta">beast.base.spec.inference.distribution.Beta</map>
+<map name="LaplaceDistribution">beast.base.spec.inference.distribution.LaplaceDistribution</map>
+<map name="InverseGamma">beast.base.spec.inference.distribution.InverseGamma</map>
+<map name="Dirichlet">beast.base.spec.inference.distribution.Dirichlet</map>
+<map name="prior">beast.base.spec.inference.distribution.Prior</map>
 
 
 	<beauticonfig spec="beastfx.app.inputeditor.BeautiConfig"
@@ -25,78 +25,97 @@
 			beast.base.evolution.sitemodel.SiteModel.mutationRate=Substitution Rate,
 			beast.base.evolution.speciation.SpeciesTreePrior.gammaParameter=Population Mean"
 		inlinePlugins ="beast.base.inference.MCMC.distribution,
-			beast.base.evolution.sitemodel.SiteModel.substModel,
-			beast.base.evolution.tree.coalescent.ExponentialGrowth,
-			beast.base.evolution.tree.coalescent.ConstantPopulation,
-			beast.base.evolution.tree.coalescent.Coalescent,
-			beast.base.inference.State.stateNode"
+			beast.base.spec.evolution.sitemodel.SiteModel.substModel,
+            beast.base.spec.evolution.tree.coalescent.ExponentialGrowth,
+            beast.base.spec.evolution.tree.coalescent.ConstantPopulation,
+            beast.base.inference.State.stateNode,
+            beast.base.spec.inference.distribution.IID.distr"
 		collapsedPlugins ="beast.base.inference.MCMC.logger"
 		suppressPlugins = "beast.base.inference.MCMC.operator,
-			beast.base.inference.MCMC.operatorschedule,
-			beast.base.inference.MCMC.state,
-			beast.base.inference.MCMC.distribution,
-			beast.base.inference.MCMC.init,
-			beast.base.evolution.speciation.BirthDeathGernhard08Model.treeIntervals,
-			beast.base.evolution.speciation.BirthDeathGernhard08Model.type,
-			beast.base.evolution.speciation.BirthDeathGernhard08Model.sampleProbability,
-			beast.base.evolution.speciation.BirthDeathGernhard08Model.tree,
-			beast.evolution.speciation.SABirthDeathModel.removalProbability,
-			beast.evolution.speciation.SABirthDeathModel.treeIntervals,
-			beast.evolution.speciation.SABirthDeathModel.birthRate,
-			beast.evolution.speciation.SABirthDeathModel.deathRate,
-			beast.evolution.speciation.SABirthDeathModel.samplingRate,
-			beast.evolution.speciation.SABirthDeathModel.conditioningOnRoot,
-			beast.evolution.speciation.SABirthDeathModel.tree,
-			beast.evolution.speciation.SABirthDeathModel.expectedN,
-			beast.evolution.speciation.SABirthDeathModel.treeWOffset,
-			beast.base.evolution.tree.Tree,
-			beast.base.evolution.tree.Tree.trait,
-			beast.base.evolution.tree.Tree.taxa,
-			beast.base.evolution.tree.Tree.taxonset,
-			beast.base.evolution.tree.coalescent.RandomTree.trait,
-			beast.base.evolution.tree.coalescent.RandomTree.initial,
-			beast.base.evolution.tree.coalescent.RandomTree.taxa,
-			beast.base.evolution.tree.coalescent.RandomTree.taxonset,
-			beast.base.evolution.tree.coalescent.RandomTree.estimate,
-			beast.base.evolution.tree.TreeParser.initial,
-			beast.base.evolution.tree.TreeParser.taxa,
-			beast.base.evolution.tree.TreeParser.taxonset,
-			beast.base.evolution.tree.TreeParser.trait,
-			beast.base.evolution.tree.TreeParser.estimate,
-			beast.base.evolution.tree.ClusterTree.initial,
-			beast.base.evolution.tree.ClusterTree.taxa,
-			beast.base.evolution.tree.ClusterTree.taxonset,
-			beast.base.evolution.tree.ClusterTree.trait,
-			beast.base.evolution.tree.ClusterTree.estimate,
-			beast.base.evolution.substitutionmodel.WAG.rates,
-			beast.base.evolution.substitutionmodel.WAG.frequencies,
-			beast.base.evolution.substitutionmodel.JTT.rates,
-			beast.base.evolution.substitutionmodel.JTT.frequencies,
-			beast.base.evolution.substitutionmodel.Blosum62.rates,
-			beast.base.evolution.substitutionmodel.Blosum62.frequencies,
-			beast.base.evolution.substitutionmodel.Dayhoff.rates,
-			beast.base.evolution.substitutionmodel.Dayhoff.frequencies,
-			beast.base.evolution.substitutionmodel.CPREV.rates,
-			beast.base.evolution.substitutionmodel.CPREV.frequencies,
-			beast.base.evolution.substitutionmodel.MTREV.rates,
-			beast.base.evolution.substitutionmodel.MTREV.frequencies,
-			beast.base.evolution.substitutionmodel.GTR.rates,
-			beast.base.evolution.substitutionmodel.JukesCantor.frequencies,
-			beast.base.inference.distribution.Prior.x,
-			beast.base.evolution.tree.MRCAPrior.tree,
-			beast.base.evolution.tree.MRCAPrior.monophyletic,
-			beast.base.evolution.tree.MRCAPrior.taxonset,
-			beast.base.evolution.branchratemodel.UCRelaxedClockModel.tree,
-			beast.base.evolution.branchratemodel.UCRelaxedClockModel.rateCategories,
-			beast.base.evolution.branchratemodel.RandomLocalClockModel.tree,
-			beast.base.evolution.branchratemodel.RandomLocalClockModel.meanRate,
-			beast.base.evolution.branchratemodel.RandomLocalClockModel.indicators,
-			beast.base.evolution.operator.ScaleOperator.indicator,
-			beast.base.inference.Operator.weight,
-			beast.base.evolution.speciation.YuleModel.treeIntervals,
-			beast.base.evolution.speciation.YuleModel.useTipDates,
-			beast.base.evolution.speciation.YuleModel.tree,
-			beast.base.inference.Logger.model,
+    		beast.base.inference.MCMC.operatorschedule,
+    		beast.base.spec.inference.operatorSchedule.subschedule,
+    		beast.base.spec.inference.operatorSchedule.operatorPattern,
+			beast.base.spec.inference.operatorSchedule.operator,
+	        beast.base.evolution.tree.coalescent.Coalescent.treeIntervals,
+	        beast.base.evolution.tree.coalescent.Coalescent.tree,
+	        beast.base.inference.MCMC.state,
+	        beast.base.inference.MCMC.distribution,
+	        beast.base.inference.MCMC.init,
+	        beast.base.spec.evolution.speciation.BirthDeathGernhard08Model.treeIntervals,
+	        beast.base.spec.evolution.speciation.BirthDeathGernhard08Model.tree,
+	        beast.base.spec.evolution.speciation.BirthDeathGernhard08Model.sampleProbability,
+	        beast.base.spec.evolution.speciation.BirthDeathGernhard08Model.originHeight,
+			beast.base.spec.evolution.speciation.YuleModel.treeIntervals,
+			beast.base.spec.evolution.speciation.YuleModel.useTipDates,
+			beast.base.spec.evolution.speciation.YuleModel.tree,
+            beast.base.spec.evolution.speciation.YuleModel.originHeight,
+	        beast.base.evolution.tree.Tree,
+	        beast.base.evolution.tree.Tree.trait,
+	        beast.base.evolution.tree.Tree.taxa,
+	        beast.base.evolution.tree.Tree.taxonset,
+	        beast.base.evolution.tree.Tree.nodetype,
+	        beast.base.spec.evolution.tree.coalescent.RandomTree.trait,
+	        beast.base.spec.evolution.tree.coalescent.RandomTree.initial,
+	        beast.base.spec.evolution.tree.coalescent.RandomTree.taxa,
+	        beast.base.spec.evolution.tree.coalescent.RandomTree.taxonset,
+	        beast.base.spec.evolution.tree.coalescent.RandomTree.estimate,
+	        beast.base.spec.evolution.tree.coalescent.RandomTree.nodetype,
+	        beast.base.evolution.tree.TreeParser.initial,
+	        beast.base.evolution.tree.TreeParser.taxa,
+	        beast.base.evolution.tree.TreeParser.taxonset,
+	        beast.base.evolution.tree.TreeParser.trait,
+	        beast.base.evolution.tree.TreeParser.estimate,
+	        beast.base.evolution.tree.TreeParser.nodetype,
+	        beast.base.spec.evolution.tree.ClusterTree.initial,
+	        beast.base.spec.evolution.tree.ClusterTree.taxa,
+	        beast.base.spec.evolution.tree.ClusterTree.taxonset,
+	        beast.base.spec.evolution.tree.ClusterTree.trait,
+	        beast.base.spec.evolution.tree.ClusterTree.estimate,
+	        beast.base.spec.evolution.tree.ClusterTree.nodetype,
+	        beast.base.spec.evolution.tree.ClusterTree.distance,
+	        beast.base.spec.evolution.substitutionmodel.WAG.rates,
+	        beast.base.spec.evolution.substitutionmodel.WAG.frequencies,
+	        beast.base.spec.evolution.substitutionmodel.JTT.rates,
+	        beast.base.spec.evolution.substitutionmodel.JTT.frequencies,
+	        beast.base.spec.evolution.substitutionmodel.Blosum62.rates,
+	        beast.base.spec.evolution.substitutionmodel.Blosum62.frequencies,
+	        beast.base.spec.evolution.substitutionmodel.Dayhoff.rates,
+	        beast.base.spec.evolution.substitutionmodel.Dayhoff.frequencies,
+	        beast.base.spec.evolution.substitutionmodel.CPREV.rates,
+	        beast.base.spec.evolution.substitutionmodel.CPREV.frequencies,
+	        beast.base.spec.evolution.substitutionmodel.MTREV.rates,
+	        beast.base.spec.evolution.substitutionmodel.MTREV.frequencies,
+	        beast.base.spec.evolution.substitutionmodel.GTR.rates,
+	        beast.base.evolution.substitutionmodel.JukesCantor.frequencies,
+            beast.base.inference.distribution.Prior.x,
+            beast.base.spec.evolution.tree.MRCAPrior.tree,
+            beast.base.spec.evolution.tree.MRCAPrior.monophyletic,
+            beast.base.spec.evolution.tree.MRCAPrior.taxonset,
+            beast.base.evolution.tree.MRCAPrior.tree,
+            beast.base.evolution.tree.MRCAPrior.monophyletic,
+            beast.base.evolution.tree.MRCAPrior.taxonset,
+            beast.base.evolution.branchratemodel.UCRelaxedClockModel.tree,
+            beast.base.evolution.branchratemodel.UCRelaxedClockModel.rateCategories,
+			beast.base.evolution.branchratemodel.UCRelaxedClockModel.distr,
+            beast.base.spec.evolution.branchratemodel.RandomLocalClockModel.tree,
+            beast.base.spec.evolution.branchratemodel.RandomLocalClockModel.meanRate,
+            beast.base.spec.evolution.branchratemodel.RandomLocalClockModel.indicators,
+            beast.base.spec.evolution.operator.ScaleTreeOperator.indicator,
+            beast.base.spec.evolution.operator.ScaleTreeOperator.indicator,
+	        beast.base.spec.inference.operator.weight,
+            beast.base.inference.Logger.model,
+            beast.base.spec.evolution.tree.coalescent.BayesianSkyline.treeIntervals,
+            beast.base.spec.evolution.tree.coalescent.BayesianSkyline.tree,
+            beast.base.inference.parameter.RealParameter.keys,
+            beast.base.inference.parameter.BooleanParameter.keys,
+            beast.base.inference.parameter.IntegerParameter.keys,
+            beast.base.inference.parameter.CompoundRealParameter.keys,
+            beast.base.spec.inference.parameter.RealScalarParam.domain,
+            beast.base.spec.inference.parameter.IntScalarParam.domain,
+            beast.base.spec.inference.parameter.RealVectorParam.domain,
+            beast.base.spec.inference.parameter.IntVectorParam.domain,
+            beast.base.spec.inference.distribution.IID.param,
+            beast.base.spec.inference.distribution.MarkovChainDistribution.param,
 			starbeast3.GeneTree.tree,
 			starbeast3.GeneTree.speciesTree,
 			starbeast3.GeneTree.populationModel,
@@ -137,7 +156,7 @@
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.nBins,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.distr"
 		buttonLabelMap="beast.app.beauti.BeautiInitDlg.&gt;&gt; details=Edit parameters"
-		hmc='BirthDeath/index/,
+		hmc="BirthDeath/index/,
 popMean/index/=Priors/PopSizePrior/,
 treePrior/ploidy/index/,
 RandomTree/rootHeight/,
@@ -149,7 +168,7 @@ FrequenciesExchanger/integer/,
 FrequenciesExchanger/weight/,
 FrequenciesExchanger/autoOptimize/,
 BayesianSkyline/index/,
-ConstantPopulation0/popSize/,
+ConstantPopulation/popSize/,
 mcmc/numInitializationAttempts/,
 mcmc/preBurnin/,
 mcmc/storeEvery/,
@@ -219,18 +238,18 @@ CoalescentConstant/index/,
 YuleModel/index/,
 ClusterTree/clock.rate/,
 ClusterTree/adjustTreeNodeHeights/,
-ClusterTree/clusterType//'>
+ClusterTree/clusterType//">
 
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Partitions" tiptext="Data Partitions" path="distribution/distribution[id='likelihood']/distribution/data" hasPartitions="none" icon="2220.pngx" forceExpansion="FALSE" type="beast.base.evolution.alignment.Alignment"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Partitions" tiptext="Data Partitions" path='distribution/distribution[id="likelihood"]/distribution/data' hasPartitions="none" icon="2220.pngx" forceExpansion="FALSE" type="beast.base.spec.evolution.alignment.Alignment"/>
 		<mergepoint id="aux-sb3-partitions-panels"/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Taxon Sets" tiptext="Specify taxon sets that make up species" path="operator[id='Reheight.t:Species']/taxonset" hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Taxon Sets" tiptext="Specify taxon sets that make up species" path='operator[id="Reheight.t:Species"]/taxonset' hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
 
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Tip Dates" tiptext="Allows to specify date that a taxon was sampled" path="operator[id='ParallelMCMCTreeOperator']/speciesTree" hasPartitions="none" icon="2.png.x" forceExpansion="TRUE"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Tip Dates" tiptext="Allows to specify date that a taxon was sampled" path='operator[id="ParallelMCMCTreeOperator"]/speciesTree' hasPartitions="none" icon="2.png.x" forceExpansion="TRUE"/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Gene Ploidy" tiptext="The ploidy for each gene (locus)" path="distribution/distribution[id='speciescoalescent']/distribution" hasPartitions="none" icon="2.pngx" forceExpansion="TRUE"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Gene Ploidy" tiptext="The ploidy for each gene (locus)" path='distribution/distribution[id="speciescoalescent"]/distribution' hasPartitions="none" icon="2.pngx" forceExpansion="TRUE"/>
 
 
 		
@@ -238,21 +257,21 @@ ClusterTree/clusterType//'>
 		<mergepoint id="aux-sb3-sitemodel-panels"/>
 
 
-		<panel spec='beastfx.app.inputeditor.BeautiPanelConfig' panelname="Gene Clock Model" tiptext="Clock model"
-            path="distribution/distribution[id='likelihood']/distribution/branchRateModel" 
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Gene Clock Model" tiptext="Clock model"
+            path='distribution/distribution[id="likelihood"]/distribution/branchRateModel' 
             type="starbeast3.evolution.branchratemodel.StarBeast3Clock"
 			hasPartitions="none" icon="2.pngx" forceExpansion="TRUE"
         />
-		<mergepoint id='aux-sb3-clockmodel-panels'/>
+		<mergepoint id="aux-sb3-clockmodel-panels"/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon='4.png.x' tiptext="Species Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
-		<mergepoint id='aux-sb3-clockmodel-panels'/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon="4.png.x" tiptext="Species Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
+		<mergepoint id="aux-sb3-clockmodel-panels"/>
 
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
 		<mergepoint id="aux-sb3-initilisation-panels"/>
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Priors" tiptext="Other priors" path="distribution/distribution[id='prior']/distribution" hasPartitions="none" icon="7.pngx" forceExpansion="TRUE_START_COLLAPSED" type="beast.base.inference.Distribution" buttonStatus="ADD_ONLY"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Priors" tiptext="Other priors" path='distribution/distribution[id="prior"]/distribution' hasPartitions="none" icon="7.pngx" forceExpansion="TRUE_START_COLLAPSED" type="beast.base.inference.Distribution" buttonStatus="ADD_ONLY"/>
 		<mergepoint id="aux-sb3-priors-panels"/>
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Operators" tiptext="MCMC Operator details" path="operator" hasPartitions="none" icon="8.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
@@ -268,7 +287,7 @@ ClusterTree/clusterType//'>
 		<alignmentProvider id="Import Alignment" spec="starbeast3.app.beauti.StarBeastAlignmentProvider3" template="@StarBEASTPartitionTemplate3"/>
 
 
-		<partitiontemplate id="StarBEASTPartitionTemplate3" spec="beastfx.app.inputeditor.BeautiSubTemplate" class="beast.base.evolution.likelihood.TreeLikelihood" mainid="mcmc">
+		<partitiontemplate id="StarBEASTPartitionTemplate3" spec="beastfx.app.inputeditor.BeautiSubTemplate" class="beast.base.spec.evolution.likelihood.TreeLikelihood" mainid="mcmc">
 
 			<![CDATA[
 				<tree id="Tree.t:$(n)" name="stateNode">
@@ -278,8 +297,8 @@ ClusterTree/clusterType//'>
 
 				<distribution id="treePrior.t:$(n)" spec="starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" populationModel="@speciesTreePopulationModel" speciesTreePrior="@SpeciesTreePopSize.Species" tree="@Tree.t:$(n)"/>
 			
-				<logger id='treelog.t:$(n)' spec='beast.base.inference.Logger' logEvery="10000" fileName="$(tree).trees" mode='tree'>
-					<log id='TreeWithMetaDataLogger.t:$(n)' spec='beast.base.evolution.TreeWithMetaDataLogger' tree='@Tree.t:$(n)'>
+				<logger id="treelog.t:$(n)" spec="beast.base.inference.Logger" logEvery="10000" fileName="$(tree).trees" mode="tree">
+					<log id="TreeWithMetaDataLogger.t:$(n)" spec="beast.base.evolution.TreeWithMetaDataLogger" tree="@Tree.t:$(n)">
 					</log>
 				</logger>
 
@@ -295,53 +314,41 @@ ClusterTree/clusterType//'>
 					
 					
 				<!-- site model -->
-				<plugin gammaCategoryCount="0" id="SiteModel.s:$(n)" spec="SiteModel">
-						<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
-						<shape id="gammaShape.s:$(n)" spec="parameter.RealParameter" value="1.0" estimate="false" lower="0"/>
-						<proportionInvariant id="proportionInvariant.s:$(n)" spec="parameter.RealParameter" value="0.0" lower="0" upper="1" estimate="false"/>
+				<plugin gammaCategoryCount="0" id="SiteModel.s:$(n)" spec="beast.base.spec.evolution.sitemodel.SiteModel">
+						<mutationRate id="mutationRate.s:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+						<shape id="gammaShape.s:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false" />
+						<proportionInvariant id="proportionInvariant.s:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.0" estimate="false"/>
 				</plugin>
 
 
-				<plugin data="@$(n)" id="treeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:$(n)">
+				<plugin data="@$(n)" id="treeLikelihood.$(n)" spec="beast.base.spec.evolution.likelihood.TreeLikelihood" tree="@Tree.t:$(n)">
 					
 					<siteModel idref="SiteModel.s:$(n)"/>
-					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.evolution.branchratemodel.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" tree="@Tree.t:$(n)">
+					<branchRateModel id="GeneTreeClock.c:$(n)" spec="starbeast3.evolution.branchratemodel.StarBeast3Clock" sharedRateModel="@branchRatesModel.Species" tree="@Tree.t:$(n)" geneTree="@treePrior.t:$(n)">
 						<clock.rate idref="clockRate.c:$(n)" />
 					</branchRateModel>
 	
 				</plugin>
 				
 
-
 				<log id="TreeStat.t:$(n)" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree.t:$(n)"/>
-				<log id="TreeDistanceNJ.t:$(n)" metric="RNNI" spec="beastlabs.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
-					<ref clusterType="neighborjoining" spec="beast.base.evolution.tree.ClusterTree" taxa="@$(n)"/>
-				</log>
-				<log id="TreeDistanceUPGMA.t:$(n)" metric="RNNI" spec="beastlabs.evolution.tree.TreeDistanceLogger" tree="@Tree.t:$(n)">
-					<ref clusterType="upgma" spec="beast.base.evolution.tree.ClusterTree" taxa="@$(n)"/>
-				</log>
 
 
-
-				<prior id='MutationRatePrior.s:$(n)' x='@mutationRate.s:$(n)'>
-					<LogNormal meanInRealSpace="true" name="distr" M="1" S="0.6" />
-				</prior>
-				<prior id='GammaShapePrior.s:$(n)' x='@gammaShape.s:$(n)'><distr spec="beast.base.inference.distribution.Exponential" mean='1'/></prior>
-				<prior id='PropInvariantPrior.s:$(n)' x='@proportionInvariant.s:$(n)'><distr spec="beast.base.inference.distribution.Uniform" lower='0' upper='1'/></prior>
+				<distribution id="MutationRatePrior.s:$(n)" param="@mutationRate.s:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true"  M="1" S="0.6" />
+				<distribution id="GammaShapePrior.s:$(n)" param="@gammaShape.s:$(n)" spec="beast.base.spec.inference.distribution.Exponential" mean="1"/>
+				<distribution id="PropInvariantPrior.s:$(n)" param="@proportionInvariant.s:$(n)" spec="beast.base.spec.inference.distribution.Beta" alpha="1" beta="1"/>
 
 
-				<prior id='ClockRatePrior.c:$(n)' x='@clockRate.c:$(n)'>
-					<LogNormal meanInRealSpace="true" name="distr" M="1" S="0.6" />
-				</prior>
+				<distribution meanInRealSpace="true" spec="beast.base.spec.inference.distribution.LogNormal" id="ClockRatePrior.c:$(n)" param="@clockRate.c:$(n)" M="1" S="0.6" />
 
 
-				<clock.rate id="clockRate.c:$(n)" spec="parameter.RealParameter" value="1.0" estimate="true" lower="0"/>
+				<clock.rate id="clockRate.c:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="true" />
 
-				<operator id="proportionInvariantScaler.s:$(n)" spec="beast.base.inference.operator.kernel.BactrianIntervalOperator" scaleFactor="0.75" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
-				<operator id="mutationRateScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@mutationRate.s:$(n)"/>
-				<operator id="gammaShapeScaler.s:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@gammaShape.s:$(n)"/>
+				<operator id="proportionInvariantScaler.s:$(n)" spec="beast.base.spec.inference.operator.uniform.IntervalOperator" scaleFactor="0.75" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
+				<operator id="mutationRateScaler.s:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@mutationRate.s:$(n)"/>
+				<operator id="gammaShapeScaler.s:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@gammaShape.s:$(n)"/>
 
-				<operator id="clockRateScaler.c:$(n)" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@clockRate.c:$(n)"/>
+				<operator id="clockRateScaler.c:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@clockRate.c:$(n)"/>
 
 
 
@@ -397,14 +404,14 @@ ClusterTree/clusterType//'>
 			<connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
 
 			<!-- Substitution model -->
-            <connect srcID='proportionInvariant.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
-            <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
-            <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
+            <connect srcID="proportionInvariant.s:$(n)"       targetID="state" inputName="stateNode" if="inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true"/>
+            <connect srcID="mutationRate.s:$(n)"              targetID="state" inputName="stateNode" if="inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
+            <connect srcID="gammaShape.s:$(n)"                targetID="state" inputName="stateNode" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
 
 
 
-            <connect srcID='clockRate.c:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
-            <connect srcID='clockRate.c:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
+            <connect srcID="clockRate.c:$(n)"              targetID="state" inputName="stateNode" if="inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
+            <connect srcID="clockRate.c:$(n)"              targetID="tracelog" inputName="log" if="inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true"/>
 
 
 
@@ -412,16 +419,16 @@ ClusterTree/clusterType//'>
 			<connect srcID="mutationRate.s:$(n)" targetID="updown.all" inputName="up" if="inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
 			-->
 
-            <connect srcID='proportionInvariant.s:$(n)'       targetID='tracelog' inputName='log' if='inposterior(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'/>
-            <connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
-            <connect srcID='gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
+            <connect srcID="proportionInvariant.s:$(n)"       targetID="tracelog" inputName="log" if="inposterior(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true"/>
+            <connect srcID="mutationRate.s:$(n)"              targetID="tracelog" inputName="log" if="inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
+            <connect srcID="gammaShape.s:$(n)"                targetID="tracelog" inputName="log" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
 
-            <connect srcID='GammaShapePrior.s:$(n)'          targetID='prior' inputName='distribution' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Prior on gamma shape for partition s:$(n)</connect>
-            <connect srcID='PropInvariantPrior.s:$(n)'       targetID='prior' inputName='distribution' if='inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true'>Prior on proportion invariant for partition s:$(n)</connect>
-			<connect srcID='MutationRatePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Prior on gene tree relative mutation rate for partition s:$(n)</connect>
+            <connect srcID="GammaShapePrior.s:$(n)"          targetID="prior" inputName="distribution" if="inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true">Prior on gamma shape for partition s:$(n)</connect>
+            <connect srcID="PropInvariantPrior.s:$(n)"       targetID="prior" inputName="distribution" if="inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true">Prior on proportion invariant for partition s:$(n)</connect>
+			<connect srcID="MutationRatePrior.s:$(n)"        targetID="prior" inputName="distribution" if="inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true">Prior on gene tree relative mutation rate for partition s:$(n)</connect>
 
 
-			<connect srcID='ClockRatePrior.c:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'>Prior on gene tree relative clock rate for partition s:$(n)</connect>
+			<connect srcID="ClockRatePrior.c:$(n)"        targetID="prior" inputName="distribution" if="inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true">Prior on gene tree relative clock rate for partition s:$(n)</connect>
 
 
 
@@ -462,45 +469,39 @@ ClusterTree/clusterType//'>
 			<mergepoint id="aux-sb3-partitiontemplate"/>
 		</partitiontemplate>
 
-		<alignmentProvider id="Add Morphology to Species Tree" spec='starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider' template='@StarBEAST3MKTrait'/>
+		<alignmentProvider id="Add Morphology to Species Tree" spec="starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider" template="@StarBEAST3MKTrait"/>
 
-		<subtemplate id='StarBEAST3MKTrait' class='beast.base.evolution.alignment.FilteredAlignment' mainid='$(n)'
-					 suppressInputs = 'starbeast3.evolution.substitutionmodel.LewisMK.stateNumber,
+		<subtemplate id="StarBEAST3MKTrait" class="beast.base.spec.evolution.alignment.FilteredAlignment" mainid="$(n)"
+					 suppressInputs = "starbeast3.evolution.substitutionmodel.LewisMK.stateNumber,
 			starbeast3.evolution.substitutionmodel.LewisMK.datatype,
 			starbeast3.evolution.substitutionmodel.LewisMK.frequencies,
-			starbeast3.evolution.substitutionmodel.LewisMK.proportionInvariant'>
+			starbeast3.evolution.substitutionmodel.LewisMK.proportionInvariant">
 
 			<![CDATA[
-			<stateNode id="clockRate.c:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="true"/>
+			<stateNode id="clockRate.c:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="true"/>
 
-			<distribution id="morphTreeLikelihood.$(n)" spec="TreeLikelihood" tree="@Tree.t:Species">
-				<data spec="beast.base.evolution.alignment.FilteredAlignment" id="$(n)" filter="0-end">
+			<distribution id="morphTreeLikelihood.$(n)" spec="beast.base.spec.evolution.likelihood.TreeLikelihood" tree="@Tree.t:Species">
+				<data spec="beast.base.spec.evolution.alignment.FilteredAlignment" id="$(n)" filter="0-end">
 					<userDataType spec="beast.base.evolution.datatype.StandardData" id="morphDataType.$(n)" />
 				</data>
 				<siteModel spec="SiteModel" id="SiteModel.s:$(n)" gammaCategoryCount="0">
 					<substModel spec="starbeast3.evolution.substitutionmodel.LewisMK" id="LewisMK.s:$(n)" datatype="@morphDataType.$(n)"/>
-					<mutationRate spec="parameter.RealParameter" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
-					<shape spec="parameter.RealParameter" id="gammaShape.s:$(n)" value="1.0" estimate="false"/>
+					<mutationRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
+					<shape spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="gammaShape.s:$(n)" value="1.0" estimate="false"/>
 				</siteModel>
 				<!-- Species-tree strict clock for this morphology partition -->
 
-				<branchRateModel id="strictClockModel.c:$(n)" spec="StrictClockModel" clock.rate="@clockRate.c:$(n)"/>
+				<branchRateModel id="strictClockModel.c:$(n)" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3" clock.rate="@clockRate.c:$(n)"/>
 			</distribution>
 
-			<prior id="MutationRatePrior.s:$(n)" x="@mutationRate.s:$(n)">
-				<distr spec="OneOnX"/>
-			</prior>
+			<distribution id="MutationRatePrior.s:$(n)" param="@mutationRate.s:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="0.001" S="3"/>
 
-			<prior id="clockRatePrior.c:$(n)" x="@clockRate.c:$(n)">
-				<distr spec="beast.base.inference.distribution.LogNormalDistributionModel" meanInRealSpace="true">
-					<S id="clockRatePriorStdev.s:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="false"/>
-					<M id="clockRatePriorMean.s:$(n)" spec="parameter.RealParameter" lower="0.0" value="1.0" estimate="false"/>
-				</distr>
-			</prior>
+			<distribution id="clockRatePrior.c:$(n)" param="@clockRate.c:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true">
+				<S id="clockRatePriorStdev.s:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal"  value="1.0" estimate="false"/>
+				<M id="clockRatePriorMean.s:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal"  value="1.0" estimate="false"/>
+			</distribution>
 
-			<prior id="GammaShapePrior.s:$(n)" x="@gammaShape.s:$(n)">
-				<distr spec="LogNormalDistributionModel" meanInRealSpace="true" M="1.0" S="2.0"/>
-			</prior>
+			<distribution id="GammaShapePrior.s:$(n)" param="@gammaShape.s:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="1.0" S="2.0"/>
 
 			<operator id="mutationRateScaler.s:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="1.0" parameter="@mutationRate.s:$(n)"/>
 			<operator id="gammaShapeScaler.s:$(n)" scaleFactor="0.75" spec="ScaleOperator" weight="1.0" parameter="@gammaShape.s:$(n)"/>
@@ -515,7 +516,7 @@ ClusterTree/clusterType//'>
 			<connect srcID="mutationRate.s:$(n)" targetID="state" inputName="stateNode" if="inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
 			<connect srcID="gammaShape.s:$(n)" targetID="state" inputName="stateNode" if="inposterior(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
 			<connect srcID="clockRate.c:$(n)" targetID="state" inputName="stateNode" if="inposterior(Tree.t:$(n)) and clockRate.c:$(n)/estimate=true"/>
-			<connect srcID='clockRatePrior.c:$(n)'  targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'>Prior on strict clock rate for morphological data c:$(n)</connect>
+			<connect srcID="clockRatePrior.c:$(n)"  targetID="prior" inputName="distribution" if="inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true">Prior on strict clock rate for morphological data c:$(n)</connect>
 
 			<connect srcID="mutationRateScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
 			<connect srcID="gammaShapeScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inposterior(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true"/>
@@ -558,13 +559,10 @@ ClusterTree/clusterType//'>
     <state id="state" storeEvery="5000">
 	
 	
-
-	
-	<stateNode idref="Tree.t:Species" />
-	<stateNode idref="speciationRate.t:Species" />
-        <parameter id="popSize" name="stateNode" value="1" lower="0.0"/>
-	
-        <parameter id="popMean" name="stateNode" value="1" lower="0"/>
+		<stateNode idref="Tree.t:Species" />
+		<stateNode idref="speciationRate.t:Species" />
+        <parameter id="popSize" spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal" name="stateNode" value="1"/>
+        <parameter id="popMean" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" name="stateNode" value="1"/>
     </state>
 
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
@@ -585,8 +583,8 @@ ClusterTree/clusterType//'>
 
         
         <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
-            <distribution id="YuleModel.t:Species" spec="beast.base.evolution.speciation.YuleModel" tree="@Tree.t:Species">
-				<birthDiffRate spec="parameter.RealParameter" id="speciationRate.t:Species" value="1.0" lower="0.0" estimate="true"/>
+            <distribution id="YuleModel.t:Species" spec="beast.base.spec.evolution.speciation.YuleModel" tree="@Tree.t:Species">
+				<birthDiffRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="speciationRate.t:Species" value="1.0"  estimate="true"/>
 			</distribution>
 			
 
@@ -594,15 +592,9 @@ ClusterTree/clusterType//'>
 	
 	
 			
-			<distribution id="speciationRatePrior.t:Species" spec="beast.base.inference.distribution.Prior" x="@speciationRate.t:Species">
-				<distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="10000.0"/>
-			</distribution>
+			<distribution id="speciationRatePrior.t:Species" spec="beast.base.spec.inference.distribution.LogNormal" param="@speciationRate.t:Species" meanInRealSpace="true" M="1" S="3.0"/>
 
-
-		    <prior id="popMean.prior" name="distribution" x="@popMean">
-				<OneOnX name="distr"/>
-            </prior>
-			
+			<distribution id="popMean.prior" spec="beast.base.spec.inference.distribution.LogNormal" param="@popMean" meanInRealSpace="true" M="0.01" S="2.0"/>
 
 			
         </distribution>
@@ -611,9 +603,7 @@ ClusterTree/clusterType//'>
 		 <distribution id="vectorPrior" spec="beast.base.inference.CompoundDistribution">
 		 
 		 			
-			<prior id="constPopSizesPrior.Species" name="distribution" x="@popSize">
-				<distr id="popPriorDistr.InverseGamma" spec="beast.base.inference.distribution.InverseGamma" alpha="2.0" beta="@popMean"/>
-            </prior>
+			<distribution id="popPriorDistr.InverseGamma" param="@popSize" spec="beast.base.spec.inference.distribution.InverseGamma" alpha="2.0" beta="@popMean"/>
 			
 		 
 		 
@@ -648,15 +638,15 @@ ClusterTree/clusterType//'>
 	
 	
 	
-	<operator id="TreeRootScaler.t:Species" rootOnly="true" scaleFactor="0.7" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" tree="@Tree.t:Species" weight="3.0"/>
+	<operator id="TreeRootScaler.t:Species" rootOnly="true" scaleFactor="0.7" spec="beast.base.spec.evolution.operator.ScaleTreeOperator" tree="@Tree.t:Species" weight="3.0"/>
 	<operator id="BactrianNodeOperator.t:Species" spec="beast.base.evolution.operator.kernel.BactrianNodeOperator" tree="@Tree.t:Species" weight="3.0"/>
-	<operator id="AdaptableTopologyOperator.lengths.Species" spec="beast.base.evolution.operator.AdaptableOperatorSampler" tree="@Tree.t:Species" uniformp="0.1" weight="100">
+	<operator id="AdaptableTopologyOperator.lengths.Species" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" tree="@Tree.t:Species" uniformp="0.1" weight="100">
 
 
 
 		
 		<operator idref="BactrianNodeOperator.t:Species" />
-		<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" tree="@Tree.t:Species" weight="1.0"/>
+		<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="beast.base.spec.evolution.operator.ScaleTreeOperator" tree="@Tree.t:Species" weight="1.0"/>
 		
 		<operator idref="CoordinatedUniform.t:Species" />
 		<operator idref="CoordinatedExponential.t:Species" />
@@ -667,7 +657,7 @@ ClusterTree/clusterType//'>
 		
 		
 		<!-- UpDown  -->
-		<operator id="updown.all" spec="beast.base.inference.operator.kernel.BactrianUpDownOperator" scaleFactor="0.75" weight="1.0">
+		<operator id="updown.all" spec="beast.base.spec.evolution.operator.UpDownOperator" scaleFactor="0.75" weight="1.0">
 		 	<up idref="speciationRate.t:Species"/>               
             <down idref="Tree.t:Species"/>
                     
@@ -682,37 +672,37 @@ ClusterTree/clusterType//'>
 	
 	
 	
-	<operator bactrian="true" chainCoverage="1" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0" threads="-1" weight="1">
+	<operator chainCoverage="0.2" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0" threads="-1" weight="1">
    
 	</operator>
    
    
-   <operator id="PopSizeGibbsSampler.Species" spec='starbeast3.operators.PopSizeGibbsSampler' popSizes="@popSize" weight="50.0" gammaprior="@popPriorDistr.InverseGamma" >
+   <operator id="PopSizeGibbsSampler.Species" spec="starbeast3.operators.PopSizeGibbsSampler" popSizes="@popSize" weight="50.0" gammaprior="@popPriorDistr.InverseGamma" >
     </operator>
 	
 	
 
-	<operator id="AdaptableOperatorSampler.popmean:Species" parameter="@popMean" spec="beast.base.evolution.operator.AdaptableOperatorSampler" weight="5.0">
+	<operator id="AdaptableOperatorSampler.popmean:Species" parameter="@popMean" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="5.0">
 
 		<!-- Scale -->
-		<operator id="Scale.popmean" parameter="@popMean" scaleFactor="0.75" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" weight="1.0"/>
+		<operator id="Scale.popmean" parameter="@popMean" scaleFactor="0.75" spec="beast.base.spec.inference.operator.ScaleOperator" weight="1.0"/>
 
 		<!-- UpDown -->
 		<operator idref="updown.all"/>
 
 
 		<!-- SampleFromPrior -->
-		<operator id="SampleFromPriorOperator.popmean" np="1" parameter="@popMean" prior2="@popMean.prior" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
+		<operator id="SampleFromPriorOperator.popmean" np="1" parameter="@popMean" prior="@popMean.prior" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
 
 
 	</operator>
 	
 	
 	
-	<operator id="AdaptableOperatorSampler.YuleModel.t:Species" parameter="@speciationRate.t:Species" spec="beast.base.evolution.operator.AdaptableOperatorSampler" weight="5.0">
-		<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" weight="1.0"/>
+	<operator id="AdaptableOperatorSampler.YuleModel.t:Species" parameter="@speciationRate.t:Species" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="5.0">
+		<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="beast.base.spec.inference.operator.ScaleOperator" weight="1.0"/>
 		<operator idref="updown.all"/>
-		<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:Species" prior2="@speciationRatePrior.t:Species" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
+		<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:Species" prior="@speciationRatePrior.t:Species" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
 	</operator>
 	
 	
@@ -763,7 +753,7 @@ ClusterTree/clusterType//'>
 			
 				
 				<branchRateModel id="strictClockModel.Species" tree="@Tree.t:Species" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3">
-					 <clock.rate id='SpeciesTreeStrictClockRate' spec='parameter.RealParameter' lower="0.0" value='1.0' estimate='false'/>
+					 <clock.rate id="SpeciesTreeStrictClockRate" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
 				</branchRateModel>
 				
 

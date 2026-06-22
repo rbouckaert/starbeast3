@@ -1,0 +1,138 @@
+package starbeast3.operators;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.Distribution;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
+import beast.base.spec.evolution.likelihood.GenericTreeLikelihood;
+import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
+
+@Description("Distribution on a tree conditionally independent from all other distributions given the state of the rest of parameter space")
+public class ParallelMCMCTreeOperatorTreeDistribution extends ParallelDistSet {
+	
+	
+	final public Input<Tree> treeInput = new Input<>("tree", "the tree", Validate.REQUIRED);
+	final public Input<GenericTreeLikelihood> treelikelihoodInput = new Input<>("treelikelihood", "treelikelihood part of the distribution", Validate.REQUIRED);
+	final public Input<GeneTreeForSpeciesTreeDistribution> genepriorInput = new Input<>("geneprior", "prior on the gene tree", Validate.REQUIRED);
+	final public Input<List<Distribution>> distInput = new Input<>("dist", "other distributions which will be affected by changing the tree", new ArrayList<>());
+	final public Input<List<RealVectorParam<?>>> includeInput = new Input<>("include", "optional additional parameters to include", new ArrayList<>());
+	
+	
+	Tree tree;
+	GenericTreeLikelihood treelikelihood;
+	GeneTreeForSpeciesTreeDistribution geneprior;
+	List<RealVectorParam<?>> includeExtraParameters;
+	List<Distribution> otherDistributions;
+	
+	
+	 
+	public Tree getTree() {return tree;}
+	public void setTree(Tree tree) {this.tree = tree;}
+	public GenericTreeLikelihood getTreelikelihood() {return treelikelihood;}
+	public void setTreelikelihood(GenericTreeLikelihood treelikelihood) {this.treelikelihood = treelikelihood;}
+	public GeneTreeForSpeciesTreeDistribution getGeneprior() {return geneprior;}
+	public void setGeneprior(GeneTreeForSpeciesTreeDistribution geneprior) {this.geneprior = geneprior;}
+	public List<RealVectorParam<?>> getInclude() {return includeExtraParameters;}
+	public void setInclude(List<RealVectorParam<?>> parameters) {this.includeExtraParameters = parameters;}
+	public void setOtherDists(List<Distribution> d){ this.otherDistributions = d; }
+	public void addOtherDists(List<Distribution> d){ this.otherDistributions.addAll(d); }
+	public List<Distribution> getOtherDists(){ return this.otherDistributions; }
+	
+	public ParallelMCMCTreeOperatorTreeDistribution() {
+		
+	}
+	
+
+	@Override
+	public void initAndValidate() {
+		this.tree = treeInput.get();
+		this.treelikelihood = treelikelihoodInput.get();
+		this.geneprior = genepriorInput.get();
+		this.includeExtraParameters = includeInput.get();
+		this.otherDistributions = distInput.get();
+	}
+	
+	
+	/**
+	 * More site patterns = greater
+	 */
+	@Override
+	public int compareTo(ParallelDistSet other) {
+		int patterns1 = this.getNumberPatterns();
+		int patterns2 = other.getNumberPatterns();
+		if (patterns1 < patterns2) return -1;
+		if (patterns1 > patterns2) return  1;
+		return 0;
+	}
+	
+	
+	/**
+	 * Return the actual distribution as a list
+	 * @return
+	 */
+	@Override
+	public List<ParallelMCMCTreeOperatorTreeDistribution> getDists(){
+		List<ParallelMCMCTreeOperatorTreeDistribution> dists = new ArrayList<>();
+		dists.add(this);
+		return dists;
+	}
+	
+	
+	
+	/**
+	 * Get the tree, as well as the tree of the likelihood and prior
+	 */
+	@Override
+	public List<Tree> getTrees() {
+		List<Tree> trees = new ArrayList<>();
+		trees.add(this.tree);
+		TreeInterface priorTree = this.getGeneprior().treeInput.get();
+		TreeInterface likelihoodTree = this.treelikelihood.treeInput.get();
+		if (!trees.contains(priorTree) && priorTree instanceof Tree) trees.add((Tree)priorTree);
+		if (!trees.contains(likelihoodTree) && likelihoodTree instanceof Tree) trees.add((Tree)likelihoodTree);
+		return trees;
+	}
+	
+	
+	/**
+	 * Number of taxa
+	 * @return
+	 */
+	@Override
+	public int getTaxonCount() {
+		return this.tree.getTaxaNames().length;
+	}
+	
+	/**
+	 * Number of site patterns
+	 * @return
+	 */
+	@Override
+	public int getNumberPatterns() {
+		return this.getTreelikelihood().dataInput.get().getPatternCount();
+	}
+	
+	
+	/**
+	 * Call before beginning parallel MCMC
+	 */
+	public void startThreading() {
+		
+	}
+	
+	
+	/**
+	 * Call after finishing parallel MCMC
+	 */
+	public void stopThreading() {
+		
+	}
+
+	
+}

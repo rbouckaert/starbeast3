@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.rbouckaert</groupId>
+    <artifactId>starbeast3</artifactId>
+    <version>1.3.0</version>
+
+    <name>StarBeast3</name>
+    <description>Multispecies coalescent</description>
+
+    <url>https://github.com/rbouckaert/starbeast3</url>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Jordan Douglas</name>
+            <url>https://github.com/jordandouglas</url>
+        </developer>
+
+        <developer>
+            <name>Remco Bouckaert</name>
+            <url>https://github.com/rbouckaert</url>
+        </developer>
+
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/rbouckaert/starbeast3.git</connection>
+        <developerConnection>scm:git:ssh://github.com:rbouckaert/starbeast3.git</developerConnection>
+        <url>https://github.com/rbouckaert/starbeast3</url>
+    </scm> 
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>25</maven.compiler.release>
+        <beast.version>2.8.0-SNAPSHOT</beast.version>
+        <beast.pkg.name>starbeast3</beast.pkg.name>
+        <beast.pkg.version>1.3.0</beast.pkg.version>
+        <beast.module>beast.base</beast.module>
+        <beast.main>beast.base.minimal.BeastMain</beast.main>
+        <beast.args/>
+        <javafx.version>25.0.2</javafx.version>
+        <commons-statistics.version>1.2</commons-statistics.version>
+        <commons-math3.version>3.6.1</commons-math3.version>
+        <commons-math4-legacy.version>4.0-beta1</commons-math4-legacy.version>
+
+    </properties>
+
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/rbouckaert/starbeast3</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencies>
+
+        <!-- BEAST 3 core -->
+        <dependency>
+            <groupId>io.github.compevol</groupId>
+            <artifactId>beast-pkgmgmt</artifactId>
+            <version>${beast.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.compevol</groupId>
+            <artifactId>beast-base</artifactId>
+            <version>${beast.version}</version>
+        </dependency>
+
+         <dependency>
+            <groupId>io.github.compevol</groupId>
+            <artifactId>beast-fx</artifactId>
+            <version>${beast.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.jordandouglas</groupId>
+            <artifactId>beast-orc</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+
+
+
+
+
+        <!-- Commons Statistics -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-statistics-distribution</artifactId>
+            <version>${commons-statistics.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>${commons-math3.version}</version>
+        </dependency>
+
+
+
+
+        <!-- JavaFX -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.20.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
+                <configuration>
+                    <release>25</release>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Surefire (test runner) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <argLine>
+                        --add-reads starbeast3=ALL-UNNAMED
+                        --add-reads beast.base=ALL-UNNAMED
+                        --add-reads beast.app=ALL-UNNAMED
+                        --add-reads beast.pkgmgmt=ALL-UNNAMED
+                    </argLine>
+                    <systemPropertyVariables>
+                        <BEAST_PACKAGE_PATH>${project.build.outputDirectory}</BEAST_PACKAGE_PATH>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <!-- Copy version.xml to target/ for BEASTClassLoader.initServices() -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-version-xml</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>version.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>embed-version-xml-in-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>version.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Run BEAST or BEAUti with starbeast3 on module path:
+                 mvn exec:exec -Dbeast.args="examples/some.xml"
+                 mvn exec:exec -Dbeast.module=beast.fx -Dbeast.main=beastfx.app.beauti.Beauti -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <commandlineArgs>--module-path %classpath -DBEAST_PACKAGE_PATH=${project.build.outputDirectory} -m ${beast.module}/${beast.main} ${beast.args}</commandlineArgs>
+                </configuration>
+            </plugin>
+
+            <!-- Assemble BEAST package ZIP -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/beast-package.xml</descriptor>
+                    </descriptors>
+                    <finalName>${beast.pkg.name}.v${beast.pkg.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>beast-package</id>
+                        <phase>package</phase>
+                        <goals><goal>single</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals><goal>jar-no-fork</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.11.2</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals><goal>jar</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.6.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

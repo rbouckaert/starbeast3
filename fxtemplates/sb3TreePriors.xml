@@ -1,30 +1,29 @@
-<beast version="2.0" namespace="beast.app.beauti:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.math.distributions">
+<beast version="2.8"
+       namespace="beastfx.app.beauti:beastfx.app.inputeditor:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.spec.inference.operator:beast.base.spec.inference.operator:beast.base.spec.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.inference.distribution">
 	<!-- tree priors -->
 	<mergewith point="sb3TreePriorTemplates">
-		<!-- Plain ol' Yule -->
-		<subtemplate id="YuleModel" class="beast.base.evolution.speciation.YuleModel" mainid="YuleModel.t:$(n)" 
-			hmc='
+		<!-- Plain ol" Yule -->
+		<subtemplate id="YuleModel" class="beast.base.spec.evolution.speciation.YuleModel" mainid="YuleModel.t:$(n)" 
+			hmc="
 speciationRatePrior/index/=Priors/YuleBirthRatePrior/
-'>
+">
 <![CDATA[
-			<distribution id="YuleModel.t:$(n)" spec="beast.base.evolution.speciation.YuleModel" tree="@Tree.t:$(n)">
-				<birthDiffRate spec="parameter.RealParameter" id="speciationRate.t:$(n)" value="1.0" lower="0.0" estimate="true" />
+			<distribution id="YuleModel.t:$(n)" spec="beast.base.spec.evolution.speciation.YuleModel" tree="@Tree.t:$(n)">
+				<birthDiffRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="speciationRate.t:$(n)" value="1.0"  estimate="true" />
 			</distribution>
 
-			<prior id="speciationRatePrior.t:$(n)" x="@speciationRate.t:$(n)">
-				 <distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="10000.0"/>
-			</prior>
+			 <distr id="speciationRatePrior.t:$(n)" param="@speciationRate.t:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="1" S="3.0"/>
 			
 			<operator id="UniformOperator.t:$(n)" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
 			<operator id="WilsonBalding.t:$(n)" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
 			<operator id="Wide.t:$(n)" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
 			<operator id="Narrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
-			<operator id="BactrianSubtreeSlide.t:$(n)" size="0.002" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
+			<operator id="BactrianSubtreeSlide.t:$(n)" size="0.002" spec="kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
 	
 			
-			<operator id="AdaptableOperatorSampler.YuleModel.t:$(n)" parameter="@speciationRate.t:$(n)" spec="beast.base.evolution.operator.AdaptableOperatorSampler" weight="5.0">
-				<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="beast.base.evolution.operator.kernel.BactrianScaleOperator" weight="1.0"/>
-				<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:$(n)" prior2="@speciationRatePrior.t:$(n)" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
+			<operator id="AdaptableOperatorSampler.YuleModel.t:$(n)" parameter="@speciationRate.t:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="5.0">
+				<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="beast.base.spec.inference.operator.ScaleOperator" weight="1.0"/>
+				<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:$(n)" prior="@speciationRatePrior.t:$(n)" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
 			</operator>
 
 ]]>
@@ -87,19 +86,18 @@ speciationRatePrior/index/=Priors/YuleBirthRatePrior/
 		
 		
 		<!-- Calibrated Yule -->
-		<subtemplate id="CalibratedYuleModel" class="beast.base.evolution.speciation.CalibratedYuleModel" mainid="CalibratedYuleModel.t:$(n)" 
-			suppressInputs="beast.base.evolution.speciation.CalibratedYuleModel.logMarginal,beast.base.evolution.speciation.CalibratedYuleModel.tree,beast.base.evolution.speciation.CalibratedYuleModel.treeIntervals,beast.base.evolution.speciation.CalibratedYuleModel.calibrations"
+		<subtemplate id="CalibratedYuleModel" class="beast.base.spec.evolution.speciation.CalibratedYuleModel"
+                     mainid="CalibratedYuleModel.t:$(n)"
+                     suppressInputs="beast.base.spec.evolution.speciation.CalibratedYuleModel.logMarginal,beast.base.spec.evolution.speciation.CalibratedYuleModel.tree,beast.base.spec.evolution.speciation.CalibratedYuleModel.treeIntervals,beast.base.spec.evolution.speciation.CalibratedYuleModel.calibrations"
 			hmc="
 cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 ">
 			<![CDATA[
-						<distribution id="CalibratedYuleModel.t:$(n)" spec="beast.base.evolution.speciation.CalibratedYuleModel" tree="@Tree.t:$(n)">
-							<birthRate spec="parameter.RealParameter" id="cySpeciationRate.t:$(n)" value="1.0" lower="0.0" upper="10000.0" estimate="true" />
+						<distribution id="CalibratedYuleModel.t:$(n)" spec="beast.base.spec.evolution.speciation.CalibratedYuleModel" tree="@Tree.t:$(n)">
+							<birthRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="cySpeciationRate.t:$(n)" value="1.0" estimate="true" />
 						</distribution>
 
-						<prior id="cySpeciationRatePrior.t:$(n)" x="@cySpeciationRate.t:$(n)">
-							 <distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="10000.0"/>
-						</prior>
+						 <distr id="cySpeciationRatePrior.t:$(n)" param="@cySpeciationRate.t:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="0.01" S="2.0"/>
 
 						<operator id="cySpeciationRateScale.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="1.0" parameter="@cySpeciationRate.t:$(n)"/>
 						
@@ -107,7 +105,7 @@ cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 						<operator id="cyWilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
 						<operator id="cyWide.t:Species" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
 						<operator id="cyNarrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
-						<operator id="cyBactrianSubtreeSlide.t:$(n)" size="0.002" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
+						<operator id="cyBactrianSubtreeSlide.t:$(n)" size="0.002" spec="kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
 			
 			]]>
 
@@ -158,31 +156,28 @@ cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 		
 
 		<!-- Birth Death model (parameterized as per Gernhard 2008) -->
-		<subtemplate id="BirthDeathModel" class="beast.base.evolution.speciation.BirthDeathGernhard08Model" mainid="BirthDeathModel.t:$(n)"
-			hmc='
+		<subtemplate id="BirthDeathModel" class="beast.base.spec.evolution.speciation.BirthDeathGernhard08Model" mainid="BirthDeathModel.t:$(n)"
+			hmc="
 netDiversificationRatePrior/index/=Priors/BirthRatePrior/,
-ExtinctionFractionPrior/index/=Priors/DeathRatePrior/'>
+ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
 <![CDATA[
 			<distribution id="BirthDeathModel.t:$(n)" spec="beast.base.evolution.speciation.BirthDeathGernhard08Model" tree="@Tree.t:$(n)">
-				<birthDiffRate spec="parameter.RealParameter" id="netDiversificationRate.t:$(n)" value="1.0" lower="0.0" upper="10000.0" estimate="true" />
-				<relativeDeathRate spec="parameter.RealParameter" id="ExtinctionFraction.t:$(n)" value="0.5" lower="0.0" upper="1.0" estimate="true" />
+				<birthDiffRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="netDiversificationRate.t:$(n)" value="1.0" estimate="true" />
+				<relativeDeathRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" id="ExtinctionFraction.t:$(n)" value="0.5" estimate="true" />
 			</distribution>
 
-			<prior id="netDiversificationRatePrior.t:$(n)" x="@netDiversificationRate.t:$(n)">
-				 <distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="10000.0"/>
-			</prior>
-			<prior id="ExtinctionFractionPrior.t:$(n)" x="@ExtinctionFraction.t:$(n)">
-			 	<Beta name="distr">
-                    <alpha spec="parameter.RealParameter" lower="0.0">5.0</alpha>
-                    <beta spec="parameter.RealParameter" lower="0.0">1.0</beta>
-                </Beta>
-			</prior>
+			 <distribution id="netDiversificationRatePrior.t:$(n)" param="@netDiversificationRate.t:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="0.01" S="2.0"/>
+
+		 	<distribution spec="beast.base.spec.inference.distribution.Beta" id="ExtinctionFractionPrior.t:$(n)" param="@ExtinctionFraction.t:$(n)">
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" >5.0</alpha>
+                <beta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" >1.0</beta>
+            </distribution>
 			
 			<operator id="bdUniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
 			<operator id="bdWilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
 			<operator id="bdWide.t:Species" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
 			<operator id="bdNarrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
-			<operator id="bdBactrianSubtreeSlide.t:$(n)" size="0.002" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
+			<operator id="bdBactrianSubtreeSlide.t:$(n)" size="0.002" spec="kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
 
 			<operator id="netDiversificationRateScale.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@netDiversificationRate.t:$(n)"/>
 			<operator id="ExtinctionFractionScale.t:$(n)" parameter="@ExtinctionFraction.t:$(n)" scaleFactor="0.5" spec="ScaleOperator" weight="3.0" />
@@ -250,38 +245,29 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/'>
 		
 		<!-- FBD model with sampled ancestor support from Gavryushkina et al (2014) -->
 		<subtemplate id="FBDModel" class="sa.evolution.speciation.SABirthDeathModel" mainid="FBDModel.t:$(n)"
-					 suppressInputs="sa.evolution.speciation.SABirthDeathModel.removalProbability,
-			sa.evolution.speciation.SABirthDeathModel.treeIntervals,
-			sa.evolution.speciation.SABirthDeathModel.birthRate,
-			sa.evolution.speciation.SABirthDeathModel.deathRate,
-			sa.evolution.speciation.SABirthDeathModel.samplingRate,
-			sa.evolution.speciation.SABirthDeathModel.conditioningOnRoot,
-			sa.evolution.speciation.SABirthDeathModel.tree">
+					suppressInputs="sa.evolution.speciation.SABirthDeathModel.removalProbability,
+	sa.evolution.speciation.SABirthDeathModel.treeIntervals,
+	sampled.evolution.speciation.SABirthDeathModel.birthRate,
+	sa.evolution.speciation.SABirthDeathModel.deathRate,
+	sa.evolution.speciation.SABirthDeathModel.samplingRate,
+	sa.evolution.speciation.SABirthDeathModel.conditioningOnRoot,
+	sa.evolution.speciation.SABirthDeathModel.tree">
 <![CDATA[
 			<!-- Sampled Ancestor Birth Death model-->
 			<distribution id="FBDModel.t:$(n)" spec="sa.evolution.speciation.SABirthDeathModel" tree="@Tree.t:$(n)" conditionOnRhoSampling="true">
-				<parameter name="origin" id="originFBD.t:$(n)" value ="200.0" lower="0.0"/>
-				<parameter name="diversificationRate" id="diversificationRateFBD.t:$(n)" value="1.0" lower="0.0"/>
-				<parameter name="turnover" id="turnoverFBD.t:$(n)" value="0.5" lower="0.0" upper="1.0"/>
-				<parameter name="samplingProportion" id="samplingProportionFBD.t:$(n)" value="0.5" lower="0.0" upper="1.0"/>
-				<parameter estimate="false" name="rho" id="rhoFBD.t:$(n)" value="1.0" lower="0.0" upper="1.0"/>
-				<parameter name="removalProbability" id="rFBD.t:$(n)" value="0.0" lower="0.0" upper="1.0"/>
+				<origin id="originFBD.t:$(n)" spec="RealScalarParam" domain="PositiveReal" value="100.0"/>
+				<diversificationRate id="diversificationRateFBD.t:$(n)" spec="RealScalarParam" domain="Real" value="1.0"/>
+		        <turnover id="turnoverFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+		        <samplingProportion id="samplingProportionFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
+		        <rho id="rhoFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
+		        <removalProbability id="rFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.0"/>
 			</distribution>
-			<prior id="originPriorFBD.t:$(n)" x="@originFBD.t:$(n)">
-				<distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="Infinity"/>
-			</prior>
-			<prior id="diversificationRatePriorFBD.t:$(n)" x="@diversificationRateFBD.t:$(n)">
-				<distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="Infinity"/>
-			</prior>
-			<prior id="turnoverPriorFBD.t:$(n)" x="@turnoverFBD.t:$(n)">
-				<distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="1.0"/>
-			</prior>
-			<prior id="samplingProportionPriorFBD.t:$(n)" x="@samplingProportionFBD.t:$(n)">
-				<distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="1.0"/>
-			</prior>
-			<prior id="rhoPriorFBD.t:$(n)" x="@rhoFBD.t:$(n)">
-				<distr spec="beast.base.inference.distribution.Uniform" lower="0.0" upper="1.0"/>
-			</prior>
+			
+			<distr id="originPriorFBD.t:$(n)" param="@originFBD.t:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="1" S="3.0"/>
+			<distr id="diversificationRatePriorFBD.t:$(n)" param="@diversificationRateFBD.t:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="1" S="3.0"/>
+			<distr id="turnoverPriorFBD.t:$(n)" param="@turnoverFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Beta" alpha="3.0" beta="1.0"/>
+			<distr id="samplingProportionPriorFBD.t:$(n)" param="@samplingProportionFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Beta" alpha="1.0" beta="3.0"/>
+			<distr id="rhoPriorFBD.t:$(n)" param="@rhoFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Beta" alpha="1.0" beta="1.0"/>
 			<operator id="originScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="3.0" parameter="@originFBD.t:$(n)"/>
 			<operator id="divRateScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@diversificationRateFBD.t:$(n)"/>
 			<operator id="turnoverScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@turnoverFBD.t:$(n)"/>
