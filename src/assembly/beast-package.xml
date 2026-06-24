@@ -28,15 +28,15 @@
         </dependencySet>
     </dependencySets>
 
-    <fileSets>
+ <fileSets>
         <!-- examples/ (if present) -->
         <fileSet>
-            <directory>${project.basedir}/examples</directory>
+            <directory>${project.basedir}/src/test/resources/${beast.pkg.name}/examples</directory>
             <outputDirectory>/examples</outputDirectory>
         </fileSet>
         <!-- fxtemplates/ (if present; use JPMS module-namespaced resource path) -->
         <fileSet>
-            <directory>${project.basedir}/fxtemplates</directory>
+            <directory>${project.basedir}/src/main/resources/${beast.pkg.name}/fxtemplates</directory>
             <outputDirectory>/fxtemplates</outputDirectory>
         </fileSet>
     </fileSets>
