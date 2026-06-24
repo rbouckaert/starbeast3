@@ -241,7 +241,7 @@ ClusterTree/adjustTreeNodeHeights/,
 ClusterTree/clusterType//">
 
 
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Partitions" tiptext="Data Partitions" path='distribution/distribution[id="likelihood"]/distribution/data' hasPartitions="none" icon="2220.pngx" forceExpansion="FALSE" type="beast.base.spec.evolution.alignment.Alignment"/>
+		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Partitions" tiptext="Data Partitions" path='distribution/distribution[id="likelihood"]/distribution/data' hasPartitions="none" icon="2220.pngx" forceExpansion="FALSE" type="beast.base.evolution.alignment.Alignment"/>
 		<mergepoint id="aux-sb3-partitions-panels"/>
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Taxon Sets" tiptext="Specify taxon sets that make up species" path='operator[id="Reheight.t:Species"]/taxonset' hasPartitions="none" icon="1.pngx" forceExpansion="TRUE"/>
@@ -253,7 +253,13 @@ ClusterTree/clusterType//">
 
 
 		
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Site Model" tiptext="Site model and substitution model specifications" path="siteModel" hasPartitions="SiteModel" icon="3.pngx" forceExpansion="TRUE"/>
+		<panel spec='BeautiPanelConfig' panelname="Site Model" tiptext="Site model and substitution model specifications"
+            path='siteModel'
+            hasPartitions="SiteModel" icon='3.png.x' forceExpansion='TRUE'
+        />		
+        <!--
+        <panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Site Model" tiptext="Site model and substitution model specifications" path="siteModel" hasPartitions="SiteModel" icon="3.pngx" forceExpansion="TRUE"/>
+        -->
 		<mergepoint id="aux-sb3-sitemodel-panels"/>
 
 
@@ -354,9 +360,10 @@ ClusterTree/clusterType//">
 
 			]]>
 
-
 			<connect srcID="treeLikelihood.$(n)" targetID="likelihood" inputName="distribution" if="isInitializing"/>
 			<connect srcID="ParallelMCMCTreeOperator" targetID="mcmc" inputName="operator" if="isInitializing"/>
+
+			<connect method="beastfx.app.inputeditor.spec.SiteModelInputEditor.customConnector"/>
 			
 			<connect srcID="treelog.t:$(n)" targetID="mcmc" inputName="logger" if="inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
@@ -400,9 +407,6 @@ ClusterTree/clusterType//">
 
 			<!-- end hacks -->
 			
-
-			<connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
-
 			<!-- Substitution model -->
             <connect srcID="proportionInvariant.s:$(n)"       targetID="state" inputName="stateNode" if="inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true"/>
             <connect srcID="mutationRate.s:$(n)"              targetID="state" inputName="stateNode" if="inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
@@ -484,7 +488,7 @@ ClusterTree/clusterType//">
 				<data spec="beast.base.spec.evolution.alignment.FilteredAlignment" id="$(n)" filter="0-end">
 					<userDataType spec="beast.base.evolution.datatype.StandardData" id="morphDataType.$(n)" />
 				</data>
-				<siteModel spec="SiteModel" id="SiteModel.s:$(n)" gammaCategoryCount="0">
+				<siteModel spec="beast.base.spec.evolution.sitemodel.SiteModel" id="SiteModel.s:$(n)" gammaCategoryCount="0">
 					<substModel spec="starbeast3.evolution.substitutionmodel.LewisMK" id="LewisMK.s:$(n)" datatype="@morphDataType.$(n)"/>
 					<mutationRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="mutationRate.s:$(n)" value="1.0" estimate="false"/>
 					<shape spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="gammaShape.s:$(n)" value="1.0" estimate="false"/>
@@ -509,7 +513,7 @@ ClusterTree/clusterType//">
 		]]>
 
 			<connect srcID="morphTreeLikelihood.$(n)" targetID="likelihood" inputName="distribution" if="isInitializing"/>
-			<connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
+			<connect method="beastfx.app.inputeditor.spec.SiteModelInputEditor.customConnector"/>
 
 			<connect srcID="MutationRatePrior.s:$(n)" targetID="prior" inputName="distribution" if="nooperator(FixMeanMutationRatesOperator) and inposterior(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true"/>
 
