@@ -161,7 +161,7 @@ cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 netDiversificationRatePrior/index/=Priors/BirthRatePrior/,
 ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
 <![CDATA[
-			<distribution id="BirthDeathModel.t:$(n)" spec="beast.base.evolution.speciation.BirthDeathGernhard08Model" tree="@Tree.t:$(n)">
+			<distribution id="BirthDeathModel.t:$(n)" spec="beast.base.spec.evolution.speciation.BirthDeathGernhard08Model" tree="@Tree.t:$(n)">
 				<birthDiffRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" id="netDiversificationRate.t:$(n)" value="1.0" estimate="true" />
 				<relativeDeathRate spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" id="ExtinctionFraction.t:$(n)" value="0.5" estimate="true" />
 			</distribution>
@@ -179,9 +179,9 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
 			<operator id="bdNarrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
 			<operator id="bdBactrianSubtreeSlide.t:$(n)" size="0.002" spec="kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
 
-			<operator id="netDiversificationRateScale.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@netDiversificationRate.t:$(n)"/>
-			<operator id="ExtinctionFractionScale.t:$(n)" parameter="@ExtinctionFraction.t:$(n)" scaleFactor="0.5" spec="ScaleOperator" weight="3.0" />
-			<operator id="ExtinctionFractionUniform.t:$(n)" parameter="@ExtinctionFraction.t:$(n)" spec="UniformOperator" weight="3.0" />
+			<operator id="netDiversificationRateScale.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@netDiversificationRate.t:$(n)"/>
+			<operator id="ExtinctionFractionScale.t:$(n)" parameter="@ExtinctionFraction.t:$(n)" scaleFactor="0.5" spec="beast.base.spec.inference.operator.ScaleOperator" weight="3.0" />
+			<operator id="ExtinctionFractionUniform.t:$(n)" parameter="@ExtinctionFraction.t:$(n)" spec="beast.base.spec.inference.operator.uniform.IntervalOperator" weight="3.0" />
 ]]>
 
 			<connect srcID="BirthDeathModel.t:$(n)" targetID="prior" inputName="distribution" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
@@ -255,12 +255,12 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
 <![CDATA[
 			<!-- Sampled Ancestor Birth Death model-->
 			<distribution id="FBDModel.t:$(n)" spec="sa.evolution.speciation.SABirthDeathModel" tree="@Tree.t:$(n)" conditionOnRhoSampling="true">
-				<origin id="originFBD.t:$(n)" spec="RealScalarParam" domain="PositiveReal" value="100.0"/>
-				<diversificationRate id="diversificationRateFBD.t:$(n)" spec="RealScalarParam" domain="Real" value="1.0"/>
-		        <turnover id="turnoverFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
-		        <samplingProportion id="samplingProportionFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.5"/>
-		        <rho id="rhoFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
-		        <removalProbability id="rFBD.t:$(n)" spec="RealScalarParam" domain="UnitInterval" value="0.0"/>
+				<origin id="originFBD.t:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="100.0"/>
+				<diversificationRate id="diversificationRateFBD.t:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.0"/>
+			       <turnover id="turnoverFBD.t:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.5"/>
+			       <samplingProportion id="samplingProportionFBD.t:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.5"/>
+			       <rho id="rhoFBD.t:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="1.0" estimate="false"/>
+			       <removalProbability id="rFBD.t:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval" value="0.0"/>
 			</distribution>
 			
 			<distr id="originPriorFBD.t:$(n)" param="@originFBD.t:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="1" S="3.0"/>
@@ -268,11 +268,11 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
 			<distr id="turnoverPriorFBD.t:$(n)" param="@turnoverFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Beta" alpha="3.0" beta="1.0"/>
 			<distr id="samplingProportionPriorFBD.t:$(n)" param="@samplingProportionFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Beta" alpha="1.0" beta="3.0"/>
 			<distr id="rhoPriorFBD.t:$(n)" param="@rhoFBD.t:$(n)" spec="beast.base.spec.inference.distribution.Beta" alpha="1.0" beta="1.0"/>
-			<operator id="originScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="3.0" parameter="@originFBD.t:$(n)"/>
-			<operator id="divRateScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@diversificationRateFBD.t:$(n)"/>
-			<operator id="turnoverScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@turnoverFBD.t:$(n)"/>
-			<operator id="samplingPScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@samplingProportionFBD.t:$(n)"/>
-			<operator id="rhoScalerFBD.t:$(n)" spec="ScaleOperator" scaleFactor="0.9" weight="1.0" parameter="@rhoFBD.t:$(n)"/>
+			<operator id="originScalerFBD.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="3.0" parameter="@originFBD.t:$(n)"/>
+			<operator id="divRateScalerFBD.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@diversificationRateFBD.t:$(n)"/>
+			<operator id="turnoverScalerFBD.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@turnoverFBD.t:$(n)"/>
+			<operator id="samplingPScalerFBD.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="10.0" parameter="@samplingProportionFBD.t:$(n)"/>
+			<operator id="rhoScalerFBD.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.9" weight="1.0" parameter="@rhoFBD.t:$(n)"/>
 			<plugin id="SACountFBD.t:$(n)" spec="sa.evolution.tree.SampledAncestorLogger" tree="@Tree.t:$(n)"/>
 			<!-- operators for sampled ancestor trees -->
 			<operator id="LeafToSAFBD.t:$(n)" spec="sa.evolution.operators.LeafToSampledAncestorJump" weight="10" tree="@Tree.t:$(n)"/>

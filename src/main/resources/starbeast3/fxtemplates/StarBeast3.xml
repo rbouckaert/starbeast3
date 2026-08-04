@@ -154,7 +154,10 @@
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.rateQuantiles,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.tree,
 			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.nBins,
-			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.distr"
+			starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3.distr,
+			starbeast3.operators.PopSizeGibbsSampler.gammaprior,
+			starbeast3.operators.PopSizeGibbsSampler.popSizes,
+			starbeast3.operators.PopSizeGibbsSampler.gene"
 		buttonLabelMap="beast.app.beauti.BeautiInitDlg.&gt;&gt; details=Edit parameters"
 		hmc="BirthDeath/index/,
 popMean/index/=Priors/PopSizePrior/,
@@ -273,8 +276,8 @@ ClusterTree/clusterType//">
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Species Clock Model" icon="4.png.x" tiptext="Species Clock model" path="init/sharedRateModel/branchRateModel" forceExpansion="TRUE"/>
 		<mergepoint id="aux-sb3-clockmodel-panels"/>
 
-
-		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/>
+		<!-- Removing the state panel with beast 2.8 -->
+		<!-- <panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="State" tiptext="Initial state" path="state/stateNode" hasPartitions="none" icon="6.pngx" forceExpansion="TRUE_START_COLLAPSED" isVisible="false"/> -->
 		<mergepoint id="aux-sb3-initilisation-panels"/>
 
 		<panel spec="beastfx.app.inputeditor.BeautiPanelConfig" panelname="Priors" tiptext="Other priors" path='distribution/distribution[id="prior"]/distribution' hasPartitions="none" icon="7.pngx" forceExpansion="TRUE_START_COLLAPSED" type="beast.base.inference.Distribution" buttonStatus="ADD_ONLY"/>

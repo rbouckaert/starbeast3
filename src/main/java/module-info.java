@@ -60,5 +60,6 @@ open module starbeast3 {
     	starbeast3.app.beauti.StarBeastTipDatesInputEditor;
  
     provides beastfx.app.inputeditor.BeautiAlignmentProvider with
-    	starbeast3.app.beauti.StarBeastAlignmentProvider3;
+    	starbeast3.app.beauti.StarBeastAlignmentProvider3,
+    	starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider;
 }
