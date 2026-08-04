@@ -59,6 +59,9 @@ open module starbeast3 {
     	starbeast3.app.beauti.StarBeast3ClockInputEditor,
     	starbeast3.app.beauti.StarBeastTipDatesInputEditor;
  
+    provides beastfx.app.beauti.PriorProvider with
+    	starbeast3.app.beauti.MRCAPriorProviderSB3;
+    
     provides beastfx.app.inputeditor.BeautiAlignmentProvider with
     	starbeast3.app.beauti.StarBeastAlignmentProvider3,
     	starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider;
