@@ -6,8 +6,8 @@ import java.math.MathContext;
 import java.util.HashSet;
 import java.util.List;
 
-
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+
 
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -54,6 +54,9 @@ public class ParallelMCMC extends MCMC {
 	public ParallelMCMC() {
 		loggersInput.setRule(Validate.OPTIONAL);
 		startStateInput.setRule(Validate.REQUIRED);
+		//int x = org.apache.commons.math4.stat.regression.LinearRegression();
+		
+		
 	}
 	
 	public void setLogPosterior(double logP) {

@@ -64,7 +64,10 @@
 				
 				<distribution spec='beast.base.spec.inference.distribution.LogNormal' id="SpeciesRelaxedClockRatePrior" param="@SpeciesTreeRelaxedClockRate" meanInRealSpace="true" M="0.001" S="3" />
 				<distribution spec='beast.base.spec.inference.distribution.Gamma' id="SpeciesRelaxedClockSDPrior" param="@SpeciesTreeRelaxedClockSD" alpha="5" lambda="0.05" />
-				<distribution spec='beast.base.spec.inference.distribution.LogNormal' id="FastRatePriorDistributionClock.$(n)" param="@SpeciesTreeBranchRates"  M="1.0" S="@SpeciesTreeRelaxedClockSD" meanInRealSpace="true"/>
+
+				<distribution spec='beast.base.spec.inference.distribution.IID' id="FastRatePriorDistributionClock.IID.$(n)" param="@SpeciesTreeBranchRates" >
+					<distr spec='beast.base.spec.inference.distribution.LogNormal' id="FastRatePriorDistributionClock.$(n)" M="1.0" S="@SpeciesTreeRelaxedClockSD" meanInRealSpace="true"/>
+				</distribution>
 				
 				
 				
@@ -111,7 +114,7 @@
 			<!-- Estimate branch rates? -->
 			<connect srcID="SpeciesTreeBranchRates" targetID="state" inputName="stateNode" if="inlikelihood(SpeciesTreeBranchRates) and SpeciesTreeBranchRates/estimate=true"/> 
 			<connect srcID="RateStatLogger.Species" targetID="tracelog" inputName="log" if="inlikelihood(SpeciesTreeBranchRates) and SpeciesTreeBranchRates/estimate=true"/>
-			<connect srcID="FastRatePriorDistributionClock.Species" targetID="vectorPrior" inputName="distribution" if="inlikelihood(SpeciesTreeBranchRates) and SpeciesTreeBranchRates/estimate=true"/>
+			<connect srcID="FastRatePriorDistributionClock.IID.Species" targetID="vectorPrior" inputName="distribution" if="inlikelihood(SpeciesTreeBranchRates) and SpeciesTreeBranchRates/estimate=true"/>
 			<connect srcID="AdaptableOperatorSampler.rates:Species" targetID="mcmc" inputName="operator" if="inlikelihood(SpeciesTreeBranchRates) and SpeciesTreeBranchRates/estimate=true">
 				Adaptable operator for species tree relaxed clock branch rates
 			</connect>
@@ -120,7 +123,7 @@
 			<connect srcID="ConstantDistanceOperatorSpeciesTree:Species" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inlikelihood(SpeciesTreeBranchRates) and SpeciesTreeBranchRates/estimate=true"/> 
 				<!--<connect srcID="treePrior.t:$(n)" targetID="ConstantDistanceOperatorSpeciesTree:Species" inputName="gene" if="inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true"/>-->
 			<connect srcID="SpeciesTreeBranchRates" targetID="SpeciesTreeLoggerX" inputName="metadata" if="inlikelihood(SpeciesTreeBranchRates) and SpeciesTreeBranchRates/estimate=true"/> 
-			<connect method="starbeast3.operators.ConstantDistanceOperatorSpeciesTree.addGeneTrees" />
+			<connect method="starbeast3.app.beauti.StarBeast3ClockInputEditor.addGeneTrees" />
 			
 			
 			

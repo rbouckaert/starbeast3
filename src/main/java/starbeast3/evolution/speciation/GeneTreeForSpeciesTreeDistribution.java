@@ -15,6 +15,7 @@ import beast.base.core.Description;
 import beast.base.inference.Distribution;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
+import beast.base.core.ProgramStatus;
 import beast.base.inference.State;
 import beast.base.spec.domain.NonNegativeReal;
 import beast.base.spec.inference.parameter.RealVectorParam;
@@ -182,8 +183,7 @@ public class GeneTreeForSpeciesTreeDistribution extends Distribution {
         geneTreeLeafNodeCount = treeInput.get().getLeafNodeCount();
         speciesNodeCount = speciesTree.getNodeCount();
 
-
-        if (Beauti.isInBeauti()) {
+        if (ProgramStatus.name.equals("BEAUti")) {
             // we are in BEAUti, so do not initialise
             return;
         }
@@ -209,7 +209,8 @@ public class GeneTreeForSpeciesTreeDistribution extends Distribution {
             final String speciesID = getSpeciesID(gtNodes[i].getID());
             // ??? can this be a startup check? can this happen during run due to tree change?
             if (speciesID == null) {
-                throw new IllegalArgumentException("Cannot find species for lineage " + gtNodes[i].getID());
+                throw new IllegalArgumentException("Cannot find species for lineage " + gtNodes[i].getID() + "." +
+                		" This might be because a species and individual have the same name. Note that the species can renamed in the Taxon Sets tab of BEAUti.");
             }
             for (int species = 0; species < speciesCount; species++) {
                 if (speciesID.equals(sptNodes[species].getID())) {

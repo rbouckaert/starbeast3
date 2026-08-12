@@ -2,6 +2,7 @@ package starbeast3.operators;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
+import beast.base.core.ProgramStatus;
 import beast.base.core.Input.Validate;
 import beast.base.spec.domain.NonNegativeReal;
 import beast.base.spec.inference.parameter.RealVectorParam;
@@ -68,7 +69,7 @@ public class NodeReheight2 extends Operator {
         originSpecified = originInput.get() != null;
         geneTreeDistributions = geneTreesInput.get();
 
-        if (Beauti.isInBeauti()) {
+        if (ProgramStatus.name.equals("BEAUti")) {
         	return;
         }
         

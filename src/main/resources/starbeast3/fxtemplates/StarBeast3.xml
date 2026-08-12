@@ -625,8 +625,9 @@ ClusterTree/clusterType//">
 		
 		 <distribution id="vectorPrior" spec="beast.base.inference.CompoundDistribution">
 		 
-		 			
-			<distribution id="popPriorDistr.InverseGamma" param="@popSize" spec="beast.base.spec.inference.distribution.InverseGamma" alpha="2.0" beta="@popMean"/>
+		 	<distribution id="popPriorDistr.InverseGamma.IID" spec="beast.base.spec.inference.distribution.IID" param="@popSize" >		
+				<distr id="popPriorDistr.InverseGamma" spec="beast.base.spec.inference.distribution.InverseGamma" alpha="2.0" beta="@popMean"/>
+			</distribution>
 			
 		 
 		 

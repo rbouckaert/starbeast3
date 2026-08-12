@@ -1,6 +1,5 @@
 package starbeast3.operators;
 
-import beastfx.app.inputeditor.BeautiDoc;
 import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -15,6 +14,7 @@ import beast.base.evolution.operator.TreeOperator;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.util.Randomizer;
+import beastfx.app.inputeditor.BeautiDoc;
 import starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3;
 import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 
@@ -439,56 +439,6 @@ public class ConstantDistanceOperatorSpeciesTree extends TreeOperator {
     
     
     
-    
-    /*
-     * Add gene trees to the input
-     */
-    public static void addGeneTrees(BeautiDoc doc) {
-    	
-
-    	
-    	for (String str : doc.pluginmap.keySet()) {
-    		
-    		
-    		// Find the constant distance operator(s)
-    		BEASTInterface obj = doc.pluginmap.get(str);
-    		if (obj instanceof ConstantDistanceOperatorSpeciesTree) {
-    			ConstantDistanceOperatorSpeciesTree op = (ConstantDistanceOperatorSpeciesTree)obj;
-
-    			// List
-    			List<GeneTreeForSpeciesTreeDistribution> genes = new ArrayList<>();
-    			
-    			
-    			// Add gene tree priors to the operators inputs
-    	    	for (String str2 : doc.pluginmap.keySet()) {
-
-    	    		// Find the gene tree priors
-    	    		BEASTInterface obj2 = doc.pluginmap.get(str2);
-    	    		if (obj2 instanceof GeneTreeForSpeciesTreeDistribution) {
-    	    			
-    	    			
-    	    			
-    	    			GeneTreeForSpeciesTreeDistribution treePrior = (GeneTreeForSpeciesTreeDistribution)obj2;
-    	    			Tree tree = (Tree) treePrior.treeInput.get();
-    	    			if (!tree.isEstimated()) continue;
-    	    			
-    	    			if (!genes.contains(treePrior)) genes.add(treePrior);    	    		
-    	    		}
-    	    		
-    	    	}
-    	    	
-    	    	op.geneTreeDistributionsInput.get().clear();
-    	    	op.geneTreeDistributionsInput.set(genes);
-    			
-    			
-    		}
-    	}
-    	
-    	
-    	
-    	
-    }
-
 
 }
 

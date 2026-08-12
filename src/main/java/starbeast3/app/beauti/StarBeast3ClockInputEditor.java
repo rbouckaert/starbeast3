@@ -2,11 +2,13 @@ package starbeast3.app.beauti;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 import beast.base.core.BEASTInterface;
 import beast.base.core.Input;
+import beast.base.evolution.tree.Tree;
 import beast.base.inference.StateNode;
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.type.RealScalar;
@@ -24,6 +26,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.HBox;
 import starbeast3.evolution.branchratemodel.StarBeast3Clock;
+import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
+import starbeast3.operators.ConstantDistanceOperatorSpeciesTree;
 
 public class StarBeast3ClockInputEditor extends ListInputEditor {
 
@@ -139,4 +143,57 @@ public class StarBeast3ClockInputEditor extends ListInputEditor {
 			});	
 	    }
 	  }
+	
+
+    
+    /*
+     * Add gene trees to the input
+     */
+    public static void addGeneTrees(BeautiDoc doc) {
+    	
+
+    	
+    	for (String str : doc.pluginmap.keySet()) {
+    		
+    		
+    		// Find the constant distance operator(s)
+    		BEASTInterface obj = doc.pluginmap.get(str);
+    		if (obj instanceof ConstantDistanceOperatorSpeciesTree) {
+    			ConstantDistanceOperatorSpeciesTree op = (ConstantDistanceOperatorSpeciesTree)obj;
+
+    			// List
+    			List<GeneTreeForSpeciesTreeDistribution> genes = new ArrayList<>();
+    			
+    			
+    			// Add gene tree priors to the operators inputs
+    	    	for (String str2 : doc.pluginmap.keySet()) {
+
+    	    		// Find the gene tree priors
+    	    		BEASTInterface obj2 = doc.pluginmap.get(str2);
+    	    		if (obj2 instanceof GeneTreeForSpeciesTreeDistribution) {
+    	    			
+    	    			
+    	    			
+    	    			GeneTreeForSpeciesTreeDistribution treePrior = (GeneTreeForSpeciesTreeDistribution)obj2;
+    	    			Tree tree = (Tree) treePrior.treeInput.get();
+    	    			if (!tree.isEstimated()) continue;
+    	    			
+    	    			if (!genes.contains(treePrior)) genes.add(treePrior);    	    		
+    	    		}
+    	    		
+    	    	}
+    	    	
+    	    	op.geneTreeDistributionsInput.get().clear();
+    	    	op.geneTreeDistributionsInput.set(genes);
+    			
+    			
+    		}
+    	}
+    	
+    	
+    	
+    	
+    }
+
+	
 }

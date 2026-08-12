@@ -12,6 +12,7 @@ import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.inference.distribution.Gamma;
 import beast.base.spec.inference.distribution.InverseGamma;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.type.RealScalar;
 import beast.base.util.Randomizer;
 import beast.base.core.Log;
@@ -172,7 +173,7 @@ public class PopSizeGibbsSampler extends Operator {
 		double beta = priorBeta.get() + b;
 		
 		Gamma g = new Gamma();
-		g.initByName("alpha", alpha, "beta", 1.0/beta);
+		g.initByName("alpha", new RealScalarParam<>(alpha, PositiveReal.INSTANCE), "theta", new RealScalarParam<>(1.0/beta, PositiveReal.INSTANCE));
 		//GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
 		double newN = 1.0 / g.cumulativeProbability(Randomizer.nextFloat());
 		return newN;
@@ -203,8 +204,9 @@ public class PopSizeGibbsSampler extends Operator {
 		double alpha = priorAlpha.get() + a;
 		double beta = priorBeta.get() + b;
 		
+		
 		Gamma g = new Gamma();
-		g.initByName("alpha", alpha, "beta", 1.0/beta);
+		g.initByName("alpha", new RealScalarParam<>(alpha, PositiveReal.INSTANCE), "theta", new RealScalarParam<>(1.0/beta, PositiveReal.INSTANCE));
 		//GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
 		double newN = 1.0 / g.cumulativeProbability(Randomizer.nextFloat());
 		return newN;
