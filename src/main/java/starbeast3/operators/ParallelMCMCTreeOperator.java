@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
+//import org.apache.commons.math4.legacy.stat.regression.SimpleRegression;
+
 import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
 import beast.base.inference.Distribution;
@@ -31,6 +33,9 @@ import beast.base.spec.inference.operator.ScaleOperator;
 import beast.base.spec.inference.operator.uniform.IntervalOperator;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.inference.parameter.SimplexParam;
+
+import beast.base.spec.inference.parameter.RealScalarParam;
+
 import beast.base.spec.type.Tensor;
 import starbeast3.core.ParallelMCMC;
 
@@ -66,6 +71,9 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		mcmcs = new ArrayList<>();
 		
 		
+		
+		// TEST
+		 //SimpleRegression regression = new SimpleRegression();
 
 		
 		// Tidy the distributions
@@ -287,31 +295,30 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				beast.base.evolution.operator.Uniform UniformOperator = new beast.base.evolution.operator.Uniform();
 				UniformOperator.initByName("tree", d.tree, "weight", 30.0);
 				operators.add(UniformOperator);
-				
 
 				
 				// Root scaler
-				beast.base.evolution.operator.kernel.BactrianScaleOperator treeRootScaler = new beast.base.evolution.operator.kernel.BactrianScaleOperator();
-				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 10.0, "rootOnly", true);
+				beast.base.spec.evolution.operator.ScaleTreeOperator treeRootScaler = new beast.base.spec.evolution.operator.ScaleTreeOperator();
+				treeRootScaler.initByName("scaleFactor", 0.5, "tree", d.tree, "weight", 3.0, "rootOnly", true);
 				operators.add(treeRootScaler);
 				
 				// Bactrian interval
 				beast.base.evolution.operator.kernel.BactrianNodeOperator intervalOperator = new beast.base.evolution.operator.kernel.BactrianNodeOperator();
-				intervalOperator.initByName("tree", d.tree, "weight", 10.0);
+				intervalOperator.initByName("tree", d.tree, "weight", 30.0);
 				operators.add(intervalOperator);
 				
 				// Subtree slide
 				beast.base.evolution.operator.kernel.BactrianSubtreeSlide SubtreeSlide = new beast.base.evolution.operator.kernel.BactrianSubtreeSlide();
-				SubtreeSlide.initByName("tree", d.tree, "weight", 10.0);
+				SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
 				operators.add(SubtreeSlide);
 				
 				
 				// Adaptable operators for tree scaling
-				beast.base.evolution.operator.AdaptableOperatorSampler adaptable = new beast.base.evolution.operator.AdaptableOperatorSampler();
+				beast.base.spec.evolution.operator.AdaptableOperatorSampler adaptable = new beast.base.spec.evolution.operator.AdaptableOperatorSampler();
 				List<Operator> adaptOperators = new ArrayList<>();
 				
 				// Tree scaler
-				beast.base.inference.operator.kernel.BactrianUpDownOperator treeScaler = new beast.base.inference.operator.kernel.BactrianUpDownOperator();
+				beast.base.spec.evolution.operator.UpDownOperator treeScaler = new beast.base.spec.evolution.operator.UpDownOperator();
 				treeScaler.initByName("scaleFactor", 0.5, "up", d.tree, "weight", 1.0);
 				adaptOperators.add(treeScaler);
 
@@ -396,30 +403,53 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				for (StateNode s : stateNodeList) {
 					
 					
-					if (!(s instanceof RealVectorParam<?>)) continue;
-					RealVectorParam<?> rp = (RealVectorParam<?>)s;
+					Log.warning("statenode " + s.getID());
+					boolean isReal = s instanceof RealScalarParam<?> || s instanceof RealVectorParam<?>;
+					
+					if (!isReal) continue;
+					Tensor<?,?> rp = (Tensor<?,?>)s;
+					
+					
+					double lower = Double.NEGATIVE_INFINITY;
+					double upper = Double.NEGATIVE_INFINITY;
+					if (s instanceof RealScalarParam<?>) {
+						RealScalarParam<?> param = (RealScalarParam<?>)s;
+						lower = param.getLower();
+						upper = param.getUpper();
+						
+					}else {
+						RealVectorParam<?> param = (RealVectorParam<?>)s;
+						lower = param.getLower();
+						upper = param.getUpper();
+						
+					}
 					
 					dim += rp.size();
 					
+					
+					Log.warning("xxx");
+					
 
 					if (rp instanceof SimplexParam || logsumInput.get().contains(s)) {
+						
+						SimplexParam simplex = (SimplexParam)rp;
 						
 						DeltaExchangeOperator op = new DeltaExchangeOperator();
 						op.initByName("parameter", rp, "delta", 0.2, "weight", 0.5);
 						operators.add(op);
 						double sum = 0;
-						for (int i = 0; i < rp.size(); i++) {
-							sum += rp.get(i);
+						for (int i = 0; i < simplex.size(); i++) {
+							sum += simplex.get(i);
 						}
 						f = new LogConstrainedSumTransform(rp, sum);
 						
 						
-						Log.warning("Adding logsum(" + sum + ") for " + rp.getID());
+						Log.warning("Adding logsum(" + sum + ") for " + simplex.getID());
 						
 					} 
 					
 					// Logit
-					else if (rp.getLower() != Double.NEGATIVE_INFINITY && rp.getUpper() != Double.POSITIVE_INFINITY) {
+					else if (lower != Double.NEGATIVE_INFINITY && upper != Double.POSITIVE_INFINITY) {
 						
 						IntervalOperator op = new IntervalOperator();
 						op.initByName("parameter", rp, "scaleFactor", 0.5, "weight", 0.5);
@@ -429,13 +459,13 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						l.add(rp);
 						f = new Transform.LogitTransform(l);
 						
-						Log.warning("Adding logit(" + rp.getLower() + "," + rp.getUpper() + ") " + rp.getID());
+						Log.warning("Adding logit(" + lower + "," + upper + ") " + s.getID());
 						
 					}
 					
 					
 					// Scale
-					else if (rp.getLower() >= 0)  {
+					else if (lower >= 0)  {
 						
 	
 						ScaleOperator op = new ScaleOperator();
@@ -443,7 +473,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						operators.add(op);
 						f = new LogTransform(rp);
 						
-						Log.warning("Adding scale " + rp.getID());
+						Log.warning("Adding scale " + s.getID());
 					}
 					
 					
@@ -459,7 +489,7 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 						List<Tensor<?,?>> l = new ArrayList<>();
 						l.add(rp);
 						f = new Transform.NoTransform(l);
-						Log.warning("Adding notransform " + rp.getID());
+						Log.warning("Adding notransform " + s.getID());
 						
 						
 					}
@@ -507,6 +537,12 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		
 		// Learn the chain length
 		int nregression = this.nrOfThreads > 1 ? nregressionInput.get() : 0;
+		
+		
+		
+		for (Operator op : operators) {
+			Log.warning("adding operator " + op.getClass());
+		}
 
 		ParallelMCMC mcmc = new ParallelMCMC();
 		mcmc.initByName("state", state, "operator", operators, "distribution", sampleDistr, "chainLength", chainLength, "robust", false, "nregression", nregression);

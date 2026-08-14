@@ -63,7 +63,7 @@
 				<operator id="relaxedClockRateScaler.c:$(n)" scaleFactor="0.7" spec="beast.base.spec.inference.operator.ScaleOperator" parameter="@SpeciesTreeRelaxedClockRate" weight="3.0"/>
 				
 				<distribution spec='beast.base.spec.inference.distribution.LogNormal' id="SpeciesRelaxedClockRatePrior" param="@SpeciesTreeRelaxedClockRate" meanInRealSpace="true" M="0.001" S="3" />
-				<distribution spec='beast.base.spec.inference.distribution.Gamma' id="SpeciesRelaxedClockSDPrior" param="@SpeciesTreeRelaxedClockSD" alpha="5" lambda="0.05" />
+				<distribution spec='beast.base.spec.inference.distribution.Gamma' id="SpeciesRelaxedClockSDPrior" param="@SpeciesTreeRelaxedClockSD" alpha="5" theta="0.05" />
 
 				<distribution spec='beast.base.spec.inference.distribution.IID' id="FastRatePriorDistributionClock.IID.$(n)" param="@SpeciesTreeBranchRates" >
 					<distr spec='beast.base.spec.inference.distribution.LogNormal' id="FastRatePriorDistributionClock.$(n)" M="1.0" S="@SpeciesTreeRelaxedClockSD" meanInRealSpace="true"/>

@@ -7,16 +7,7 @@
 
 <map name="connect" reserved="true">beastfx.app.inputeditor.BeautiConnector</map>
 <map name="subtemplate" reserved="true">beastfx.app.inputeditor.BeautiSubTemplate</map>
-<map name="Uniform">beast.base.spec.inference.distribution.Uniform</map>
-<map name="Normal">beast.base.spec.inference.distribution.Normal</map>
-<map name="LogNormal">beast.base.spec.inference.distribution.LogNormal</map>
-<map name="Exponential">beast.base.spec.inference.distribution.Exponential</map>
-<map name="Gamma">beast.base.spec.inference.distribution.Gamma</map>
-<map name="Beta">beast.base.spec.inference.distribution.Beta</map>
-<map name="LaplaceDistribution">beast.base.spec.inference.distribution.LaplaceDistribution</map>
-<map name="InverseGamma">beast.base.spec.inference.distribution.InverseGamma</map>
-<map name="Dirichlet">beast.base.spec.inference.distribution.Dirichlet</map>
-<map name="prior">beast.base.spec.inference.distribution.Prior</map>
+
 
 
 	<beauticonfig spec="beastfx.app.inputeditor.BeautiConfig"

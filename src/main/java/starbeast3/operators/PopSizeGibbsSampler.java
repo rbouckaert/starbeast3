@@ -102,6 +102,30 @@ public class PopSizeGibbsSampler extends Operator {
 			Log.warning("PopSizeGibbsSampler: Please provide at least one gene tree");
 		}
 		
+//		
+//		
+//		double alpha = priorAlpha.get();
+//		double beta = priorBeta.get();
+//		
+//		Gamma g = new Gamma();
+//		g.initByName("alpha", new RealScalarParam<>(alpha, PositiveReal.INSTANCE), "theta", new RealScalarParam<>(1.0/beta, PositiveReal.INSTANCE));
+//		//GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+//		
+//		
+		
+		
+//		
+//		
+//		for (int i = 0; i < 1000; i ++) {
+//			double newN = 1.0 / g.inverseCumulativeProbability(Randomizer.nextFloat());
+//			System.out.println(alpha + " " + beta + " " + newN);
+//		}
+//		
+//		
+//		System.exit(0);
+//		
+	
+		
 	}
 	
 
@@ -175,7 +199,13 @@ public class PopSizeGibbsSampler extends Operator {
 		Gamma g = new Gamma();
 		g.initByName("alpha", new RealScalarParam<>(alpha, PositiveReal.INSTANCE), "theta", new RealScalarParam<>(1.0/beta, PositiveReal.INSTANCE));
 		//GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
-		double newN = 1.0 / g.cumulativeProbability(Randomizer.nextFloat());
+		
+		
+		
+		double newN = 1.0 / g.inverseCumulativeProbability(Randomizer.nextFloat());
+		
+		//System.out.println(alpha + " " + beta + " " + newN);
+		
 		return newN;
 		
 	}
@@ -208,7 +238,7 @@ public class PopSizeGibbsSampler extends Operator {
 		Gamma g = new Gamma();
 		g.initByName("alpha", new RealScalarParam<>(alpha, PositiveReal.INSTANCE), "theta", new RealScalarParam<>(1.0/beta, PositiveReal.INSTANCE));
 		//GammaDistribution g = new GammaDistribution(myRandomizer, alpha, 1.0/beta, GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
-		double newN = 1.0 / g.cumulativeProbability(Randomizer.nextFloat());
+		double newN = 1.0 / g.inverseCumulativeProbability(Randomizer.nextFloat());
 		return newN;
 	}	
 }

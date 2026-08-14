@@ -19,6 +19,9 @@ import beast.base.inference.Operator;
 import beast.base.inference.State;
 import beast.base.inference.StateNode;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.Tensor;
+
 import beast.base.spec.inference.parameter.SimplexParam;
 import beast.base.inference.CompoundDistribution;
 import beast.base.core.Log;
@@ -259,10 +262,12 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	 */
 	public static void getRealParameterStateNodes(BEASTInterface d, List<StateNode> otherStateNodes, Set<StateNode> stateNodes) {
 		for (Object o : d.listActiveBEASTObjects()) {
-			if (o instanceof StateNode && otherStateNodes.contains(o) && o instanceof RealVectorParam<?>) {
+			
+			boolean isReal = o instanceof RealScalarParam<?> || o instanceof RealVectorParam<?>;
+			if (o instanceof StateNode && otherStateNodes.contains(o) && isReal) {
 				
 				StateNode state = (StateNode)o;
-				if (!stateNodes.contains(state) && parameterIsPartOfLikelihood((RealVectorParam<?>)o)) {
+				if (!stateNodes.contains(state) && parameterIsPartOfLikelihood(o)) {
 					stateNodes.add(state);
 				}
 				
@@ -274,7 +279,7 @@ public class ParallelMCMCRealParameterOperator extends MultiStepOperator {
 	
 	
 	
-	public static boolean parameterIsPartOfLikelihood(RealVectorParam<?> o) {
+	public static boolean parameterIsPartOfLikelihood(Object o) {
 		
 		// Part of likelihood?
 		for (BEASTInterface o2 : ((BEASTInterface)o).getOutputs()) {

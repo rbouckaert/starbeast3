@@ -96,7 +96,7 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
         
         StringBuffer buf2 = new StringBuffer();
 		if (metadataList.size() > 0) {
-			buf2.append("[&");
+			buf2.append(",");
 			boolean needsComma = false;
 			for (Tensor<?,?> metadata : metadataList) {
 				if (metadata instanceof Vector) {
@@ -130,7 +130,6 @@ public class SpeciesTreeLogger extends BEASTObject implements Loggable {
 				}
 			}
 			
-			buf2.append(']');
 		}
 		
         if (buf2.length() > 3) {
