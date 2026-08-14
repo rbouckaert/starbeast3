@@ -5,7 +5,7 @@ open module starbeast3 {
     requires static beast.fx;
     requires static orc;
     requires static org.apache.commons.statistics.distribution;
-    requires static commons.math3;
+    requires static org.apache.commons.math4.legacy;
     
 
     exports starbeast3.app.beauti;

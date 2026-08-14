@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-//import org.apache.commons.math4.legacy.stat.regression.SimpleRegression;
 
 import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
@@ -72,9 +71,6 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 		
 		
 		
-		// TEST
-		 //SimpleRegression regression = new SimpleRegression();
-
 		
 		// Tidy the distributions
 		tidyDistributions(this.distributions);
@@ -427,7 +423,6 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 					dim += rp.size();
 					
 					
-					Log.warning("xxx");
 					
 
 					if (rp instanceof SimplexParam || logsumInput.get().contains(s)) {

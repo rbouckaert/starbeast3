@@ -6,7 +6,7 @@ import java.math.MathContext;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.apache.commons.math4.legacy.stat.regression.SimpleRegression;
 
 
 import beast.base.core.Description;
