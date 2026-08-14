@@ -505,7 +505,7 @@ ClusterTree/clusterType//">
 				</siteModel>
 				<!-- Species-tree strict clock for this morphology partition -->
 
-				<branchRateModel id="strictClockModel.c:$(n)" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3" clock.rate="@clockRate.c:$(n)"/>
+				<branchRateModel id="strictClockModel.c:$(n)" spec="starbeast3.evolution.branchratemodel.StrictClockModelSB3" tree="@Tree.t:Species" clock.rate="@clockRate.c:$(n)"/>
 			</distribution>
 
 			<distribution id="MutationRatePrior.s:$(n)" param="@mutationRate.s:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="0.001" S="3"/>
@@ -517,9 +517,9 @@ ClusterTree/clusterType//">
 
 			<distribution id="GammaShapePrior.s:$(n)" param="@gammaShape.s:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="1.0" S="2.0"/>
 
-			<operator id="mutationRateScaler.s:$(n)" spec="ScaleOperator" scaleFactor="0.75" weight="1.0" parameter="@mutationRate.s:$(n)"/>
-			<operator id="gammaShapeScaler.s:$(n)" scaleFactor="0.75" spec="ScaleOperator" weight="1.0" parameter="@gammaShape.s:$(n)"/>
-			<operator id="clockRateScaler.c:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@clockRate.c:$(n)"/>
+			<operator id="mutationRateScaler.s:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="1.0" parameter="@mutationRate.s:$(n)"/>
+			<operator id="gammaShapeScaler.s:$(n)" scaleFactor="0.75" spec="beast.base.spec.inference.operator.ScaleOperator" weight="1.0" parameter="@gammaShape.s:$(n)"/>
+			<operator id="clockRateScaler.c:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@clockRate.c:$(n)"/>
 		]]>
 
 			<connect srcID="morphTreeLikelihood.$(n)" targetID="likelihood" inputName="distribution" if="isInitializing"/>
@@ -733,7 +733,6 @@ ClusterTree/clusterType//">
 		<log id="TreeStat.Species" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree.t:Species"/>
         <log idref="YuleModel.t:Species"/>
         <log idref="popMean"/>
-        <log idref="popSize"/>
     </logger>
 
 

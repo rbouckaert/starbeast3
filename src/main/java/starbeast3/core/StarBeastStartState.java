@@ -790,7 +790,7 @@ public class StarBeastStartState extends Tree implements StateNodeInitialiser {
           rnd.setInputValue("constraint", cal);
         }
         ConstantPopulation pf = new ConstantPopulation();
-        RealVectorParam<NonNegativeReal> pp = new RealVectorParam<>();
+        RealScalarParam<PositiveReal> pp = new RealScalarParam<>();
         pp.set(1.0);
         pf.setInputValue("popSize", pp);
 
