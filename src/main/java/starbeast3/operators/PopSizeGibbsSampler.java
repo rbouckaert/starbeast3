@@ -75,6 +75,10 @@ public class PopSizeGibbsSampler extends Operator {
 	protected List<GeneTreeForSpeciesTreeDistribution> geneTreeDistributions;
 
 	
+	Gamma gammaDistribution = new Gamma();
+	RealScalarParam<NonNegativeReal> alphaParam; 
+	RealScalarParam<NonNegativeReal> thetaParam; 
+	
 	@Override
 	public void initAndValidate() {
 		popSizes = popSizesInput.get();
@@ -101,6 +105,10 @@ public class PopSizeGibbsSampler extends Operator {
 			
 			Log.warning("PopSizeGibbsSampler: Please provide at least one gene tree");
 		}
+		
+		
+		alphaParam = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
+		thetaParam = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
 		
 
 		
@@ -174,11 +182,13 @@ public class PopSizeGibbsSampler extends Operator {
 		double alpha = priorAlpha.get() + a;
 		double beta = priorBeta.get() + b;
 		
-		Gamma g = new Gamma();
-		g.initByName("alpha", new RealScalarParam<>(alpha, PositiveReal.INSTANCE), "theta", new RealScalarParam<>(1.0/beta, PositiveReal.INSTANCE));
+		
+		alphaParam.set(alpha);
+		thetaParam.set(1.0/beta);
+		gammaDistribution.initByName("alpha", alphaParam, "theta", thetaParam);
 		
 		
-		double newN = 1.0 / g.inverseCumulativeProbability(Randomizer.nextFloat());
+		double newN = 1.0 / gammaDistribution.inverseCumulativeProbability(Randomizer.nextFloat());
 		
 		
 		return newN;
@@ -210,9 +220,10 @@ public class PopSizeGibbsSampler extends Operator {
 		double beta = priorBeta.get() + b;
 		
 		
-		Gamma g = new Gamma();
-		g.initByName("alpha", new RealScalarParam<>(alpha, PositiveReal.INSTANCE), "theta", new RealScalarParam<>(1.0/beta, PositiveReal.INSTANCE));
-		double newN = 1.0 / g.inverseCumulativeProbability(Randomizer.nextFloat());
+		alphaParam.set(alpha);
+		thetaParam.set(1.0/beta);
+		gammaDistribution.initByName("alpha", alphaParam, "theta", thetaParam);
+		double newN = 1.0 / gammaDistribution.inverseCumulativeProbability(Randomizer.nextFloat());
 		return newN;
 	}	
 }

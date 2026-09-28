@@ -303,13 +303,14 @@ public class ParallelMCMC extends MCMC {
             //System.err.print("\n" + sampleNr + " " + operator.getName()+ ":");
 
             if (this.robust && (debugFlag && sampleNr % 3 == 0 || sampleNr % 10000 == 0)) {
+            //if (sampleNr % 2 == 0) {
                 // check that the posterior is correctly calculated at every third
                 // sample, as long as we are in debug mode
             	final double originalLogP = isStochastic ? posterior.getNonStochasticLogP() : oldLogLikelihood;
                 final double logLikelihood = isStochastic ? state.robustlyCalcNonStochasticPosterior(posterior) : state.robustlyCalcPosterior(posterior);
                 if (isTooDifferent(logLikelihood, originalLogP)) {
                     reportLogLikelihoods(posterior, "");
-                    Log.err.println("At sample " + sampleNr + "\nLikelihood incorrectly calculated: " + originalLogP + " != " + logLikelihood
+                    Log.err.println("At sample " + sampleNr + "\nLikelihood incorrectly calculated in parallel: " + originalLogP + " != " + logLikelihood
                     		+ "(" + (originalLogP - logLikelihood) + ")"
                             + " Operator: " + operator.getName());
                 }

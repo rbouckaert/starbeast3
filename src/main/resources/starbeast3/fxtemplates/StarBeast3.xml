@@ -700,7 +700,6 @@ ClusterTree/clusterType//">
 		 	<up idref="speciationRate.t:Species"/>               
             <down idref="Tree.t:Species"/>
                     
-            <down idref="popSize"/>
             <down idref="popMean"/>
                 
         </operator>
@@ -711,12 +710,12 @@ ClusterTree/clusterType//">
 	
 	
 	
-	<operator id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0.2" threads="-1" chainCoverage="0.2" weight="1">
+	<operator id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0" threads="-1" chainCoverage="0.2" weight="1">
    
 	</operator>
    
    
-   <operator id="PopSizeGibbsSampler.Species" spec="starbeast3.operators.PopSizeGibbsSampler" popSizes="@popSize" weight="50.0" gammaprior="@popPriorDistr.InverseGamma" >
+   <operator id="PopSizeGibbsSampler.Species" spec="starbeast3.operators.PopSizeGibbsSampler" popSizes="@popSize" weight="10.0" gammaprior="@popPriorDistr.InverseGamma" >
     </operator>
 	
 	

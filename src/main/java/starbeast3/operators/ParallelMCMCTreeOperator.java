@@ -304,8 +304,9 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				operators.add(intervalOperator);
 				
 				
+				// Gene node operator
 				GeneNodeOperator geneNodeOperator = new GeneNodeOperator();
-				geneNodeOperator.initByName("tree", d.tree, "gene", d.geneprior , "weight", 30.0);
+				geneNodeOperator.initByName("tree", d.tree, "gene", d.geneprior, "weight", 30.0);
 				operators.add(geneNodeOperator);
 				
 				

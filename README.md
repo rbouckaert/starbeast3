@@ -14,8 +14,7 @@ This repository branch is for BEAST 2.8. Please see the v2.6 and v2.7 branches f
 Please refer to the following guides:
 1. Official guide (below).
 2. Taming the Beast workshop with the fossilised birth-death model (2025). [Go to page.](https://taming-the-beast.org/tutorials/StarBeast3-Tutorial/) 
-3. Workshop with tip date estimation (2023). [Go to page.](https://github.com/rbouckaert/starbeast3/tree/master/workshop)
-4. StarBeast3 blog on the BEAST 2 website (2022). [Go to page.](https://www.beast2.org/2022/03/31/starbeast3.html)
+3. StarBeast3 blog on the BEAST 2 website (2022). [Go to page.](https://www.beast2.org/2022/03/31/starbeast3.html)
 
 
 
@@ -33,7 +32,7 @@ Please refer to the following guides:
 ## Using StarBeast3
 
 
-This tutorial is based on the Gopher example data by [Belfiore et al. 2008](https://doi.org/10.1080/10635150802044011). Please also see a tutorial on divergence time dating [here](workshop/).
+This tutorial is based on the Gopher example data by [Belfiore et al. 2008](https://doi.org/10.1080/10635150802044011). 
 
 
 1. Open BEAUti, and select the StarBeast3 template  (menu `File/Templates/StarBeast3`).
@@ -123,7 +122,7 @@ Also see tutorial for *BEAST (see [StarBEAST tutorial](https://taming-the-beast.
 Press '+ Add Prior' at the bottom of the Priors tab, and select 'StarBeast3 MRCA Prior'. Do not select the standard 'MRCA Prior' (because its tipsOnly operators are incompatible with multispecies coalescent models). Then set tipsOnly=true, and make sure to enable `Use tip dates' in the Tip Dates tab with dates initialised accordingly. 
 
 
-This will allow the estimation of the dates of certain leaves in the tree, for example those informed by fossil calibration data. This approach makes for a robust and flexible alternative to having time calibrations on the MRCA node.
+This will allow the estimation of the dates of certain leaves in the tree, for example those informed by fossil calibration data. This approach makes for a robust and flexible alternative to having time calibrations on an MRCA node.
 
 
 

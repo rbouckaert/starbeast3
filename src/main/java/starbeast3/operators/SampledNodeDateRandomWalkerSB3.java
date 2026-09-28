@@ -12,6 +12,7 @@ import beast.base.evolution.alignment.TaxonSet;
 import beast.base.evolution.operator.TreeOperator;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
+import beast.base.inference.StateNode;
 import beast.base.util.Randomizer;
 import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 
@@ -163,6 +164,24 @@ public class SampledNodeDateRandomWalkerSB3 extends TipDatesRandomWalker {
 
         return 0.0;
     }
+    
+    
+    
+    /**
+     * return list of state nodes that this operator operates on.
+     * state nodes that are input to the operator but are never changed
+     * in a proposal should not be listed
+     */
+    public List<StateNode> listStateNodes() {
+        // pick up all inputs that are stateNodes that are estimated
+        final List<StateNode> list = new ArrayList<>();
+        list.add(treeInput.get());
+        for (GeneTreeForSpeciesTreeDistribution gene : geneTreesInput.get()) {
+        	list.add((StateNode)gene.getGeneTree());
+        }
+        return list;
+    }
+
 
 
 
