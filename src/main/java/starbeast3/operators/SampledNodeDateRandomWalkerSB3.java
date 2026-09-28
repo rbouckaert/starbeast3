@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import beast.base.evolution.operator.TipDatesRandomWalker;
 import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -17,19 +18,19 @@ import starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution;
 
 
 @Description("Randomly moves tip dates on a tree by randomly selecting one from (a subset of) taxa. Moves gene tree with species tree")
-public class SampledNodeDateRandomWalkerSB3 extends TreeOperator {
+public class SampledNodeDateRandomWalkerSB3 extends TipDatesRandomWalker {
     // perhaps multiple trees may be necessary if they share the same taxon?
     // public Input<List<Tree>> m_treesInput = new Input<>("tree" ,"tree to operate on", new ArrayList<>(), Validate.REQUIRED);
 	
 	public final Input<List<GeneTreeForSpeciesTreeDistribution>> geneTreesInput = new Input<>("gene", "list of gene trees that constrain species tree movement", new ArrayList<>());
 
-
-
-    final public Input<Double> windowSizeInput =
-            new Input<>("windowSize", "the size of the window both up and down when using uniform interval OR standard deviation when using Gaussian", Input.Validate.REQUIRED);
-    final public Input<TaxonSet> m_taxonsetInput = new Input<>("taxonset", "limit scaling to a subset of taxa. By default all tips are scaled.");
-    final public Input<Boolean> useGaussianInput =
-            new Input<>("useGaussian", "Use Gaussian to move instead of uniform interval. Default false.", false);
+//
+//
+//    final public Input<Double> windowSizeInput =
+//            new Input<>("windowSize", "the size of the window both up and down when using uniform interval OR standard deviation when using Gaussian", Input.Validate.REQUIRED);
+//    final public Input<TaxonSet> m_taxonsetInput = new Input<>("taxonset", "limit scaling to a subset of taxa. By default all tips are scaled.");
+//    final public Input<Boolean> useGaussianInput =
+//            new Input<>("useGaussian", "Use Gaussian to move instead of uniform interval. Default false.", false);
 
     /**
      * node indices of taxa to choose from *
@@ -164,88 +165,9 @@ public class SampledNodeDateRandomWalkerSB3 extends TreeOperator {
     }
 
 
-    public double reflectValue(double value, double lower, double upper) {
-
-        double newValue = value;
-
-        if (value < lower) {
-            if (Double.isInfinite(upper)) {
-                // we are only going to reflect once as the upper bound is at infinity...
-                newValue = lower + (lower - value);
-            } else {
-                double remainder = lower - value;
-
-                int widths = (int) Math.floor(remainder / (upper - lower));
-                remainder -= (upper - lower) * widths;
-
-                // even reflections
-                if (widths % 2 == 0) {
-                    newValue = lower + remainder;
-                    // odd reflections
-                } else {
-                    newValue = upper - remainder;
-                }
-            }
-        } else if (value > upper) {
-            if (Double.isInfinite(lower)) {
-                // we are only going to reflect once as the lower bound is at -infinity...
-                newValue = upper - (newValue - upper);
-            } else {
-
-                double remainder = value - upper;
-
-                int widths = (int) Math.floor(remainder / (upper - lower));
-                remainder -= (upper - lower) * widths;
-
-                // even reflections
-                if (widths % 2 == 0) {
-                    newValue = upper - remainder;
-                    // odd reflections
-                } else {
-                    newValue = lower + remainder;
-                }
-            }
-        }
-
-        return newValue;
-    }
 
 
-    @Override
-    public double getCoercableParameterValue() {
-        return windowSize;
-    }
 
-    @Override
-    public void setCoercableParameterValue(double value) {
-        windowSize = value;
-    }
 
-    @Override
-    public void optimize(double logAlpha) {
-        // must be overridden by operator implementation to have an effect
-        double delta = calcDelta(logAlpha);
-        delta += Math.log(windowSize);
-        windowSize = Math.exp(delta);
-    }
-
-    @Override
-    public final String getPerformanceSuggestion() {
-        double prob = m_nNrAccepted / (m_nNrAccepted + m_nNrRejected + 0.0);
-        double targetProb = getTargetAcceptanceProbability();
-
-        double ratio = prob / targetProb;
-        if (ratio > 2.0) ratio = 2.0;
-        if (ratio < 0.5) ratio = 0.5;
-
-        // new scale factor
-        double newWindowSize = windowSize * ratio;
-
-        DecimalFormat formatter = new DecimalFormat("#.###");
-        if (prob < 0.10) {
-            return "Try setting window size to about " + formatter.format(newWindowSize);
-        } else if (prob > 0.40) {
-            return "Try setting window size to about " + formatter.format(newWindowSize);
-        } else return "";
-    }
 }
+

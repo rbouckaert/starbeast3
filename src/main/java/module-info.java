@@ -26,6 +26,7 @@ open module starbeast3 {
         starbeast3.simulation.DirectSimulator,
         starbeast3.core.OperatorScheduleRecalculator,
         starbeast3.core.ParallelMCMC,
+        starbeast3.math.distributions.GeneralisedEpochBranchRatePrior,
         starbeast3.evolution.branchratemodel.SharedSpeciesClockModel,
         starbeast3.evolution.branchratemodel.StrictClockModelSB3,
         starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3,

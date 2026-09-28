@@ -25,6 +25,7 @@
         <provider classname="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3"/>
         <provider classname="starbeast3.evolution.speciation.ConstantPopulations"/>
         <provider classname="starbeast3.evolution.substitutionmodel.LewisMK"/>
+        <provider classname="starbeast3.math.distributions.GeneralisedEpochBranchRatePrior"/>
 	    <provider classname="starbeast3.tree.StarBeast3TaxonSet"/>
         <provider classname="starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution"/>
         <provider classname="starbeast3.math.distributions.MRCAPriorSB3"/>

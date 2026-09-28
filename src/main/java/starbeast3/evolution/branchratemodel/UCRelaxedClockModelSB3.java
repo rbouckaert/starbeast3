@@ -16,6 +16,7 @@ import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.evolution.branchratemodel.Base;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.TreeInterface;
 import beast.base.inference.StateNode;
@@ -27,6 +28,7 @@ public class UCRelaxedClockModelSB3 extends Base implements BranchRateModelSB3 {
 	final public Input<TreeInterface> treeInput = new Input<>("tree", "(Species) tree to apply per-branch rates to.", Input.Validate.REQUIRED);
     final public Input<Boolean> estimateRootInput = new Input<>("estimateRoot", "Estimate rate of the root branch.", false);
     final public Input<Boolean> noCacheInput = new Input<>("noCache", "Always recalculate branch rates.", false);
+    final public Input<Boolean> normaliseInput = new Input<>("normalise", "Normalise branch lengths to give a mean rate of 1.", false);
     final public Input<RealScalarParam<PositiveReal>> stdevInput = new Input<>("stdev", "Standard deviation of the log-normal distribution for branch rates. If not supplied uses exponential.");
     final public Input<RealVectorParam<NonNegativeReal>> realRatesInput = new Input<>("realRates", "The real rates associated with nodes in the species tree for sampling of individual rates among branches.", Input.Validate.REQUIRED);
     
@@ -202,6 +204,25 @@ public class UCRelaxedClockModelSB3 extends Base implements BranchRateModelSB3 {
         super.restore();
     }
 
+    
+    private double computeFactor() {
+        //scale mean rate to 1.0 or separate parameter
+    	
+    	Tree tree = (Tree) treeInput.get();
+        double treeRate = 0.0;
+        double treeTime = 0.0;
+        for (int i = 0; i < tree.getNodeCount(); i++) {
+            Node node = tree.getNode(i);
+            if (!node.isRoot()) {
+                treeRate += realRates.get(i) * node.getLength();
+                treeTime += node.getLength();
+            }
+        }
+        double scaleFactor = 1.0 / (treeRate / treeTime);
+        
+        return scaleFactor;
+    }
+    
 
     private void update() {
     	
@@ -214,6 +235,10 @@ public class UCRelaxedClockModelSB3 extends Base implements BranchRateModelSB3 {
             estimatedMean = meanRateInput.get().get();
         }
 
+        double scaleFactor = 1;
+        if (normaliseInput.get()) {
+        	scaleFactor = computeFactor();
+        }
         
         
         // Multiply the raw rate by the clock rate
@@ -223,7 +248,7 @@ public class UCRelaxedClockModelSB3 extends Base implements BranchRateModelSB3 {
 	        case rates: {
 	        	
 	            for (int i = 0; i < nEstimatedRates; i++) {
-	                ratesArray[i] = estimatedMean * realRates.get(i);
+	                ratesArray[i] = scaleFactor * estimatedMean * realRates.get(i);
 	            }
 	        	
 	        	break;
@@ -231,6 +256,8 @@ public class UCRelaxedClockModelSB3 extends Base implements BranchRateModelSB3 {
         
         
         }
+        
+       
         
        
         binRatesNeedsUpdate = false;

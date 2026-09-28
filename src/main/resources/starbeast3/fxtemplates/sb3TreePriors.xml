@@ -21,6 +21,11 @@ speciationRatePrior/index/=Priors/YuleBirthRatePrior/
 			<operator id="BactrianSubtreeSlide.t:$(n)" size="0.002" spec="kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
 	
 			
+			<operator id="BactrianNodeOperator.t:$(n)" spec="beast.base.evolution.operator.kernel.BactrianNodeOperator" tree="@Tree.t:$(n)" weight="3.0"/>
+
+
+
+
 			<operator id="AdaptableOperatorSampler.YuleModel.t:$(n)" parameter="@speciationRate.t:$(n)" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" weight="5.0">
 				<operator id="Scale.YuleModel" parameter="@speciationRate.t:Species" scaleFactor="0.75" spec="beast.base.spec.inference.operator.ScaleOperator" weight="1.0"/>
 				<operator id="SampleFromPriorOperator.YuleModel" np="1" parameter="@speciationRate.t:$(n)" prior="@speciationRatePrior.t:$(n)" spec="orc.operators.SampleFromPriorOperator" weight="1"/>
@@ -73,6 +78,11 @@ speciationRatePrior/index/=Priors/YuleBirthRatePrior/
 			</connect>
 
 
+			<connect srcID="BactrianNodeOperator.t:$(n)" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inlikelihood(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+				Node operator on species tree
+			</connect>
+
+
 			<connect srcID="speciationRate.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n)) and speciationRate.t:$(n)/estimate=true"/>
 			<connect srcID="speciationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(YuleModel.t:$(n)) and inposterior(speciationRate.t:$(n))"/>
 			
@@ -99,9 +109,9 @@ cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 
 						 <distr id="cySpeciationRatePrior.t:$(n)" param="@cySpeciationRate.t:$(n)" spec="beast.base.spec.inference.distribution.LogNormal" meanInRealSpace="true" M="0.01" S="2.0"/>
 
-						<operator id="cySpeciationRateScale.t:$(n)" spec="ScaleOperator" scaleFactor="0.5" weight="1.0" parameter="@cySpeciationRate.t:$(n)"/>
+						<operator id="cySpeciationRateScale.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.5" weight="1.0" parameter="@cySpeciationRate.t:$(n)"/>
 						
-						<operator id="cyUniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
+						<operator id="cyUniformOperator.t:Species" spec="beast.base.evolution.operator.kernel.BactrianNodeOperator" tree="@Tree.t:Species" weight="3.0"/>
 						<operator id="cyWilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
 						<operator id="cyWide.t:Species" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
 						<operator id="cyNarrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
@@ -129,7 +139,7 @@ cySpeciationRatePrior/index/=Priors/CalibratedYuleBirthRatePrior/
 
 			<connect srcID="cySpeciationRate.t:$(n)" targetID="SBI" inputName="birthRate" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(cySpeciationRate.t:$(n))"/>
 		
-			<connect srcID="cyUniformOperator.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+			<connect srcID="cyUniformOperator.t:$(n)" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inposterior(CalibratedYuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
 				Operate on tree node heights
 			</connect>
 			
@@ -173,11 +183,13 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
                 <beta spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" >1.0</beta>
             </distribution>
 			
-			<operator id="bdUniformOperator.t:Species" spec="Uniform" tree="@Tree.t:Species" weight="3.0"/>
+			<operator id="bdUniformOperator.t:Species" spec="beast.base.evolution.operator.kernel.BactrianNodeOperator" tree="@Tree.t:Species" weight="3.0"/>
 			<operator id="bdWilsonBalding.t:Species" spec="WilsonBalding" tree="@Tree.t:Species" weight="15.0"/>
 			<operator id="bdWide.t:Species" isNarrow="false" spec="Exchange" tree="@Tree.t:Species" weight="15.0"/>
 			<operator id="bdNarrow.t:$(n)" isNarrow="true" spec="Exchange" tree="@Tree.t:Species" weight="1.0"/>
 			<operator id="bdBactrianSubtreeSlide.t:$(n)" size="0.002" spec="kernel.BactrianSubtreeSlide" tree="@Tree.t:Species" weight="15.0"/>
+
+
 
 			<operator id="netDiversificationRateScale.t:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.5" weight="3.0" parameter="@netDiversificationRate.t:$(n)"/>
 			<operator id="ExtinctionFractionScale.t:$(n)" parameter="@ExtinctionFraction.t:$(n)" scaleFactor="0.5" spec="beast.base.spec.inference.operator.ScaleOperator" weight="3.0" />
@@ -209,7 +221,7 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
 				Sample uniformly the extinction fraction of tree t:$(n)
 			</connect>
 			
-			<connect srcID="bdUniformOperator.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
+			<connect srcID="bdUniformOperator.t:$(n)" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inposterior(BirthDeathModel.t:$(n)) and inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true">
 				Operate on tree node heights
 			</connect>
 			
@@ -304,9 +316,9 @@ ExtinctionFractionPrior/index/=Priors/DeathRatePrior/">
 			<connect srcID="SAWilsonBaldingFBD.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="SAWideFBD.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="SANarrowFBD.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-			<connect srcID="SAUniformOperatorFBD.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
+			<connect srcID="SAUniformOperatorFBD.t:$(n)" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 			<connect srcID="SATreeRootScalerFBD.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
-			<connect srcID="SATreeScalerFBD.t:$(n)" targetID="mcmc" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
+			<connect srcID="SATreeScalerFBD.t:$(n)" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inposterior(FBDModel.t:$(n)) and Tree.t:$(n)/estimate=true"/>
 
 			<connect srcID="FBDModel.t:$(n)" targetID="tracelog" inputName="log" if="inposterior(FBDModel.t:$(n))"/>
 			<plate var="p" range="diversificationRate,turnover,samplingProportion,rho">

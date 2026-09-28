@@ -8,6 +8,30 @@
 <map name="connect" reserved="true">beastfx.app.inputeditor.BeautiConnector</map>
 <map name="subtemplate" reserved="true">beastfx.app.inputeditor.BeautiSubTemplate</map>
 
+<!-- Univariate distribution, OneOnX is removed -->
+<map name='Bernoulli'>beast.base.spec.inference.distribution.Bernoulli</map>
+<map name='Beta'>beast.base.spec.inference.distribution.Beta</map>
+<map name='Cauchy'>beast.base.spec.inference.distribution.Cauchy</map>
+<map name='ChiSquare'>beast.base.spec.inference.distribution.ChiSquare</map>
+<map name='Exponential'>beast.base.spec.inference.distribution.Exponential</map>
+<map name='Gamma'>beast.base.spec.inference.distribution.Gamma</map>
+<map name='GammaMean'>beast.base.spec.inference.distribution.GammaMean</map>
+<map name='IntUniform'>beast.base.spec.inference.distribution.IntUniform</map>
+<map name='InverseGamma'>beast.base.spec.inference.distribution.InverseGamma</map>
+<map name='LaplaceDistribution'>beast.base.spec.inference.distribution.Laplace</map>
+<map name='LogNormal'>beast.base.spec.inference.distribution.LogNormal</map>
+<map name='LogUniform'>beast.base.spec.inference.distribution.LogUniform</map>
+<map name='Normal'>beast.base.spec.inference.distribution.Normal</map>
+<map name='Uniform'>beast.base.spec.inference.distribution.Uniform</map>
+<map name='Poisson'>beast.base.spec.inference.distribution.Poisson</map>
+<!-- Multivariate distribution   -->
+<map name='Dirichlet'>beast.base.spec.inference.distribution.Dirichlet</map>
+<map name='IID'>beast.base.spec.inference.distribution.IID</map>
+<!-- Conditional distribution  -->
+<map name='OffsetInt'>beast.base.spec.inference.distribution.OffsetInt</map>
+<map name='OffsetReal'>beast.base.spec.inference.distribution.OffsetReal</map>
+<map name='TruncatedInt'>beast.base.spec.inference.distribution.TruncatedInt</map>
+<map name='TruncatedReal'>beast.base.spec.inference.distribution.TruncatedReal</map>
 
 
 	<beauticonfig spec="beastfx.app.inputeditor.BeautiConfig"
@@ -344,6 +368,9 @@ ClusterTree/clusterType//">
 
 				<clock.rate id="clockRate.c:$(n)" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="true" />
 
+
+				<operator id="BactrianNodeOperator.t:Species" spec="beast.base.evolution.operator.kernel.BactrianNodeOperator" tree="@Tree.t:Species" weight="1.0"/>
+
 				<operator id="proportionInvariantScaler.s:$(n)" spec="beast.base.spec.inference.operator.uniform.IntervalOperator" scaleFactor="0.75" weight="0.1" parameter="@proportionInvariant.s:$(n)"/>
 				<operator id="mutationRateScaler.s:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@mutationRate.s:$(n)"/>
 				<operator id="gammaShapeScaler.s:$(n)" spec="beast.base.spec.inference.operator.ScaleOperator" scaleFactor="0.75" weight="0.1" parameter="@gammaShape.s:$(n)"/>
@@ -414,7 +441,6 @@ ClusterTree/clusterType//">
 			-->
 			<connect srcID="Tree.t:Species" targetID="SBI" inputName="gene" if="Tree.t:$(n)/estimate=XXX"/>
 			<connect srcID="Tree.t:Species" targetID="treeTopFinder" inputName="tree" if="Tree.t:$(n)/estimate=XXX"/>
-
 			<!-- end hacks -->
 			
 			<!-- Substitution model -->
@@ -444,6 +470,10 @@ ClusterTree/clusterType//">
 
 			<connect srcID="ClockRatePrior.c:$(n)"        targetID="prior" inputName="distribution" if="inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true">Prior on gene tree relative clock rate for partition s:$(n)</connect>
 
+
+			<connect srcID="BactrianNodeOperator.t:Species" targetID="AdaptableTopologyOperator.lengths.Species" inputName="operator" if="inposterior(YuleModel.t:$(n)) and inlikelihood(Tree.t:Species) and Tree.t:Species/estimate=true">
+				Node operator on species tree
+			</connect>
 
 
 			<connect srcID="proportionInvariantScaler.s:$(n)" targetID="mcmc" inputName="operator" if="inlikelihood(proportionInvariant.s:$(n)) and proportionInvariant.s:$(n)/estimate=true">
@@ -653,20 +683,14 @@ ClusterTree/clusterType//">
 	
 	
 	
-	<operator id="TreeRootScaler.t:Species" rootOnly="true" scaleFactor="0.7" spec="beast.base.spec.evolution.operator.ScaleTreeOperator" tree="@Tree.t:Species" weight="3.0"/>
-	<operator id="BactrianNodeOperator.t:Species" spec="beast.base.evolution.operator.kernel.BactrianNodeOperator" tree="@Tree.t:Species" weight="3.0"/>
+	<operator id="TreeRootScaler.t:Species" rootOnly="true" scaleFactor="0.7" spec="sa.evolution.operators.SAScaleOperator" tree="@Tree.t:Species" weight="3.0"/>
 	<operator id="AdaptableTopologyOperator.lengths.Species" spec="beast.base.spec.evolution.operator.AdaptableOperatorSampler" tree="@Tree.t:Species" uniformp="0.1" weight="100">
 
-
-
 		
-		<operator idref="BactrianNodeOperator.t:Species" />
-		<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="beast.base.spec.evolution.operator.ScaleTreeOperator" tree="@Tree.t:Species" weight="1.0"/>
+		<operator id="TreeScaler.t:Species" scaleFactor="0.01" spec="sa.evolution.operators.SAScaleOperator" tree="@Tree.t:Species" weight="1.0"/>
 		
 		<operator idref="CoordinatedUniform.t:Species" />
 		<operator idref="CoordinatedExponential.t:Species" />
-
-
 
 	
 		
@@ -687,7 +711,7 @@ ClusterTree/clusterType//">
 	
 	
 	
-	<operator chainCoverage="0.2" id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0" threads="-1" weight="1">
+	<operator id="ParallelMCMCTreeOperator" includeRealParameters="true" speciesTree="@Tree.t:Species" learning="false" nregression="50" otherState="@state" runtime="1000" schedule="@operatorSchedule" spec="starbeast3.operators.ParallelMCMCTreeOperator" targetCPU="0.2" threads="-1" chainCoverage="0.2" weight="1">
    
 	</operator>
    

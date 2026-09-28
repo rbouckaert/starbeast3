@@ -1,0 +1,195 @@
+#
+#model:
+#
+#<?xml version="1.0" encoding="UTF-8" standalone="no"?><input id="posterior" spec="beast.base.inference.CompoundDistribution">
+#    <distribution id="speciescoalescent" spec="beast.base.inference.CompoundDistribution">
+#        <distribution id="treePrior.t:26" spec="starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution">
+#            <tree id="Tree.t:26" spec="beast.base.evolution.tree.Tree">
+#                <taxonset id="TaxonSet.26" spec="beast.base.evolution.alignment.TaxonSet">
+#                </taxonset>
+#            </tree>
+#            <speciesTree id="Tree.t:Species" spec="starbeast3.tree.SpeciesTree">
+#                <taxonset id="taxonsuperset" spec="starbeast3.tree.StarBeast3TaxonSet">
+#                    <taxon id="idahoensis" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Thomomys_idahoensis_pygmaeus_a" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_idahoensis_pygmaeus_b" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                    <taxon id="talpoides" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Thomomys_talpoides_ocius" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_talpoides_yakimensis" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_talpoides_bridgeri" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                    <taxon id="townsendii" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Thomomys_townsendii_townsendii" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_townsendii_relictus" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                    <taxon id="umbrinus" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Thomomys_umbrinus_chihuahuae" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_umbrinus_atroavarius" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                    <taxon id="monticola" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Thomomys_monticola_a" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_monticola_b" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                    <taxon id="bottae" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Thomomys_bottae_xerophilus" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_alpinus" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_saxatilis" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_awahnee_b" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_albatus" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_awahnee_a" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_ruidosae" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_bottae" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_cactophilus" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_riparius" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_laticeps" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_bottae_mewa" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                    <taxon id="heterodus" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Orthogeomys_heterodus" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                    <taxon id="mazama" spec="beast.base.evolution.alignment.TaxonSet">
+#                        <taxon id="Thomomys_mazama_mazama" spec="beast.base.evolution.alignment.Taxon"/>
+#                        <taxon id="Thomomys_mazama_nasicus" spec="beast.base.evolution.alignment.Taxon"/>
+#                    </taxon>
+#                </taxonset>
+#            </speciesTree>
+#            <speciesTreePrior id="SpeciesTreePopSize.Species" spec="starbeast3.evolution.speciation.SpeciesTreePrior" taxonset="@taxonsuperset" tree="@Tree.t:Species">
+#                <bottomPopSize dimension="15" domain="PositiveReal" id="popSize" spec="beast.base.spec.inference.parameter.RealVectorParam">1.0</bottomPopSize>
+#                <gammaParameter domain="PositiveReal" id="popMean" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                <populationModel id="speciesTreePopulationModel" populationSizes="@popSize" spec="starbeast3.evolution.speciation.ConstantPopulations" speciesTree="@Tree.t:Species"/>
+#                <treePrior id="BirthDeathModel.t:Species" spec="beast.base.spec.evolution.speciation.BirthDeathGernhard08Model" tree="@Tree.t:Species">
+#                    <relativeDeathRate domain="UnitInterval" id="ExtinctionFraction.t:Species" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.5"/>
+#                    <birthDiffRate domain="PositiveReal" id="netDiversificationRate.t:Species" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                </treePrior>
+#            </speciesTreePrior>
+#            <populationModel idref="speciesTreePopulationModel"/>
+#        </distribution>
+#        <distribution id="treePrior.t:29" populationModel="@speciesTreePopulationModel" spec="starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species">
+#            <tree id="Tree.t:29" spec="beast.base.evolution.tree.Tree">
+#                <taxonset id="TaxonSet.29" spec="beast.base.evolution.alignment.TaxonSet">
+#                </taxonset>
+#            </tree>
+#        </distribution>
+#        <distribution id="treePrior.t:47" populationModel="@speciesTreePopulationModel" spec="starbeast3.evolution.speciation.GeneTreeForSpeciesTreeDistribution" speciesTree="@Tree.t:Species" speciesTreePrior="@SpeciesTreePopSize.Species">
+#            <tree id="Tree.t:47" spec="beast.base.evolution.tree.Tree">
+#                <taxonset id="TaxonSet.47" spec="beast.base.evolution.alignment.TaxonSet">
+#                </taxonset>
+#            </tree>
+#        </distribution>
+#    </distribution>
+#    <distribution idref="SpeciesTreePopSize.Species"/>
+#    <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
+#        <distribution idref="BirthDeathModel.t:Species"/>
+#        <LogNormal id="ClockRatePrior.c:26" meanInRealSpace="true" name="distribution">
+#            <M domain="Real" id="RealScalarParam.10" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#            <S domain="PositiveReal" id="RealScalarParam.11" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.6"/>
+#            <param domain="PositiveReal" id="clockRate.c:26" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#        </LogNormal>
+#        <LogNormal id="ClockRatePrior.c:29" meanInRealSpace="true" name="distribution">
+#            <M domain="Real" id="RealScalarParam.17" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#            <S domain="PositiveReal" id="RealScalarParam.18" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.6"/>
+#            <param domain="PositiveReal" id="clockRate.c:29" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#        </LogNormal>
+#        <LogNormal id="ClockRatePrior.c:47" meanInRealSpace="true" name="distribution">
+#            <M domain="Real" id="RealScalarParam.24" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#            <S domain="PositiveReal" id="RealScalarParam.25" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.6"/>
+#            <param domain="PositiveReal" id="clockRate.c:47" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#        </LogNormal>
+#        <Beta id="ExtinctionFractionPrior.t:Species" name="distribution" param="@ExtinctionFraction.t:Species">
+#            <alpha domain="PositiveReal" id="RealScalarParam.93" spec="beast.base.spec.inference.parameter.RealScalarParam" value="5.0"/>
+#            <beta domain="PositiveReal" id="RealScalarParam.94" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#        </Beta>
+#        <Dirichlet id="FrequenciesPrior.s:26" name="distribution">
+#            <alpha dimension="4" domain="PositiveReal" estimate="false" id="RealVectorParam.0" spec="beast.base.spec.inference.parameter.RealVectorParam">4.0 4.0 4.0 4.0</alpha>
+#            <param dimension="4" domain="UnitInterval" id="freqParameter.s:26" spec="beast.base.spec.inference.parameter.SimplexParam">0.25 0.25 0.25 0.25</param>
+#        </Dirichlet>
+#        <Dirichlet alpha="@RealVectorParam.0" id="FrequenciesPrior.s:29" name="distribution">
+#            <param dimension="4" domain="UnitInterval" id="freqParameter.s:29" spec="beast.base.spec.inference.parameter.SimplexParam">0.25 0.25 0.25 0.25</param>
+#        </Dirichlet>
+#        <Dirichlet alpha="@RealVectorParam.0" id="FrequenciesPrior.s:47" name="distribution">
+#            <param dimension="4" domain="UnitInterval" id="freqParameter.s:47" spec="beast.base.spec.inference.parameter.SimplexParam">0.25 0.25 0.25 0.25</param>
+#        </Dirichlet>
+#        <LogNormal id="KappaPrior.s:26" name="distribution">
+#            <M domain="Real" estimate="false" id="RealScalarParam.28" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#            <S domain="PositiveReal" estimate="false" id="RealScalarParam.29" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.25"/>
+#            <param domain="PositiveReal" id="kappa.s:26" spec="beast.base.spec.inference.parameter.RealScalarParam" value="2.0"/>
+#        </LogNormal>
+#        <LogNormal M="@RealScalarParam.28" S="@RealScalarParam.29" id="KappaPrior.s:29" name="distribution">
+#            <param domain="PositiveReal" id="kappa.s:29" spec="beast.base.spec.inference.parameter.RealScalarParam" value="2.0"/>
+#        </LogNormal>
+#        <LogNormal M="@RealScalarParam.28" S="@RealScalarParam.29" id="KappaPrior.s:47" name="distribution">
+#            <param domain="PositiveReal" id="kappa.s:47" spec="beast.base.spec.inference.parameter.RealScalarParam" value="2.0"/>
+#        </LogNormal>
+#        <Gamma id="SpeciesRelaxedClockSDPrior" name="distribution">
+#            <alpha domain="PositiveReal" id="RealScalarParam.32" spec="beast.base.spec.inference.parameter.RealScalarParam" value="5.0"/>
+#            <theta domain="PositiveReal" id="RealScalarParam.33" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.05"/>
+#            <param domain="PositiveReal" id="SpeciesTreeRelaxedClockSD" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.1"/>
+#        </Gamma>
+#        <LogNormal id="netDiversificationRatePrior.t:Species" meanInRealSpace="true" name="distribution" param="@netDiversificationRate.t:Species">
+#            <M domain="Real" id="RealScalarParam.91" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.01"/>
+#            <S domain="PositiveReal" id="RealScalarParam.92" spec="beast.base.spec.inference.parameter.RealScalarParam" value="2.0"/>
+#        </LogNormal>
+#        <LogNormal id="popMean.prior" meanInRealSpace="true" name="distribution" param="@popMean">
+#            <M domain="Real" id="RealScalarParam.2" spec="beast.base.spec.inference.parameter.RealScalarParam" value="0.01"/>
+#            <S domain="PositiveReal" id="RealScalarParam.3" spec="beast.base.spec.inference.parameter.RealScalarParam" value="2.0"/>
+#        </LogNormal>
+#    </distribution>
+#    <distribution id="vectorPrior" spec="beast.base.inference.CompoundDistribution">
+#        <IID id="popPriorDistr.InverseGamma.IID" name="distribution" param="@popSize">
+#            <InverseGamma beta="@popMean" id="popPriorDistr.InverseGamma" name="distr">
+#                <alpha domain="PositiveReal" id="RealScalarParam.4" spec="beast.base.spec.inference.parameter.RealScalarParam" value="2.0"/>
+#            </InverseGamma>
+#        </IID>
+#        <IID id="FastRatePriorDistributionClock.IID.Species" name="distribution">
+#            <LogNormal S="@SpeciesTreeRelaxedClockSD" id="FastRatePriorDistributionClock.Species" meanInRealSpace="true" name="distr">
+#                <M domain="Real" id="RealScalarParam.34" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#            </LogNormal>
+#            <param dimension="15" domain="NonNegativeReal" id="SpeciesTreeBranchRates" spec="beast.base.spec.inference.parameter.RealVectorParam">1.0</param>
+#        </IID>
+#    </distribution>
+#    <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution" useThreads="true">
+#        <distribution data="@26" id="treeLikelihood.26" spec="beast.base.spec.evolution.likelihood.TreeLikelihood" tree="@Tree.t:26">
+#            <siteModel id="SiteModel.s:26" spec="beast.base.spec.evolution.sitemodel.SiteModel">
+#                <mutationRate domain="PositiveReal" estimate="false" id="mutationRate.s:26" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                <shape domain="PositiveReal" estimate="false" id="gammaShape.s:26" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                <proportionInvariant domain="UnitInterval" estimate="false" id="proportionInvariant.s:26" spec="beast.base.spec.inference.parameter.RealScalarParam"/>
+#                <substModel id="hky.s:26" kappa="@kappa.s:26" spec="beast.base.spec.evolution.substitutionmodel.HKY">
+#                    <frequencies frequencies="@freqParameter.s:26" id="estimatedFreqs.s:26" spec="beast.base.spec.evolution.substitutionmodel.Frequencies"/>
+#                </substModel>
+#            </siteModel>
+#            <branchRateModel clock.rate="@clockRate.c:26" geneTree="@treePrior.t:26" id="GeneTreeClock.c:26" spec="starbeast3.evolution.branchratemodel.StarBeast3Clock" tree="@Tree.t:26">
+#                <sharedRateModel id="branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel">
+#                    <branchRateModel estimateRoot="true" id="relaxedClockModel.Species" realRates="@SpeciesTreeBranchRates" spec="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3" stdev="@SpeciesTreeRelaxedClockSD" tree="@Tree.t:Species">
+#                        <clock.rate domain="PositiveReal" estimate="false" id="SpeciesTreeRelaxedClockRate" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                    </branchRateModel>
+#                </sharedRateModel>
+#            </branchRateModel>
+#        </distribution>
+#        <distribution data="@29" id="treeLikelihood.29" spec="beast.base.spec.evolution.likelihood.TreeLikelihood" tree="@Tree.t:29">
+#            <siteModel id="SiteModel.s:29" spec="beast.base.spec.evolution.sitemodel.SiteModel">
+#                <mutationRate domain="PositiveReal" estimate="false" id="mutationRate.s:29" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                <shape domain="PositiveReal" estimate="false" id="gammaShape.s:29" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                <proportionInvariant domain="UnitInterval" estimate="false" id="proportionInvariant.s:29" spec="beast.base.spec.inference.parameter.RealScalarParam"/>
+#                <substModel id="hky.s:29" kappa="@kappa.s:29" spec="beast.base.spec.evolution.substitutionmodel.HKY">
+#                    <frequencies frequencies="@freqParameter.s:29" id="estimatedFreqs.s:29" spec="beast.base.spec.evolution.substitutionmodel.Frequencies"/>
+#                </substModel>
+#            </siteModel>
+#            <branchRateModel clock.rate="@clockRate.c:29" geneTree="@treePrior.t:29" id="GeneTreeClock.c:29" sharedRateModel="@branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.StarBeast3Clock" tree="@Tree.t:29"/>
+#        </distribution>
+#        <distribution data="@47" id="treeLikelihood.47" spec="beast.base.spec.evolution.likelihood.TreeLikelihood" tree="@Tree.t:47">
+#            <siteModel id="SiteModel.s:47" spec="beast.base.spec.evolution.sitemodel.SiteModel">
+#                <mutationRate domain="PositiveReal" estimate="false" id="mutationRate.s:47" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                <shape domain="PositiveReal" estimate="false" id="gammaShape.s:47" spec="beast.base.spec.inference.parameter.RealScalarParam" value="1.0"/>
+#                <proportionInvariant domain="UnitInterval" estimate="false" id="proportionInvariant.s:47" spec="beast.base.spec.inference.parameter.RealScalarParam"/>
+#                <substModel id="hky.s:47" kappa="@kappa.s:47" spec="beast.base.spec.evolution.substitutionmodel.HKY">
+#                    <frequencies frequencies="@freqParameter.s:47" id="estimatedFreqs.s:47" spec="beast.base.spec.evolution.substitutionmodel.Frequencies"/>
+#                </substModel>
+#            </siteModel>
+#            <branchRateModel clock.rate="@clockRate.c:47" geneTree="@treePrior.t:47" id="GeneTreeClock.c:47" sharedRateModel="@branchRatesModel.Species" spec="starbeast3.evolution.branchratemodel.StarBeast3Clock" tree="@Tree.t:47"/>
+#        </distribution>
+#    </distribution>
+#</input>
+#
+Sample	posterior	likelihood	prior	vectorPrior	speciescoalescent	Tree.t:Species.height	Tree.t:Species.treeLength	Tree.t:26.height	Tree.t:26.treeLength	Tree.t:29.height	Tree.t:29.treeLength	Tree.t:47.height	Tree.t:47.treeLength	popMean	popSize.1	popSize.2	popSize.3	popSize.4	popSize.5	popSize.6	popSize.7	popSize.8	popSize.9	popSize.10	popSize.11	popSize.12	popSize.13	popSize.14	popSize.15	treeLikelihood.26	treeLikelihood.29	treeLikelihood.47	treePrior.t:26	treePrior.t:29	treePrior.t:47	clockRate.c:26	clockRate.c:29	clockRate.c:47	kappa.s:26	kappa.s:29	kappa.s:47	freqParameter.s:26.1	freqParameter.s:26.2	freqParameter.s:26.3	freqParameter.s:26.4	freqParameter.s:29.1	freqParameter.s:29.2	freqParameter.s:29.3	freqParameter.s:29.4	freqParameter.s:47.1	freqParameter.s:47.2	freqParameter.s:47.3	freqParameter.s:47.4	RateStatLogger.Species.mean	RateStatLogger.Species.variance	RateStatLogger.Species.coefficientOfVariation	SpeciesTreeRelaxedClockSD	BirthDeathModel.t:Species	netDiversificationRate.t:Species	ExtinctionFraction.t:Species
+0	-3962.022694260352	-4467.956243520335	12.811165438105615	101.14997874085185	391.97240508102544	0.01761641267164277	0.06544566177336955	0.021247356554211998	0.09665914016103272	0.022379060359395898	0.09933548238433193	0.01826045875856425	0.10645223082473843	0.002337345063334627	0.0012589402069444432	0.0012321547928956199	0.0010005177272431813	7.972343257528636E-4	8.955145731740829E-4	5.46728798559476E-4	3.773469046870399E-4	7.566362052020663E-4	0.0011975652924810702	0.0010560953716948626	6.622756736845854E-4	0.0019496467230657375	0.0015666153390417768	8.067661614108586E-4	0.0014035528709039913	-1378.683424443269	-1264.8160392646446	-1824.4567798124222	132.03493381193084	132.5216577116896	127.41581355740497	1.0	1.0	1.0	2.0	2.0	2.0	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.9468337056419314	0.012550379172919422	0.11375092946857504	0.1	25.47063091528493	97.51458341018464	0.5

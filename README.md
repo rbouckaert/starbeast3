@@ -4,7 +4,10 @@
 
 [BEAST 2](http://beast2.org) based package for Bayesian multispecies coalescent (MSC) analyses using efficient and parallelised MCMC operators. 
 
-This repository branch is for BEAST 2.7. Please see the v2.6 branch for compatibility with BEAST 2.6.
+This repository branch is for BEAST 2.8. Please see the v2.6 and v2.7 branches for compatibility with BEAST 2.6 and 2.7.
+
+
+
 
 ### Resources
 
@@ -142,13 +145,13 @@ the ``newick`` string should specify the topology and branch lengths of the spec
 
 ## Fixing the species tree topology
 
-To set up a fixed-topology analysis, the species tree operators which propose tree topologies must be switched off. This involves deleting, or commenting out, any blocks in the xml file which correspond to the follwoing operators: Reheight.t:Species, BactrianSubtreeSlide.t:Species, WilsonBalding.t:Species, Wide.t:Species, and AdaptableTopologyOperator.tree.Species. 
+To set up a fixed-topology analysis, the species tree operators which propose tree topologies must be switched off. This involves deleting, or commenting out, any blocks in the xml file which correspond to the following operators: Reheight.t:Species, BactrianSubtreeSlide.t:Species, WilsonBalding.t:Species, Wide.t:Species, and AdaptableTopologyOperator.tree.Species. 
 
 
 
 ## Stochastic mapping
 
-The substitutions along each lineage in each gene tree can be reconstructed using the [BeastMap](https://github.com/jordandouglas/BeastMap) package. Furthermore, as illustrated below using the morphology dataset from [Taming the Beast FBD 2025 workshop](https://taming-the-beast.org/tutorials/StarBeast3-Tutorial/), the number of changes in each species lineage can also be estimates. This can be the total number of changes in each gene lineage within the species, or number of morphological changes. Be careful, as the total number of substitutions within a species will grow with the number of individuals within that species, and therefore the counter is best suited for when each extant species has just one individual rather than several. 
+The substitutions along each lineage in each gene tree can be reconstructed using the [BeastMap](https://github.com/jordandouglas/BeastMap) package. As illustrated below using the morphology dataset from [Taming the Beast FBD 2025 workshop](https://taming-the-beast.org/tutorials/StarBeast3-Tutorial/), the number of changes in each species lineage can also be estimated. This can be the total number of changes in each gene lineage within the species, or number of morphological changes. Be careful, as the total number of substitutions within a species will grow with the number of individuals within that species, and therefore the counter is best suited for when each extant species has just one individual rather than several. 
 
 
 ![BeastMap](tutorial/BeastMap.png)
