@@ -42,6 +42,7 @@
         <provider classname="starbeast3.operators.ParallelMCMCTreeOperator"/>
         <provider classname="starbeast3.operators.ParallelMCMCTreeOperatorTreeDistribution"/>
         <provider classname="starbeast3.operators.PopSizeGibbsSampler"/>
+        <provider classname="starbeast3.operators.GeneNodeOperator"/>
         <provider classname="starbeast3.tree.SpeciesTree"/>
         <provider classname="starbeast3.core.SpeciesTreeLogger"/>
         <provider classname="starbeast3.evolution.speciation.SpeciesTreePrior"/>

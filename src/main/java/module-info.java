@@ -48,6 +48,7 @@ open module starbeast3 {
         starbeast3.operators.ParallelMCMCTreeOperator,
         starbeast3.operators.ParallelMCMCTreeOperatorTreeDistribution,
         starbeast3.operators.PopSizeGibbsSampler,
+        starbeast3.operators.GeneNodeOperator,
         starbeast3.tree.SpeciesTree,
         starbeast3.core.SpeciesTreeLogger,
         starbeast3.evolution.speciation.SpeciesTreePrior,

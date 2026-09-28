@@ -12,7 +12,10 @@ import beast.base.inference.Distribution;
 import beast.base.inference.Logger;
 import beast.base.inference.State;
 import beast.base.inference.StateNode;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.distribution.Gamma;
 import beast.base.spec.inference.distribution.LogNormal;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beastfx.app.beauti.PriorListInputEditor;
 import beastfx.app.beauti.PriorProvider;
 import beastfx.app.inputeditor.BEASTObjectPanel;
@@ -89,15 +92,20 @@ public class MRCAPriorProviderSB3 implements PriorProvider {
             // this sets up the type
             
             LogNormal ln = new LogNormal();
-            ln.initByName("M", 1.0, "S", 3.0, "meanInRealSpace", true );
-            prior.distInput.setValue(ln, prior);
+            
+            // this sets up the type
+            prior.distInput.setValue(new Gamma(null,
+            		new RealScalarParam<>(0.01, PositiveReal.INSTANCE), // shape 
+            		new RealScalarParam<>(0.01, PositiveReal.INSTANCE)) // rate
+            		, prior);
             // this removes the parametric distribution
             prior.distInput.setValue(null, prior);
-
+            
             Logger logger = (Logger) doc.pluginmap.get("tracelog");
             logger.loggersInput.setValue(prior, logger);
         } catch (Exception e) {
             // TODO: handle exception
+        	e.printStackTrace();
         }
         List<Distribution> selectedPlugins = new ArrayList<>();
         selectedPlugins.add(prior);

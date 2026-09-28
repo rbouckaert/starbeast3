@@ -303,6 +303,13 @@ public class ParallelMCMCTreeOperator extends MultiStepOperator {
 				intervalOperator.initByName("tree", d.tree, "weight", 30.0);
 				operators.add(intervalOperator);
 				
+				
+				GeneNodeOperator geneNodeOperator = new GeneNodeOperator();
+				geneNodeOperator.initByName("tree", d.tree, "gene", d.geneprior , "weight", 30.0);
+				operators.add(geneNodeOperator);
+				
+				
+				
 				// Subtree slide
 				beast.base.evolution.operator.kernel.BactrianSubtreeSlide SubtreeSlide = new beast.base.evolution.operator.kernel.BactrianSubtreeSlide();
 				SubtreeSlide.initByName("tree", d.tree, "weight", 15.0);
