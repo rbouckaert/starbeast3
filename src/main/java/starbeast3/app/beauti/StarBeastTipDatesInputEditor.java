@@ -230,10 +230,37 @@ public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
     
     /* synchronise table with data from traitSet BEASTObject */
     private void convertTraitToTableData() {
-        for (int i = 0; i < tableData.size(); i++) {
-            tableData.get(i).setTaxon(taxa.get(i));
-            tableData.get(i).setDate("0");
-            tableData.get(i).setAge(0.0);
+//        for (int i = 0; i < tableData.size(); i++) {
+//            tableData.get(i).setTaxon(taxa.get(i));
+//            tableData.get(i).setDate("0");
+//            tableData.get(i).setAge(0.0);
+//        }
+//        String[] traits = traitSet.traitsInput.get().split(",");
+//        for (String trait : traits) {
+//            trait = trait.replaceAll("\\s+", " ");
+//            String[] strs = trait.split("=");
+//            if (strs.length != 2) {
+//                break;
+//                //throw new Exception("could not parse trait: " + trait);
+//            }
+//            String taxonID = normalize(strs[0]);
+//            int taxonIndex = taxa.indexOf(taxonID);
+////            if (taxonIndex < 0) {
+////                throw new Exception("Trait (" + taxonID + ") is not a known taxon. Spelling error perhaps?");
+////            }
+//            if (taxonIndex >= 0) {
+//                tableData.get(taxonIndex).setDate(normalize(strs[1]));
+//                tableData.get(taxonIndex).setTaxon(taxonID);
+//            } else {
+//                Log.warning.println("WARNING: File contains taxon " + taxonID + " that cannot be found in alignment");
+//            }
+//        }
+//        
+        Map<String, TipDate> byTaxon = new HashMap<>();
+        for (TipDate td : tableData) {
+            td.setDate("0");
+            td.setAge(0.0);
+            byTaxon.put(td.getTaxon(), td);
         }
         String[] traits = traitSet.traitsInput.get().split(",");
         for (String trait : traits) {
@@ -241,20 +268,17 @@ public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
             String[] strs = trait.split("=");
             if (strs.length != 2) {
                 break;
-                //throw new Exception("could not parse trait: " + trait);
             }
             String taxonID = normalize(strs[0]);
-            int taxonIndex = taxa.indexOf(taxonID);
-//            if (taxonIndex < 0) {
-//                throw new Exception("Trait (" + taxonID + ") is not a known taxon. Spelling error perhaps?");
-//            }
-            if (taxonIndex >= 0) {
-                tableData.get(taxonIndex).setDate(normalize(strs[1]));
-                tableData.get(taxonIndex).setTaxon(taxonID);
+            TipDate td = byTaxon.get(taxonID);
+            if (td != null) {
+                td.setDate(normalize(strs[1]));
             } else {
                 Log.warning.println("WARNING: File contains taxon " + taxonID + " that cannot be found in alignment");
             }
         }
+        
+        
         if (traitSet.traitNameInput.get().equals(TraitSet.DATE_BACKWARD_TRAIT)) {
             Double minDate = Double.MAX_VALUE;
             for (int i = 0; i < tableData.size(); i++) {
@@ -327,16 +351,32 @@ public class StarBeastTipDatesInputEditor extends BEASTObjectInputEditor {
     /**
      * synchronise traitSet BEAST object with table data
      */
+//    private void convertTableDataToTrait() {
+//        String trait = "";
+//        for (int i = 0; i < tableData.size(); i++) {
+//            trait += taxa.get(i) + "=" + tableData.get(i).getDate();
+//            if (i < tableData.size() - 1) {
+//                trait += ",\n";
+//            }
+//        }
+//        try {
+//            traitSet.traitsInput.setValue(trait, traitSet);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+    
     private void convertTableDataToTrait() {
-        String trait = "";
+        StringBuilder trait = new StringBuilder();
         for (int i = 0; i < tableData.size(); i++) {
-            trait += taxa.get(i) + "=" + tableData.get(i).getDate();
+            TipDate td = tableData.get(i);
+            trait.append(td.getTaxon()).append("=").append(td.getDate());
             if (i < tableData.size() - 1) {
-                trait += ",\n";
+                trait.append(",\n");
             }
         }
         try {
-            traitSet.traitsInput.setValue(trait, traitSet);
+            traitSet.traitsInput.setValue(trait.toString(), traitSet);
         } catch (Exception e) {
             e.printStackTrace();
         }
