@@ -3,17 +3,17 @@ author: Jordan Douglas
 level: Intermediate
 title: StarBeast3 tutorial
 subtitle: Multispecies coalescent divergence dating with fossil leaves
-beastversion: 2.7.6
+beastversion: 2.8
 ---
 
 # StarBeast3 tutorial: Multispecies coalescent divergence dating with fossil leaves
 
 
-In this tutorial, we will explore primate multilocus genomic data using a multispecies coalescent model. We will demonstrate how to perform this analysis using StarBeast3 and how the model can be visualised and interpreted.
+In this tutorial, we will explore primate multilocus genomic data using a multispecies coalescent model. We will demonstrate how to perform this analysis using StarBeast3 and how the model can be visualised and interpreted. For compatability with BEAST 2.7, please refer to the 2.7 branch of this repository.
 
 ## Dependencies
 
-Please install [BEAST 2.7.5](https://www.beast2.org/) or greater before starting the tutorial.
+Please install [BEAST 2.8](https://www.beast2.org/) or greater before starting the tutorial.
 
 ## 1. Primates
 
@@ -25,8 +25,6 @@ Their original dataset contains 27 partitions.
 In this tutorial, we will consider just 3 of these loci. They also compiled fossil data, which we will use in this tutorial. We will estimate the phylogeny of these three 3 loci, plus a 4th 'fossil' locus that captures time calibration data. These four gene trees will be constrained within a single species tree phylogeny.
 
 **Step 1.1.** Download the genetic data .nex file [here](https://raw.githubusercontent.com/rbouckaert/starbeast3/master/workshop/data/primates_3loci.nex) and the fossil .fasta file [here](https://raw.githubusercontent.com/rbouckaert/starbeast3/master/workshop/data/fossils.fasta).
-
-![A bush baby](https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/The_Mohol_bushbaby_%28Galago_moholi%29%2C_crop.jpg/800px-The_Mohol_bushbaby_%28Galago_moholi%29%2C_crop.jpg)
 
 ## 2. Set up multispecies coalescent method in BEAUti
 
@@ -144,8 +142,6 @@ Now we are done! We just have to save the file.
 If you encounter any issues along the way, you can download the pre-generated XML file [here](data/primates.xml).
 
 
-
-![A bush baby using BEAST 2](figs/bushbaby.jpg)
 
 
 ## 3. Running BEAST 2
