@@ -357,7 +357,6 @@ name="alignment">
                 <up idref="clockRate.c:47"/>
                 <up idref="netDiversificationRate.t:Species"/>
                 <down idref="Tree.t:Species"/>
-                <down idref="popSize"/>
                 <down idref="popMean"/>
                 <down idref="Tree.t:26"/>
                 <down idref="Tree.t:29"/>
