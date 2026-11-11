@@ -108,7 +108,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math4-legacy</artifactId>
             <version>${commons-math4-legacy.version}</version>
-            <scope>provided</scope>
         </dependency>
 
 
