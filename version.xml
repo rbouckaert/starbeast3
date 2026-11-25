@@ -20,6 +20,7 @@
         <provider classname="starbeast3.app.beauti.StarBeast3MorphModelAlignmentProvider"/>
         <provider classname="starbeast3.simulation.DirectSimulator"/>
         <provider classname="starbeast3.core.ParallelMCMC"/>
+        <provider classname="starbeast3.core.OperatorScheduleRecalculator"/>
         <provider classname="starbeast3.evolution.branchratemodel.SharedSpeciesClockModel"/>
         <provider classname="starbeast3.evolution.branchratemodel.StrictClockModelSB3"/>
         <provider classname="starbeast3.evolution.branchratemodel.UCRelaxedClockModelSB3"/>
